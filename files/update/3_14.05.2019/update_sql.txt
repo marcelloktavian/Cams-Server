@@ -1,0 +1,2 @@
+ALTER TABLE `cams_db`.`olnso` ADD COLUMN `deleted` INT(1) DEFAULT 0 NULL AFTER `user`; 
+UPDATE olnso SET deleted=1 WHERE total=0

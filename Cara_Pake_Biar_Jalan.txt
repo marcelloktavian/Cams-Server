@@ -1,0 +1,13 @@
+Atur Koneksi databasenya di config.php dalam folder include
+Const _HOST -> Hostnya, biasa localhost
+Const _USER -> User DB nya
+Const _PASS -> Password uSer DB nya
+Const _DBSE -> Nama DB nya
+Const BASE_URL Ganti samain sama url nya yg di bikin
+
+
+Bebas Pake untuk tujuan Belajar aja
+
+Thx,
+Download from http://jt3angga.wordpress.com
+Kaskus ID oBheLy

@@ -1,0 +1,4 @@
+1. Tble b2bso,b2bso_detail,b2bso_composition,mst_b2bsalesman
+2. master_b2b/b2bsalesman.php,b2bsalesman_form.php,b2bproducts.php
+3. folder sales b2b
+4. menu

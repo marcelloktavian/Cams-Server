@@ -1,0 +1,654 @@
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend, article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{
+	margin:0;padding:0;border:0;
+	/*font-size:100%;font:inherit;*/ 
+	vertical-align:baseline;  
+}
+ 
+body{
+	background-color:#FFFFFF;
+	/* font: 62.5% "Trebuchet MS", sans-serif; */
+	font: 62.5% "Trebuchet MS", sans-serif;
+	height:100%;
+}
+
+a:hover, a:active, a:focus {
+    outline: 0;
+}
+
+.datepicker {
+	text-align: center;
+	width: 70px;	
+}
+
+.number {
+	text-align: right;
+	width: 50px;
+}
+.city_id {
+	width: 200px;
+}
+
+#loginBoxX{
+	position: fixed;
+	top: 25%;
+	left: 43%;
+	margin-top: -25px;
+	margin-left: -93px;
+	width:350px;
+	height:120px;
+	/* border:solid 1px red; */
+}
+#loginBox label{ display:block; }
+#loginBox input.text,#loginBox select { margin-bottom:10px; width:95%; padding: .4em; }
+#loginBox fieldset { padding:0; border:0; margin-top:5px; }
+#loginBox .validateTips { border: 1px solid transparent; padding: 0.3em; }
+.noClose .ui-dialog-titlebar-close{
+	display:none;
+}
+#infomodule{padding-top:4px;}
+
+/* General */
+.padding-1{padding:1px;}
+.padding-2{padding:2px;}
+.padding-3{padding:3px;}
+.padding-4{padding:4px;}
+.padding-5{padding:5px;}
+.padding-6{padding:6px;}
+.padding-7{padding:7px;}
+
+
+.fieldTextBox{
+	padding: 4px 4px;
+	border:solid 1px #A6C9E2;
+	-moz-border-radius: 3px; -webkit-border-radius: 3px; -khtml-border-radius: 3px; border-radius: 3px;
+	/*font-family:Verdana!important;
+	font-size:11px!important;*/
+}
+.fieldTextBox:focus{
+	border:solid 1px #4297D7;
+}
+
+.loaderMini{
+	background: url(image/loader.gif) 0 0 no-repeat;
+	height: 16px;
+	width: 16px;
+	display: block;
+}
+
+.selectMenuComp{
+	height:25px; padding-top:4px;
+}
+
+ul.iconsSlide {margin: 0; padding: 0;}
+ul.iconsSlide li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+ul.iconsSlide span.ui-icon {float: left; margin: 0 4px;}
+
+ul.listStyle {margin: 0; padding: 0;}
+ul.listStyle li{ margin-top:5px; padding:3px 0; list-style: none;  width:300px;  }
+.box_attach{ float:left; margin-bottom:2px; display:block; background:#f6f6f6; padding:3px; width:200px; }
+.box_attach:hover{background:#DDDDDD;}
+
+.pullLeft{
+	float:left;
+}
+.pullRight{
+	float:right;
+}
+
+.ui-accordion .ui-accordion-content {padding: 7px;}
+.ui-tabs-nav li {position: relative;}
+.ui-tabs-selected a span {padding-right: 10px;}
+.ui-tabs-close {float: left; margin: 0.4em 0.2em 0 0; cursor: pointer;}
+.ui-tabs-selected .ui-tabs-close {display: block;}
+
+.icon-box-alert{
+	float:left; margin:0 7px 20px 0;
+}
+
+td.field {
+	/*background:none repeat scroll 0 0 #D8E9F6;*/	
+	border-bottom:1px solid #DDDDDD;
+	padding-left:5px;
+	padding-top:5px;
+	font-family:Verdana;
+	/*font-size:11px!important;*/
+	font-weight:bold!important;
+}
+
+td.field_right {
+	/*background:none repeat scroll 0 0 #D8E9F6;*/	
+	border-left:1px solid #DDDDDD;
+	border-bottom:1px solid #DDDDDD;
+	padding-left:5px;
+	padding-top:5px;
+	font-family:Verdana;
+	/*font-size:11px!important;*/
+	font-weight:bold!important;
+}
+
+/* Grid Form General */
+.width-600{width:600px;}
+.width-800{width:800px;}
+.width-900{width:900px;}
+
+.form-crud th{
+	text-align:left;
+}
+
+.form-crud td,th {
+	padding: 5px 5px; 
+}
+
+.form-crud input, textarea{
+	padding: 4px 4px;
+ 	width:270px;
+}
+.form-crud textarea{
+	width:270px;
+	height:85px;
+	display:block;
+}
+.field-content{
+ 	float:left; 	
+	width:150px;
+}
+
+.field-dark{
+	background-color:#F1F1F1;
+}
+
+.embossed {
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.25), inset 0 -3px 0 rgba(255,255,255,.2), 0 1px 0 rgba(0,0,0,.1);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.25), inset 0 -3px 0 rgba(255,255,255,.2), 0 1px 0 rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.25), inset 0 -3px 0 rgba(255,255,255,.2), 0 1px 0 rgba(0,0,0,.1);
+}
+/*.ui-widget{font-family:Verdana;font-size:1.1em}*/
+/*.ui-widget .ui-widget{font-size:11px}*/
+.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:Verdana;/*font-size:11px*/}
+
+
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; }
+.ui-timepicker-rtl dl dd { margin: 0 65px 10px 10px; }
+
+
+/*
+ * Original version: 1.0 � 2010 Andrew Valums ( andrew(at)valums.com )
+ * Current Maintainer (2.0+): 2012, Ray Nicholus ( fineuploader(at)garstasio.com )
+ *
+ * Licensed under MIT license, GNU GPL 2 or later, GNU LGPL 2 or later, see license.txt.
+ */
+.qq-uploader {
+    position: relative;
+    width: 100%;
+}
+.qq-upload-button {
+    display: block;
+    width: 80px;
+    padding: 5px 0;
+    /*text-align: center;
+    background: #880000;
+    border-bottom: 1px solid #DDD;
+    color: #FFF;*/
+}
+.qq-upload-button-hover {
+    background: #CC0000;
+}
+.qq-upload-button-focus {
+    outline: 1px dotted #000000;
+}
+.qq-upload-drop-area, .qq-upload-extra-drop-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 30px;
+    z-index: 2;
+    background: #FF9797;
+    text-align: center;
+}
+.qq-upload-drop-area span {
+    display: block;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    margin-top: -8px;
+    font-size: 16px;
+}
+.qq-upload-extra-drop-area {
+    position: relative;
+    margin-top: 50px;
+    font-size: 16px;
+    padding-top: 30px;
+    height: 20px;
+    min-height: 40px;
+}
+.qq-upload-drop-area-active {
+    background: #FF7171;
+}
+.qq-upload-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.qq-upload-list li {
+    margin: 0;
+    padding: 9px;
+    line-height: 15px;
+    font-size: 16px;
+    background-color: #FFF0BD;
+}
+.qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-retry, .qq-upload-failed-text, .qq-upload-finished {
+    margin-right: 12px;
+}
+.qq-upload-file {
+}
+.qq-upload-spinner {
+    display: inline-block;
+    background: url("image/loader.gif");
+    width: 15px;
+    height: 15px;
+    vertical-align: text-bottom;
+}
+.qq-drop-processing {
+    display: none;
+}
+.qq-drop-processing-spinner {
+    display: inline-block;
+    background: url("processing.gif");
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+}
+.qq-upload-finished {
+    display:none;
+    width:15px;
+    height:15px;
+    vertical-align:text-bottom;
+}
+.qq-upload-retry {
+    display: none;
+    color: #000000;
+}
+.qq-upload-cancel {
+	color: #000000;
+}
+.qq-upload-retryable .qq-upload-retry {
+    display: inline;
+}
+.qq-upload-size, .qq-upload-cancel, .qq-upload-retry {
+    font-size: 12px;
+    font-weight: normal;
+}
+.qq-upload-failed-text {
+    display: none;
+    font-style: italic;
+    font-weight: bold;
+}
+.qq-upload-failed-icon {
+    display:none;
+    width:15px;
+    height:15px;
+    vertical-align:text-bottom;
+}
+.qq-upload-fail .qq-upload-failed-text {
+    display: inline;
+}
+.qq-upload-retrying .qq-upload-failed-text {
+    display: inline;
+    color: #D60000;
+}
+.qq-upload-list li.qq-upload-success {
+    background-color: #5DA30C;
+    color: #FFFFFF;
+}
+.qq-upload-list li.qq-upload-fail {
+    background-color: #D60000;
+    color: #FFFFFF;
+}
+.qq-progress-bar {
+    background: -moz-linear-gradient(top,  rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
+    width: 0%;
+    height: 15px;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    display: none;
+}
+
+/*Top Left Navigation*/
+#top_navigate{
+ 	position: absolute;
+	right:6px;
+	top:3px;
+	list-style-type: none;
+	list-style-position: outside;
+	margin:0;
+	z-index: 5;
+}
+#top_navigate li{
+	float: left; 
+}
+ 
+
+/*Menu Option*/
+#top_navigate ul{	 
+	list-style-type:none;
+	list-style-position:outside;
+	position:relative;
+	line-height:15px; 
+	z-index:5;
+	right:0px;
+}
+
+
+#top_navigate ul a{	
+	cursor: pointer;
+}
+
+#top_navigate li{
+	float:left;
+	position:relative;
+	z-index:20;
+}
+
+#top_navigate li li{
+	float:left;
+}
+
+#top_navigate ul {
+	display:none;
+	position:absolute;
+	top:25px;  
+}
+
+#top_navigate li ul a{ 
+	height:auto;
+	float:left;	
+	text-align:left;
+	padding:5px; 
+	width:150px;
+	font-weight: bold;
+}
+
+#top_navigate ul ul{ 
+	top:auto;
+	border-top:none;
+}	
+
+#top_navigate li ul ul {
+	left:171px;
+	top:-1px;
+}
+
+#top_navigate li:hover ul ul, #top_navigate li:hover ul ul ul, #top_navigate li:hover ul ul ul ul{
+	display:none;	
+}
+#top_navigate li:hover ul, #top_navigate li li:hover ul, #top_navigate li li li:hover ul, #top_navigate li li li li:hover ul{
+	display:block;
+}
+
+#top_navigate li ul a{
+	border-top:none;
+	text-decoration: none;
+}
+
+/* Multiselect
+----------------------------------*/
+
+.ui-multiselect { border: solid 1px; font-size: 0.8em; }
+.ui-multiselect ul { -moz-user-select: none; }
+.ui-multiselect li { margin: 0; padding: 0; cursor: default; line-height: 20px; height: 20px; font-size: 11px; list-style: none; }
+.ui-multiselect li a { color: #999; text-decoration: none; padding: 0; display: block; float: left; cursor: pointer;}
+.ui-multiselect li.ui-draggable-dragging { padding-left: 10px; }
+
+.ui-multiselect div.selected { position: relative; padding: 0; margin: 0; border: 0; float:left; }
+.ui-multiselect ul.selected { position: relative; padding: 0; overflow: auto; overflow-x: hidden; background: #fff; margin: 0; list-style: none; border: 0; position: relative; width: 100%; }
+.ui-multiselect ul.selected li { }
+
+.ui-multiselect div.available { position: relative; padding: 0; margin: 0; border: 0; float:left; border-left: 1px solid; }
+.ui-multiselect ul.available { position: relative; padding: 0; overflow: auto; overflow-x: hidden; background: #fff; margin: 0; list-style: none; border: 0; width: 100%; }
+.ui-multiselect ul.available li { padding-left: 10px; }
+ 
+.ui-multiselect .ui-state-default { border: none; margin-bottom: 1px; position: relative; padding-left: 20px;}
+.ui-multiselect .ui-state-hover { border: none; }
+.ui-multiselect .ui-widget-header {border: none; font-size: 11px; margin-bottom: 1px;}
+ 
+.ui-multiselect .add-all { float: right; padding: 7px;}
+.ui-multiselect .remove-all { float: right; padding: 7px;}
+.ui-multiselect .search { float: left; padding: 4px;}
+.ui-multiselect .count { float: left; padding: 7px;}
+
+.ui-multiselect li span.ui-icon-arrowthick-2-n-s { position: absolute; left: 2px; }
+.ui-multiselect li a.action { position: absolute; right: 2px; top: 2px; }
+ 
+.ui-multiselect input.search { height: 14px; padding: 1px; opacity: 0.5; margin: 4px; width: 100px; }
+
+
+/* Jquery.Tagit
+------------------------------------------*/
+ul.tagit {
+    padding: 1px 5px;
+    overflow: auto;
+    margin-left: inherit; /* usually we don't want the regular ul margins. */
+    margin-right: inherit;
+}
+ul.tagit li {
+    display: block;
+    float: left;
+    margin: 2px 5px 2px 0;
+}
+ul.tagit li.tagit-choice {    
+    position: relative;
+    line-height: inherit;
+}
+
+ul.tagit li.tagit-choice-read-only { 
+    padding: .2em .5em .2em .5em; 
+} 
+
+ul.tagit li.tagit-choice-editable { 
+    padding: .2em 18px .2em .5em; 
+} 
+
+ul.tagit li.tagit-new {
+    padding: .25em 4px .25em 0;
+}
+
+ul.tagit li.tagit-choice a.tagit-label {
+    cursor: pointer;
+    text-decoration: none;
+}
+ul.tagit li.tagit-choice .tagit-close {
+    cursor: pointer;
+    position: absolute;
+    right: .1em;
+    top: 50%;
+    margin-top: -8px;
+    line-height: 17px;
+}
+
+/* used for some custom themes that don't need image icons */
+ul.tagit li.tagit-choice .tagit-close .text-icon {
+    display: none;
+}
+
+ul.tagit li.tagit-choice input {
+    display: block;
+    float: left;
+    margin: 2px 5px 2px 0;
+}
+ul.tagit input[type="text"] {
+    -moz-box-sizing:    border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing:         border-box;
+
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: inherit;
+    background-color: inherit;
+    outline: none;
+}
+
+.filetree span.logout {
+    background: url("images/file.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+.filetree span.logout {
+    display: block;
+    padding: 1px 0 1px 16px;
+}
+.filetree span.logout a {
+    text-decoration: none;
+}
+.btn_box {
+	width: 100%;
+	text-align: right;
+	margin-top: 3px;
+	padding: 5px 2px;	
+}
+
+
+/*Form*/
+.ui-form {
+	width: 100%;
+	margin: 0 auto;
+}
+.ui-form .ui-widget-header h2 {
+	margin: 10px 0 10px 20px;
+}
+.ui-form .ui-widget-content {
+	padding: 20px 20px 10px;
+}
+.ui-form label, .ui-form input, .ui-form .ui-state-error, .ui-form .ui-icon, .ui-form .ui-state-error p {
+	/*float: left;*/
+}
+.ui-form label, .ui-state-error p {
+	/*font-size: 12px;
+	padding: 10px 10px 0 0;*/
+	margin-right: 15px;
+}
+.ui-form label.label-control {
+	float: left;
+	width: 200px;
+	text-align: right;
+	line-height: 25px;
+}
+.ui-form div.form-control {
+	margin-bottom: 5px; 
+}
+
+.ui-form div.form-control input, select, textarea {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border: 1px solid #C0C0C0;
+	padding: 5px;
+	font-size: 0.9em;
+}
+
+.ui-form .ui-state-error {
+	padding: 4px;
+}
+.ui-form .ui-state-error p {
+	font-weight: bold;
+	padding-top: 5px;
+}
+.ui-form .ui-state-error .ui-icon {
+	margin: 5px 3px 0 4px;
+}
+
+.ui-form .jtable tr th {
+	padding: 5px;
+}
+.ui-form .jtable tr td {
+	padding: 5px;
+}
+
+/*Form Search Grid*/
+.ui-form-search {
+	margin: 0 auto 5px;
+}
+.ui-form-search .ui-widget-header h2 {
+	margin: 10px 0 10px 20px;
+}
+.ui-form-search .ui-widget-content {
+	padding: 3px 15px;
+}
+.ui-form-search .column-left {
+	width: 48%;
+	float: left;
+}
+.ui-form-search .column-right {
+	width: 48%;
+	float: right;
+}
+
+.ui-form-search .searchbox-button {
+	float: right;
+}
+
+.ui-form-search label, .ui-state-error p {
+	margin-right: 10px;
+}
+.ui-form-search label.label-control {
+	float: left;
+	width: 20%;
+	text-align: left;
+	line-height: 25px;
+}
+.ui-form-search div.form-control {
+	margin-bottom: 5px; 
+}
+
+.ui-form-search div.form-control input, select, textarea {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border: 1px solid #C0C0C0;
+	padding: 5px;
+	font-size: 0.9em;
+}
+
+.ui-form-search  .input-searh {
+	width: 70%;
+}
+
+.ui-form-search .ui-state-error {
+	padding: 4px;
+}
+.ui-form-search .ui-state-error p {
+	font-weight: bold;
+	padding-top: 5px;
+}
+.ui-form-search .ui-state-error .ui-icon {
+	margin: 5px 3px 0 4px;
+}
+
+.ui-form-search .jtable tr th {
+	padding: 5px;
+}
+.ui-form-search .jtable tr td {
+	padding: 5px;
+}
+.padding5 {
+	padding: 5px;
+}

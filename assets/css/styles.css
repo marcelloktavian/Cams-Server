@@ -1,0 +1,171 @@
+/*!
+ * HanzZame - Bengkel Auto Stars Bootstrap Admin Theme
+ */
+.fontsmall {
+	color:#777777;
+	font-family:arial;
+	font-size:10px;
+	
+}
+.fonttext {
+	color:#777777;
+	font-family:arial;
+	font-size:14px;
+	
+}
+.fontjudul {
+	color:#777777;
+	font-family:arial;
+	font-size:20px;
+	text-align:center;
+}
+hr {
+	border-color:#E0E0E0;
+	margin-bottom:10px;
+}
+
+.inputform {
+	text-align:left;
+	height:25px;
+	width:245px;
+	font-size:14px;
+	color:#777777;
+	padding:3px;
+	padding-left:8px;
+}
+
+.Nama_Jasa {
+	text-align:left;
+	height:25px;
+	width:5px;
+	font-size:14px;
+	color:#777777;
+	padding:3px;
+	padding-left:8px;
+}
+
+.fixed-table{
+	table-layout: fixed;
+	width : 100%;
+}
+
+.fit-column{
+	width				: 1%;
+	white-space	: nowrap;
+}
+
+.title-big{
+	font-family : 'Arial';
+	font-weight : bold;
+	font-size   : 1.8em;
+}
+
+.title-md{
+	font-weight : bold;
+	font-size		: 1.3em;
+}
+
+.title-sm{
+	font-weight : bold;
+}
+
+.text-left{
+	text-align : left;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.text-right{
+	text-align: right;
+}
+
+table.detail_table tr td{
+	padding: 0.2em; height: 1.5em;
+}
+
+table.detail_table tr:not(:first-child) td{
+	font-size : 0.8em;
+}
+
+tr td.td-border{
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr td.td-border:last-child{
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+	border-right : 1px solid black;
+}
+
+tr:first-child td.td-border{
+	border-top : 1px solid black;
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr:first-child td.td-border:last-child{
+	border-top : 1px solid black;
+	border-left : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr:last-child td.td-border:last-child{
+	border-left : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+.td-title{
+	background-color : #efefef;
+}
+
+#form2 textarea {
+	font-size:14px;
+	color:#777777;
+	font-family:arial;
+	padding:3px;
+	padding-left:8px;
+}
+
+#form2 input[type="submit"] {
+	width: 135px;
+	background-color: #2b6597;
+	border:0px;
+	color:#FFF;
+	font-size:14px;
+	padding:8px 0px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+#form2 input[type="submit"]:hover {
+	background-color:#5084b1;
+
+}
+
+#New2 {
+	width: 135px;
+	background-color: #2c963a;
+	border:0px;
+	color:#FFF;
+	font-size:14px;
+	padding:4px 0px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+#New2:hover {
+	background-color: #5baf66;
+}
+
+thead {
+	background-color:#eaeaea;
+	text-align:center;
+	color:c1c1c1;
+	height:35px;
+}
+
