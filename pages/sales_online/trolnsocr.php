@@ -136,10 +136,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$stmt = $db->prepare("INSERT INTO olnso_id(`nomor`,`id_trans`,`user_id`,`lastmodified`) SELECT IFNULL((MAX(nomor)+1),0),?,?,NOW() FROM olnso_id WHERE DATE(lastmodified)=DATE(NOW())"); 
 		$stmt->execute(array($_GET['id'],$_SESSION['user']['user_id']));
 		$id = $db->lastInsertId();
-		$idnext = ($id+2)/3 + 246630;
+		// $idnext = ($id+2)/3 + 246630;
+
+		$idnext='';
+		$query = mysql_query("(SELECT (a.id_ship+1) AS idbaru FROM olnso_id a WHERE a.id < $id ORDER BY a.id DESC LIMIT 1)");
+		while($q = mysql_fetch_array($query)){
+			$idnext = $q['idbaru'];
+		}
 
 		$stmt = $db->prepare("UPDATE olnso_id SET id_ship=? WHERE id=?"); 
-		$stmt->execute(array($idnext, $id));
+		$stmt->execute(array($idnext,$id));
 		
 		$idtrans=$_GET['id'];
 		
@@ -448,7 +454,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 			viewrecords: true,
 			rownumbers: true,
 			sortorder: "desc",
-			caption: "Data Penjualan Online Credit test",
+			caption: "Data Penjualan Online Credit",
 			ondblClickRow: function (rowid) {
 				alert(rowid);
 			},
