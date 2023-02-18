@@ -135,7 +135,11 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		//posting data untuk oln_id
 		$stmt = $db->prepare("INSERT INTO olnso_id(`nomor`,`id_trans`,`user_id`,`lastmodified`) SELECT IFNULL((MAX(nomor)+1),0),?,?,NOW() FROM olnso_id WHERE DATE(lastmodified)=DATE(NOW())"); 
 		$stmt->execute(array($_GET['id'],$_SESSION['user']['user_id']));
-		
+		$id = $db->lastInsertId();
+		$idnext = ($id+2)/3 + 246630;
+
+		$stmt = $db->prepare("UPDATE olnso_id SET id_ship=? WHERE id=?"); 
+		$stmt->execute(array($idnext, $id));
 		
 		$idtrans=$_GET['id'];
 		
@@ -162,8 +166,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
         $q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
         $idparent=$q['id'];
 		
-		$dpp = round($total / 1.11);
-		$ppn = round(round($total / 1.11) * 0.11);
+		$dpp = $total / 1.11;
+		$ppn = $total / 1.11 * 0.111;
 
 		$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('01.04.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
 		while($akun1 = mysql_fetch_array($query1)){
