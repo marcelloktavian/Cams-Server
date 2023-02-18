@@ -7,15 +7,7 @@
 	
 	$url = 'http://'.$_SERVER['HTTP_HOST'];
 
-<<<<<<< HEAD
-	
-
 	define('BASE_URL', $url.'/');
-=======
-
-        define('BASE_URL', $url.'/');
-
->>>>>>> ace20ef8a8e3af59023a67096d32d8641f00baab
 
 	define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	
