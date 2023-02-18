@@ -136,9 +136,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$stmt = $db->prepare("INSERT INTO olnso_id(`nomor`,`id_trans`,`user_id`,`lastmodified`) SELECT IFNULL((MAX(nomor)+1),0),?,?,NOW() FROM olnso_id WHERE DATE(lastmodified)=DATE(NOW())"); 
 		$stmt->execute(array($_GET['id'],$_SESSION['user']['user_id']));
 		$id = $db->lastInsertId();
-		var_dump($id);
 		$idnext = ($id+2)/3 + 246630;
-		var_dump($idnext);die;
 
 		$stmt = $db->prepare("UPDATE olnso_id SET id_ship=? WHERE id=?"); 
 		$stmt->execute(array($idnext, $id));
@@ -450,7 +448,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 			viewrecords: true,
 			rownumbers: true,
 			sortorder: "desc",
-			caption: "Data Penjualan Online Credit",
+			caption: "Data Penjualan Online Credit test",
 			ondblClickRow: function (rowid) {
 				alert(rowid);
 			},
