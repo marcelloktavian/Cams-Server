@@ -3,8 +3,8 @@
 // panggil fungsi validasi xss dan injection
 
 $server =  "localhost";
-$username = "root";
-$password = "";
+$username = "app";
+$password = "Aaaa1234";
 $database = "cams_db2022";
 
 // Koneksi dan memilih database di server

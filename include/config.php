@@ -1,11 +1,15 @@
 <?php
 	session_start();	
 	define('_HOST', 'localhost');
-	define('_USER', 'root');
-	define('_PASS', '');
+	define('_USER', 'app');
+	define('_PASS', 'Aaaa1234');
 	define('_DBSE', 'cams_db2022');
 	
-	define('BASE_URL', 'http://192.168.1.254/cams2022/');
+	$url = 'http://'.$_SERVER['HTTP_HOST'];
+
+	
+
+	define('BASE_URL', $url.'/');
 
 	define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	
