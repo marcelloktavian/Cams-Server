@@ -85,10 +85,14 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
       number_format($line['harga'],0),
       $line['kategori'],
       number_format($line['penyusutan'],0),
+      $line['hpp'] == 0 ? 'Tidak':'Iya', 
       $edit,
       $delete,
     );
     $i++;
+  }
+  if(!isset($responce)){
+    $responce = [];
   }
   echo json_encode($responce);
   exit;
@@ -125,11 +129,10 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
   } else {
     $id_mst = $idSupplier['id'];
   }
-  
 
   if(isset($_POST['id'])){
-    $stmt = $db->prepare("UPDATE `mst_produk` SET `produk_jasa`=?, `id_supplier`=?, `tgl_quotation`=?, `satuan`=?, `harga`=?, `kategori`=?, `penyusutan`=?, `lastmodified`=NOW() WHERE id=?");
-    $stmt->execute(array(strtoupper($_POST['produk_jasa']), $id_mst, $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan'], $_POST['id']));
+    $stmt = $db->prepare("UPDATE `mst_produk` SET `produk_jasa`=?, `id_supplier`=?, `tgl_quotation`=?, `satuan`=?, `harga`=?, `kategori`=?, `penyusutan`=?, `hpp`=? ,`lastmodified`=NOW() WHERE id=?");
+    $stmt->execute(array(strtoupper($_POST['produk_jasa']), $id_mst, $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan'], $_POST['hpp'], $_POST['id']));
 
     $affected_rows = $stmt->rowCount();
     if($affected_rows > 0){
@@ -138,9 +141,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
       $r['stat'] = 0; $r['message'] = 'Failed';
     }
   } else {
-    $stmt = $db->prepare("INSERT INTO `mst_produk` (`produk_jasa`,`id_supplier`,`tgl_quotation`, `satuan`, `harga`, `kategori`, `penyusutan`, `lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt = $db->prepare("INSERT INTO `mst_produk` (`produk_jasa`,`id_supplier`,`tgl_quotation`, `satuan`, `harga`, `kategori`, `penyusutan`, `hpp`, `lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW())");
 
-    if($stmt->execute(array(strtoupper($_POST['produk_jasa']), '0', $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan']))){
+    if($stmt->execute(array(strtoupper($_POST['produk_jasa']), '0', $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan'], $_POST['hpp']))){
       $r['stat'] = 1; $r['message'] = 'Success';
     } else {
       $r['stat'] = 0; $r['message'] = 'Failed';
@@ -167,16 +170,17 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     $('#table_purchproducts').jqGrid({
       url       : '<?php echo BASE_URL.'pages/master_purchase/purchproducts.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Edit', 'Delete'],
+      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Mempengaruhi HPP', 'Edit', 'Delete'],
       colModel  : [
         {name:'id', index:'id', align:'right', width:30, searchoptions: {sopt:['cn']}},
-        {name:'produk_jasa', index:'produk_jasa', width:350, searchoptions: {sopt:['cn']}},
+        {name:'produk_jasa', index:'produk_jasa', searchoptions: {sopt:['cn']}},
         {name:'supplier', index:'supplier', searchoptions: {sopt:['cn']}},
-        {name:'tgl_quotation', index:'tgl_quotation', searchoptions: {sopt:['cn']}, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}},
+        {name:'tgl_quotation', index:'tgl_quotation', align:'center', width:90, searchoptions: {sopt:['cn']}, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}},
         {name:'satuan', index:'satuan', align:'center', searchoptions: {sopt:['cn']}, width:100},
         {name:'harga', index:'harga', align:'right', searchoptions: {sopt:['cn']}},
         {name:'kategori', index:'kategori', align:'center', width:100, searchoptions: {sopt:['cn']}},
-        {name:'penyusutan', index:'penyusutan', align:'right', searchoptions: {sopt:['cn']}},
+        {name:'penyusutan', index:'penyusutan', align:'right', width:90, searchoptions: {sopt:['cn']}},
+        {name:'hpp', index:'hpp', align:'center', width:90, searchoptions: {sopt:['cn']}},
         {name:'Edit', index:'edit', align:'center', width:50, sortable: false, search: false},
         {name:'Delete', index:'delete', align:'center', width:50, sortable: false, search: false},
       ],

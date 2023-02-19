@@ -41,6 +41,7 @@ else {
 
 $serial_number    = str_pad($serial_number, 3, '0', STR_PAD_LEFT);
 
+$persen_ppn       = $_POST['persen_ppn'];
 $no_dokumen       = $dokumen_header.$serial_number;
 $id_supplier      = explode(':',$_POST['supplier'])[0];
 $nama_supplier    = explode(':',$_POST['supplier'])[1];
@@ -54,7 +55,7 @@ $ppn              = $_POST['ppn'];
 $grand_total      = $_POST['grand_total'];
 $catatan          = $_POST['catatan'];
 
-$sql_master       = "INSERT INTO `mst_po` (dokumen, id_supplier, nama_supplier, tgl_po, eta_pengiriman, id_pemohon, nama_pemohon, total_dpp, total_qty, ppn, grand_total, catatan) VALUES ('$no_dokumen','$id_supplier','$nama_supplier','$tgl_po','$eta_pengiriman','$id_pemohon','$pemohon','$total_dpp','$total_qty','$ppn','$grand_total','$catatan')";
+$sql_master       = "INSERT INTO `mst_po` (dokumen, id_supplier, nama_supplier, tgl_po, eta_pengiriman, id_pemohon, nama_pemohon, total_dpp, total_qty, ppn, grand_total, catatan, persen_ppn) VALUES ('$no_dokumen','$id_supplier','$nama_supplier','$tgl_po','$eta_pengiriman','$id_pemohon','$pemohon','$total_dpp','$total_qty','$ppn','$grand_total','$catatan','$persen_ppn')";
 
 $sql              = mysql_query($sql_master);
 
@@ -72,8 +73,11 @@ for($i=1; $i<$row; $i++){
     $price              = $_POST['dpp'.$i];
     $satuan             = $_POST['satuan'.$i];
     $subtotal           = $_POST['sub_total'.$i];
+    $idAkun             = $_POST['idAkun'.$i];
+    $nomorAkun          = $_POST['nomorAkun'.$i];
+    $namaAkun           = $_POST['namaAkun'.$i];
 
-    $sql_detail         = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal')";
+    $sql_detail         = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
 
     $sql                = mysql_query($sql_detail);
   }

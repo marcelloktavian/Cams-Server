@@ -1,3 +1,5 @@
+<?php $persen_ppn = 11 ;?>
+
 <style>
   body {
     background-color: Moccasin;
@@ -22,6 +24,9 @@
 
 <body>
   <form id="po_add" name="po_add" action="" method="post">
+
+    <input type="hidden" class="" name="persen_ppn" id="persen_ppn" value="0">
+
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD PURCHASE ORDER</td>
@@ -37,19 +42,19 @@
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Pemohon</td>
-        <td><input type="text" class="inputForm" name="pemohon" id="pemohon" placeholder="Nama Pemohon" /></td>
+        <td><input type="text" class="inputForm" name="pemohon" id="pemohon" /></td>
         <td class="fonttext">Supplier</td>
-        <td><input type="text" class="inputForm" name="supplier" id="supplier" placeholder="Nama Supplier" /></td>
+        <td><input type="text" class="inputForm" name="supplier" id="supplier" /></td>
       </tr>
       <tr>
         <td class="fonttext">Tanggal PO</td>
-        <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" placeholder="Tanggal PO" /></td>
+        <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" /></td>
         <td class="fonttext">Estimasi Pengiriman</td>
-        <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" placeholder="Tanggal Estimasi Pengiriman" /></td>
+        <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" /></td>
       </tr>
       <tr>
         <td class="fonttext">Catatan</td>
-        <td colspan="100%"><textarea type="text" class="inputForm" name="catatan" id="catatan" placeholder="Catatan" style="height: 40px; width: 320px;"></textarea></td>
+        <td colspan="100%"><textarea type="text" class="inputForm" name="catatan" id="catatan" style="height: 40px; width: 320px;"></textarea></td>
       </tr>
       <tr height="1">
         <td colspan="100%"><hr /></td>
@@ -61,6 +66,8 @@
         <tr>
           <td width="5%" class="fonttext">Kode</td>
           <td width="30%" class="fonttext">Produk / Jasa</td>
+          <td width="30%" class="fonttext">Nomor Akun</td>
+          <td width="30%" class="fonttext">Nama Akun</td>
           <td width="10%" class="fonttext">Qty</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
@@ -113,7 +120,7 @@
 
     $('#total_dpp').val(parseFloat(totalorder));
     $('#total_dpp_view').val(intToIDR(parseFloat(totalorder)));
-    
+
     hitungppn(); hitungdpp();
   }
 
@@ -123,7 +130,8 @@
       var kode=$('#id'+i).val();
       var pkp=$('#pkp'+i).val();
       if (kode != null && kode != '' && pkp == '1'){
-        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*11/100);
+        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
+        $('#persen_ppn').val(<?= $persen_ppn ?>);
       }
     }
 
@@ -211,6 +219,21 @@
     idx.type="hidden"; idx.name="pkp"+index; idx.id="pkp"+index; return idx;
   }
 
+  function generateNomorAkun(index){
+    var idx = document.createElement("input");
+    idx.type="text"; idx.name="nomorAkun"+index; idx.id="nomorAkun"+index; idx.size="15" ;return idx;
+  }
+
+  function generateIdAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="idAkun"+index; idx.id="idAkun"+index; return idx;
+  }
+
+  function generateNamaAkun(index){
+    var idx = document.createElement("input");
+    idx.type="text"; idx.name="namaAkun"+index; idx.id="namaAkun"+index;  idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="30"; return idx;
+  }
+
   function generateProdukJasa(index){
     var idx = document.createElement("input");
     idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="70"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
@@ -218,7 +241,7 @@
 
   function generateQuantity(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=10; return idx;
+    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=15; return idx;
   }
 
   function generateDPPUnit(index){
@@ -247,7 +270,6 @@
 
   // products autocomplete ----------------------
     $("#pemohon").autocomplete("popemohon_list.php", {width: 400});
-
     $("#supplier").autocomplete("posupplier_list.php", {width: 400});
 
     var sup_q = "";
@@ -264,6 +286,36 @@
       baris1 = 1;
       addNewRow1();
     });
+
+    function get_akun(a) {
+			$("#nomorAkun" + a + "").autocomplete("COALov.php?", {
+				width: 178
+			});
+			//   console.log('here'+a)  ;
+			$("#nomorAkun" + a + "").result(function (event, data, formatted) {
+				var nama = document.getElementById("nomorAkun" + a + "").value;
+				for (var i = 0; i < nama.length; i++) {
+					var id = nama.split(';');
+					if (id[1] == "") continue;
+					var id_pd = id[1];
+				}
+				// console.log(id_pd);
+				$.ajax({
+					url: 'COALoVdet.php?id=' + id_pd,
+					dataType: 'json',
+					data: "nama=" + formatted,
+					success: function (data) {
+						var id = data.id;
+						$("#idAkun" + a + "").val(id);
+						var noakun = data.noakun;
+						$("#nomorAkun" + a + "").val(noakun);
+						var nama = data.nama;
+						$("#namaAkun" + a + "").val(nama);
+					}
+				});
+
+			});
+		}
 
     function get_products(a){
       $("#id"+a).autocomplete("poproduk_list.php?sup="+sup_q, {width: 400});
@@ -305,15 +357,20 @@
     var td4 = document.createElement("td");
     var td5 = document.createElement("td");
     var td6 = document.createElement("td");
+    var td7 = document.createElement("td");
+    var td8 = document.createElement("td");
 
     td0.appendChild(generateKode(baris1));
     td0.appendChild(generatePKP(baris1));
     td1.appendChild(generateProdukJasa(baris1));
-    td2.appendChild(generateQuantity(baris1));
-    td3.appendChild(generateSatuan(baris1));
-    td4.appendChild(generateDPPUnit(baris1));
-    td5.appendChild(generateSubTotal(baris1));
-    td6.appendChild(generateDelete(baris1));
+    td2.appendChild(generateIdAkun(baris1));
+    td2.appendChild(generateNomorAkun(baris1));
+    td3.appendChild(generateNamaAkun(baris1));
+    td4.appendChild(generateQuantity(baris1));
+    td5.appendChild(generateSatuan(baris1));
+    td6.appendChild(generateDPPUnit(baris1));
+    td7.appendChild(generateSubTotal(baris1));
+    td8.appendChild(generateDelete(baris1));
 
     row.appendChild(td0);
     row.appendChild(td1);
@@ -322,8 +379,10 @@
     row.appendChild(td4);
     row.appendChild(td5);
     row.appendChild(td6);
+    row.appendChild(td7);
+    row.appendChild(td8);
 
-    document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); get_products(baris1); triggerqty(baris1); hitungsubtotal(baris1);
+    document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); get_products(baris1); get_akun(baris1); triggerqty(baris1); hitungsubtotal(baris1);
     baris1++;
   }
 

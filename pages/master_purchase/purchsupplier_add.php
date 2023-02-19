@@ -34,25 +34,31 @@
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Supplier (*)</td>
-        <td><input type="text" class="inputForm" name="supplier" id="supplier" placeholder="Nama Supplier" /></td>
+        <td><input type="text" class="inputForm" name="supplier" id="supplier" /></td>
         <td class="fonttext">PIC (*)</td>
-        <td><input type="text" class="inputForm" name="pic" id="pic" placeholder="Nama PIC"/></td>
+        <td><input type="text" class="inputForm" name="pic" id="pic" /></td>
       </tr>
       <tr>
         <td class="fonttext">Alamat (*)</td>
-        <td><input type="text" class="inputForm" name="alamat" id="alamat" placeholder="Alamat Supplier" /></td>
+        <td><textarea type="text" class="inputForm" name="alamat" id="alamat"></textarea></td>
         <td class="fonttext">Contact (*)</td>
-        <td><input type="text" class="inputForm" name="contact" id="contact" placeholder="Nomor Supplier"></td>
+        <td><input type="text" class="inputForm" name="contact" id="contact" /></td>
       </tr>
       <tr>
         <td class="fonttext">KTP</td>
-        <td><input type="text" class="inputForm" name="ktp" id="ktp" placeholder="KTP Supplier"></td>
+        <td><input type="text" class="inputForm" name="ktp" id="ktp" /></td>
         <td class="fonttext">NPWP</td>
-        <td><input type="text" class="inputForm" name="npwp" id="npwp" placeholder="NPWP Supplier"></td>
+        <td><input type="text" class="inputForm" name="npwp" id="npwp" /></td>
+      </tr>
+      <tr>
+      <td class="fonttext">Bank</td>
+        <td><input type="text" class="inputForm" name="bank" id="bank" /></td>
+        <td class="fonttext">Rekening</td>
+        <td><input type="text" class="inputForm" name="rekening" id="rekening" /></td>
       </tr>
       <tr>
         <td class="fonttext">Email</td>
-        <td><input type="text" class="inputForm" name="email" id="email" placeholder="Email Supplier"/></td>
+        <td><input type="text" class="inputForm" name="email" id="email" /></td>
         <td class="fonttext">PKP</td>
         <td style="padding : 0;"><input type="checkbox" name="pkp" id="pkp" style="margin:0 !important; width: 24px; height: 24px;"/></td>
       </tr>

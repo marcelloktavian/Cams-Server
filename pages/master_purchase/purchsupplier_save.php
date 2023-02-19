@@ -17,6 +17,8 @@ $alamat   = $_POST['alamat'];
 $contact  = $_POST['contact'];
 $email    = $_POST['email'];
 $ktp      = $_POST['ktp'];
+$bank     = $_POST['bank'];
+$rekening = $_POST['rekening'];
 $npwp     = $_POST['npwp'];
 $pkp      = $_GET['pkp'];
 $totalqty = $_POST['totalqty'];
@@ -28,10 +30,10 @@ $check_val = mysql_fetch_array($check_val);
 $check_count = $check_val[0];
 
 if($check_count != null){
-  $sql_master = "UPDATE `mst_supplier` SET `vendor`='$supplier', `pic`='$pic', `alamat`='$alamat', `telp`='$contact', `email`='$email', `ktp`='$ktp', `npwp`='$npwp' , `pkp`='$pkp', `item`='$totalqty', `lastmodified`=NOW() WHERE id='$id_supplier'";
+  $sql_master = "UPDATE `mst_supplier` SET `vendor`='$supplier', `pic`='$pic', `alamat`='$alamat', `telp`='$contact', `email`='$email', `ktp`='$ktp', `bank`='$bank', `rekening`='$rekening', `npwp`='$npwp' , `pkp`='$pkp', `item`='$totalqty', `lastmodified`=NOW() WHERE id='$id_supplier'";
 }
 else{
-  $sql_master = "INSERT INTO `mst_supplier` (vendor, pic, alamat, telp, email, ktp, npwp, pkp, item, lastmodified) VALUES ('$supplier', '$pic', '$alamat', '$contact', '$email', '$ktp', '$npwp', '$pkp', '$totalqty', NOW())";
+  $sql_master = "INSERT INTO `mst_supplier` (vendor, pic, alamat, telp, email, ktp, bank, rekening, npwp, pkp, item, lastmodified) VALUES ('$supplier', '$pic', '$alamat', '$contact', '$email', '$ktp', '$bank', '$rekening','$npwp', '$pkp', '$totalqty', NOW())";
 }
 
 $sql = mysql_query($sql_master);

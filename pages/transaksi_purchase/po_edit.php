@@ -12,6 +12,8 @@
 <?php
   include "../../include/koneksi.php";
 
+  $persen_ppn = 11;
+
   $sql_mst    = "SELECT * FROM `mst_po` WHERE id=".$_GET['id']." AND `deleted` = 0";
   $sql        = mysql_query($sql_mst) or die (mysql_error());
   $result     = mysql_fetch_array($sql);
@@ -46,6 +48,8 @@
 
     <input type="hidden" id="no_dokumen" name="no_dokumen" value="<?= $no_dokumen ;?>">
 
+    <input type="hidden" class="" name="persen_ppn" id="persen_ppn" value="0">
+
     <table width="100%">
       <tr>
         <td class="fonttjudul">EDIT PURCHASE ORDER <span style="font-weight: bold;"><?= $no_dokumen ;?></span></td>
@@ -61,19 +65,19 @@
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Pemohon</td>
-        <td><input type="text" class="inputForm" name="pemohon" id="pemohon" placeholder="Nama Pemohon" value="<?= $id_pemohon.':'.$nama_pemohon ;?>" /></td>
+        <td><input type="text" class="inputForm" name="pemohon" id="pemohon" value="<?= $id_pemohon.':'.$nama_pemohon ;?>" /></td>
         <td class="fonttext">Supplier</td>
-        <td><input type="text" class="inputForm" name="supplier" id="supplier" placeholder="Nama Supplier" value="<?= $id_supplier.':'.$nama_supplier ;?>" /></td>
+        <td><input type="text" class="inputForm" name="supplier" id="supplier" value="<?= $id_supplier.':'.$nama_supplier ;?>" /></td>
       </tr>
       <tr>
         <td class="fonttext">Tanggal PO</td>
-        <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" placeholder="Tanggal PO" value="<?= $tgl_po ;?>" /></td>
+        <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" value="<?= $tgl_po ;?>" /></td>
         <td class="fonttext">Estimasi Pengiriman</td>
-        <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" placeholder="Tanggal Estimasi Pengiriman" value="<?= $eta_pengiriman ;?>"/></td>
+        <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" value="<?= $eta_pengiriman ;?>"/></td>
       </tr>
       <tr>
         <td class="fonttext">Catatan</td>
-        <td><textarea type="text" class="inputForm" name="catatan" id="catatan" placeholder="Catatan" style="height: 40px; width: 320px;" value="<?= $catatan ;?>"><?= $catatan ;?></textarea></td>
+        <td><textarea type="text" class="inputForm" name="catatan" id="catatan" style="height: 40px; width: 320px;" value="<?= $catatan ;?>"><?= $catatan ;?></textarea></td>
       </tr>
       <tr height="1">
         <td colspan="100%"><hr /></td>
@@ -85,6 +89,8 @@
         <tr>
           <td width="5%" class="fonttext">Kode</td>
           <td width="30%" class="fonttext">Produk / Jasa</td>
+          <td width="30%" class="fonttext">Nomor Akun</td>
+          <td width="30%" class="fonttext">Nama Akun</td>
           <td width="10%" class="fonttext">Qty</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
@@ -147,7 +153,8 @@
       var kode=$('#id'+i).val();
       var pkp=$('#pkp'+i).val();
       if (kode != null && kode != '' && pkp == '1'){
-        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*11/100);
+        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
+        $('#persen_ppn').val(<?= $persen_ppn ?>);
       }
     }
 
@@ -235,6 +242,21 @@
     idx.type="hidden"; idx.name="pkp"+index; idx.id="pkp"+index; return idx;
   }
 
+  function generateNomorAkun(index){
+    var idx = document.createElement("input");
+    idx.type="text"; idx.name="nomorAkun"+index; idx.id="nomorAkun"+index; idx.size="15" ;return idx;
+  }
+
+  function generateIdAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="idAkun"+index; idx.id="idAkun"+index; return idx;
+  }
+
+  function generateNamaAkun(index){
+    var idx = document.createElement("input");
+    idx.type="text"; idx.name="namaAkun"+index; idx.id="namaAkun"+index;  idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="30"; return idx;
+  }
+
   function generateProdukJasa(index){
     var idx = document.createElement("input");
     idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="70"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
@@ -291,8 +313,37 @@
       addNewRow1();
     });
 
-    function get_products(a){
+    function get_akun(a) {
+			$("#nomorAkun" + a + "").autocomplete("COALov.php?", {
+				width: 178
+			});
+			//   console.log('here'+a)  ;
+			$("#nomorAkun" + a + "").result(function (event, data, formatted) {
+				var nama = document.getElementById("nomorAkun" + a + "").value;
+				for (var i = 0; i < nama.length; i++) {
+					var id = nama.split(';');
+					if (id[1] == "") continue;
+					var id_pd = id[1];
+				}
+				// console.log(id_pd);
+				$.ajax({
+					url: 'COALoVdet.php?id=' + id_pd,
+					dataType: 'json',
+					data: "nama=" + formatted,
+					success: function (data) {
+						var id = data.id;
+						$("#idAkun" + a + "").val(id);
+						var noakun = data.noakun;
+						$("#nomorAkun" + a + "").val(noakun);
+						var nama = data.nama;
+						$("#namaAkun" + a + "").val(nama);
+					}
+				});
 
+			});
+		}
+
+    function get_products(a){
       $("#id"+a).autocomplete("poproduk_list.php?sup="+sup_q, {width: 400});
       $("#id"+a).result(function(event, data, formatted){
         var nama = $('#id'+a).val();
@@ -331,15 +382,20 @@
     var td4 = document.createElement("td");
     var td5 = document.createElement("td");
     var td6 = document.createElement("td");
+    var td7 = document.createElement("td");
+    var td8 = document.createElement("td");
 
     td0.appendChild(generateKode(baris1));
     td0.appendChild(generatePKP(baris1));
     td1.appendChild(generateProdukJasa(baris1));
-    td2.appendChild(generateQuantity(baris1));
-    td3.appendChild(generateSatuan(baris1));
-    td4.appendChild(generateDPPUnit(baris1));
-    td5.appendChild(generateSubTotal(baris1));
-    td6.appendChild(generateDelete(baris1));
+    td2.appendChild(generateIdAkun(baris1));
+    td2.appendChild(generateNomorAkun(baris1));
+    td3.appendChild(generateNamaAkun(baris1));
+    td4.appendChild(generateQuantity(baris1));
+    td5.appendChild(generateSatuan(baris1));
+    td6.appendChild(generateDPPUnit(baris1));
+    td7.appendChild(generateSubTotal(baris1));
+    td8.appendChild(generateDelete(baris1));
 
     row.appendChild(td0);
     row.appendChild(td1);
@@ -348,8 +404,10 @@
     row.appendChild(td4);
     row.appendChild(td5);
     row.appendChild(td6);
+    row.appendChild(td7);
+    row.appendChild(td8);
 
-    document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); get_products(baris1); triggerqty(baris1); hitungsubtotal(baris1);
+    document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); get_products(baris1); get_akun(baris1); triggerqty(baris1); hitungsubtotal(baris1);
     baris1++;
   }
 <?php
@@ -362,9 +420,12 @@
     ?>
     addNewRow1();
 
-    $('#id'+<?= $i ;?>).val('<?= $rs['id'].":".$rs['nama_produk']." - ".$rs['satuan'] ;?>');
+    $('#id'+<?= $i ;?>).val('<?= $rs['id_produk'].":".$rs['nama_produk']." - ".$rs['satuan'] ;?>');
     $('#pkp'+<?= $i ;?>).val('<?= $rs['pkp'] ;?>');
     $('#produk_jasa'+<?= $i ;?>).val('<?= $rs['nama_produk'] ;?>');
+    $('#idAkun'+<?= $i ;?>).val('<?= $rs['id_akun'] ;?>');
+    $('#nomorAkun'+<?= $i ;?>).val('<?= $rs['nomor_akun'] ;?>');
+    $('#namaAkun'+<?= $i ;?>).val('<?= $rs['nama_akun'] ;?>');
     $('#qty'+<?= $i ;?>).val('<?= $rs['qty'] ;?>');
     $('#dpp'+<?= $i ;?>).val('<?= $rs['price'] ;?>');
     $('#satuan'+<?= $i ;?>).val('<?= $rs['satuan'] ;?>');

@@ -1,10 +1,12 @@
-<?php require_once '../../include/config.php';
+<?php
+
+require_once '../../include/config.php';
 
 $group_access   = unserialize(file_get_contents('../../GROUP_ACCESS_CACHE'.$_SESSION['user']['group_id']));
-$allow_add      = is_show_menu(ADD_POLICY   , poapproval, $group_access);
-$allow_edit     = is_show_menu(EDIT_POLICY  , poapproval, $group_access);
-$allow_delete   = is_show_menu(DELETE_POLICY, poapproval, $group_access);
-$allow_post     = is_show_menu(POST_POLICY  , poapproval, $group_access);
+$allow_add      = is_show_menu(ADD_POLICY   , po, $group_access);
+$allow_edit     = is_show_menu(EDIT_POLICY  , po, $group_access);
+$allow_delete   = is_show_menu(DELETE_POLICY, po, $group_access);
+$allow_post     = is_show_menu(POST_POLICY  , po, $group_access);
 
 if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $page   = $_GET['page'];
@@ -14,34 +16,27 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
   if(!$sidx) $sidx = 1;
 
-   // << searching _filter ------------------------------
-  if($_REQUEST['_search']=='false'){
-    $where = ' WHERE a.approval=1 AND a.proforma=0 AND a.deleted=0 ';
-  }else {
-    $operations = array (
-      'eq' => "= '%s'",            // Equal
-      'ne' => "<> '%s'",           // Not equal
-      'lt' => "< '%s'",            // Less than
-      'le' => "<= '%s'",           // Less than or equal
-      'gt' => "> '%s'",            // Greater than
-      'ge' => ">= '%s'",           // Greater or equal
-      'bw' => "like '%s%%'",       // Begins With
-      'bn' => "not like '%s%%'",   // Does not begin with
-      'in' => "in ('%s')",         // In
-      'ni' => "not in ('%s')",     // Not in
-      'ew' => "like '%%%s'",       // Ends with
-      'en' => "not like '%%%s'",   // Does not end with
-      'cn' => "like '%%%s%%'",     // Contains
-      'nc' => "not like '%%%s%%'", // Does not contain
-      'nu' => "is null",           // Is null
-      'nn' => "is not null"        // Is not null
-    );
-    $value = $_REQUEST['searchString'];
-    $where = sprintf(" WHERE a.approval=1 AND a.proforma=0 AND a.deleted=0 AND %s ". $operations[$_REQUEST['searchOper']], $_REQUEST['searchField'], $value);
+  // << searching _filter ------------------------------
+  if(isset($_GET['filter']) && $_GET['filter'] != ''){
+    $filter_value = " AND (`nomor_invoice` LIKE '%".$_GET['filter']."%' OR `keterangan` LIKE '%".$_GET['filter']."%' OR `supplier` LIKE '%".$_GET['filter']."%') ";
+  }
+  else{
+    $filter_value = '';
+  }
+
+  if((!isset($_GET['startdate_invoice']) && !isset($_GET['enddate_invoice']))||($_GET['startdate_invoice'] == '' && $_GET['enddate_invoice'] == '')){
+    $where = " WHERE deleted=0 AND tanggal_invoice>='".date("Y-m-d")."' AND tanggal_invoice<='".date("Y-m-d")."'".$filter_value;
+  }else if($_GET['startdate_invoice'] != '' && $_GET['enddate_invoice'] == ''){
+    $where = " WHERE deleted=0 AND tanggal_invoice>='".$_GET['startdate_invoice']."'".$filter_value;
+  }
+  else if($_GET['startdate_invoice'] == '' && $_GET['enddate_invoice'] != ''){
+    $where = " WHERE deleted=0 AND tanggal_invoice<='".$_GET['enddate_invoice']."'".$filter_value;
+  }
+  else{
+    $where = " WHERE deleted=0 AND tanggal_invoice>='".$_GET['startdate_invoice']."' AND tanggal_invoice<='".$_GET['enddate_invoice']."'".$filter_value;
   }
   // -------------------- end of searching _filter >>
-
-  $sql_po = "SELECT  a.*, date_format(a.tgl_po,'%d-%m-%y') as tgl_po_formatted, date_format(a.eta_pengiriman,'%d-%m-%y') as eta_pengiriman_formatted FROM `mst_po` a ";
+  $sql_po  = "SELECT *,  date_format(tanggal_invoice, '%d-%m-%Y') as tanggal_invoice_formatted, date_format(tanggal_jatuh_tempo, '%d-%m-%Y') as tanggal_jatuh_tempo_formatted FROM `mst_invoice` ";
   $q = $db->query($sql_po.$where);
 
   $count = $q->rowCount();
@@ -65,83 +60,134 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   
   $responce = array();
   $i=0;
+
   foreach($data1 as $line){
-    if($allow_edit)
-      $edit = '<a onclick="javascript:window_open(\''.BASE_URL.'pages/transaksi_purchase/po_edit.php?id='.$line['id'].'\',\'table_po_approval\')" href="javascript:void(0);">Edit</a>';
-    else
-      $edit = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Edit</a>';
+    if($allow_edit){
+      if($line['post_ap'] == '1'){
+        $edit = '<a onclick="javascript:custom_alert(\'Invoice yang sudah dipost ke AP tidak dapat diedit\')" href="javascript:void(0);" disabled>Edit</a>';
+      }
+      else{
+        $edit = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/transaksi_purchase/po_invoice_edit.php?id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Edit</a>';
+      }
+    }
+    else{
+      $edit = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Edit</a>';
+    }
 
-    if($allow_delete)
-      $delete = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=delete&id='.$line['id'].'\',\'table_po_approval\')" href="javascript:;">Delete</a>';
-    else
-      $delete = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Delete</a>';
+    if($allow_post){
+      if($line['total_payment'] != '0'){
+        $postInvoice = '<a onclick="javascript:custom_alert(\'Invoice sudah diproses pada AP.\')" href="javascript:void(0);">Unpost</a>';
+      }
+      else if($line['post_ap'] == '1'){
+        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=0&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Unpost</a>';
+      }
+      else{
+        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=1&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Post</a>';
+      }
+    }
+    else{
+      $postInvoice = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Post</a>';
+    }
 
-    if($allow_post)
-      $post = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=post&id='.$line['id'].'\',\'table_po_approval\')" href="javascript:;">Post</a>';
+    if($allow_delete){
+      if($line['post_ap'] == '1'){
+        $delete = '<a onclick="javascript:custom_alert(\'Invoice yang sudah dipost ke AP tidak dapat dihapus\')" href="javascript:void(0);" disabled>Delete</a>';
+      }
+      else{
+        $delete = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=delete&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Delete</a>';
+      }
+    }
+    else{
+      $delete = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Post</a>';
+    }
 
-    else
-      $post = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Post</a>';
-
-    if($allow_post)
-      $unpost = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=unpost&id='.$line['id'].'\',\'table_po_approval\')" href="javascript:;">Unpost</a>';
-
-    else
-      $unpost = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Unpost</a>';
-
-    $responce['rows'][$i]['id']   = $line['id'];
-    $responce['rows'][$i]['cell'] = array(
+    $responce['rows'][$i]['id']     = $line['id'];
+    $responce['rows'][$i]['cell']   = array(
       $line['id'],
-      $line['dokumen'],
-      $line['nama_pemohon'],
-      $line['nama_supplier'],
-      $line['tgl_po'],
-      $line['eta_pengiriman'],
-      number_format($line['total_qty'],0),
-      number_format($line['total_dpp'],0),
-      number_format($line['ppn'],0),
-      number_format($line['grand_total'],0),
-      $line['catatan'],
-      $post,
-      $unpost,
+      $line['nomor_invoice'],
+      $line['tanggal_invoice'],
+      $line['tanggal_jatuh_tempo'],
+      $line['supplier'],
+      $line['qty'],
+      number_format($line['total']),
+      number_format($line['total_payment']),
+      number_format($line['total_remaining']),
+      $line['keterangan'],
+      $postInvoice,
+      $edit,
+      $delete,
     );
     $i++;
+  }
+  if(!isset($responce)){
+    $responce = [];
   }
   echo json_encode($responce);
   exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
-  $id = $_GET['id'];
+  $id     = $_GET['id'];
 
-  $query = "SELECT * FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
+  $query  = "SELECT x.*,y.qty_po,y.qty_terbayar FROM (SELECT a.*,b.`dokumen`,b.`nama_supplier`,b.`tgl_po`, DATE_FORMAT(b.tgl_po, '%d/%m/%Y') AS tgl_po_formatted FROM `det_invoice` a LEFT JOIN `mst_po` b ON a.`id_po`=b.`id` WHERE a.`id_invoice`=".$id." AND a.deleted = 0) AS X JOIN (SELECT a.qty AS qty_po,a.qty_terbayar,b.id_detail AS id_join FROM `det_po` a LEFT JOIN `det_invoice` b ON b.id_detail=a.id WHERE b.id_invoice=".$id." AND b.`deleted`=0) AS Y ON x.id_detail=y.id_join";
 
-  $exe   = $db->query($query);
-  $count = $exe->rowCount();
-  $data1 = $exe->fetchAll(PDO::FETCH_ASSOC);
+  $exe    = $db->query($query);
+  $count  = $exe->rowCount();
+  $data1  = $exe->fetchAll(PDO::FETCH_ASSOC);
 
   $i = 0;
   $responce = '';
 
   foreach ($data1 as $line){
-    
     $responce->rows[$i]['id']   = $line['id'];
     $responce->rows[$i]['cell'] = array(
       $i + 1,
+      $line['dokumen'],
+      $line['tgl_po_formatted'],
       $line['nama_produk'],
       $line['qty'],
+      $line['qty_po'],
+      $line['qty_terbayar'],
+      number_format($line['price']),
       $line['satuan'],
-      number_format($line['price'],0),
-      number_format($line['subtotal'],0),
+      number_format($line['subtotal']),
     );
     $i++;
   }
-  echo  json_encode($responce);
+  if(!isset($responce)){
+    $responce = [];
+  }
+  echo json_encode($responce);
   exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
-  include 'po_add.php'; exit(); exit;
+  include 'po_invoice_add.php'; exit(); exit;
 }
-elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
-  $q_post   = $db->prepare("UPDATE `mst_po` SET `proforma`=? WHERE `id`=?");
+elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
+  if($_GET['val'] == "1"){
+    $qty_po   = $db->prepare("UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`+(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$_GET['id']." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$_GET['id']." AND `deleted`=0)");
+  }
+  else{
+    $qty_po   = $db->prepare("UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`-(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$_GET['id']." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$_GET['id']." AND `deleted`=0)");
+  }
+
+  $qty_po->execute();
+
+  $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
+  $q_post->execute(array($_GET['val'], $_GET['id']));
+  
+  $affected_rows = $q_post->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
+  exit;
+}
+elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
+  $q_post   = $db->prepare("UPDATE `mst_invoice` SET `deleted`=? WHERE `id`=?");
   $q_post->execute(array(1, $_GET['id']));
   $affected_rows = $q_post->rowCount();
 
@@ -154,70 +200,97 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
   echo json_encode($r);
   exit;
 }
-elseif(isset($_GET['action']) && strtolower($_GET['action'] == 'unpost')){
-  $q_post   = $db->prepare("UPDATE `mst_po` SET `approval`=? WHERE `id`=?");
-  $q_post->execute(array(0, $_GET['id']));
-  $affected_rows = $q_post->rowCount();
-
-  if($affected_rows > 0){
-    $r['stat'] = 1; $r['message'] = 'Succes';
-  }
-  else{
-    $r['stat'] = 0; $r['message'] = 'Failed';
-  }
-  echo json_encode($r);
-  exit;
-}
-elseif(isset($_GET['action']) && strtolower($_GET['action'] == 'delete')){
-  $q_del    = $db->prepare("UPDATE `mst_po` SET `deleted`=? WHERE `id`=?");
-  $q_del->execute(array(1, $_GET['id']));
-  $affected_rows = $q_del->rowCount();
-
-  if($affected_rows > 0){
-    $r['stat'] = 1; $r['message'] = 'Succes';
-  }
-  else{
-    $r['stat'] = 0; $r['message'] = 'Failed';
-  }
-  echo json_encode($r);
-  exit;
-}
 ?>
 
-<table id="table_po_approval"></table>
-<div id="pager_table_po_approval"></div>
+<div class="ui-widget ui-form" style="margin-bottom:5px;">
+  <div class="ui-widget-header ui-corner-top padding5">
+    Filter Data
+  </div>
+  <div class="ui-widget-content ui-corner-bottom">
+    <from id="filter_invoice" method="" action="" class="ui-helper-clearifx">
+      <label for="" class="ui-helper-reset label-control">Tanggal Invoice</label>
+      <div class="ui-corner-all form-control">
+        <table>
+          <tr>
+            <td><input type="text" class="required datepicker" id="startdate_invoice" name="startdate_invoice" placeholder="Start Date" readonly></td>
+            <td> s.d <input type="text" class="required datepicker" id="enddate_invoice" name="enddate_invoice" placeholder="End Date" readonly></td>
+            <td> Filter <input type="text" id="filtervalue_invoice" name="filtervalue_invoice">(No Invoice, Supplier)</td>
+          </tr>
+        </table>
+      </div>
+      <label for="" class="ui-helper-reset label-control">&nbsp;</label>
+      <div class="ui-corner-all form-control">
+        <button onclick="gridReloadInvoice()" class="btn" type="button">Cari</button>
+      </div>
+    </from>
+  </div>
+</div>
+
+<table id="table_invoice"></table>
+<div id="pager_table_invoice"></div>
+
+<div class="btn_box">
+  <?php
+    if($allow_add){ ?>
+      <a href="javascript: void(0)">
+        <button class="btn btn-success" onclick="javascript:window.open('<?= BASE_URL?>pages/transaksi_purchase/po_approval.php?action=add')">Tambah</button>
+      </a>
+  <?php } ?>
+</div>
 
 <script type="text/javascript">
+  $('#startdate_invoice').datepicker({
+		dateFormat: "dd-mm-yy"
+	});
+	$('#enddate_invoice').datepicker({
+		dateFormat: "dd-mm-yy"
+	});
+	$( "#startdate_invoice" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
+	$( "#enddate_invoice" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
+
+  function gridReloadInvoice(){
+		var startdate_b2bdo_idx   =  ($("#startdate_invoice").val()).split("-");
+		var enddate_b2bdo_idx     =  ($("#enddate_invoice").val()).split("-");
+
+    var startdate             =  startdate_b2bdo_idx[2]+"-"+startdate_b2bdo_idx[1]+"-"+startdate_b2bdo_idx[0];
+    var enddate               =  enddate_b2bdo_idx[2]+"-"+enddate_b2bdo_idx[1]+"-"+enddate_b2bdo_idx[0];
+
+		var filterb2bdo_idx       = $("#filtervalue_invoice").val();
+
+		var v_url ='<?php echo BASE_URL?>pages/transaksi_purchase/po_approval.php?action=json&startdate_invoice='+startdate+'&enddate_invoice='+enddate+'&filter='+filterb2bdo_idx;
+		jQuery("#table_invoice").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
+	}
+
   $(document).ready(function(){
-    $('#table_po_approval').jqGrid({
+    $('#table_invoice').jqGrid({
       url       : '<?= BASE_URL.'pages/transaksi_purchase/po_approval.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID','Dokumen','Pemohon','Supplier','Tanggal PO','Estimasi Pengiriman','Total Qty','Total DPP','PPN','Grand Total','Note','Proforma','Cancel Approval'],
+      colNames  : ['ID','Nomor Invoice','Tgl Invoice','Tgl Jatuh Tempo','Supplier','Total Qty','Total','Total Payment','Total Remaining','Keterangan','Post','Edit','Delete'],
       colModel  : [
-        {name:'id', index: 'id', align: 'right', width:30, searchoptions: {sopt:['cn']}},
-        {name:'dokumen', index: 'dokumen', align: 'left', width:50, searchoptions: {sopt:['cn']}},
-        {name:'pemohon', index: 'pemohon', align: 'left', width:80, searchoptions: {sopt:['cn']}},
+        {name:'id', index: 'id', align: 'right', width:15, searchoptions: {sopt:['cn']}},
+        {name:'nomor_invoice', index: 'nomor_invoice', align: 'left', width:40, searchoptions: {sopt:['cn']}},
+        {name:'tanggal_invoice', index: 'tanggal_invoice', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
+        {name:'tanggal_jatuh_tempo', index: 'tanggal_jatuh_tempo', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name:'supplier', index:'supplier', align: 'left', width:80, searchoptions: {sopt: ['cn']}},
-        {name:'tanggal_po', index:'tanggal_po', align: 'center', width:50, searchoptions: {sopt: ['cn']}, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}},
-        {name:'eta_pengiriman', index:'eta_pengiriman', align: 'center', width:50, searchoptions: {sopt: ['cn']}, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}},
-        {name:'total_qty', index:'total_qty', align:'right', width:50, searchoptions: {sopt: ['cn']}},
-        {name:'total_dpp', index:'total_odpp', align: 'right', width:50, searchoptions: {sopt: ['cn']}},
-        {name:'ppn', index:'ppn', align:'right', width: 50, searchoptions: {sopt: ['cn']}},
-        {name:'grand_total', index:'grand_total', align:'right', width: 50, searchoptions: {sopt: ['cn']}},
-        {name:'note', index:'note', algin:'left', width: 85, searchoptions: {sopt: ['cn']}},
-        {name: 'Proforma', index:'proforma', align:'center', width:40, sortable: false},
-        {name: 'CancelApproval', index:'cancelapproval', align:'center', width:40, sortable: false},
+        {name:'total_qty', index:'total_qty', align:'right', width:25, searchoptions: {sopt: ['cn']}},
+        {name:'total', index:'total', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
+        {name:'total_payment', index:'total_payment', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
+        {name:'total_remaining', index:'total_remaining', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
+        {name:'keterangan', index:'keterangan', align: 'left', searchoptions: {sopt: ['cn']}},
+        {name: 'Post', index:'post', align:'center', width:30, sortable: false},
+        {name: 'Edit', index:'edit', align:'center', width:30, sortable: false},
+        {name: 'Print', index:'print', align:'center', width:30, sortable: false},
       ],
       rowNum        : 20,
       rowList       : [10, 20, 30],
-      pager         : '#pager_table_po_approval',
+      pager         : '#pager_table_invoice',
       sortname      : 'id',
       autowidth     : true,
       height        : '460',
       viewrecords   : true,
       rownumbers    : true,
       sortorder     : 'desc',
-      caption       : "Purchase Order Approval",
+      caption       : "Purchase Invoice",
       ondblClickRow : function(rowid){
         alert(rowid);
       },
@@ -225,12 +298,12 @@ elseif(isset($_GET['action']) && strtolower($_GET['action'] == 'delete')){
       subGridUrl    : '<?= BASE_URL.'pages/transaksi_purchase/po_approval.php?action=json_sub'; ?>',
       subGridModel  : [
         {
-          name  : ['No','Produk / Jasa','QTY','Satuan','DPP/Unit','Subtotal'],
-          width : [30,250,70,70,70,70],
-          align : ['right','left','center','center','right','right'],
+          name  : ['No','Dokumen','Tgl PO','Produk / Jasa','Qty Invoice','Qty PO','Qty Terproses','DPP/Unit','Satuan','Subtotal'],
+          width : [30,100,70,250,70,70,70,90,70,100],
+          align : ['right','left','center','left','right','right','right','right','center','right'],
         }
-      ],
+      ]
     });
-    $('#table_po_approval').jqGrid('navGrid', '#pager_table_po_approval', {edit:false, add:false, del:false});
+    $('#table_invoice').jqGrid('navGrid', '#pager_table_invoice', {edit:false, add:false, del:false});
   });
 </script>

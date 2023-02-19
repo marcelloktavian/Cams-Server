@@ -53,10 +53,10 @@
 
   <table cellpadding=0 cellspacing=0 style="width:97%;">
     <tr>
-      <td rowspan="4"><img src="../../files/po.png"><span style="margin-right:70%;"></span></td><td colspan="4" class="title-big text-right" style="vertical-align:bottom; width:10em">PURCHASE ORDER</td>
+      <td rowspan="4"><img src="../../files/po.png"><span style="margin-right:65%;"></span></td><td colspan="4" class="title-big text-right" style="vertical-align:bottom; width:16em">PURCHASE ORDER</td>
     </tr>
     <tr>
-      <td style="width:6em;"></td><td class="text-left" style="vertical-align:bottom; width: 1em">PO.NO&nbsp;</td><td class="" style="vertical-align:bottom;" style="width:1em;">:</td><td class="text-right" style="vertical-align:bottom; width:7em;"><?= $no_dokumen ;?></td>
+      <td style="width:6em;"></td><td class="text-left" style="vertical-align:bottom; width: 1em">PO.NO&nbsp;</td><td class="" style="vertical-align:bottom;" style="width:1em;">:</td><td class="text-right" style="vertical-align:bottom; width:9em;"><?= $no_dokumen ;?></td>
     <tr>
       <td></td><td class="text-left">PO.DATE&nbsp;</td><td>:</td><td class="text-right"><?= date_format(date_create($tgl_po), "d M Y") ;?></td>
     </tr>
@@ -67,34 +67,34 @@
 
   <table cellpadding=0 cellspacing=0 style="width:97%;">
     <tr>
-      <td colspan="6" style="height: 0.5em !important;"></td>
+      <td colspan="7" style="height: 0.5em !important;"></td>
     </tr>
     <tr>
-      <td colspan="3" class="title-md" style="width:60%;">SUPPLIER</td><td colspan="3" class="title-md" style="width:40%;">TUJUAN PENGIRIMAN</td>
+      <td colspan="3" class="title-md" style="width:50%;">SUPPLIER</td><td style="width: 10%;"></td><td colspan="3" class="title-md" style="width:40%;">TUJUAN PENGIRIMAN</td>
     </tr>
     <tr>
-      <td colspan="6"><span style="padding:2em;"></span></td>
+      <td colspan="7"><span style="padding:2em;"></span></td>
     </tr>
     <tr style="font-size:1em;">
-      <td colspan="3" class="title-sm"><?= $nama_supplier ;?></td><td colspan="3" class="title-sm">PT. AGUNG KEMUNINGWIJAYA</td>
+      <td colspan="3" class="title-sm"><?= $nama_supplier ;?></td><td></td><td colspan="3" class="title-sm">PT. AGUNG KEMUNINGWIJAYA</td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td colspan="3"><?= $alamat_mst ;?></td><td colspan="3">Taman Kopo Indah I, Kompleks Industri No.6, Kec.  Margahayu, Kab. Bandung, Jawa Barat</td>
+      <td colspan="3"><?= $alamat_mst ;?></td><td></td><td colspan="3">Taman Kopo Indah I, Kompleks Industri No.6, Kec.  Margahayu, Kab. Bandung, Jawa Barat</td>
     </tr>
     <tr>
-      <td style="width:60%;" colspan=3><span style="padding:1em;"></span></td><td style="width:40%;" colspan=3><span style="padding:1em;"></span></td>
+      <td style="width:60%;" colspan=3><span style="padding:1em;"></span></td><td></td><td style="width:40%;" colspan=3><span style="padding:1em;"></span></td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td class="title-sm" style="width:1%;">PIC&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $pic_mst ;?></td><td class="title-sm" style="width:1%;">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>(022) 540-1972</td></td>
+      <td class="title-sm" style="width:1%;">PIC&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $pic_mst ;?></td><td></td><td class="title-sm" style="width:1%;">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>(022) 540-1972</td></td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td class="title-sm">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $no_telepon ;?></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
+      <td class="title-sm">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $no_telepon ;?></td><td></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
     </tr>
     <tr style="font-size:0.9em;">
-      <td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $email_mst ;?></td><td colspan="3"></td>
+      <td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $email_mst ;?></td><td colspan="4"></td>
     </tr>
     <tr>
-      <td colspan="6"><span style="padding:2em;"></span></td>
+      <td colspan="7"><span style="padding:2em;"></span></td>
     </tr>
   </table>
 
@@ -103,19 +103,19 @@
       <td colspan="3" class="title-sm td-title text-center td-border">CATATAN TAMBAHAN</td><td class="title-sm td-title text-center td-border" style="width:13%">DELIVERY SCHEDULE</td><td class="title-sm td-title text-center td-border" style="width:15%">REQUISITIONER</td>
     </tr>
     <tr>
-      <td colspan="3" class="text-left td-border" style="height: 4em; padding-left:15px; padding-right:15px;"><?= substr($catatan,0,420) ;?></td><td class="text-center td-border" style="width:12%"><?= date_format(date_create($eta_pengiriman), "d M Y") ;?></td><td class="text-center td-border" style="width:15%; padding-left:15px; padding-right:15px;"><?= $nama_pemohon ;?></td>
+      <td colspan="3" class="text-left td-border" style="height: 4em; padding-left:15px; padding-right:15px;"><?= substr($catatan,0,420) ;?></td><td class="text-center td-border" style="width:12%"><?= date_format(date_create($eta_pengiriman), "d M Y") ;?></td><td class="text-center td-border" style="width:15%; padding-left:15px; padding-right:15px;"><?= $nama_pemohon?></td>
     </tr>
   </table>
 
   <table cellpadding=0 cellspacing=0 style="width:97%;">
     <tr>
-      <td colspan="6"><span style="padding:2em;"></span></td>
+      <td colspan="6"><span style="padding:0.5em;"></span></td>
     </tr>
   </table>
 
   <table cellpadding=0 cellspacing=0 style="width:97%;" class="detail_table">
     <tr>
-      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>;
+      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>
     </tr>
     <?php
     $i = 0;
@@ -142,7 +142,7 @@
       <td colspan=3 rowspan=3>
         <ul>
           <li>Harap Kirimkan invoice yang sesuai dengan spesifikasi pesanan ini ke email perusahaan.</li>
-          <li>Untuk invouce fisik, harap kirimkan 2 salinan.</li>
+          <li>Untuk invoice fisik, harap kirimkan 2 salinan.</li>
           <li>Harap untuk segera berkabar jika terjadi kendala dalam pemenuhan order.</li>
         </ul>
       </td><td class="text-right td-border td-title title-sm" style="width:12%;">PPN :</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;"><?= number_format($ppn,0,',',',') ;?></td>

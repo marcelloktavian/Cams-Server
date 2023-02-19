@@ -90,12 +90,16 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
       $line['telp'],
       $line['email'],
       $line['ktp'],
+      isset($line['bank']) ? $line['bank'].' - '.$line['rekening'] : '',
       $line['npwp'],
       $line['pkp'],
       $edit,
       $delete,
     );
     $i++;
+  }
+  if(!isset($responce)){
+    $responce = [];
   }
   echo json_encode($responce);
   exit;
@@ -171,17 +175,18 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_purchsupplier').jqGrid({
       url           : '<?php echo BASE_URL.'pages/master_purchase/purchsupplier.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['ID', 'Supplier', 'PIC', 'Total Product', 'Alamat', 'Contact', 'Email', 'KTP','NPWP', 'PKP', 'Edit', 'Delete'],
+      colNames      : ['ID', 'Supplier', 'PIC', 'Total Product', 'Alamat', 'Contact', 'Email', 'KTP', 'Rekening','NPWP', 'PKP', 'Edit', 'Delete'],
       colModel      : [
         {name:'id', index:'id', align:'right', width:30, searchoptions: {sopt:['cn']}},
         {name:'vendor', index:'vendor', width:250, searchoptions: {sopt:['cn']}},
-        {name:'pic', index:'pic', searchoptions: {sopt:['cn']}},
-        {name:'produk', index:'item', align:'center', width:100, searchoptions: {sopt:['cn']}},
+        {name:'pic', index:'pic', width:100, searchoptions: {sopt:['cn']}},
+        {name:'produk', index:'item', align:'center', width:80, searchoptions: {sopt:['cn']}},
         {name:'alamat', index:'alamat', searchoptions: {sopt:['cn']}},
-        {name:'contact', index:'contact', searchoptions: {sopt:['cn']}},
+        {name:'contact', index:'contact', align:'center', width:100, searchoptions: {sopt:['cn']}},
         {name:'email', index:'email', searchoptions: {sopt:['cn']}},
-        {name:'ktp', index:'ktp', searchoptions: {sopt:['cn']}},
-        {name:'npwp', index:'npwp', searchoptions: {sopt:['cn']}},
+        {name:'ktp', index:'ktp', align:'center', width:100, searchoptions: {sopt:['cn']}},
+        {name:'pembayaran', index:'pembayaran', align:'center', width:100, searchoptions: {sopt:['cn']}},
+        {name:'npwp', index:'npwp', align:'center', width:100, searchoptions: {sopt:['cn']}},
         {name:'pkp', index:'pkp', width:40, align:'center', searchoptions: {sopt:['cn']}},
         {name:'Edit', index:'edit', align:'center', width:50, sortable: false, search: false},
         {name:'Delete', index:'delete', align:'center', width:50, sortable: false, search: false},

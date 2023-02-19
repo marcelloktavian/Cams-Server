@@ -84,6 +84,10 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
     );
     $i++;
   }
+  if(!isset($responce)){
+    $responce = [];
+  }
+
   echo json_encode($responce);
   exit;
 }

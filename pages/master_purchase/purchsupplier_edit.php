@@ -15,16 +15,18 @@
   $sql_mst  = "SELECT * FROM `mst_supplier` WHERE id=".$_GET['id']." AND `deleted` = 0 ";
   $sql      = mysql_query($sql_mst) or die (mysql_error());
   $result   = mysql_fetch_array($sql);
-    $id_mst     = $result['id'];
-    $vendor_mst = $result['vendor'];
-    $pic_mst    = $result['pic'];
-    $alamat_mst = $result['alamat'];
-    $telp_mst   = $result['telp'];
-    $email_mst  = $result['email'];
-    $ktp_mst    = $result['ktp'];
-    $npwp_mst   = $result['npwp'];
-    $pkp_mst    = $result['pkp'];
-    $item_mst   = $result['item'];
+    $id_mst       = $result['id'];
+    $vendor_mst   = $result['vendor'];
+    $pic_mst      = $result['pic'];
+    $alamat_mst   = $result['alamat'];
+    $bank_mst     = $result['bank'];
+    $rekening_mst = $result['rekening'];
+    $telp_mst     = $result['telp'];
+    $email_mst    = $result['email'];
+    $ktp_mst      = $result['ktp'];
+    $npwp_mst     = $result['npwp'];
+    $pkp_mst      = $result['pkp'];
+    $item_mst     = $result['item'];
 ?>
 
 <head>
@@ -51,25 +53,31 @@
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Supplier (*)</td>
-        <td><input type="text" class="inputForm" name="supplier" id="supplier" placeholder="Nama Supplier" value="<?= $vendor_mst ;?>"/></td>
+        <td><input type="text" class="inputForm" name="supplier" id="supplier" value="<?= $vendor_mst ;?>"/></td>
         <td class="fonttext">PIC (*)</td>
-        <td><input type="text" class="inputForm" name="pic" id="pic" placeholder="Nama PIC" value="<?= $pic_mst ;?>" /></td>
+        <td><input type="text" class="inputForm" name="pic" id="pic" value="<?= $pic_mst ;?>" /></td>
       </tr>
       <tr>
         <td class="fonttext">Alamat (*)</td>
-        <td><input type="text" class="inputForm" name="alamat" id="alamat" placeholder="Alamat Supplier" value="<?= $alamat_mst ;?>" /></td>
+        <td><textarea type="text" class="inputForm" name="alamat" id="alamat" value="<?= $alamat_mst ;?>"><?= $alamat_mst ;?></textarea></td>
         <td class="fonttext">Contact (*)</td>
-        <td><input type="text" class="inputForm" name="contact" id="contact" placeholder="Nomor Supplier" value="<?= $telp_mst ;?>" /></td>
+        <td><input type="text" class="inputForm" name="contact" id="contact" value="<?= $telp_mst ;?>" /></td>
       </tr>
       <tr>
         <td class="fonttext">KTP</td>
-        <td><input type="text" class="inputForm" name="ktp" id="ktp" placeholder="KTP Supplier" value="<?= isset($ktp_mst) ? $ktp_mst : '' ?>"></td>
+        <td><input type="text" class="inputForm" name="ktp" id="ktp" value="<?= isset($ktp_mst) ? $ktp_mst : '' ?>"></td>
         <td class="fonttext">NPWP</td>
-        <td><input type="text" class="inputForm" name="npwp" id="npwp" placeholder="NPWP Supplier" value="<?= isset($npwp_mst) ? $npwp_mst : ''?>"></td>
+        <td><input type="text" class="inputForm" name="npwp" id="npwp" value="<?= isset($npwp_mst) ? $npwp_mst : ''?>"></td>
+      </tr>
+      <tr>
+        <td class="fonttext">Bank</td>
+        <td><input type="text" class="inputForm" name="bank" id="bank" value="<?= isset($bank_mst) ? $bank_mst : '' ?>"></td>
+        <td class="fonttext">Rekening</td>
+        <td><input type="text" class="inputForm" name="rekening" id="rekening" value="<?= isset($rekening_mst) ? $rekening_mst : ''?>"></td>
       </tr>
       <tr>
         <td class="fonttext">Email</td>
-        <td><input type="text" class="inputForm" name="email" id="email" placeholder="Email Supplier" value="<?= isset($email_mst) ? $email_mst : ''?>" /></td>
+        <td><input type="text" class="inputForm" name="email" id="email" value="<?= isset($email_mst) ? $email_mst : ''?>" /></td>
         <td class="fonttext">PKP</td>
         <td><input type="checkbox" name="pkp" id="pkp" style="margin:0 !important; width: 24px; height: 24px;" <?= ($pkp_mst == "1") ? 'checked' : '' ;?> /></td>
       </tr>

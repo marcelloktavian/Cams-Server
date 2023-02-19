@@ -32,24 +32,28 @@ $reset_sql_detail     = "UPDATE `det_po` SET `deleted`=1 WHERE `id_po`='".$id_po
 $reset_sql            = mysql_query($reset_sql_detail);
 
 for($i=1; $i<$row; $i++){
-  if($_POST['id'.$i] != ''){
+  if(isset($_POST['id'.$i]) && $_POST['id'.$i] != ''){
+    $id                 = $_POST['id'.$i];
     $id_produk          = explode(':',$_POST['id'.$i])[0];
     $nama_produk        = $_POST['produk_jasa'.$i];
     $qty                = $_POST['qty'.$i];
     $price              = $_POST['dpp'.$i];
     $satuan             = $_POST['satuan'.$i];
     $subtotal           = $_POST['sub_total'.$i];
+    $idAkun             = $_POST['idAkun'.$i];
+    $nomorAkun          = $_POST['nomorAkun'.$i];
+    $namaAkun           = $_POST['namaAkun'.$i];
 
-    $sql_detail_check   = "SELECT * FROM `det_po` WHERE `id_po` = '".$id_po[0]."' AND `id_produk` = '".$id_produk."' AND deleted = 1";
+    $sql_detail_check   = "SELECT * FROM `det_po` WHERE `id_po` = ".$id_po[0]." AND `id` = ".$id." AND deleted = 1";
 
     $sql_detail_check   = mysql_query($sql_detail_check);
     $detail_check       = mysql_fetch_array($sql_detail_check);
 
     if($detail_check[0] > 0){
-      $sql_detail       = "UPDATE `det_po` SET qty='$qty', subtotal='$subtotal',`deleted`=0 WHERE `id_po`='".$id_po[0]."' AND `id_produk`='".$id_produk."'" ;
+      $sql_detail       = "UPDATE `det_po` SET qty='$qty', subtotal='$subtotal', `id_akun`='$idAkun' , `nomor_akun`='$nomorAkun', `nama_akun`='$namaAkun', `deleted`=0 WHERE `id_po`='".$id_po[0]."' AND `id_produk`='".$id_produk."'" ;
     }
     else {
-      $sql_detail       = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal')";
+      $sql_detail       = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
     }
 
     $sql                = mysql_query($sql_detail);
