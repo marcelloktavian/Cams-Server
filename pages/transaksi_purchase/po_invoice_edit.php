@@ -298,7 +298,7 @@
 
   var baris1 = 1;
   // add new row -----------------------------
-  addNewRow1();
+  // addNewRow1();
 
   function addNewRow1(){
     var tbl = document.getElementById('invoice_detail');
