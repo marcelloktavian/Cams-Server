@@ -149,6 +149,15 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			//posting data untuk oln_id
 			$stmt = $db->prepare("INSERT INTO olnso_id(`nomor`,`id_trans`,`user_id`,`lastmodified`) SELECT IFNULL((MAX(nomor)+1),0),?,?,NOW() FROM olnso_id WHERE DATE(lastmodified)=DATE(NOW())"); 
 			$stmt->execute(array($_GET['id'],$_SESSION['user']['user_id']));
+			$id = $db->lastInsertId();
+			
+			$query = mysql_query("(SELECT (a.id_ship+1) AS idbaru FROM olnso_id a WHERE a.id < $id ORDER BY a.id DESC LIMIT 1)");
+			while($q = mysql_fetch_array($query)){
+				$idnext = $q['idbaru'];
+			}
+	
+			$stmt = $db->prepare("UPDATE olnso_id SET id_ship=? WHERE id=?"); 
+			$stmt->execute(array($idnext,$id));
 		
 			//$sql_posting="INSERT INTO olnso_id(`nomor`,`id_trans`,`user`) SELECT MAX(nomor) + 1,'".$_GET['id']."','".$_SESSION['user']['user_id']."' FROM olnso_id WHERE DATE(lastmodified)=DATE(NOW())";
 			//var_dump($sql_posting);
@@ -184,8 +193,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 			$idparent=$q['id'];
 			
-			$dpp = round($total / 1.11);
-			$ppn = round(round($total / 1.11) * 0.11);
+			$dpp = $total / 1.11;
+			$ppn = $total / 1.11 * 0.111;
 			
 
 			if($tunai > 0){
