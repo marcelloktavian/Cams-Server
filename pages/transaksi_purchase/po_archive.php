@@ -328,7 +328,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       viewrecords   : true,
       rownumbers    : true,
       sortorder     : 'desc',
-      caption       : "Table AP",
+      caption       : "Account Payable",
       ondblClickRow : function(rowid){
         alert(rowid);
       },

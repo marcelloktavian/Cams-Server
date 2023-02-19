@@ -1,6 +1,10 @@
 <?php
 include "../../include/koneksi.php";
 require_once "../../include/config.php";
+
+function intToIDR($val) {
+  return 'Rp ' . number_format($val, 0, ',', '.') . ',-';
+}
 ?>
 
 <!DOCTYPE html>
@@ -73,8 +77,8 @@ require_once "../../include/config.php";
       <td class="fontjudul">DATA DETAIL INVOICE</td>
     </tr>
     <tr>
-      <td class="fontjudul">TOTAL QTY <input type="text" id="total_qty" name="total_qty" readonly></td>
-      <td class="fontjudul">PERKIRAAN TOTAL<input type="text" class="" name="subtotal_formatted" id="subtotal_formatted" value="0" style="text-align: right; font-size: 30px; background-color: white; width: 300px; height: 40px; border: 1px dotted #f30; border-radius: 4px; -moz-border-radius: 4px;" readonly/><input type="hidden" id="subtotal_value" name="subtotal_value" readonly></td>
+      <td class="fontjudul">TOTAL QTY <input type="text" id="total_qty" name="total_qty" style="text-align: right; font-size: 30px; background-color: white; width: 300px; height: 40px; border: 1px dotted #f30; border-radius: 4px; -moz-border-radius: 4px;" readonly></td>
+      <td class="fontjudul">PERKIRAAN TOTAL <input type="text" class="" name="subtotal_formatted" id="subtotal_formatted" value="0" style="text-align: right; font-size: 30px; background-color: white; width: 300px; height: 40px; border: 1px dotted #f30; border-radius: 4px; -moz-border-radius: 4px;" readonly/><input type="hidden" id="subtotal_value" name="subtotal_value" readonly></td>
     </tr>
   </table>
 
@@ -130,13 +134,13 @@ require_once "../../include/config.php";
 
             <td class="table-light"><?= $det_ap['supplier'] ?><input type="hidden" name="supplier<?= $baris ?>" id="supplier<?= $baris ?>" value="<?= $det_ap['supplier'] ?>"></td>
 
-            <td class="table-light"><?= $det_ap['qty'] ?><input type="hidden" name="qty<?= $baris ?>" id="qty<?= $baris ?>" value="<?= $det_ap['qty'] ?>"><input type="hidden" name="qty" id="qty" value="<?= $det_ap['qty'] ?>"></td>
+            <td class="table-light text-right"><?= $det_ap['qty'] ?><input type="hidden" name="qty<?= $baris ?>" id="qty<?= $baris ?>" value="<?= $det_ap['qty'] ?>"><input type="hidden" name="qty" id="qty" value="<?= $det_ap['qty'] ?>"></td>
 
-            <td class="table-light"><?= $det_ap['total'] ?><input type="hidden" name="total<?= $baris ?>" id="total<?= $baris ?>" value="<?= $det_ap['total'] ?>"></td>
+            <td class="table-light text-right"><?= intToIDR($det_ap['total']) ?><input type="hidden" name="total<?= $baris ?>" id="total<?= $baris ?>" value="<?= $det_ap['total'] ?>"></td>
 
-            <td class="table-light"><?= $det_ap['total_payment'] ?><input type="hidden" name="total_payment<?= $baris ?>" id="total_payment<?= $baris ?>" value="<?= $det_ap['total_payment'] ?>"></td>
+            <td class="table-light text-right"><?= intToIDR($det_ap['total_payment']) ?><input type="hidden" name="total_payment<?= $baris ?>" id="total_payment<?= $baris ?>" value="<?= $det_ap['total_payment'] ?>"></td>
 
-            <td class="table-light"><?= $det_ap['total_remaining'] ?><input type="hidden" name="total_remaining<?= $baris ?>" id="total_remaining<?= $baris ?>" value="<?= $det_ap['total_remaining'] ?>"><input type="hidden" name="total_remaining" id="total_remaining" value="<?= $det_ap['total_remaining'] ?>"></td>
+            <td class="table-light text-right"><?= intToIDR($det_ap['total_remaining']) ?><input type="hidden" name="total_remaining<?= $baris ?>" id="total_remaining<?= $baris ?>" value="<?= $det_ap['total_remaining'] ?>"><input type="hidden" name="total_remaining" id="total_remaining" value="<?= $det_ap['total_remaining'] ?>"></td>
 
             <td class="table-light"><?= $det_ap['keterangan'] ?><input type="hidden" name="keterangan<?= $baris ?>" id="keterangan<?= $baris ?>" value="<?= $det_ap['keterangan'] ?>"></td>
           </tr>

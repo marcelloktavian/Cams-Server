@@ -111,7 +111,6 @@ if(isset($_GET['status'])){
         <td class="text-center td-border" style="width:3%; padding: 0.1em;">'.$i.'</td><td class="text-center td-border" style="padding-left:15px; padding-right:15px;">'.$row['ap_num'].'</td><td class="text-center td-border" style="width:10%">'.$row['ap_date_formatted'].'</td><td class="text-left td-border" style="width:13%; padding-left:15px; padding-right:10px;">'.$row['nama_supplier'].'</td><td class="text-left td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.$row['bank'].' - '.$row['rekening'].'</td><td class="text-center td-border" style="width:8%; padding-left:15px; padding-right:10px; color:green; text-decoration: underline;">POSTED</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.intToIDR($row['grand_total']).'</td>
       </tr>';
     }
-    
 
     $totalQty += $row['total_qty']; $totalPembayaran += $row['grand_total'];
   }
@@ -124,3 +123,7 @@ if(isset($_GET['status'])){
 </table>
 
 </body>
+
+<script>
+  window.print();
+</script>
