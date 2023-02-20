@@ -54,8 +54,8 @@
       <label for="kategori" class="label-control">Kategori</label>
       <div class="ui-corner-all form-control">
         <select class="required" value="<?= isset($row['kategori']) ? strtolower($row['kategori']) : '';?>" id="kategori" name="kategori">
-          <option <?= isset($row['kategori']) ? '' : 'selected'; ?> hidden value="<?= isset($row['kategori']) ? strtolower($row['kategori']) : ''; ?>">-choose(pilih)-</option>
-          <option value="biaya" <?= (strtolower($row['kategori']) == "biaya") ? 'selected' : '' ?>>Biaya</option>
+          <option  hidden value="<?= isset($row['kategori']) ? strtolower($row['kategori']) : ''; ?>">-choose(pilih)-</option>
+          <option value="biaya" <?= (strtolower($row['kategori']) == "biaya") ? 'selected' : '' ?> <?= isset($row['kategori']) ? '' : 'selected'; ?>>Biaya</option>
           <option value="stock" <?= (strtolower($row['kategori']) == "stock") ? 'selected' : '' ?>>Stock</option>
           <option value="aset" <?= (strtolower($row['kategori']) == "aset") ? 'selected' : '' ?>>Aset</option>
         </select>
