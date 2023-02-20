@@ -75,6 +75,8 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
     else
     $delete = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Delete</a>';
 
+    $history = '<a onclick="javascript:popDetail(\''.$line['id'].'\')" href="javascript:;">History</a>';
+
     $responce['rows'][$i]['id']   = $line['id'];
     $responce['rows'][$i]['cell'] = array(
       $line['id'],
@@ -86,6 +88,7 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
       $line['kategori'],
       number_format($line['penyusutan'],0),
       $line['hpp'] == 0 ? 'Tidak':'Iya', 
+      $history,
       $edit,
       $delete,
     );
@@ -135,6 +138,10 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     $stmt->execute(array(strtoupper($_POST['produk_jasa']), $id_mst, $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan'], $_POST['hpp'], $_POST['id']));
 
     $affected_rows = $stmt->rowCount();
+
+    $stmt = $db->prepare("INSERT INTO history_mst_produk VALUES(NULL,?,?,?,NOW())");
+    $stmt->execute(array($_POST['id'], $_POST['tgl_quotation'], $_POST['harga']));
+
     if($affected_rows > 0){
       $r['stat'] = 1; $r['message'] = 'Success';
     } else {
@@ -144,6 +151,11 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     $stmt = $db->prepare("INSERT INTO `mst_produk` (`produk_jasa`,`id_supplier`,`tgl_quotation`, `satuan`, `harga`, `kategori`, `penyusutan`, `hpp`, `lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW())");
 
     if($stmt->execute(array(strtoupper($_POST['produk_jasa']), '0', $_POST['tgl_quotation'], strtoupper($_POST['satuan']), $_POST['harga'], strtoupper($_POST['kategori']), $_POST['penyusutan'], $_POST['hpp']))){
+      $id = $db->lastInsertId();
+
+      $stmt = $db->prepare("INSERT INTO history_mst_produk VALUES(NULL,?,?,?,NOW())");
+      $stmt->execute(array($id, $_POST['tgl_quotation'], $_POST['harga']));
+
       $r['stat'] = 1; $r['message'] = 'Success';
     } else {
       $r['stat'] = 0; $r['message'] = 'Failed';
@@ -170,7 +182,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     $('#table_purchproducts').jqGrid({
       url       : '<?php echo BASE_URL.'pages/master_purchase/purchproducts.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Mempengaruhi HPP', 'Edit', 'Delete'],
+      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Mempengaruhi HPP', 'History', 'Edit', 'Delete'],
       colModel  : [
         {name:'id', index:'id', align:'right', width:30, searchoptions: {sopt:['cn']}},
         {name:'produk_jasa', index:'produk_jasa', searchoptions: {sopt:['cn']}},
@@ -181,6 +193,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
         {name:'kategori', index:'kategori', align:'center', width:100, searchoptions: {sopt:['cn']}},
         {name:'penyusutan', index:'penyusutan', align:'right', width:90, searchoptions: {sopt:['cn']}},
         {name:'hpp', index:'hpp', align:'center', width:90, searchoptions: {sopt:['cn']}},
+        {name:'History', index:'history', align:'center', width:50, sortable: false, search: false},
         {name:'Edit', index:'edit', align:'center', width:50, sortable: false, search: false},
         {name:'Delete', index:'delete', align:'center', width:50, sortable: false, search: false},
       ],
@@ -200,4 +213,15 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     });
     $('#table_purchproducts').jqGrid('navGrid', '#pager_table_purchproducts', {edit:false, add:false, del:false});
   });
+
+  function popDetail(idx){
+    var width   = 1200;
+    var height  = 600;
+    var left    = (screen.width - width)/2;
+    var top     = (screen.height - height)/2;
+    var params  = 'width='+width+', height='+height+',scrollbars=yes';
+    params     += ', top='+top+', left='+left;
+    window.open('pages/master_purchase/purchproducts_history.php?id='+idx,'',params);
+  }
 </script>
+
