@@ -49,7 +49,7 @@ for($i=1; $i<$row; $i++){
       $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`) VALUES ('$id_po','$id_detail','$id_invoice','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal')";
     }
 
-    var_dump($sql_detail);
+    // var_dump($sql_detail);
 
     $sql              = mysql_query($sql_detail);
   }
