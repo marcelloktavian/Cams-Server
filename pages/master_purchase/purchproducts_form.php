@@ -69,8 +69,8 @@
       <label id="label_hpp" for="hpp" class="label-control">Mempengaruhi HPP</label>
       <div id="containter_hpp" class="ui-corner-all form-control">
         <select value="<?= $row['hpp'] ;?>" id="hpp" name="hpp">
-          <option value="1">Iya</option>
-          <option value="0" <?= isset($row['hpp']) ? '' : 'selected'; ?>>Tidak</option>
+          <option value="1" <?php if(isset($row['hpp'])){if($row['hpp'] == '1'){echo "selected";}} ?>>Iya</option>
+          <option value="0" <?php if(isset($row['hpp'])){if($row['hpp'] == '0'){echo "selected";}} ?>>Tidak</option>
         </select>
       </div>
     </form>
