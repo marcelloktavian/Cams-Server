@@ -117,7 +117,7 @@ if(isset($_GET['status'])){
   ?>
 
   <tr>
-    <td class="title-sm text-left td-border" colspan=6>TOTAL</td><td class="title-sm text-right td-border" style="padding-left:15px; padding-right:10px;"><?= intToIDR($totalPembayaran) ?></td>
+    <td class="title-sm text-right td-border" colspan=6 align="right">TOTAL : </td><td class="title-sm text-right td-border" style="padding-left:15px; padding-right:10px;"><?= intToIDR($totalPembayaran) ?></td>
   </tr>
 
 </table>
