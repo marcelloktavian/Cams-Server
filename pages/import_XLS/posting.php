@@ -26,7 +26,7 @@ error_reporting(0);
 		
 		//inisialisasi id product,namabrg dan pelanggan
 		$sql_update_product="";
-		$sql_update_product=" UPDATE olnpreso olp SET olp.id_product=(SELECT id FROM mst_products p WHERE (p.oln_product_id=olp.oln_productid) AND(p.size=olp.size) LIMIT 1) ,olp.namabrg=(SELECT nama FROM mst_products p WHERE (p.oln_product_id=olp.oln_productid) AND(p.size=olp.size) LIMIT 1)";
+		$sql_update_product=" UPDATE olnpreso olp SET olp.id_product=(SELECT id FROM mst_products p WHERE (p.oln_product_id=olp.oln_productid) AND(p.size=olp.size)  AND p.deleted=0 LIMIT 1) ,olp.namabrg=(SELECT nama FROM mst_products p WHERE (p.oln_product_id=olp.oln_productid) AND(p.size=olp.size)  AND p.deleted=0 LIMIT 1)";
 		$update_product=mysql_query($sql_update_product) or die (mysql_error());
 
 		// dropshiper init
