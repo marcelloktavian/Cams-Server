@@ -336,9 +336,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       subGridUrl    : '<?= BASE_URL.'pages/transaksi_purchase/po_archive.php?action=json_sub'; ?>',
       subGridModel  : [
         {
-          name  : ['No','Nomor Invoice','Tanggal Invoice','Tanggal Jatuh Tempo','Qty','Subtotal Pending Invoice','Subtotal AP'],
+          name  : ['No','Nomor Invoice','Tanggal Invoice','Tanggal Jatuh Tempo','Qty','Subtotal Invoice','Subtotal AP'],
           width : [20,100,70,70,70,100],
-          align : ['right','left','center','center','center','right','right'],
+          align : ['right','left','center','center','right','right','right'],
         }
       ]
     });
