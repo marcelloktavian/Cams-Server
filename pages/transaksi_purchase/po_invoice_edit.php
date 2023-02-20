@@ -298,7 +298,7 @@
 
   var baris1 = 1;
   // add new row -----------------------------
-  // addNewRow1();
+  addNewRow1();
 
   function addNewRow1(){
     var tbl = document.getElementById('invoice_detail');
@@ -352,7 +352,7 @@
 
   <?php
 
-  $sql_detail       = "SELECT x.*,y.dokumen FROM(SELECT a.*,b.qty AS qty_po, b.qty_terbayar FROM `det_invoice` a LEFT JOIN `det_po` b ON a.id_po=b.id_po AND a.id_produk=b.id_produk WHERE a.id_invoice=".$_GET['id']." AND a.`deleted`=0) AS x JOIN (SELECT a.id as id_join, a.dokumen FROM `mst_po` a LEFT JOIN `det_po` b ON a.id=b.id_po WHERE a.deleted=0 AND b.deleted=0) AS y ON x.id_po=y.id_join GROUP BY x.id";
+  $sql_detail       = "SELECT x.*,y.dokumen FROM(SELECT a.*,b.qty AS qty_po, b.qty_terbayar FROM `det_invoice` a LEFT JOIN `det_po` b ON a.id_detail=b.id AND a.id_produk=b.id_produk WHERE a.id_invoice=".$_GET['id']." AND a.`deleted`=0) AS x JOIN (SELECT a.id as id_join, a.dokumen FROM `mst_po` a LEFT JOIN `det_po` b ON a.id=b.id_po WHERE a.deleted=0 AND b.deleted=0) AS y ON x.id_po=y.id_join GROUP BY x.id";
 
   $sql_detail       = mysql_query($sql_detail);
 

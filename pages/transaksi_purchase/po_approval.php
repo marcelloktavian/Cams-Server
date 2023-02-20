@@ -128,7 +128,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $id     = $_GET['id'];
 
-  $query  = "SELECT x.*,y.qty_po,y.qty_terbayar FROM (SELECT a.*,b.`dokumen`,b.`nama_supplier`,b.`tgl_po`, DATE_FORMAT(b.tgl_po, '%d/%m/%Y') AS tgl_po_formatted FROM `det_invoice` a LEFT JOIN `mst_po` b ON a.`id_po`=b.`id` WHERE a.`id_invoice`=".$id." AND a.deleted = 0) AS X JOIN (SELECT a.qty AS qty_po,a.qty_terbayar,b.id_detail AS id_join FROM `det_po` a LEFT JOIN `det_invoice` b ON b.id_detail=a.id WHERE b.id_invoice=".$id." AND b.`deleted`=0) AS Y ON x.id_detail=y.id_join";
+  $query  = "SELECT x.*,y.qty_po,y.qty_terbayar FROM (SELECT a.*,b.`dokumen`,b.`nama_supplier`,b.`tgl_po`, DATE_FORMAT(b.tgl_po, '%d/%m/%Y') AS tgl_po_formatted FROM `det_invoice` a LEFT JOIN `mst_po` b ON a.`id_po`=b.`id` WHERE a.`id_invoice`=".$id." AND a.deleted = 0) AS `x` JOIN (SELECT a.qty AS qty_po,a.qty_terbayar,b.id_detail AS id_join FROM `det_po` a LEFT JOIN `det_invoice` b ON b.id_detail=a.id WHERE b.id_invoice=".$id." AND b.`deleted`=0) AS `y` ON x.id_detail=y.id_join";
 
   $exe    = $db->query($query);
   $count  = $exe->rowCount();
