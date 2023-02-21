@@ -18,7 +18,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
   // << searching _filter ------------------------------
   if(isset($_GET['filter']) && $_GET['filter'] != ''){
-    $filter_value = " AND (`ap_num` LIKE '%".$_GET['filter']."%' OR `voucher` LIKE '%".$_GET['filter']."%' OR `supplier` LIKE '%".$_GET['filter']."%' OR `nama_akun` LIKE '%".$_GET['filter']."%' OR `catatan` LIKE '%".$_GET['filter']."%') ";
+    $filter_value = " AND (`ap_num` LIKE '%".$_GET['filter']."%' OR `nama_supplier` LIKE '%".$_GET['filter']."%' OR `nama_akun` LIKE '%".$_GET['filter']."%' OR `catatan` LIKE '%".$_GET['filter']."%') ";
   }
   else{
     $filter_value = '';
@@ -172,18 +172,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
   include 'ap_add.php'; exit(); exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
-  if($_GET['val'] == "1"){
-    $qty_ap   = $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
-
-    $rem_ap   = $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
-  }
-  else{
-    $qty_ap   =  $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
-
-    $rem_ap   = $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
-  }
-  $qty_ap->execute(); $rem_ap->execute();
-
   $q_post = $db->prepare("UPDATE `mst_ap` SET `posting`=? WHERE `id`=?");
   $q_post->execute(array($_GET['val'], $_GET['id']));
 
@@ -199,6 +187,12 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
   exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
+  $qty_ap   =  $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
+
+  $rem_ap   = $db->prepare("UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$_GET['id']."')");
+
+  $qty_ap->execute(); $rem_ap->execute();
+
   $q_post   = $db->prepare("UPDATE `mst_ap` SET `deleted`=? WHERE `id`=?");
   $q_post->execute(array(1, $_GET['id']));
   $affected_rows = $q_post->rowCount();
@@ -220,7 +214,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   </div>
 
   <div class="ui-widget-content ui-conrer-bottom">
-    <form id="filtervalue_ap" method="" action="" class="ui-helper-clearfix">
+    <form id="filter_ap" method="" action="" class="ui-helper-clearfix">
       <label for="" class="ui-helper-reset label-control">Tanggal AP</label>
       <div class="ui-corner-all form-control">
         <table>
@@ -232,7 +226,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
               <option value="unposted">Belum Dipost</option>
               <option value="all" selected>Semua</option>
             </select></td>
-            <td> Filter <input type="text" id="filtervalue_ap" name="filtervalue_ap">(Nomor AP, Supplier, Nama Akun, Catatan)</td>
+            <td> Filter <input type="text" id="filtervalue_ap" name="filtervalue_ap" />(Nomor AP, Supplier, Nama Akun, Catatan)</td>
           </tr>
         </table>
       </div>
@@ -337,7 +331,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       subGridModel  : [
         {
           name  : ['No','Nomor Invoice','Tanggal Invoice','Tanggal Jatuh Tempo','Qty','Subtotal Invoice','Subtotal AP'],
-          width : [20,100,70,70,70,100],
+          width : [20,100,70,70,70,100,100],
           align : ['right','left','center','center','right','right','right'],
         }
       ]

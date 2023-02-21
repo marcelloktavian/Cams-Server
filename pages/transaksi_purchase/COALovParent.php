@@ -12,7 +12,7 @@ if (!$q) return;
     // if($q=='ppn' || $q=='PPN' || $q=='09.01' || $q=='09.01.' || $q=='09.01.0' || $q=='09.01.00' || $q=='09.01.000' || $q=='09.01.0000' || $q=='09.01.00000'){
     //     $query = "SELECT * FROM mst_coa WHERE (noakun like '%$q%' OR nama like '%$q%') ";
     // }else{
-        $sql1 = mysql_query($sql_products." where a.deleted=0 AND (SUBSTRING(noakun,1,2)='01' OR SUBSTRING(noakun,1,2)='05' OR SUBSTRING(noakun,1,2)='06') ");
+        $sql1 = mysql_query($sql_products." where a.deleted=0 AND (noakun='01.01.00000')");
         while($r1 = mysql_fetch_array($sql1)) {
             if ($countnya == 0) {
                 $query .= "select id, noakun, nama, jenis from mst_coa where id='".$r1['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000' AND (noakun like '%$q%' OR nama like '%$q%') ";

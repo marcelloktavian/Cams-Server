@@ -26,6 +26,7 @@
         <td class="fontjudul">ADD AP</td>
         <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_ap" id="total_qty_ap"  style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">TOTAL <input type="text" class="" name="total_ap" id="total_ap" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_ap_value" id="total_ap_value" readonly></td>
+        <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
       </tr>
     </table>
 
@@ -39,7 +40,7 @@
         <td><input type="date" class="inputForm" name="tanggal_ap" id="tanggal_ap"></td>
       </tr>
       <tr>
-        <td class="fonttext">Akun</td>
+        <td class="fonttext">Akun Kredit</td>
         <td><input type="text" class="inputForm" name="akun" id="akun" /></td>
       </tr>
       <tr height="1">
@@ -105,7 +106,7 @@
       addNewRow1();
     });
 
-    $("#akun").autocomplete("COALov.php?", {
+    $("#akun").autocomplete("COALovParent.php?", {
       width: 178
     });
     //   console.log('here'+a)  ;
@@ -148,6 +149,7 @@
   function hitungTotal(){
     var totalinvoice = 0;
     var totalqty = 0;
+    var totalpending = 0;
 
     for(var i=1; i<=baris1; i++){
       var kode = $('#id_invoice'+i).val();
@@ -156,11 +158,14 @@
         console.log($('#qty'+i).val());
         totalinvoice = totalinvoice + parseFloat($('#total_inv'+i).val());
         totalqty = totalqty + parseFloat($('#qty'+i).val());
+        totalpending = totalpending + parseFloat($('#total_sisa_inv'+i).val());
       }
     }
 
     $('#total_ap').val(intToIDR(parseFloat(totalinvoice)));
     $('#total_ap_value').val(parseFloat(totalinvoice));
+    $('#total_pending').val(intToIDR(parseFloat(totalpending)));
+    $('#total_pending_value').val(parseFloat(totalpending));
     $('#total_qty_ap').val(parseFloat(totalqty));
   }
 

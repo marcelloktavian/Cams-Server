@@ -48,6 +48,7 @@
         <td class="fontjudul">EDIT AP <span style="font-weight: bold;"><?= $nomor_ap ;?></span></td>
         <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_ap" id="total_qty_ap" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">TOTAL <input tpye="text" class="" name="total_ap" id="total_ap" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_ap_value" id="total_ap_value" readonly /></td>
+        <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
       </tr>
     </table>
 
@@ -61,7 +62,7 @@
         <td><input type="date" class="inputForm" name="tanggal_ap" id="tanggal_ap" value="<?= $tanggal_ap ?>" readonly /></td>
       </tr>
       <tr>
-        <td class="fonttext">Akun</td>
+        <td class="fonttext">Akun Kredit</td>
         <td><input type="text" class="inputForm" name="akun" id="akun" value="<?= $id_akun.':'.$nama_akun.' | '.$nomor_akun ?>" readonly/></td>
       </tr>
       <tr height="1">
@@ -113,8 +114,8 @@
 
 <script>
   function checkMax(idx){
-    if(parseFloat($('#total_inv'+idx).val()) >= parseFloat($('#total_sisa_inv'+idx).val())){
-      $('#total_inv'+idx).val($('#total_sisa_inv'+idx).val());
+    if(parseFloat($('#total_inv'+idx).val()) >= parseFloat($('#total_sisa_inv'+idx).val())+parseFloat($('#total_inv_hidden'+idx).val())){
+      $('#total_inv'+idx).val(parseFloat($('#total_sisa_inv'+idx).val())+parseFloat($('#total_inv_hidden'+idx).val()));
     }
     else if($('#total_inv'+idx).val() == ''){
       $('#total_inv'+idx).val(0);
@@ -129,6 +130,7 @@
   function hitungTotal(){
     var totalinvoice = 0;
     var totalqty = 0;
+    var totalpending = 0;
 
     for(var i=1; i<=baris1; i++){
       var kode = $('#id_invoice'+i).val();
@@ -137,11 +139,14 @@
         console.log($('#qty'+i).val());
         totalinvoice = totalinvoice + parseFloat($('#total_inv'+i).val());
         totalqty = totalqty + parseFloat($('#qty'+i).val());
+        totalpending = totalpending + parseFloat($('#total_sisa_inv'+i).val());
       }
     }
 
     $('#total_ap').val(intToIDR(parseFloat(totalinvoice)));
     $('#total_ap_value').val(parseFloat(totalinvoice));
+    $('#total_pending').val(intToIDR(parseFloat(totalpending)));
+    $('#total_pending_value').val(parseFloat(totalpending));
     $('#total_qty_ap').val(parseFloat(totalqty));
   }
 
@@ -232,6 +237,11 @@
     idx.type="text"; idx.name="total_inv"+index; idx.id="total_inv"+index; idx.size="20"; idx.style.textAlign = "right"; idx.value="0"; return idx;
   }
 
+  function generateTotalHidden(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="total_inv_hidden"+index; idx.id="total_inv_hidden"+index; idx.size="20"; idx.style.textAlign = "right"; idx.value="0"; return idx;
+  }
+
   function generateTotalTerbayar(index){
     var idx = document.createElement("input");
     idx.type="text"; idx.name="total_terbayar_inv"+index; idx.id="total_terbayar_inv"+index; idx.size="20"; idx.style.textAlign = "right"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.value="0"; return idx;
@@ -281,6 +291,7 @@
     td3.appendChild(generateTanggalJatuhTempo(baris1));
     td4.appendChild(generateQty(baris1));
     td5.appendChild(generateTotal(baris1));
+    td5.appendChild(generateTotalHidden(baris1));
     td6.appendChild(generateTotalTerbayar(baris1));
     td7.appendChild(generateTotalSisa(baris1));
     td8.appendChild(generateDelete(baris1));
@@ -321,6 +332,7 @@
     $('#tanggal_jatuh_tempo<?= $i ?>').val('<?= $rs['tanggal_jatuh_tempo'] ?>');
     $('#qty<?= $i ?>').val('<?= $rs['qty'] ?>');
     $('#total_inv<?= $i ?>').val('<?= $rs['total'] ?>');
+    $('#total_inv_hidden<?= $i ?>').val('<?= $rs['total'] ?>');
     $('#total_terbayar_inv<?= $i ?>').val('<?= $rs['total_payment'] ?>');
     $('#total_sisa_inv<?= $i ?>').val('<?= $rs['total_remaining'] ?>');
 

@@ -25,6 +25,7 @@
       <tr>
         <td class="fontjudul">ADD PURCHASE INVOICE</td>
         <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_inv" id="total_qty_inv" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
+        <td class="fontjudul">QTY PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
         <td class="fontjudul">TOTAL <input type="text" class="" name="total_inv" id="total_inv" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_inv_value" id="total_inv_value" readonly></td>
       </tr>
     </table>
@@ -127,17 +128,20 @@
   function hitungTotal(){
     var totalinvoice = 0;
     var totalqty = 0;
+    var totalpending = 0;
 
     for(var i=1; i<=baris1; i++){
       var kode = $('#id'+i).val();
       if(kode != undefined && kode != ''){
         totalinvoice = totalinvoice + parseFloat($('#subtotal_inv'+i).val());
         totalqty = totalqty + parseFloat($('#qty_inv'+i).val());
+        totalpending = totalpending + parseFloat($('#qty_remaining'+i).val());
       }
     }
 
     $('#total_inv').val(intToIDR(parseFloat(totalinvoice)));
     $('#total_inv_value').val(parseFloat(totalinvoice));
+    $('#total_pending').val(parseFloat(totalpending));
     $('#total_qty_inv').val(parseFloat(totalqty));
   }
 

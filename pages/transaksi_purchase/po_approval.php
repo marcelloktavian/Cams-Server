@@ -163,17 +163,38 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
   include 'po_invoice_add.php'; exit(); exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
-  if($_GET['val'] == "1"){
-    $qty_po   = $db->prepare("UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`+(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$_GET['id']." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$_GET['id']." AND `deleted`=0)");
-  }
-  else{
-    $qty_po   = $db->prepare("UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`-(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$_GET['id']." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$_GET['id']." AND `deleted`=0)");
-  }
-
-  $qty_po->execute();
-
   $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
   $q_post->execute(array($_GET['val'], $_GET['id']));
+  
+  $affected_rows = $q_post->rowCount();
+}
+elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass'){
+  $id_user=$_SESSION['user']['username'];
+
+	//cek apakah pass sama atau tidak
+  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+  $stmt->execute();
+
+  $affected_rows = $stmt->rowCount();
+  if($affected_rows > 0){
+    $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
+    $q_post->execute(array($_GET['val'], $_POST['id']));
+    
+    $affected_rows = $q_post->rowCount();
+
+    if($affected_rows > 0){
+      $r['stat'] = 1; $r['message'] = 'Succes';
+    }
+    else{
+      $r['stat'] = 0; $r['message'] = 'Failed';
+    }
+    echo json_encode($r);
+    exit;
+  }
+}
+elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
+  $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
+  $q_post->execute(array($_GET['val'], $_POST['id']));
   
   $affected_rows = $q_post->rowCount();
 
@@ -187,6 +208,10 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
   exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
+  $qty_po   = $db->prepare("UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`-(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$_GET['id']." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$_GET['id']." AND `deleted`=0)");
+
+  $qty_po->execute();
+
   $q_post   = $db->prepare("UPDATE `mst_invoice` SET `deleted`=? WHERE `id`=?");
   $q_post->execute(array(1, $_GET['id']));
   $affected_rows = $q_post->rowCount();

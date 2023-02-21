@@ -9,7 +9,7 @@ function intToIDR($val) {
 }
 
 if(isset($_GET['filter']) && $_GET['filter'] != ''){
-  $filter_value = " AND (`ap_num` LIKE '%".$_GET['filter']."%' OR `voucher` LIKE '%".$_GET['filter']."%' OR `supplier` LIKE '%".$_GET['filter']."%' OR `nama_akun` LIKE '%".$_GET['filter']."%' OR `catatan` LIKE '%".$_GET['filter']."%') ";
+  $filter_value = " AND (`ap_num` LIKE '%".$_GET['filter']."%' OR `nama_supplier` LIKE '%".$_GET['filter']."%' OR `nama_akun` LIKE '%".$_GET['filter']."%' OR `catatan` LIKE '%".$_GET['filter']."%') ";
 }
 else{
   $filter_value = '';

@@ -43,6 +43,10 @@ for($i=1; $i<$row; $i++){
   }
 }
 
+$sql_qty          = "UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`+(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$id_invoice[0]." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$id_invoice[0]." AND `deleted`=0)";
+
+$query            = mysql_query($sql_qty);
+
 ?>
 
 <script language="javascript">

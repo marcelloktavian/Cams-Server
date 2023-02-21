@@ -69,6 +69,7 @@ for($i=1; $i<$row; $i++){
   if($_POST['id'.$i] != ''){
     $id_produk          = explode(':',$_POST['id'.$i])[0];
     $nama_produk        = $_POST['produk_jasa'.$i];
+    $tanggal_quotation  = $_POST['tanggal_quotation'.$i];
     $qty                = $_POST['qty'.$i];
     $price              = $_POST['dpp'.$i];
     $satuan             = $_POST['satuan'.$i];
@@ -77,7 +78,7 @@ for($i=1; $i<$row; $i++){
     $nomorAkun          = $_POST['nomorAkun'.$i];
     $namaAkun           = $_POST['namaAkun'.$i];
 
-    $sql_detail         = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
+    $sql_detail         = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, tgl_quotation, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk', '$tanggal_quotation', '$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
 
     $sql                = mysql_query($sql_detail);
   }

@@ -21,6 +21,12 @@ $sql_master     = "UPDATE `mst_ap` SET `total_qty`='$total_qty',`grand_total`='$
 $query          = mysql_query($sql_master);
 
 // detail data processing -----------------
+$qty_ap           =  "UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."' WHERE `deleted`=0) WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."' AND `deleted`=0)";
+
+$rem_ap           = "UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."' WHERE `deleted`=0) WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."' AND `deleted`=0)";
+
+$query    = mysql_query($qty_ap);
+$query    = mysql_query($rem_ap);
 
 $reset_sql_detail = "UPDATE `det_ap` SET `deleted`=1 WHERE `id_ap`=$id_ap";
 $reset_sql        = mysql_query($reset_sql_detail);
@@ -38,8 +44,8 @@ for($i=1; $i<$row; $i++){
 
     $sql_detail_check     = "SELECT * FROM `det_ap` WHERE `id_ap`=$id_ap AND `id_detail`=$id_detail AND `deleted` = 1";
 
-    $sql_detail_check   = mysql_query($sql_detail_check);
-    $detail_check       = mysql_fetch_array($sql_detail_check);
+    $sql_detail_check     = mysql_query($sql_detail_check);
+    $detail_check         = mysql_fetch_array($sql_detail_check);
 
     if($detail_check[0] > 0){
       $sql_detail       = "UPDATE `det_ap` SET total='$total', `deleted`=0 WHERE `id_detail`=$id_detail";
@@ -48,11 +54,17 @@ for($i=1; $i<$row; $i++){
       $sql_detail       = "INSERT INTO `det_ap` (`id_ap`,`id_invoice`,`no_invoice`,`tanggal_invoice`,`tanggal_jatuh_tempo`,`qty`,`remaining`,`total`) VALUES ('$id_ap','$id_invoice','$no_invoice','$tanggal_invoice','$tanggal_jatuh_tempo','$qty','$remaining','$total')";
     }
 
-    // var_dump($sql_detail);
-
     $sql                = mysql_query($sql_detail);
   }
 }
+
+$qty_ap           = "UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."')";
+
+$rem_ap           = "UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap."')";
+
+$query    = mysql_query($qty_ap);
+$query    = mysql_query($rem_ap);
+
 ?>
 <script language="javascript">
   window.close();

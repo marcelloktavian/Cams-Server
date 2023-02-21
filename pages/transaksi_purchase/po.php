@@ -141,7 +141,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $id = $_GET['id'];
 
-  $query = "SELECT * FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
+  $query = "SELECT *,date_format(tanggal_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
 
   $exe   = $db->query($query);
   $count = $exe->rowCount();
@@ -156,6 +156,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
     $responce->rows[$i]['cell'] = array(
       $i + 1,
       $line['nama_produk'],
+      $line['tanggal_quotation_formatted'],
       $line['qty'],
       $line['satuan'],
       number_format($line['price'],0),
@@ -170,6 +171,29 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
   include 'po_add.php'; exit(); exit;
+}
+elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass'){
+  $id_user=$_SESSION['user']['username'];
+
+	//cek apakah pass sama atau tidak
+  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+  $stmt->execute();
+
+  $affected_rows = $stmt->rowCount();
+  if($affected_rows > 0){
+    $q_post   = $db->prepare("UPDATE `mst_po` SET `approval`=? WHERE `id`=?");
+    $q_post->execute(array($_GET['val'], $_GET['id']));
+    $affected_rows = $q_post->rowCount();
+
+    if($affected_rows > 0){
+      $r['stat'] = 1; $r['message'] = 'Succes';
+    }
+    else{
+      $r['stat'] = 0; $r['message'] = 'Failed';
+    }
+    echo json_encode($r);
+    exit;
+  }
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'approval'){
   $q_post   = $db->prepare("UPDATE `mst_po` SET `approval`=? WHERE `id`=?");
@@ -327,9 +351,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       subGridUrl    : '<?= BASE_URL.'pages/transaksi_purchase/po.php?action=json_sub'; ?>',
       subGridModel  : [
         {
-          name  : ['No','Produk / Jasa','Qty','Satuan','DPP/Unit','Subtotal Tanpa PPN','Nomor Akun', 'Nama Akun'],
-          width : [30,250,70,70,70,70,70,200],
-          align : ['right','left','center','center','right','right','center','left'],
+          name  : ['No','Produk / Jasa','Tanggal Quotation','Qty','Satuan','DPP/Unit','Subtotal Tanpa PPN','Nomor Akun', 'Nama Akun'],
+          width : [30,250,70,70,70,70,70,70,200],
+          align : ['right','left','center','center','center','right','right','center','left'],
         }
       ],
     });

@@ -81,6 +81,13 @@ for($i=1; $i<$row; $i++){
   }
 }
 
+$qty_ap   = "UPDATE `mst_invoice` SET `mst_invoice`.`total_payment`=`mst_invoice`.`total_payment`+(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap[0]."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap[0]."')";
+
+$rem_ap   = "UPDATE `mst_invoice` SET `mst_invoice`.`total_remaining`=`mst_invoice`.`total_remaining`-(SELECT `total` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap[0]."') WHERE `mst_invoice`.id=(SELECT `id_invoice` FROM `det_ap` WHERE det_ap.id_invoice=mst_invoice.id AND det_ap.id_ap='".$id_ap[0]."')";
+
+$query    = mysql_query($qty_ap);
+$query    = mysql_query($rem_ap);
+
 ?>
 
 <script language="javascript">

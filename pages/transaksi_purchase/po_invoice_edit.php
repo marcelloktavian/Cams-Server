@@ -45,6 +45,7 @@
       <tr>
         <td class="fontjudul">EDIT PURCHASE INVOICE <span style="font-weight: bold;"><?= $nomor_invoice ;?></span></td>
         <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_inv" id="total_qty_inv" style="text-align: right; font-size: 30px; backgorund-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
+        <td class="fontjudul">QTY PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
         <td class="fontjudul">TOTAL <input type="text" class="" name="total_inv" id="total_inv" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border:1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_inv_value" id="total_inv_value" readonly></td>
       </tr>
     </table>
@@ -128,17 +129,20 @@
   function hitungTotal(){
     var totalinvoice = 0;
     var totalqty = 0;
+    var totalpending = 0;
 
     for(var i=1; i<=baris1; i++){
       var kode = $('#id'+i).val();
       if(kode != undefined && kode != ''){
         totalinvoice = totalinvoice + parseFloat($('#subtotal_inv'+i).val());
         totalqty = totalqty + parseFloat($('#qty_inv'+i).val());
+        totalpending = totalpending + parseFloat($('#qty_remaining'+i).val());
       }
     }
 
     $('#total_inv').val(intToIDR(parseFloat(totalinvoice)));
     $('#total_inv_value').val(parseFloat(totalinvoice));
+    $('#total_pending').val(parseFloat(totalpending));
     $('#total_qty_inv').val(parseFloat(totalqty));
   }
 
@@ -157,8 +161,8 @@
   }
 
   function checkMax(idx){
-    if(parseFloat($('#qty_inv'+idx).val()) >= parseFloat($('#qty_remaining'+idx).val())){
-      $('#qty_inv'+idx).val($('#qty_remaining'+idx).val());
+    if(parseFloat($('#qty_inv'+idx).val()) >= parseFloat($('#qty_remaining'+idx).val())+parseFloat($('#qty_inv_hidden'+idx).val())){
+      $('#qty_inv'+idx).val(parseFloat($('#qty_remaining'+idx).val())+parseFloat($('#qty_inv_hidden'+idx).val()));
     }
     else if($('#qty_inv'+idx).val() == ''){
       $('#qty_inv'+idx).val(0);
@@ -262,6 +266,11 @@
     idx.type="text"; idx.name="qty_inv"+index; idx.id="qty_inv"+index; idx.size="10"; idx.style.textAlign = "right"; idx.value="0"; return idx;
   }
 
+  function generateQuantityHidden(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="qty_inv_hidden"+index; idx.id="qty_inv_hidden"+index; idx.size="10"; idx.style.textAlign = "right"; idx.value="0"; return idx;
+  }
+
   function generateQuantityPayment(index){
     var idx = document.createElement("input");
     idx.type="text"; idx.name="qty_payment"+index; idx.id="qty_payment"+index; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="10"; idx.style.textAlign = "right"; idx.value="0"; return idx;
@@ -324,6 +333,7 @@
     td3.appendChild(generateIdProduk(baris1));
     td3.appendChild(generateProdukJasa(baris1));
     td4.appendChild(generateQuantity(baris1));
+    td4.appendChild(generateQuantityHidden(baris1));
     td5.appendChild(generateQuantityPayment(baris1));
     td6.appendChild(generateQuantityRemaining(baris1));
     td7.appendChild(generateSatuan(baris1));
@@ -369,6 +379,7 @@
     $('#id_produk'+<?= $i ?>).val('<?= $rs['id_produk'] ?>');
     $('#produk_jasa'+<?= $i ?>).val('<?= $rs['nama_produk'] ?>');
     $('#qty_inv'+<?= $i ?>).val('<?= $rs['qty'] ?>');
+    $('#qty_inv_hidden'+<?= $i ?>).val('<?= $rs['qty'] ?>');
     $('#qty_payment'+<?= $i ?>).val('<?= $rs['qty_terbayar'] ?>');
     $('#qty_remaining'+<?= $i ?>).val('<?= $rs['qty_po']-$rs['qty_terbayar'] ?>');
     $('#dpp_unit'+<?= $i ?>).val('<?= $rs['price'] ?>');

@@ -22,6 +22,9 @@ $sql_update           = "UPDATE `mst_invoice` SET `nomor_invoice`='$nomor_invoic
 $query                = mysql_query($sql_update);
 
 // detail data processing -----------------
+$sql_qty            = "UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`-(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$id_invoice." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$id_invoice." AND `deleted`=0)";
+$sql                = mysql_query($sql_qty);
+
 $reset_sql_detail     = "UPDATE `det_invoice` SET `deleted`=1 WHERE `id_invoice`=".$id_invoice."";
 $reset_sql            = mysql_query($reset_sql_detail);
 
@@ -54,6 +57,9 @@ for($i=1; $i<$row; $i++){
     $sql              = mysql_query($sql_detail);
   }
 }
+
+$sql_qty            = "UPDATE `det_po` SET `det_po`.`qty_terbayar`=`det_po`.`qty_terbayar`+(SELECT `qty` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_produk=det_po.`id_produk` AND det_invoice.id_invoice=".$id_invoice." AND det_invoice.`deleted`=0) WHERE `det_po`.id=(SELECT `id_detail` FROM `det_invoice` WHERE det_invoice.id_detail=det_po.id AND det_invoice.id_invoice=".$id_invoice." AND `deleted`=0)";
+$sql                = mysql_query($sql_qty);
 
 ?>
 <script language="javascript">

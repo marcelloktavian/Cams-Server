@@ -95,7 +95,6 @@
           <td class="fonttext">Tanggal Quotation</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
-          <td width="5%" class="fonttext">Hapus</td>
         </tr>
       </thead>
     </table>
@@ -268,7 +267,6 @@ function addNewRow1(){
   var td3 = document.createElement("td");
   var td4 = document.createElement("td");
   var td5 = document.createElement("td");
-  var td6 = document.createElement("td");
 
   td0.appendChild(generateKode(baris1));
   td1.appendChild(generateProdukJasa(baris1));
@@ -276,7 +274,6 @@ function addNewRow1(){
   td3.appendChild(generateQuotation(baris1));
   td4.appendChild(generateSatuan(baris1));
   td5.appendChild(generateHarga(baris1));
-  td6.appendChild(generateDelete(baris1));
 
   row.appendChild(td0);
   row.appendChild(td1);
@@ -284,14 +281,12 @@ function addNewRow1(){
   row.appendChild(td3);
   row.appendChild(td4);
   row.appendChild(td5);
-  row.appendChild(td6);
 
-  document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')');
   triggerqty(baris1); get_products(baris1);
   baris1++;
 }
 <?php
-  $sql_detail = "SELECT *, date_format(tgl_quotation,'%d-%m-%Y') AS tgl FROM `mst_produk` WHERE id_supplier=".$_GET['id']." AND deleted='0' ";
+  $sql_detail = "SELECT *, date_format(tgl_quotation,'%d-%m-%Y') AS tgl,date_format(tgl_quotation, '%d-%m-%Y') as tgl_quotation_formatted FROM `mst_produk` WHERE id_supplier=".$_GET['id']." AND deleted='0' ";
   $sql_detail = mysql_query($sql_detail);
 
   $i = 1;
@@ -299,10 +294,10 @@ function addNewRow1(){
     ?>
     addNewRow1();
     
-    $('#id'+<?= $i ;?>).val('<?= $rs['id'].":".$rs['produk_jasa']." - ".$rs['satuan'] ;?>');
+    $('#id'+<?= $i ;?>).val('<?= $rs['id'].":".$rs['produk_jasa']." - ".$rs['satuan']." : ".$rs['tgl_quotation_formatted']." Rp ".number_format($rs['harga'], 0) ?>');
     $('#produk_jasa'+<?= $i ;?>).val('<?= $rs['produk_jasa'] ;?>');
     $('#kategori'+<?= $i ;?>).val('<?= $rs['kategori'] ;?>');
-    $('#tgl_quotation'+<?= $i ;?>).val('<?= $rs['tgl'] ;?>');
+    $('#tgl_quotation'+<?= $i ;?>).val('<?= str_replace("-", "/", $rs['tgl']) ;?>');
     $('#satuan'+<?= $i ;?>).val('<?= $rs['satuan'] ;?>');
     $('#harga'+<?= $i ;?>).val('<?= $rs['harga'] ;?>');
     <?php

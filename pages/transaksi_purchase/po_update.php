@@ -36,6 +36,7 @@ for($i=1; $i<$row; $i++){
     $id                 = $_POST['id'.$i];
     $id_produk          = explode(':',$_POST['id'.$i])[0];
     $nama_produk        = $_POST['produk_jasa'.$i];
+    $tanggal_quotation  = $_POST['tanggal_quotation'.$i];
     $qty                = $_POST['qty'.$i];
     $price              = $_POST['dpp'.$i];
     $satuan             = $_POST['satuan'.$i];
@@ -44,23 +45,23 @@ for($i=1; $i<$row; $i++){
     $nomorAkun          = $_POST['nomorAkun'.$i];
     $namaAkun           = $_POST['namaAkun'.$i];
 
-    $sql_detail_check   = "SELECT * FROM `det_po` WHERE `id_po` = ".$id_po[0]." AND `id` = ".$id." AND deleted = 1";
+    $sql_detail_check   = "SELECT * FROM `det_po` WHERE `id_po` = ".$id_po[0]." AND `id_produk` = ".$id_produk." AND deleted = 1";
+
+    var_dump($sql_detail_check);
 
     $sql_detail_check   = mysql_query($sql_detail_check);
     $detail_check       = mysql_fetch_array($sql_detail_check);
 
     if($detail_check[0] > 0){
-      $sql_detail       = "UPDATE `det_po` SET qty='$qty', subtotal='$subtotal', `id_akun`='$idAkun' , `nomor_akun`='$nomorAkun', `nama_akun`='$namaAkun', `deleted`=0 WHERE `id_po`='".$id_po[0]."' AND `id_produk`='".$id_produk."'" ;
+      $sql_detail       = "UPDATE `det_po` SET qty='$qty', tanggal_quotation='$tanggal_quotation', subtotal='$subtotal', `id_akun`='$idAkun' , `nomor_akun`='$nomorAkun', `nama_akun`='$namaAkun', `deleted`=0 WHERE `id_po`='".$id_po[0]."' AND `id_produk`='".$id_produk."'" ;
     }
     else {
-      $sql_detail       = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
+      $sql_detail       = "INSERT INTO `det_po` (id_po, id_produk, nama_produk, tgl_quotation, qty, price, satuan, subtotal, id_akun, nomor_akun, nama_akun) VALUES ('$id_po[0]','$id_produk','$nama_produk', '$tanggal_quotation', '$qty','$price','$satuan','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
     }
+
+    var_dump($sql_detail);
 
     $sql                = mysql_query($sql_detail);
   }
 }
 ?>
-
-<script language="javascript">
-  window.close();
-</script>

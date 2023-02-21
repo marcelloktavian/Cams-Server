@@ -25,7 +25,7 @@
     $grand_total    = $mst_po['grand_total'];
     $catatan        = $mst_po['catatan'];
 
-  $sql_det    = "SELECT * FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
+  $sql_det    = "SELECT *,date_format(tanggal_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
   $get_det    = mysql_query($sql_det) or die(mysql_error());
 
 ?>
@@ -115,7 +115,7 @@
 
   <table cellpadding=0 cellspacing=0 style="width:97%;" class="detail_table">
     <tr>
-      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>
+      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:15%">TANGGAL QUOTATION</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>
     </tr>
     <?php
     $i = 0;
@@ -124,22 +124,22 @@
       
       echo '
       <tr>
-        <td class="text-center td-border" style="width:3%;">'.$i.'</td><td class="text-left td-border" style="padding-left:15px; padding-right:15px;">'.$row['nama_produk'].'</td><td class="text-center td-border" style="width:10%">'.$row['qty'].'&nbsp;&nbsp;'.$row['satuan'].'</td><td class="text-right td-border" style="width:13%; padding-left:15px; padding-right:10px;">'.number_format($row['price'],0,',',',').'</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.number_format($row['subtotal'],0,',',',').'</td>
+        <td class="text-center td-border" style="width:3%;">'.$i.'</td><td class="text-left td-border" style="padding-left:15px; padding-right:15px;">'.$row['nama_produk'].'</td><td class="text-center td-border" style="width:10%">'.$row['tanggal_quotation_formatted'].'</td><td class="text-center td-border" style="width:10%">'.$row['qty'].'&nbsp;&nbsp;'.$row['satuan'].'</td><td class="text-right td-border" style="width:13%; padding-left:15px; padding-right:10px;">'.number_format($row['price'],0,',',',').'</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.number_format($row['subtotal'],0,',',',').'</td>
       </tr>';
     }
     while($i <= 30){
       echo '
       <tr>
-        <td class="text-center td-border" style="width:3%;"><td class="text-left td-border"></td><td class="text-center td-border" style="width:10%"></td><td class="text-right td-border" style="width:13%"></td><td class="text-right td-border" style="width:15%"></td>
+        <td class="text-center td-border" style="width:3%;"><td class="text-left td-border"></td><td class="text-center td-border" style="width:10%"></td><td class="text-center td-border" style="width:10%"></td><td class="text-right td-border" style="width:13%"></td><td class="text-right td-border" style="width:15%"></td>
       </tr>';
       $i ++;
     }
     ;?>
     <tr style="">
-      <td colspan=2 class="text-right td-border title-sm td-title" style="width:3%; border-top: 2px solid black !important;">TOTAL QTY :</td><td class="text-center td-border" style="width:10%; border-top: 2px solid black !important; padding-left:15px; padding-right:15px;"><?= $total_qty ;?></td><td class="text-right td-border td-title title-sm" style="width:13%; border-top: 2px solid black !important;">DPP :</td><td class="text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-left:15px; padding-right:10px;"><?= number_format($total_dpp,0,',',',') ;?></td>
+      <td colspan=3 class="text-right td-border title-sm td-title" style="width:3%; border-top: 2px solid black !important;">TOTAL QTY :</td><td class="text-center td-border" style="width:10%; border-top: 2px solid black !important; padding-left:15px; padding-right:15px;"><?= $total_qty ;?></td><td class="text-right td-border td-title title-sm" style="width:13%; border-top: 2px solid black !important;">DPP :</td><td class="text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-left:15px; padding-right:10px;"><?= number_format($total_dpp,0,',',',') ;?></td>
     </tr>
     <tr>
-      <td colspan=3 rowspan=3>
+      <td colspan=4 rowspan=3>
         <ul>
           <li>Harap Kirimkan invoice yang sesuai dengan spesifikasi pesanan ini ke email perusahaan.</li>
           <li>Untuk invoice fisik, harap kirimkan 2 salinan.</li>

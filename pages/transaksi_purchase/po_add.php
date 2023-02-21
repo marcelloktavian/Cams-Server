@@ -66,7 +66,8 @@
         <tr>
           <td width="5%" class="fonttext">Kode</td>
           <td width="30%" class="fonttext">Produk / Jasa</td>
-          <td width="30%" class="fonttext">Nomor Akun</td>
+          <td width="15%" class="fonttext">Tanggal Quotation</td>
+          <td width="30%" class="fonttext">Akun 1,5,6</td>
           <td width="30%" class="fonttext">Nama Akun</td>
           <td width="10%" class="fonttext">Qty</td>
           <td width="10%" class="fonttext">Satuan</td>
@@ -236,7 +237,12 @@
 
   function generateProdukJasa(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="70"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="55"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+  }
+
+  function generateTanggalQuotation(index){
+    var idx = document.createElement("input");
+    idx.type="date"; idx.name="tanggal_quotation"+index; idx.id="tanggal_quotation"+index; idx.size="15"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
   }
 
   function generateQuantity(index){
@@ -331,6 +337,8 @@
           success   : function(data){
             var products = data.produk_jasa;
               $('#produk_jasa'+a).val(products);
+            var tgl_quotation = data.tgl_quotation;
+              $('#tanggal_quotation'+a).val(tgl_quotation);
             var harga = data.harga;
               $('#dpp'+a).val(harga);
             var pkp = data.pkp;
@@ -359,18 +367,20 @@
     var td6 = document.createElement("td");
     var td7 = document.createElement("td");
     var td8 = document.createElement("td");
+    var td9 = document.createElement("td");
 
     td0.appendChild(generateKode(baris1));
     td0.appendChild(generatePKP(baris1));
     td1.appendChild(generateProdukJasa(baris1));
-    td2.appendChild(generateIdAkun(baris1));
-    td2.appendChild(generateNomorAkun(baris1));
-    td3.appendChild(generateNamaAkun(baris1));
-    td4.appendChild(generateQuantity(baris1));
-    td5.appendChild(generateSatuan(baris1));
-    td6.appendChild(generateDPPUnit(baris1));
-    td7.appendChild(generateSubTotal(baris1));
-    td8.appendChild(generateDelete(baris1));
+    td2.appendChild(generateTanggalQuotation(baris1));
+    td3.appendChild(generateIdAkun(baris1));
+    td3.appendChild(generateNomorAkun(baris1));
+    td4.appendChild(generateNamaAkun(baris1));
+    td5.appendChild(generateQuantity(baris1));
+    td6.appendChild(generateSatuan(baris1));
+    td7.appendChild(generateDPPUnit(baris1));
+    td8.appendChild(generateSubTotal(baris1));
+    td9.appendChild(generateDelete(baris1));
 
     row.appendChild(td0);
     row.appendChild(td1);
@@ -381,6 +391,7 @@
     row.appendChild(td6);
     row.appendChild(td7);
     row.appendChild(td8);
+    row.appendChild(td9);
 
     document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); get_products(baris1); get_akun(baris1); triggerqty(baris1); hitungsubtotal(baris1);
     baris1++;
