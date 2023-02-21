@@ -80,10 +80,10 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
         $postApproval = '<a onclick="javascript:custom_alert(\'Harap Unpost Invoice Terlebih Dahulu\')" href="javascript:;" disabled>Unpost</a>';
       }
       else if($line['approval'] == '1' && $line['proforma'] == '0'){
-        $postApproval = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po.php?action=approval&val=0&id='.$line['id'].'\',\'table_po\')" href="javascript:;">Unpost</a>';
+        $postApproval = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_post_pass.php?action=approval&val=0&id='.$line['id'].'\',\'table_po\')" href="javascript:;">Unpost</a>';
       }
       else{
-        $postApproval = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po.php?action=approval&val=1&id='.$line['id'].'\',\'table_po\')" href="javascript:;">Post</a>';
+        $postApproval = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_post_pass.php?action=approval&val=1&id='.$line['id'].'\',\'table_po\')" href="javascript:;">Post</a>';
       }
     }
 
@@ -176,13 +176,13 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass'){
   $id_user=$_SESSION['user']['username'];
 
 	//cek apakah pass sama atau tidak
-  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_po']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();
   if($affected_rows > 0){
     $q_post   = $db->prepare("UPDATE `mst_po` SET `approval`=? WHERE `id`=?");
-    $q_post->execute(array($_GET['val'], $_GET['id']));
+    $q_post->execute(array($_GET['val'], $_POST['id_po']));
     $affected_rows = $q_post->rowCount();
 
     if($affected_rows > 0){

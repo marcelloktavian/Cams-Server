@@ -79,10 +79,10 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
         $postInvoice = '<a onclick="javascript:custom_alert(\'Invoice sudah diproses pada AP.\')" href="javascript:void(0);">Unpost</a>';
       }
       else if($line['post_ap'] == '1'){
-        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=0&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Unpost</a>';
+        $postInvoice = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_invoice_post_pass.php?action=postap&val=0&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Unpost</a>';
       }
       else{
-        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=1&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Post</a>';
+        $postInvoice = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_invoice_post_pass.php?action=postap&val=1&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Post</a>';
       }
     }
     else{
@@ -172,14 +172,14 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass'){
   $id_user=$_SESSION['user']['username'];
 
 	//cek apakah pass sama atau tidak
-  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_inv']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();
   if($affected_rows > 0){
     $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
-    $q_post->execute(array($_GET['val'], $_POST['id']));
-    
+    $q_post->execute(array($_GET['val'], $_POST['id_inv']));
+
     $affected_rows = $q_post->rowCount();
 
     if($affected_rows > 0){
