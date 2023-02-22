@@ -51,26 +51,117 @@
             
 			<label for="deposit_name" class="ui-helper-reset label-control">DEPOSIT TUNAI</label>
             <div class="ui-corner-all form-control">
-                <input value="<?php echo isset($row['tunai']) ? $row['tunai'] : ''; ?>" type="text" style="text-transform: uppercase" id="tunai" name="tunai">
+                <input value="<?php echo isset($row['tunai']) ? $row['tunai'] : ''; ?>" type="number" style="text-transform: uppercase" id="tunai" name="tunai" onkeyup="changedeposit()">
             </div>
 
 			
 			<label for="alamat" class="ui-helper-reset label-control">DEPOSIT TRANSFER</label>
             <div class="ui-corner-all form-control">
-                <input value="<?php echo isset($row['transfer']) ? $row['transfer'] : ''; ?>" type="text" style="text-transform: uppercase" id="transfer" name="transfer">
+                <input value="<?php echo isset($row['transfer']) ? $row['transfer'] : ''; ?>" type="number" style="text-transform: uppercase" id="transfer" name="transfer" onkeyup="changetransfer()">
             </div>
 			
 			<label for="deposit_name" class="ui-helper-reset label-control">CASHBACK</label>
             <div class="ui-corner-all form-control">
-                <input value="<?php echo isset($row['cashback']) ? $row['cashback'] : ''; ?>" type="text" style="text-transform: uppercase" id="cashback" name="cashback">
+                <input value="<?php echo isset($row['cashback']) ? $row['cashback'] : ''; ?>" type="number" style="text-transform: uppercase" id="cashback" name="cashback" onkeyup="changecashback()">
             </div>
 			
 			<label for="keterangan" class="ui-helper-reset label-control">Keterangan</label>
             <div class="ui-corner-all form-control">
                 <textarea id="keterangan" name="keterangan"style="text-transform: uppercase"><?php echo isset($row['keterangan']) ? $row['keterangan'] : ''; ?></textarea>
             </div>
+
+			<label for="keterangan" class="ui-helper-reset label-control">Type</label>
+            <div class="ui-corner-all form-control">
+				<select name='type' id='type' onchange="changetype()">
+					<option value="Menambah" selected>Menambah</option>
+					<option value="Mengurang">Mengurang</option>
+				</select>
+            </div>
 			
         </form>
 		(*) wajib diisi
     </div>
 </div>
+<script>
+	function changetype(){
+		var tipe = $('#type').val();
+		var tunai = $('#tunai').val();
+		var transfer = $('#transfer').val();
+		var cashback = $('#cashback').val();
+
+		if(tunai != ''){
+			if(tunai != '0'){
+				if(tipe == 'Menambah'){
+					$('#tunai').val(tunai.replace("-", ""));
+				}else{
+					$('#tunai').val('-'+tunai);
+				}
+			}
+		}
+
+		if(transfer != ''){
+			if(transfer != '0'){
+				if(tipe == 'Menambah'){
+					$('#transfer').val(transfer.replace("-", ""));
+				}else{
+					$('#transfer').val('-'+transfer);
+				}
+			}
+		}
+
+		if(cashback != ''){
+			if(cashback != '0'){
+				if(tipe == 'Menambah'){
+					$('#cashback').val(cashback.replace("-", ""));
+				}else{
+					$('#cashback').val('-'+cashback);
+				}
+			}
+		}
+	}
+
+	function changedeposit(){
+		var tipe = $('#type').val();
+		var isi = $('#tunai').val();
+
+		if(tipe == 'Menambah'){
+			$('#tunai').val(isi.replace("-", ""));
+		}else{
+			if(isi != ''){
+				if(isi.substring(0, 1) != '-'){
+					$('#tunai').val('-'+isi);
+				}
+			}
+		}
+	}
+
+	function changetransfer(){
+		var tipe = $('#type').val();
+		var isi = $('#transfer').val();
+
+		if(tipe == 'Menambah'){
+			$('#transfer').val(isi.replace("-", ""));
+		}else{
+			if(isi != ''){
+				if(isi.substring(0, 1) != '-'){
+					$('#transfer').val('-'+isi);
+				}
+			}
+		}
+	}
+
+	function changecashback(){
+		var tipe = $('#type').val();
+		var isi = $('#cashback').val();
+
+		if(tipe == 'Menambah'){
+			$('#cashback').val(isi.replace("-", ""));
+		}else{
+			if(isi != ''){
+				if(isi.substring(0, 1) != '-'){
+					$('#cashback').val('-'+isi);
+				}
+			}
+		}
+	}
+</script>
