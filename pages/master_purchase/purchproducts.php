@@ -88,7 +88,7 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
       $line['kategori'],
       number_format($line['penyusutan'],0),
       $line['hpp'] == 0 ? 'Tidak':'Iya', 
-      $history,
+      // $history,
       $edit,
       $delete,
     );
@@ -182,7 +182,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     $('#table_purchproducts').jqGrid({
       url       : '<?php echo BASE_URL.'pages/master_purchase/purchproducts.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Mempengaruhi HPP', 'History', 'Edit', 'Delete'],
+      colNames  : ['ID', 'Produk / Jasa', 'Supplier', 'Tanggal Quotation', 'Satuan', 'DPP/Unit', 'Kategori', 'Bulan Penyusutan', 'Mempengaruhi HPP', 'Edit', 'Delete'],
       colModel  : [
         {name:'id', index:'id', align:'right', width:30, searchoptions: {sopt:['cn']}},
         {name:'produk_jasa', index:'produk_jasa', searchoptions: {sopt:['cn']}},
@@ -193,7 +193,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
         {name:'kategori', index:'kategori', align:'center', width:100, searchoptions: {sopt:['cn']}},
         {name:'penyusutan', index:'penyusutan', align:'right', width:90, searchoptions: {sopt:['cn']}},
         {name:'hpp', index:'hpp', align:'center', width:90, searchoptions: {sopt:['cn']}},
-        {name:'History', index:'history', align:'center', width:50, sortable: false, search: false},
+        // {name:'History', index:'history', align:'center', width:50, sortable: false, search: false},
         {name:'Edit', index:'edit', align:'center', width:50, sortable: false, search: false},
         {name:'Delete', index:'delete', align:'center', width:50, sortable: false, search: false},
       ],
