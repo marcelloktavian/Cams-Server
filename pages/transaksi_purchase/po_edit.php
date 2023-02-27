@@ -88,14 +88,15 @@
       <thead>
         <tr>
           <td width="5%" class="fonttext">Kode</td>
-          <td width="30%" class="fonttext">Produk / Jasa</td>
+          <td width="25%" class="fonttext">Produk / Jasa</td>
+          <td width="10%" class="fonttext">Tanggal Quotation</td>
           <td width="30%" class="fonttext">Akun 1,5,6</td>
           <td width="30%" class="fonttext">Nama Akun</td>
-          <td width="10%" class="fonttext">Qty</td>
+          <td width="7%" class="fonttext">Qty</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
           <td width="15%" class="fonttext">Sub Total</td>
-          <td width="5%" class="fonttext">Hapus</td>
+          <td width="7%" class="fonttext">Hapus</td>
         </tr>
       </thead>
     </table>
@@ -433,7 +434,7 @@
     $('#id'+<?= $i ;?>).val('<?= $rs['id_produk'].":".$rs['nama_produk']." - ".$rs['satuan'] ;?>');
     $('#pkp'+<?= $i ;?>).val('<?= $rs['pkp'] ;?>');
     $('#produk_jasa'+<?= $i ;?>).val('<?= $rs['nama_produk'] ;?>');
-    $('#tgl_quotation'+<?= $i ;?>).val('<?= $rs['tgl_quotation'] ?>');
+    $('#tanggal_quotation'+<?= $i ;?>).val('<?= $rs['tgl_quotation'] ?>');
     $('#idAkun'+<?= $i ;?>).val('<?= $rs['id_akun'] ;?>');
     $('#nomorAkun'+<?= $i ;?>).val('<?= $rs['nomor_akun'] ;?>');
     $('#namaAkun'+<?= $i ;?>).val('<?= $rs['nama_akun'] ;?>');
