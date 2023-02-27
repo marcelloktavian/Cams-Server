@@ -25,7 +25,7 @@
     $grand_total    = $mst_po['grand_total'];
     $catatan        = $mst_po['catatan'];
 
-  $sql_det    = "SELECT *,date_format(tanggal_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
+  $sql_det    = "SELECT *,date_format(tgl_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
   $get_det    = mysql_query($sql_det) or die(mysql_error());
 
 ?>
