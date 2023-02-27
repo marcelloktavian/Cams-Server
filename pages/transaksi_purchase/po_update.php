@@ -65,3 +65,6 @@ for($i=1; $i<$row; $i++){
   }
 }
 ?>
+<script>
+  window.close();
+</script>

@@ -433,7 +433,7 @@
     $('#id'+<?= $i ;?>).val('<?= $rs['id_produk'].":".$rs['nama_produk']." - ".$rs['satuan'] ;?>');
     $('#pkp'+<?= $i ;?>).val('<?= $rs['pkp'] ;?>');
     $('#produk_jasa'+<?= $i ;?>).val('<?= $rs['nama_produk'] ;?>');
-    $('#tanggal_quotation'+<?= $i ;?>).val('<?= $rs['tanggal_quotation'] ?>');
+    $('#tgl_quotation'+<?= $i ;?>).val('<?= $rs['tgl_quotation'] ?>');
     $('#idAkun'+<?= $i ;?>).val('<?= $rs['id_akun'] ;?>');
     $('#nomorAkun'+<?= $i ;?>).val('<?= $rs['nomor_akun'] ;?>');
     $('#namaAkun'+<?= $i ;?>).val('<?= $rs['nama_akun'] ;?>');
