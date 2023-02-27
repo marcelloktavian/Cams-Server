@@ -203,6 +203,8 @@
     var supplier        = $('#po_edit').find('input[name="supplier"]').val();
     var tanggal_po      = $('#po_edit').find('input[name="tanggal_po"]').val();
     var eta_pengiriman  = $('#po_edit').find('input[name="eta_pengiriman"]').val();
+    var total_dpp       = $('#total_dpp').val();
+    var grand_total     = $('#grand_total').val();
 
     if(pemohon == ''){
       pesan = 'Pemohon tidak boleh kosong\n';
@@ -215,6 +217,9 @@
     }
     else if(tanggal_po== ''){
       pesan = 'Tanggal PO tidak boleh kosong\n';
+    }
+    else if((parseInt(total_dpp) < 1) && (parseInt(grand_total) < 1)){
+      pesan = 'Total tidak bisa nol\n';
     }
 
     if(pesan != ''){

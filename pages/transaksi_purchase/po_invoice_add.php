@@ -195,6 +195,7 @@
     var tanggal_invoice     = $('#invoice_add').find('input[name="tanggal_invoice"]').val();
     var tanggal_jatuh_tempo = $('#invoice_add').find('input[name="tanggal_jatuh_tempo"]').val();
     var catatan             = $('#invoice_add').find('input[name="catatan"]').val();
+    var total_qty           = $('#total_qty_inv').val();
 
     if(nomor_invoice == ''){
       pesan = 'Nomor Invoice tidak boleh kosong\n';
@@ -207,6 +208,9 @@
     }
     else if(tanggal_jatuh_tempo == ''){
       pesan = 'Tanggal Jatuh Tempo tidak boleh kosong\n';
+    }
+    else if(parseInt(total_qty) < 1){
+      pesan = 'Total tidak bisa nol\n';
     }
 
     if(pesan != ''){
