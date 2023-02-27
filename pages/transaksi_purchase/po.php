@@ -357,6 +357,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         }
       ],
     });
-    $('#table_po').jqGrid('navGrid', '#pager_table_po', {edit:false, add:false, del:false});
+    $('#table_po').jqGrid('navGrid', '#pager_table_po', {edit:false, add:false, del:false, search:false});
   });
 </script>

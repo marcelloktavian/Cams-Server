@@ -336,6 +336,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         }
       ]
     });
-    $('#table_ap').jqGrid('navGrid', '#pager_table_ap', {edit:false, add:false, del:false});
+    $('#table_ap').jqGrid('navGrid', '#pager_table_ap', {edit:false, add:false, del:false, search:false});
   });
 </script>
