@@ -196,8 +196,8 @@ error_reporting(0);
 	$kode=""; 
 	while($rs2=mysql_fetch_array($sq2))
 	{ 	
-     $nett_price=$rs2['harga_satuan'] *(1-$rs2['discdp']);
-	 $nett_subtotal=$rs2['subtotal'] *(1-$rs2['discdp']);
+     $nett_price=round($rs2['harga_satuan'] *(1-$rs2['discdp']));
+	 $nett_subtotal=round($rs2['subtotal'] *(1-$rs2['discdp']));
 	 $disc=$rs2['disc_faktur'];
 	 //total merupakan faktur tanpa ongkir - disc faktur
 	 $total=$rs2['faktur']-$rs2['disc_faktur'];
@@ -245,7 +245,7 @@ error_reporting(0);
 	<?
 	$grand_qty+=$rs2['jumlah_beli'];
 	//$grand_subtotal+=$rs2['subtotal'];
-	$grand_subtotal+=$nett_subtotal;
+	$grand_subtotal+=round($nett_subtotal);
 	//$totaldpp =($grand_subtotal/1.11);
 	//totaldpp didapat dari grand faktur(grandtotal)/1.11
 	$totaldpp =($grand_total/1.11);

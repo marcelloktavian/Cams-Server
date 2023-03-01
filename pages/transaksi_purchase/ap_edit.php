@@ -166,9 +166,10 @@
   function cetak(){
     var pesan = "";
 
-    var tanggal_ap    = $('#ap_add').find('input[name="tanggal_ap"]').val();
-    var supplier      = $('#ap_add').find('input[name="supplier"]').val();
-    var akun          = $('#ap_add').find('input[name="akun"]').val();
+    var tanggal_ap    = $('#ap_edit').find('input[name="tanggal_ap"]').val();
+    var supplier      = $('#ap_edit').find('input[name="supplier"]').val();
+    var akun          = $('#ap_edit').find('input[name="akun"]').val();
+    var total_ap      = $('#total_ap_value').val();
 
     if(tanggal_ap == ''){
       pesan = 'Tanggal AP tidak boleh kosong\n';
@@ -178,6 +179,9 @@
     }
     else if(akun == ''){
       pesan = 'Akun tidak boleh kosong\n';
+    }
+    else if(parseInt(total_ap) == 0){
+      pesan = 'Total tidak bisa nol\n';
     }
 
     if(pesan != ''){

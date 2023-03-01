@@ -240,7 +240,7 @@ error_reporting(0);
 	$grand_ongkir+=$rs2['ongkir'];
 	$grand_disc+=$disc*$rs2['jumlah_return'];		
 	$grand_qty+=$rs2['jumlah_return'];
-	$grand_subtotal+=($nett_price*$rs2['jumlah_return']);
+	$grand_subtotal+=round($nett_price*$rs2['jumlah_return']);
 	//totaldpp bruto didapat dari grand faktur(grand_subtotal)/1.11
 	$totaldppbt =($grand_subtotal/1.11);
 	$totalppnbt= ($totaldppbt*0.11);

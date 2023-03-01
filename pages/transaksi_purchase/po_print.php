@@ -3,6 +3,10 @@
   require_once '../../include/config.php';
 
   include '../../include/koneksi.php';
+  
+  function intToIDR($val) {
+    return 'Rp ' . number_format($val, 0, ',', '.') . ',-';
+  }
 
   $sql_mst    = "SELECT a.*,b.alamat,b.`pic`,b.`telp`,b.`email` FROM `mst_po` a LEFT JOIN `mst_supplier` b ON a.`id_supplier`=b.`id` WHERE a.`id`='".$_GET['id']."'";
   $get_mst    = mysql_query($sql_mst) or die(mysql_error());
@@ -25,7 +29,7 @@
     $grand_total    = $mst_po['grand_total'];
     $catatan        = $mst_po['catatan'];
 
-  $sql_det    = "SELECT *,date_format(tanggal_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
+  $sql_det    = "SELECT *,date_format(tgl_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$_GET['id']."' AND `deleted` = 0";
   $get_det    = mysql_query($sql_det) or die(mysql_error());
 
 ?>
@@ -115,7 +119,7 @@
 
   <table cellpadding=0 cellspacing=0 style="width:97%;" class="detail_table">
     <tr>
-      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:15%">TANGGAL QUOTATION</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>
+      <td class="title-sm td-title text-center td-border" style="width:3%;">NO.</td><td class="title-sm td-title text-center td-border">PRODUK/JASA</td><td class="title-sm td-title text-center td-border" style="width:10%">QTY</td><td class="title-sm td-title text-center td-border" style="width:13%">DPP/UNIT</td><td class="title-sm td-title text-center td-border" style="width:15%">TOTAL</td>
     </tr>
     <?php
     $i = 0;
@@ -124,34 +128,34 @@
       
       echo '
       <tr>
-        <td class="text-center td-border" style="width:3%;">'.$i.'</td><td class="text-left td-border" style="padding-left:15px; padding-right:15px;">'.$row['nama_produk'].'</td><td class="text-center td-border" style="width:10%">'.$row['tanggal_quotation_formatted'].'</td><td class="text-center td-border" style="width:10%">'.$row['qty'].'&nbsp;&nbsp;'.$row['satuan'].'</td><td class="text-right td-border" style="width:13%; padding-left:15px; padding-right:10px;">'.number_format($row['price'],0,',',',').'</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.number_format($row['subtotal'],0,',',',').'</td>
+        <td class="text-center td-border" style="width:3%;">'.$i.'</td><td class="text-left td-border" style="padding-left:15px; padding-right:15px;">'.$row['nama_produk'].'</td><td class="text-center td-border" style="width:10%">'.$row['qty'].'&nbsp;&nbsp;'.$row['satuan'].'</td><td class="text-right td-border" style="width:13%; padding-left:15px; padding-right:10px;">'.intToIDR($row['price']).'</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;">'.intToIDR($row['subtotal']).'</td>
       </tr>';
     }
     while($i <= 30){
       echo '
       <tr>
-        <td class="text-center td-border" style="width:3%;"><td class="text-left td-border"></td><td class="text-center td-border" style="width:10%"></td><td class="text-center td-border" style="width:10%"></td><td class="text-right td-border" style="width:13%"></td><td class="text-right td-border" style="width:15%"></td>
+        <td class="text-center td-border" style="width:3%;"><td class="text-left td-border"></td><td class="text-center td-border" style="width:10%"></td><td class="text-right td-border" style="width:13%"></td><td class="text-right td-border" style="width:15%"></td>
       </tr>';
       $i ++;
     }
     ;?>
     <tr style="">
-      <td colspan=3 class="text-right td-border title-sm td-title" style="width:3%; border-top: 2px solid black !important;">TOTAL QTY :</td><td class="text-center td-border" style="width:10%; border-top: 2px solid black !important; padding-left:15px; padding-right:15px;"><?= $total_qty ;?></td><td class="text-right td-border td-title title-sm" style="width:13%; border-top: 2px solid black !important;">DPP :</td><td class="text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-left:15px; padding-right:10px;"><?= number_format($total_dpp,0,',',',') ;?></td>
+      <td colspan=2 class="text-right td-border title-sm td-title" style="width:3%; border-top: 2px solid black !important;">TOTAL QTY :</td><td class="text-center td-border" style="width:10%; border-top: 2px solid black !important; padding-left:15px; padding-right:15px;"><?= $total_qty ;?></td><td class="text-right td-border td-title title-sm" style="width:13%; border-top: 2px solid black !important;">DPP :</td><td class="text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-left:15px; padding-right:10px;"><?= intToIDR($total_dpp) ;?></td>
     </tr>
     <tr>
-      <td colspan=4 rowspan=3>
+      <td colspan=3 rowspan=3>
         <ul>
           <li>Harap Kirimkan invoice yang sesuai dengan spesifikasi pesanan ini ke email perusahaan.</li>
           <li>Untuk invoice fisik, harap kirimkan 2 salinan.</li>
           <li>Harap untuk segera berkabar jika terjadi kendala dalam pemenuhan order.</li>
         </ul>
-      </td><td class="text-right td-border td-title title-sm" style="width:12%;">PPN :</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;"><?= number_format($ppn,0,',',',') ;?></td>
+      </td><td class="text-right td-border td-title title-sm" style="width:12%;">PPN :</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;"><?= intToIDR($ppn) ;?></td>
     </tr>
     <tr>
       <td class="text-right td-border td-title title-sm" style="width:12%;">PENGIRIMAN :</td><td class="text-right td-border"></td>
     </tr>
     <tr>
-      <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 1em; padding-bottom: 1em;">GRAND TOTAL :</td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.5em; padding-bottom: 1em; padding-left:15px; padding-right:10px; vertical-align:center;"><?= number_format($grand_total,0,',',',') ;?></td>
+      <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 1em; padding-bottom: 1em;">GRAND TOTAL :</td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.5em; padding-bottom: 1em; padding-left:15px; padding-right:10px; vertical-align:center;"><?= intToIDR($grand_total) ;?></td>
     </tr>
   </table>
 

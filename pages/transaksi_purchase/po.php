@@ -141,7 +141,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $id = $_GET['id'];
 
-  $query = "SELECT *,date_format(tanggal_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
+  $query = "SELECT *,date_format(tgl_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
 
   $exe   = $db->query($query);
   $count = $exe->rowCount();
@@ -357,6 +357,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         }
       ],
     });
-    $('#table_po').jqGrid('navGrid', '#pager_table_po', {edit:false, add:false, del:false});
+    $('#table_po').jqGrid('navGrid', '#pager_table_po', {edit:false, add:false, del:false, search:false});
   });
 </script>
