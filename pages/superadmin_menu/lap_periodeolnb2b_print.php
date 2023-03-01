@@ -98,7 +98,7 @@ error_reporting(0);
   $type=$_GET['type'];
 
 
-    $query_total = "SELECT SUM(total-ongkir) AS total FROM ((SELECT dr.nama, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir,SUM(so.discount_faktur) AS discount_faktur,SUM(so.total) AS total FROM olnso so 
+    $query_total = "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir,SUM(so.discount_faktur) AS discount_faktur,SUM(so.total) AS total FROM olnso so 
     LEFT JOIN mst_dropshipper dr ON dr.id=so.id_dropshipper
     WHERE so.deleted=0 AND so.state='1' AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y')  AND STR_TO_DATE('$tglend','%d/%m/%Y')
     GROUP BY so.id_dropshipper)
@@ -121,7 +121,7 @@ $query_b2b =  "SELECT SUM(total) AS total FROM ((SELECT cus.nama, SUM(b.totalkir
    
 
 
-$query_oln =  "SELECT SUM(total-ongkir) AS total FROM ((SELECT dr.nama, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir,SUM(so.discount_faktur) AS discount_faktur,SUM(so.total) AS total FROM olnso so 
+$query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir,SUM(so.discount_faktur) AS discount_faktur,SUM(so.total) AS total FROM olnso so 
     LEFT JOIN mst_dropshipper dr ON dr.id=so.id_dropshipper
     WHERE so.deleted=0 AND so.state='1' AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y')  AND STR_TO_DATE('$tglend','%d/%m/%Y')
     GROUP BY so.id_dropshipper)) AS tbl";
