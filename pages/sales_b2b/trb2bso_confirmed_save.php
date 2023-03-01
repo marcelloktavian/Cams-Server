@@ -128,7 +128,7 @@ include("../../include/koneksi.php");
 		{
 		//---simpan detail---
 		$query = "INSERT INTO b2bdo_detail( id_trans,id_b2bso_det,id_product,namabrg,id31,qty31,id32,qty32,id33,qty33,id34,qty34,id35,qty35,id36,qty36,id37,qty37,id38,qty38,id39,qty39,id40,qty40,id41,qty41,id42,qty42,id43,qty43,id44,qty44,id45,qty45,id46,qty46,harga_satuan,jumlah_beli,jumlah_kirim,sisa,disc) VALUES ('".$id_pkb."','".$id_detail."','".$id_product."','".$NamaBrg."','".$id31."','".$k31."','".$id32."','".$k32."','".$id33."','".$k33."','".$id34."','".$k34."','".$id35."','".$k35."','".$id36."','".$k36."','".$id37."','".$k37."','".$id38."','".$k38."','".$id39."','".$k39."','".$id40."','".$k40."','".$id41."','".$k41."','".$id42."','".$k42."','".$id43."','".$k43."','".$id44."','".$k44."','".$id45."','".$k45."','".$id46."','".$k46."','".$Harga."','".$Qty."','".$QtyKirim."','".$Sisa."','".$Disc."')";
-		// var_dump($query);die;
+		var_dump($query);die;
 		$hasil = mysql_query($query) or die ("insert b2bdo_detail error".mysql_error());
 	   
 		//Buat update jumlah_kirim di b2bso_detail 
