@@ -245,7 +245,7 @@ error_reporting(0);
 	<?
 	$grand_qty+=$rs2['jumlah_beli'];
 	//$grand_subtotal+=$rs2['subtotal'];
-	$grand_subtotal+=$nett_subtotal;
+	$grand_subtotal+=round($nett_subtotal);
 	//$totaldpp =($grand_subtotal/1.11);
 	//totaldpp didapat dari grand faktur(grandtotal)/1.11
 	$totaldpp =($grand_total/1.11);
