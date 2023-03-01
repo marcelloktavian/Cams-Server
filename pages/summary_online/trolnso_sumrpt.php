@@ -190,8 +190,8 @@ error_reporting(0);
 	$kode=""; 
 	while($rs2=mysql_fetch_array($sq2))
 	{ 	
-     $nett_price=$rs2['harga_satuan'] *(1-$rs2['discdp']);
-	 $nett_subtotal=$rs2['subtotal'] *(1-$rs2['discdp']);
+     $nett_price=ceil($rs2['harga_satuan'] *(1-$rs2['discdp']));
+	 $nett_subtotal=ceil($rs2['subtotal'] *(1-$rs2['discdp']));
 	 $disc=$rs2['disc_faktur'];
 	 //total merupakan faktur tanpa ongkir - disc faktur
 	 $total=$rs2['faktur']-$rs2['disc_faktur'];
