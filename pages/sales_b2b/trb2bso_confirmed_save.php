@@ -330,6 +330,6 @@ include("../../include/koneksi.php");
 	
 ?>
     <script language="javascript"> 
-	// window.close();
+	window.close();
 	//window.opener.location.href='../../Registrasi.html';
 	</script> 
