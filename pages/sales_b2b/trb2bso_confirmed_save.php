@@ -58,8 +58,8 @@ include("../../include/koneksi.php");
 	$exp_note 	= $_POST['exp_note'];
 	$note 		= $_POST['txtbrg'];
 	$ref_kode 		= $_POST['ref_kode'];
-	$row=$_POST['jum'];
-	 var_dump($row);die;
+	$row=$_GET['baris'];
+
 	//var_dump('tanggal= '.$tgl);die;
 	//--------akhir tarik parameter utk simpan------------
 	//inisialisasi subtotal
