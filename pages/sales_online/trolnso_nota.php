@@ -161,6 +161,16 @@ error_reporting(0);
 	$sql = mysql_query($sql_jual);
 	//var_dump($sql_jual); die;
 	$rs = mysql_fetch_array($sql);
+
+	$ex = explode('(',$rs['dropshipper']);
+
+	$noPhone=str_replace(')','',$ex[1]);
+	$jmlSensor=5;
+	$afterVal=3;
+	$sensor = substr($noPhone, $afterVal, $jmlSensor);
+	$noPhone2=explode($sensor,$noPhone);
+	$newPhone=$noPhone2[0]."xxxxxxxxx";
+	$dropshipper = $ex[0].'('.$newPhone.')';
 ?>
 
 
@@ -178,9 +188,9 @@ error_reporting(0);
 		  <!-- 2 -->
 		  
 		  <tr> 
-		  <th colspan="4" class="style11btlr"><div align="left">Pengirim : <?=$rs['dropshipper'];?></div></th>
+		  <th colspan="4" class="style11btlr"><div align="left">Pengirim : <?=$dropshipper;?></div></th>
           <td >&nbsp;</td>		  
-		  <th colspan="4" class="style11btlr"><div align="left">Pengirim : <?=$rs['dropshipper'];?></div></th> 
+		  <th colspan="4" class="style11btlr"><div align="left">Pengirim : <?=$dropshipper;?></div></th> 
 		 
 		  </tr>
           		  

@@ -258,7 +258,7 @@ error_reporting(0);
 	$ids=substr($ids,0,-1);
     $id_faktur1=$_GET['id_trans1'];
     //$id_faktur=TSO18020021;
-	$sql_m1="SELECT a.*,b.nama AS dropshipper,c.nama as exp,c.kode_warna,c.logo,d.kecamatan,d.kabupaten,d.provinsi,i.id as id_kirim FROM olnso a 
+	$sql_m1="SELECT a.*,b.nama AS dropshipper,c.nama as exp,c.kode_warna,c.logo,d.kecamatan,d.kabupaten,d.provinsi,i.id_ship as id_kirim FROM olnso a 
 	left join mst_dropshipper b on a.id_dropshipper = b.id
 	left join mst_expedition c on a.id_expedition = c.id
 	left join mst_address d on a.id_address = d.id
@@ -291,13 +291,24 @@ error_reporting(0);
 		  
 		  // $class_page_break = 'page';
 	  // }
+
+		$ex = explode('(',$m1['dropshipper']);
+
+		$noPhone=str_replace(')','',$ex[1]);
+		$jmlSensor=5;
+		$afterVal=3;
+		$sensor = substr($noPhone, $afterVal, $jmlSensor);
+		$noPhone2=explode($sensor,$noPhone);
+		$newPhone=$noPhone2[0]."xxxxxxxxx";
+		$dropshipper = $ex[0].'('.$newPhone.')';
+
 	  ?>
   <div class="<?=$class_page_break?>">
   <table width="100%" border="0" class="cut-off "  align="center" cellpadding="0" cellspacing="0">
           <!-- 1 -->
 		  <tr> 
 		  <td style="border-top: 1px solid black;border-left: 1px solid black;" rowspan="1" colspan="2"><center><img src="../../files/shippinglabel_small.png" style="width:160px"></center></td> 
-		  <th colspan="6" class="style11btl"><div align="left">Pengirim : <?=$m1['dropshipper'];?></div></td>
+		  <th colspan="6" class="style11btl"><div align="left">Pengirim : <?=$dropshipper;?></div></td>
           <!--<td >&nbsp;</td>-->		  
           <th rowspan="1" colspan="2" class="style11btlr_detail"><div align="center">(<?=$m1['id_kirim'];?>)<?=$m1['id_trans'];?>/<? echo "".$ref_kode;?></div></th> 
           </tr> 
