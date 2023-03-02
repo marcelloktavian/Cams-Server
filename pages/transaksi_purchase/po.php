@@ -124,6 +124,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       number_format($line['total_dpp'],0),
       number_format($line['ppn'],0),
       number_format($line['grand_total'],0),
+      number_format($line['pengiriman'],0),
       $line['catatan'],
       $postApproval,
       $edit,
@@ -316,7 +317,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_po').jqGrid({
       url       : '<?= BASE_URL.'pages/transaksi_purchase/po.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID','Dokumen','Pemohon','Supplier','Tgl PO','ETA Pengiriman','Total Qty','Total DPP','PPN','Grand Total','Catatan','Approval','Edit','Delete','Print'],
+      colNames  : ['ID','Dokumen','Pemohon','Supplier','Tgl PO','ETA Pengiriman','Total Qty','Total DPP','PPN','Grand Total','Pengiriman','Catatan','Approval','Edit','Delete','Print'],
       colModel  : [
         {name:'id', index: 'id', align: 'right', width:15, searchoptions: {sopt:['cn']}},
         {name:'dokumen', index: 'dokumen', align: 'left', width:40, searchoptions: {sopt:['cn']}},
@@ -328,6 +329,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         {name:'total_dpp', index:'total_odpp', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         {name:'ppn', index:'ppn', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
         {name:'grand_total', index:'grand_total', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
+        {name:'pengiriman', index:'pengiriman', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
         {name:'Catatan', index:'catatan', align: 'left', searchoptions: {sopt: ['cn']}},
         {name: 'Approval', index:'approval', align:'center', width:25, sortable: false},
         {name: 'Delete', index:'delete', align:'center', width:30, sortable: false},

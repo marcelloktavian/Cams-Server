@@ -39,26 +39,28 @@
         <td><input type="text" class="inputForm" name="pic" id="pic" /></td>
       </tr>
       <tr>
-        <td class="fonttext">Alamat (*)</td>
-        <td><textarea type="text" class="inputForm" name="alamat" id="alamat"></textarea></td>
+        <td class="fonttext" rowspan=2>Alamat (*)</td>
+        <td rowspan=2><textarea type="text" class="inputForm" name="alamat" id="alamat" style="height:3.55em;"></textarea></td>
         <td class="fonttext">Contact (*)</td>
         <td><input type="text" class="inputForm" name="contact" id="contact" /></td>
       </tr>
       <tr>
-        <td class="fonttext">KTP</td>
-        <td><input type="text" class="inputForm" name="ktp" id="ktp" /></td>
-        <td class="fonttext">NPWP</td>
-        <td><input type="text" class="inputForm" name="npwp" id="npwp" /></td>
+        <td class="fonttext">Email</td>
+        <td><input type="text" class="inputForm" name="email" id="email" /></td>
       </tr>
       <tr>
-      <td class="fonttext">Bank</td>
+        <td class="fonttext">KTP</td>
+        <td><input type="text" class="inputForm" name="ktp" id="ktp" /></td>
+        <td class="fonttext">Bank</td>
         <td><input type="text" class="inputForm" name="bank" id="bank" /></td>
+      </tr>
+      <tr>
+        <td class="fonttext">NPWP</td>
+        <td><input type="text" class="inputForm" name="npwp" id="npwp" /></td>
         <td class="fonttext">Rekening</td>
         <td><input type="text" class="inputForm" name="rekening" id="rekening" /></td>
       </tr>
       <tr>
-        <td class="fonttext">Email</td>
-        <td><input type="text" class="inputForm" name="email" id="email" /></td>
         <td class="fonttext">PKP</td>
         <td style="padding : 0;"><input type="checkbox" name="pkp" id="pkp" style="margin:0 !important; width: 24px; height: 24px;"/></td>
       </tr>
@@ -72,7 +74,6 @@
         <tr>
           <td width="5%" class="fonttext">Kode</td>
           <td width="30%" class="fonttext">Produk / Jasa</td>
-          <td width="10%" class="fonttext">Kategori</td>
           <td class="fonttext">Tanggal Quotation</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
@@ -179,19 +180,29 @@
     idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.readOnly = "readonly"; idx.size="42"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
   }
 
-  function generateKategori(index){
+  function generateNomorAkun(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="kategori"+index; idx.id="kategori"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="nomorAkun"+index; idx.id="nomorAkun"+index; idx.size="15" ;return idx;
+  }
+
+  function generateIdAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="idAkun"+index; idx.id="idAkun"+index; return idx;
+  }
+
+  function generateNamaAkun(index){
+    var idx = document.createElement("input");
+    idx.type="text"; idx.name="namaAkun"+index; idx.id="namaAkun"+index;  idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="30"; return idx;
   }
 
   function generateQuotation(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="tgl_quotation"+index; idx.id="tgl_quotation"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="tgl_quotation"+index; idx.id="tgl_quotation"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.style.textAlign="center"; return idx;
   }
 
   function generateSatuan(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="satuan"+index; idx.id="satuan"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="satuan"+index; idx.id="satuan"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.style.textAlign="center"; return idx;
   }
 
   function generateHarga(index){
@@ -258,7 +269,6 @@
 
     td0.appendChild(generateKode(baris1));
     td1.appendChild(generateProdukJasa(baris1));
-    td2.appendChild(generateKategori(baris1));
     td3.appendChild(generateQuotation(baris1));
     td4.appendChild(generateSatuan(baris1));
     td5.appendChild(generateHarga(baris1));
@@ -266,7 +276,6 @@
 
     row.appendChild(td0);
     row.appendChild(td1);
-    row.appendChild(td2);
     row.appendChild(td3);
     row.appendChild(td4);
     row.appendChild(td5);

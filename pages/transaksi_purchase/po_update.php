@@ -16,9 +16,10 @@ $total_qty        = $_POST['total_qty'];
 $total_dpp        = $_POST['total_dpp'];
 $ppn              = $_POST['ppn'];
 $grand_total      = $_POST['grand_total'];
+$pengiriman       = $_POST['pengiriman'];
 $catatan          = $_POST['catatan'];
 
-$sql_master       = "UPDATE `mst_po` SET id_supplier = '$id_supplier', nama_supplier = '$nama_supplier', tgl_po = '$tgl_po', eta_pengiriman = '$eta_pengiriman', id_pemohon = '$id_pemohon', nama_pemohon = '$pemohon', total_dpp = '$total_dpp', total_qty = '$total_qty', ppn = '$ppn', grand_total = '$grand_total', catatan = '$catatan' WHERE dokumen = '$no_dokumen'";
+$sql_master       = "UPDATE `mst_po` SET id_supplier = '$id_supplier', nama_supplier = '$nama_supplier', tgl_po = '$tgl_po', eta_pengiriman = '$eta_pengiriman', id_pemohon = '$id_pemohon', nama_pemohon = '$pemohon', total_dpp = '$total_dpp', total_qty = '$total_qty', ppn = '$ppn', grand_total = '$grand_total', pengiriman='$pengiriman', catatan = '$catatan' WHERE dokumen = '$no_dokumen'";
 
 $sql              = mysql_query($sql_master);
 

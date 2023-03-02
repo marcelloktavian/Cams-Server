@@ -53,9 +53,10 @@ $total_qty        = $_POST['total_qty'];
 $total_dpp        = $_POST['total_dpp'];
 $ppn              = $_POST['ppn'];
 $grand_total      = $_POST['grand_total'];
+$pengiriman       = $_POST['pengiriman'];
 $catatan          = $_POST['catatan'];
 
-$sql_master       = "INSERT INTO `mst_po` (dokumen, id_supplier, nama_supplier, tgl_po, eta_pengiriman, id_pemohon, nama_pemohon, total_dpp, total_qty, ppn, grand_total, catatan, persen_ppn) VALUES ('$no_dokumen','$id_supplier','$nama_supplier','$tgl_po','$eta_pengiriman','$id_pemohon','$pemohon','$total_dpp','$total_qty','$ppn','$grand_total','$catatan','$persen_ppn')";
+$sql_master       = "INSERT INTO `mst_po` (dokumen, id_supplier, nama_supplier, tgl_po, eta_pengiriman, id_pemohon, nama_pemohon, total_dpp, total_qty, ppn, grand_total, pengiriman, catatan, persen_ppn) VALUES ('$no_dokumen','$id_supplier','$nama_supplier','$tgl_po','$eta_pengiriman','$id_pemohon','$pemohon','$total_dpp','$total_qty','$ppn','$grand_total', '$pengiriman','$catatan','$persen_ppn')";
 
 $sql              = mysql_query($sql_master);
 

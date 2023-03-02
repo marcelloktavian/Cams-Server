@@ -39,23 +39,35 @@ else{
 $sql = mysql_query($sql_master);
 
 // detail data processing -----------------
-$id_supplier = "SELECT `id` FROM `mst_supplier` WHERE `vendor`='".$supplier."' AND `pic`='".$pic."' AND `ktp`='".$ktp."' LIMIT 1";
+if($id_supplier == 0){
+  $id_supplier = "SELECT `id` FROM `mst_supplier` WHERE `vendor`='".$supplier."' AND `pic`='".$pic."' AND `ktp`='".$ktp."' LIMIT 1";
 
-$sql = mysql_query($id_supplier);
-$id_supplier = mysql_fetch_array($sql);
-var_dump($id_supplier);
+  $sql = mysql_query($id_supplier);
+  $id_supplier = mysql_fetch_array($sql);
 
-$sql_reset = "UPDATE `mst_produk` SET `id_supplier`='0' WHERE `id_supplier`='".$id_supplier['id']."'";
+  $sql_reset = "UPDATE `mst_produk` SET `id_supplier`='0' WHERE `id_supplier`='".$id_supplier['id']."'";
+
+  $id_sup = $id_supplier['id'];
+}
+else{
+  $sql_reset = "UPDATE `mst_produk` SET `id_supplier`='0' WHERE `id_supplier`='".$id_supplier."'";
+
+  $id_sup = $id_supplier;
+}
+
+$sql = mysql_query($sql_reset);
 
 for($i=1; $i<$row; $i++){
-  $id_detail = explode(':',$_POST['id'.$i])[0];
+  if(isset($_POST['id'.$i])){
+    $id_detail = explode(':',$_POST['id'.$i])[0];
 
-  $sql_detail = "UPDATE `mst_produk` SET `id_supplier`='".$id_supplier['id']."' WHERE `id`='".$id_detail."'";
-  $sql = mysql_query($sql_detail);
+    $sql_detail = "UPDATE `mst_produk` SET `id_supplier`='".$id_sup."' WHERE `id`='".$id_detail."'";
+
+    $sql = mysql_query($sql_detail);
+  }
 }
 
 ?>
-
 <script language="javascript">
   window.close();
 </script>

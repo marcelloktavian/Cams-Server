@@ -58,26 +58,28 @@
         <td><input type="text" class="inputForm" name="pic" id="pic" value="<?= $pic_mst ;?>" /></td>
       </tr>
       <tr>
-        <td class="fonttext">Alamat (*)</td>
-        <td><textarea type="text" class="inputForm" name="alamat" id="alamat" value="<?= $alamat_mst ;?>"><?= $alamat_mst ;?></textarea></td>
+        <td class="fonttext" rowspan=2>Alamat (*)</td>
+        <td rowspan=2><textarea type="text" class="inputForm" name="alamat" id="alamat" value="<?= $alamat_mst ;?>" style="height:3.55em;"><?= $alamat_mst ;?></textarea></td>
         <td class="fonttext">Contact (*)</td>
         <td><input type="text" class="inputForm" name="contact" id="contact" value="<?= $telp_mst ;?>" /></td>
       </tr>
       <tr>
-        <td class="fonttext">KTP</td>
-        <td><input type="text" class="inputForm" name="ktp" id="ktp" value="<?= isset($ktp_mst) ? $ktp_mst : '' ?>"></td>
-        <td class="fonttext">NPWP</td>
-        <td><input type="text" class="inputForm" name="npwp" id="npwp" value="<?= isset($npwp_mst) ? $npwp_mst : ''?>"></td>
+        <td class="fonttext">Email</td>
+        <td><input type="text" class="inputForm" name="email" id="email" value="<?= isset($email_mst) ? $email_mst : ''?>" /></td>
       </tr>
       <tr>
+        <td class="fonttext">KTP</td>
+        <td><input type="text" class="inputForm" name="ktp" id="ktp" value="<?= isset($ktp_mst) ? $ktp_mst : '' ?>"></td>
         <td class="fonttext">Bank</td>
         <td><input type="text" class="inputForm" name="bank" id="bank" value="<?= isset($bank_mst) ? $bank_mst : '' ?>"></td>
+      </tr>
+      <tr>
+        <td class="fonttext">NPWP</td>
+        <td><input type="text" class="inputForm" name="npwp" id="npwp" value="<?= isset($npwp_mst) ? $npwp_mst : ''?>"></td>
         <td class="fonttext">Rekening</td>
         <td><input type="text" class="inputForm" name="rekening" id="rekening" value="<?= isset($rekening_mst) ? $rekening_mst : ''?>"></td>
       </tr>
       <tr>
-        <td class="fonttext">Email</td>
-        <td><input type="text" class="inputForm" name="email" id="email" value="<?= isset($email_mst) ? $email_mst : ''?>" /></td>
         <td class="fonttext">PKP</td>
         <td><input type="checkbox" name="pkp" id="pkp" style="margin:0 !important; width: 24px; height: 24px;" <?= ($pkp_mst == "1") ? 'checked' : '' ;?> /></td>
       </tr>
@@ -91,10 +93,10 @@
         <tr>
           <td width="5%" class="fonttext">Kode</td>
           <td width="30%" class="fonttext">Produk / Jasa</td>
-          <td width="10%" class="fonttext">Kategori</td>
           <td class="fonttext">Tanggal Quotation</td>
           <td width="10%" class="fonttext">Satuan</td>
           <td width="15%" class="fonttext">DPP/Unit</td>
+          <td class="fonttext">Hapus</td>
         </tr>
       </thead>
     </table>
@@ -201,12 +203,12 @@ function generateKategori(index){
 
 function generateQuotation(index){
   var idx = document.createElement("input");
-  idx.type="text"; idx.name="tgl_quotation"+index; idx.id="tgl_quotation"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+  idx.type="text"; idx.name="tgl_quotation"+index; idx.id="tgl_quotation"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.style.textAlign="center"; return idx;
 }
 
 function generateSatuan(index){
   var idx = document.createElement("input");
-  idx.type="text"; idx.name="satuan"+index; idx.id="satuan"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+  idx.type="text"; idx.name="satuan"+index; idx.id="satuan"+index; idx.readOnly = "readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.style.textAlign="center"; return idx;
 }
 
 function generateHarga(index){
@@ -216,9 +218,8 @@ function generateHarga(index){
 
 function generateDelete(index){
   var idx = document.createElement("input");
-  idx.type = "button"; idx.name = "del1"+index+""; idx.id = "del1"+index+""; idx.size = "10"; idx.value = "X"; idx.onclick = "delRow1("+index+")";
-  return idx;
-}
+  idx.type = "button"; idx.name = "del1"+index+""; idx.id = "del1"+index+""; idx.size = "10"; idx.value = "X"; idx.onclick = function () {delRow1(index)}; return idx;
+  }
 
 function delRow1(index){
   var element = document.getElementById("t1"+index); element.remove(); hitungqty();
@@ -263,24 +264,24 @@ function addNewRow1(){
 
   var td0 = document.createElement("td");
   var td1 = document.createElement("td");
-  var td2 = document.createElement("td");
   var td3 = document.createElement("td");
   var td4 = document.createElement("td");
   var td5 = document.createElement("td");
+  var td6 = document.createElement("td");
 
   td0.appendChild(generateKode(baris1));
   td1.appendChild(generateProdukJasa(baris1));
-  td2.appendChild(generateKategori(baris1));
   td3.appendChild(generateQuotation(baris1));
   td4.appendChild(generateSatuan(baris1));
   td5.appendChild(generateHarga(baris1));
+  td6.appendChild(generateDelete(baris1));
 
   row.appendChild(td0);
   row.appendChild(td1);
-  row.appendChild(td2);
   row.appendChild(td3);
   row.appendChild(td4);
   row.appendChild(td5);
+  row.appendChild(td6);
 
   triggerqty(baris1); get_products(baris1);
   baris1++;
@@ -296,7 +297,6 @@ function addNewRow1(){
     
     $('#id'+<?= $i ;?>).val('<?= $rs['id'].":".$rs['produk_jasa']." - ".$rs['satuan']." : ".$rs['tgl_quotation_formatted']." Rp ".number_format($rs['harga'], 0) ?>');
     $('#produk_jasa'+<?= $i ;?>).val('<?= $rs['produk_jasa'] ;?>');
-    $('#kategori'+<?= $i ;?>).val('<?= $rs['kategori'] ;?>');
     $('#tgl_quotation'+<?= $i ;?>).val('<?= str_replace("-", "/", $rs['tgl']) ;?>');
     $('#satuan'+<?= $i ;?>).val('<?= $rs['satuan'] ;?>');
     $('#harga'+<?= $i ;?>).val('<?= $rs['harga'] ;?>');

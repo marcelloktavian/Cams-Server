@@ -34,6 +34,7 @@
         <td class="fontjudul">TOTAL DPP<input type="text" class="" name="total_dpp_view" id="total_dpp_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="total_dpp" id="total_dpp" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">PPN<input type="text" class="" name="ppn_view" id="ppn_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="ppn" id="ppn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">GRAND TOTAL<input type="text" class="" name="grand_total_view" id="grand_total_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="grand_total" id="grand_total" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
+        <td class="fontjudul" style="width:18%;">GRAND TOTAL <span style="font-size:0.8em; font-weight: bold;">(+pengiriman)</span><input type="text" class="" name="grand_view" id="grand_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="grand" id="grand" style="text-align: right; font-size: 30px; background-color: white; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
       </tr>
     </table>
 
@@ -77,25 +78,31 @@
         </tr>
       </thead>
     </table>
-  </form>
 
-  <table>
-    <tr>
-      <td>
-        <p><input type='image' value='Tambah Baris' src='../../assets/images/tambah_baris.png' id='baru' onClick='addNewRow1()'/></p>
-      </td>
-      <td>
-        <p><input name='print' type='image' src='../../assets/images/simpan_cetak.png' value='Cetak' id='print' onClick='cetak()' /></p>
-      </td>
-      <td>
-        <p><input type='image' value='batal' src='../../assets/images/batal.png' id='baru' onClick='tutup()'/></p>
-      </td>
-    </tr>
-  </table>
+    <table width="100%">
+      <tr>
+        <td>
+          <p><img src='../../assets/images/tambah_baris.png' id='baru' onClick='addNewRow1()'/></p>
+        </td>
+        <td>
+          <p><img src='../../assets/images/simpan_cetak.png' value='Cetak' id='print' onClick='cetak()' /></p>
+        </td>
+        <td>
+          <p><img src='../../assets/images/batal.png' id='baru' onClick='tutup()'/></p>
+        </td>
+        <td width="100%">
+          <p class="fontjudul text-right">Biaya Pengiriman : <input type='text' id="pengiriman" name="pengiriman" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" /></p>
+        </td>
+      </tr>
+    </table>
+
+  </form>
 </body>
 
 <script type="text/javascript">
   var baris1 = 1;
+
+  checkMax();
 
   // general function ------------------------
   function hitungsubtotal(idx){
@@ -141,8 +148,9 @@
   }
 
   function hitungdpp(){
-    $('#grand_total').val((parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())))
-    $('#grand_total_view').val(intToIDR(parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())))
+    $('#grand_total').val((parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())));
+    $('#grand_total_view').val(intToIDR(parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())));
+    $('#grand_view').val(intToIDR(parseFloat($('#grand_total').val())+parseFloat($('#pengiriman').val())));
   }
 
   function hitungqty(){
@@ -158,9 +166,44 @@
     $('#total_qty').val(parseInt(totalqty));
   }
 
+  $('#pengiriman').keyup(function(){
+    checkMax(); hitungdpp();
+  });
+
+  function checkMax(){
+    if($("#pengiriman").val() == ''){
+      $("#pengiriman").val(0);
+    }
+    else if($('#pengiriman').val() > 0){
+      if(($('#pengiriman').val()).substring(0,1) == "0"){
+        $('#pengiriman').val($('#pengiriman').val().substring(1));
+      }
+    }
+  }
+
+  function checkMax(idx){
+    if($("#qty"+idx).val() == ''){
+      $("#qty"+idx).val(0);
+    }
+    else if($('#qty'+idx).val() > 0){
+      if(($('#qty'+idx).val()).substring(0,1) == "0"){
+        $('#qty'+idx).val($('#qty'+idx).val().substring(1));
+      }
+    }
+
+    if($("#pengiriman").val() == ''){
+      $("#pengiriman").val(0);
+    }
+    else if($('#pengiriman').val() > 0){
+      if(($('#pengiriman').val()).substring(0,1) == "0"){
+        $('#pengiriman').val($('#pengiriman').val().substring(1));
+      }
+    }
+  }
+
   function triggerqty(idx){
     $('#qty'+idx).keyup(function(){
-      hitungqty(); setTimeout(()=>{hitungorder();}, 100); hitungsubtotal(idx);
+      checkMax(idx); hitungqty(); setTimeout(()=>{hitungorder();}, 100); hitungsubtotal(idx);
     });
     $('#id'+idx).change(function(){
       hitungqty(); setTimeout(()=>{hitungorder();}, 100); hitungsubtotal(idx);
@@ -344,6 +387,12 @@
               $('#produk_jasa'+a).val(products);
             var tgl_quotation = data.tgl_quotation;
               $('#tanggal_quotation'+a).val(tgl_quotation);
+            var idAkun = data.id_akun;
+              $('#idAkun'+a).val(idAkun);
+            var nomorAkun = data.nomor_akun;
+              $('#nomorAkun'+a).val(nomorAkun);
+            var namaAkun = data.nama_akun;
+              $('#namaAkun'+a).val(namaAkun);
             var harga = data.harga;
               $('#dpp'+a).val(harga);
             var pkp = data.pkp;

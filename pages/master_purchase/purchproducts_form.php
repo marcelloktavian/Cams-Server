@@ -1,3 +1,14 @@
+
+<link rel="stylesheet" type="text/css" href="assets/css/jquery.autocomplete.css" />
+
+<script type="text/javascript" src="assets/js/jquery.autocomplete.js"></script>
+
+<style>
+  .ac_results{
+    z-index: 9999;
+  }
+</style>
+
 <div class="ui-widget ui-form">
   <div class="ui-widget-header ui-corner-top padding5">
     <?php
@@ -51,7 +62,12 @@
         <input class="required" value="<?= isset($row['harga']) ? $row['harga'] : '';?>" type="text" id="harga" name="harga" autocomplete="off">
       </div>
 
-      <label for="kategori" class="label-control">Kategori</label>
+      <label for="harga" class="ui-helper-reset label-control">Akun (1,5,6)</label>
+      <div class="ui-corner-all form-control">
+        <input class="required" value="<?= isset($row['id_akun']) ? $row['id_akun'].":".$row['nomor_akun']." | ".$row['nama_akun'] : '';?>" type="text" id="akun_produk" name="akun_produk" autocomplete="off">
+      </div>
+
+      <!-- <label for="kategori" class="label-control">Kategori</label>
       <div class="ui-corner-all form-control">
         <select class="required" value="<?= isset($row['kategori']) ? strtolower($row['kategori']) : '';?>" id="kategori" name="kategori">
           <option  hidden value="<?= isset($row['kategori']) ? strtolower($row['kategori']) : ''; ?>">-choose(pilih)-</option>
@@ -72,25 +88,49 @@
           <option value="1" <?php if(isset($row['hpp'])){if($row['hpp'] == '1'){echo "selected";}} ?>>Iya</option>
           <option value="0" <?php if(isset($row['hpp'])){if($row['hpp'] == '0'){echo "selected";}}else{echo "selected";} ?>>Tidak</option>
         </select>
-      </div>
+      </div> -->
     </form>
   </div>
 </div>
 
 <script>
-
   $(document).ready(function(){
-    $('#label_penyusutan').hide();
-    $('#penyusutan').hide();
+    $("#akun_produk").autocomplete("pages/master_purchase/COALov.php?", {width: 200});
 
-    <?= (strtolower($row['kategori']) == "aset") ? "$('#label_penyusutan').show(); $('#penyusutan').show(); $('#penyusutan').addClass('required');" : ''; ?>
-
-    $('#kategori').change(function(){
-      if($('#kategori').val()=='aset'){
-        $('#label_penyusutan').show(); $('#penyusutan').show(); $('#penyusutan').addClass('required');
-      } else {
-        $('#label_penyusutan').hide(); $('#penyusutan').hide(); $('#penyusutan').removeClass('required'); $('#penyusutan').val('0');
+    $("#akun_produk").result(function (event, data, formatted) {
+      var nama = document.getElementById("akun_produk").value;
+      for (var i = 0; i < nama.length; i++) {
+        var id = nama.split(';');
+        if (id[1] == "") continue;
+        var id_pd = id[1];
       }
+
+      $.ajax({
+        url: 'pages/master_purchase/COALoVdet.php?id=' + id_pd,
+        dataType: 'json',
+        data: "nama=" + formatted,
+        success: function (data) {
+          var id = data.id;
+          var noakun = data.noakun;
+          var nama = data.nama;
+          $("#akun_produk").val(id+":"+noakun+" | "+nama);
+        }
+      });
     });
   });
+
+  // // $(document).ready(function(){
+  // //   $('#label_penyusutan').hide();
+  // //   $('#penyusutan').hide();
+
+  // //   <?= (strtolower($row['kategori']) == "aset") ? "$('#label_penyusutan').show(); $('#penyusutan').show(); $('#penyusutan').addClass('required');" : ''; ?>
+
+  // //   $('#kategori').change(function(){
+  // //     if($('#kategori').val()=='aset'){
+  // //       $('#label_penyusutan').show(); $('#penyusutan').show(); $('#penyusutan').addClass('required');
+  // //     } else {
+  // //       $('#label_penyusutan').hide(); $('#penyusutan').hide(); $('#penyusutan').removeClass('required'); $('#penyusutan').val('0');
+  // //     }
+  // //   });
+  // // });
 </script>

@@ -29,6 +29,7 @@
     $total_qty      = $result['total_qty'];
     $ppn            = $result['ppn'];
     $grand_total    = $result['grand_total'];
+    $pengiriman     = $result['pengiriman'];
     $catatan        = $result['catatan'];
 ?>
 
@@ -50,13 +51,14 @@
 
     <input type="hidden" class="" name="persen_ppn" id="persen_ppn" value="0">
 
-    <table width="100%">
+    <table width="100%" cellpadding=0 cellspacing=0>
       <tr>
-        <td class="fonttjudul">EDIT PURCHASE ORDER <span style="font-weight: bold;"><?= $no_dokumen ;?></span></td>
-        <td class="fontjudul">TOTAL QTY<input type="text" class="" name="total_qty" id="total_qty" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_qty ;?>" readonly /></td>
-        <td class="fontjudul">TOTAL DPP<input type="text" class="" name="total_dpp_view" id="total_dpp_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" <?= $total_dpp ;?> readonly /><input type="hidden" class="" name="total_dpp" id="total_dpp" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_dpp ;?>" readonly /></td>
-        <td class="fontjudul">PPN<input type="text" class="" name="ppn_view" id="ppn_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /><input type="hidden" class="" name="ppn" id="ppn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /></td>
-        <td class="fontjudul">GRAND TOTAL<input type="text" class="" name="grand_total_view" id="grand_total_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total ;?>" readonly /><input type="hidden" class="" name="grand_total" id="grand_total" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total ;?>" readonly /></td>
+        <td class="fonttjudul" style="width:10%;">EDIT PURCHASE ORDER <span style="font-weight: bold;"><?= $no_dokumen ;?></span></td>
+        <td class="fontjudul" style="width:18%;">TOTAL QTY<input type="text" class="" name="total_qty" id="total_qty" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_qty ;?>" readonly /></td>
+        <td class="fontjudul" style="width:18%;">TOTAL DPP<input type="text" class="" name="total_dpp_view" id="total_dpp_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" <?= $total_dpp ;?> readonly /><input type="hidden" class="" name="total_dpp" id="total_dpp" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_dpp ;?>" readonly /></td>
+        <td class="fontjudul" style="width:18%;">PPN<input type="text" class="" name="ppn_view" id="ppn_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /><input type="hidden" class="" name="ppn" id="ppn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /></td>
+        <td class="fontjudul" style="width:18%;">GRAND TOTAL<input type="text" class="" name="grand_total_view" id="grand_total_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total ;?>" readonly /><input type="hidden" class="" name="grand_total" id="grand_total" style="text-align: right; font-size: 30px; background-color: white; width: 10em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total ;?>" readonly /></td>
+        <td class="fontjudul" style="width:18%;">GRAND TOTAL <span style="font-size:0.8em; font-weight: bold;">(+pengiriman)</span><input type="text" class="" name="grand_view" id="grand_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total+$pengiriman ;?>" readonly /><input type="hidden" class="" name="grand" id="grand" style="text-align: right; font-size: 30px; background-color: white; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $grand_total+$pengiriman ;?>" readonly /></td>
       </tr>
     </table>
 
@@ -100,25 +102,31 @@
         </tr>
       </thead>
     </table>
-  </form>
 
-  <table>
+    <table width="100%">
     <tr>
       <td>
-        <p><input type='image' value='Tambah Baris' src='../../assets/images/tambah_baris.png' id='baru' onClick='addNewRow1()'/></p>
+        <p><img src='../../assets/images/tambah_baris.png' id='baru' onClick='addNewRow1()'/></p>
       </td>
       <td>
-        <p><input name='print' type='image' src='../../assets/images/simpan_cetak.png' value='Cetak' id='print' onClick='cetak()' /></p>
+        <p><img src='../../assets/images/simpan_cetak.png' value='Cetak' id='print' onClick='cetak()' /></p>
       </td>
       <td>
-        <p><input type='image' value='batal' src='../../assets/images/batal.png' id='baru' onClick='tutup()'/></p>
+        <p><img src='../../assets/images/batal.png' id='baru' onClick='tutup()'/></p>
+      </td>
+      <td width="100%">
+        <p class="fontjudul text-right">Biaya Pengiriman : <input type='text' id="pengiriman" name="pengiriman" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $pengiriman ?>" /></p>
       </td>
     </tr>
   </table>
+
+  </form>
 </body>
 
 <script type="text/javascript">
   var baris1 = 1;
+
+  checkMax();
 
   // general function ------------------------
   function hitungsubtotal(idx){
@@ -134,7 +142,6 @@
 
   function hitungorder(){
     var totalorder = 0;
-
     for (var i=1; i<=baris1;i++){
       var kode=$('#id'+i).val();
       if (kode != null && kode != ''){
@@ -164,8 +171,10 @@
   }
 
   function hitungdpp(){
-    $('#grand_total').val((parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())))
-    $('#grand_total_view').val(intToIDR(parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())))
+    $('#grand_total').val((parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())));
+    $('#grand_total_view').val(intToIDR(parseFloat($('#total_dpp').val())+parseFloat($('#ppn').val())));
+    $('#grand_view').val(intToIDR(parseFloat($('#grand_total').val())+parseFloat($('#pengiriman').val())));
+
   }
 
   function hitungqty(){
@@ -181,9 +190,44 @@
     $('#total_qty').val(parseInt(totalqty));
   }
 
+  $('#pengiriman').keyup(function(){
+    checkMax(); hitungdpp();
+  });
+
+  function checkMax(){
+    if($("#pengiriman").val() == ''){
+      $("#pengiriman").val(0);
+    }
+    else if($('#pengiriman').val() > 0){
+      if(($('#pengiriman').val()).substring(0,1) == "0"){
+        $('#pengiriman').val($('#pengiriman').val().substring(1));
+      }
+    }
+  }
+
+  function checkMax(idx){
+    if($("#qty"+idx).val() == ''){
+      $("#qty"+idx).val(0);
+    }
+    else if($('#qty'+idx).val() > 0){
+      if(($('#qty'+idx).val()).substring(0,1) == "0"){
+        $('#qty'+idx).val($('#qty'+idx).val().substring(1));
+      }
+    }
+
+    if($("#pengiriman").val() == ''){
+      $("#pengiriman").val(0);
+    }
+    else if($('#pengiriman').val() > 0){
+      if(($('#pengiriman').val()).substring(0,1) == "0"){
+        $('#pengiriman').val($('#pengiriman').val().substring(1));
+      }
+    }
+  }
+
   function triggerqty(idx){
     $('#qty'+idx).keyup(function(){
-      hitungqty(); hitungsubtotal(idx); setTimeout(()=>{hitungorder();}, 30);
+      checkMax(idx); hitungqty(); hitungsubtotal(idx); setTimeout(()=>{hitungorder();}, 30);
     });
     $('#id'+idx).change(function(){
       hitungqty(); hitungsubtotal(idx); setTimeout(()=>{hitungorder();}, 30);
@@ -299,7 +343,7 @@
   }
 
   function delRow1(index){
-    var element = document.getElementById("t1"+index); element.remove(); hitungqty();
+    var element = document.getElementById("t1"+index); element.remove(); hitungdpp(); hitungorder();
   }
 
   // products autocomplete ----------------------
@@ -370,6 +414,12 @@
               $('#produk_jasa'+a).val(products);
             var tgl_quotation = data.tgl_quotation;
               $('#tanggal_quotation'+a).val(tgl_quotation);
+            var idAkun = data.id_akun;
+              $('#idAkun'+a).val(idAkun);
+            var nomorAkun = data.nomor_akun;
+              $('#nomorAkun'+a).val(nomorAkun);
+            var namaAkun = data.nama_akun;
+              $('#namaAkun'+a).val(namaAkun);
             var harga = data.harga;
               $('#dpp'+a).val(harga);
             var pkp = data.pkp;

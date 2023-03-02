@@ -109,7 +109,7 @@
     $("#akun").autocomplete("COALovParent.php?", {
       width: 178
     });
-    //   console.log('here'+a)  ;
+
     $("#akun").result(function (event, data, formatted) {
       var nama = document.getElementById("akun").value;
       for (var i = 0; i < nama.length; i++) {
@@ -117,7 +117,7 @@
         if (id[1] == "") continue;
         var id_pd = id[1];
       }
-      // console.log(id_pd);
+
       $.ajax({
         url: 'COALoVdet.php?id=' + id_pd,
         dataType: 'json',

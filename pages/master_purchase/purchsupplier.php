@@ -118,19 +118,11 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
 
   foreach ($data1 as $line){
 
-    if ($line['penyusutan'] == '0'){
-      $penyusutanValue = '-';
-    } else {
-      $penyusutanValue = $line['penyusutan'];
-    }
-
     $responce->rows[$i]['id']   = $line['id'];
     $responce->rows[$i]['cell'] = array(
       $i + 1,
       $line['produk_jasa'],
       $line['tgl'],
-      $line['kategori'],
-      $penyusutanValue,
       $line['satuan'],
       number_format($line['harga'],0),
     );
@@ -146,7 +138,11 @@ elseif(isset($_GET['action']) && (strtolower($_GET['action']) == 'add')){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   $stmt = $db->prepare("UPDATE `mst_supplier` SET deleted=? WHERE id=?");
   $stmt->execute(array(1, $_GET['id']));
+
   $affected_rows = $stmt->rowCount();
+
+  $stmt = $db->prepare("UPDATE `mst_produk` SET id_supplier=? WHERE id_supplier=?");
+  $stmt->execute(array(0, $_GET['id']));
 
   if($affected_rows > 0) {
     $r['stat'] = 1; $r['message'] = 'Success';
@@ -208,9 +204,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       subGridUrl    : '<?= BASE_URL.'pages/master_purchase/purchsupplier.php?action=json_sub'; ?>',
       subGridModel  : [
         {
-          name  : ['No','Produk / Jasa','Tanggal Quotation','Kategori','Bulan Penyusutan','Satuan','Harga'],
-          width : [30,250,100,70,70,70,70],
-          align : ['right','left','center','center','center','center','right'],
+          name  : ['No','Produk / Jasa','Tanggal Quotation','Satuan','Harga'],
+          width : [30,250,100,70,70],
+          align : ['right','left','center','center','right'],
         }
       ],
     });
