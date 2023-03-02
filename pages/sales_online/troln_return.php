@@ -173,8 +173,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 		$idparent=$q['id'];
 			
-		$dpp = $total / 1.11;
-		$ppn = $total / 1.11 * 0.111;
+		$dpp = round($total / 1.11);
+		$ppn = round(round($total / 1.11) * 0.11);
 
 		if($type=='Cash'){
 			$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('04.01.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
@@ -215,15 +215,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 			mysql_query($sqlakun4) or die (mysql_error());
 		}
 
-		$select2 = $db->prepare("Select max(substring(kode,3,10)+1) as kode_id from olndeposit where kode like 'TD%'");
-		$select2->execute();
-		$row2  = $select2->fetch(PDO::FETCH_ASSOC);
-		$kode  = "TD".sprintf("%03d", $row2['kode_id']);
+		if($type=='Cash'){
+			$select2 = $db->prepare("Select max(substring(kode,3,10)+1) as kode_id from olndeposit where kode like 'TD%'");
+			$select2->execute();
+			$row2  = $select2->fetch(PDO::FETCH_ASSOC);
+			$kode  = "TD".sprintf("%03d", $row2['kode_id']);
 
-		// tambah saldo dropshipper
-		$sqlsaldo="INSERT INTO `olndeposit` VALUES
-			('$kode','$kode','$tgl','$dropshipper','','REFUND ORDER #$ref_kode','DEPOSIT','0','0',NULL,'$totalreturn','$totalreturn','0','0', '0','$totalreturn','0','0','$id_user',NOW());";
-		mysql_query($sqlsaldo) or die (mysql_error());
+			// tambah saldo dropshipper
+			$sqlsaldo="INSERT INTO `olndeposit` VALUES
+				('$kode','$kode','$tgl','$dropshipper','','REFUND ORDER #$ref_kode','DEPOSIT','0','0',NULL,'$totalreturn','$totalreturn','0','0', '0','$totalreturn','0','0','$id_user',NOW());";
+			mysql_query($sqlsaldo) or die (mysql_error());
+		}
 
 		//update olnsoreturn agar jadi 1 krn return confirmed,tapi statenya dikasih string='1' krn tipe datanya enum
 		$stmt = $db->prepare("Update olnsoreturn set state='1',lastmodified=now() WHERE id_trans=?");

@@ -193,8 +193,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 			$idparent=$q['id'];
 			
-			$dpp = $total / 1.11;
-			$ppn = $total / 1.11 * 0.111;
+			$dpp = round($total / 1.11);
+			$ppn = round(round($total / 1.11) * 0.11);
 			
 
 			if($tunai > 0){
