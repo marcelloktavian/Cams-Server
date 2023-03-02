@@ -194,7 +194,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			$idparent=$q['id'];
 			
 			$dpp = round($total / 1.11);
-			$ppn = round(round($total / 1.11) * 0.11);
+			$ppn = round($total / 1.11 * 0.11);
 			
 
 			if($tunai > 0){

@@ -174,7 +174,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$idparent=$q['id'];
 			
 		$dpp = round($total / 1.11);
-		$ppn = round(round($total / 1.11) * 0.11);
+		$ppn = round($total / 1.11 * 0.11);
 
 		if($type=='Cash'){
 			$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('04.01.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");

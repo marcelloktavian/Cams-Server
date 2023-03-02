@@ -58,8 +58,8 @@ include("../../include/koneksi.php");
 	$exp_note 	= $_POST['exp_note'];
 	$note 		= $_POST['txtbrg'];
 	$ref_kode 		= $_POST['ref_kode'];
-	$row=$_GET['baris'];
-
+	$row=$_POST['jum'];
+	 
 	//var_dump('tanggal= '.$tgl);die;
 	//--------akhir tarik parameter utk simpan------------
 	//inisialisasi subtotal
@@ -301,7 +301,7 @@ include("../../include/koneksi.php");
 	$idparent=$q['id'];
 	
 	$dpp = round($total / 1.11);
-	$ppn = round(round($total / 1.11) * 0.11);
+	$ppn = round($total / 1.11 * 0.11);
 
 	$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('01.05.',IF(LENGTH('$customer')=1,'0000',IF(LENGTH('$customer')=2,'000',IF(LENGTH('$customer')=3,'00',IF(LENGTH('$customer')=4,'0','')))), '$customer')");
 	while($akun1 = mysql_fetch_array($query1)){
