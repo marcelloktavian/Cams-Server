@@ -35,7 +35,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 ?>
 <div class="ui-widget ui-form" style="margin-bottom:5px">
  <div class="ui-widget-header ui-corner-top padding5">
-        Filter Data
+        Print Jurnal Transaksi
     </div>
     <div class="ui-widget-content ui-corner-bottom">
         <form id="report_project_form" method="" action="" class="ui-helper-clearfix">
@@ -49,11 +49,18 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 				<td> s.d.  
 				<input value="" type="text" class="required datepicker"  id="enddate_jurnalrpt" name="enddate_jurnalrpt">
 				</td>
-				<!-- <td> No Akun
+				</tr>
+				</table>
+            </div>
+            <label for="project_id" class="ui-helper-reset label-control">No Akun</label>
+            <div class="ui-corner-all form-control">
+            	<table>
+				<tr>
+				<td> 
                 <select name="noakun_id" id="noakun_id" class="my-select">
                            
                 </select>
-				</td> -->
+				</td>
 				</tr>
 				</table>
             </div>
@@ -76,17 +83,16 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 	*/
 ?>
 -->
-
 <script type="text/javascript">
 	 
 	$('#startdate_jurnalrpt').datepicker({
-		dateFormat: "dd/mm/yy"
+		dateFormat: "dd/mm/yy",
 	});
 	$('#enddate_jurnalrpt').datepicker({
-		dateFormat: "dd/mm/yy"
+		dateFormat: "dd/mm/yy",
 	});
-	$( "#startdate_jurnalrpt" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
-	$( "#enddate_jurnalrpt" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
+	$( "#startdate_jurnalrpt" ).datepicker( 'setDate', '<?php echo date('1/m/Y')?>' );
+	$( "#enddate_jurnalrpt" ).datepicker( 'setDate', '<?php echo date('t/m/Y')?>' );
 	
 	function printjurnal() {
 		var startdate = $('#startdate_jurnalrpt').val();
@@ -94,7 +100,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 		var akun = $('#noakun_id').val();
 		// console.log(filter+' '+lokasi_list);
 
-		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=preview&start='+startdate+'&end='+enddate);
+		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=preview&start='+startdate+'&end='+enddate+'&akun='+akun);
 		
 	}
 
