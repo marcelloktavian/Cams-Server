@@ -49,7 +49,10 @@
 			
 			<label for="tipe" class="ui-helper-reset label-control">Type</label>
             <div class="ui-corner-all form-control">
-                <input value="<?php echo isset($row['type']) ? $row['type'] : ''; ?>" type="text" class="required" id="tipe" name="tipe">	
+                <select class="required" id="tipe" name="tipe">
+                    <option value='E' <?php if(isset($row['type'])){if($row['type']=='E'){echo "selected";}} ?>>E</option>
+                    <option value='I' <?php if(isset($row['type'])){if($row['type']=='I'){echo "selected";}} ?>>I</option>
+                </select>	
             </div>
 <!--             
             <label for="noakun" class="ui-helper-reset label-control">No Akun</label>
