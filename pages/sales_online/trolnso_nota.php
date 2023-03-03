@@ -170,7 +170,7 @@ error_reporting(0);
 	$sensor = substr($noPhone, $afterVal, $jmlSensor);
 	$noPhone2=explode($sensor,$noPhone);
 	$newPhone=$noPhone2[0]."xxxxxxxxx";
-	$dropshipper = $ex[0].'('.$newPhone.')';
+	$dropshipper = $ex[0].' ('.$newPhone.')';
 ?>
 
 

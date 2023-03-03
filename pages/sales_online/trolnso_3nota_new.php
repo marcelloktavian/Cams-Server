@@ -209,7 +209,7 @@ error_reporting(0);
 		$sensor = substr($noPhone, $afterVal, $jmlSensor);
 		$noPhone2=explode($sensor,$noPhone);
 		$newPhone=$noPhone2[0]."xxxxxxxxx";
-		$dropshipper = $ex[0].'('.$newPhone.')';
+		$dropshipper = $ex[0].' ('.$newPhone.')';
 	  ?>
 	  <div class="<?=$class_page_break?>">
   <table width="100%" border="0" class="cut-off "  align="center" cellpadding="0" cellspacing="0">
