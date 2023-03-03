@@ -11,6 +11,11 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
   $sidx   = $_GET['sidx'];
   $sord   = $_GET['sord'];
 
+  $page = isset($_GET['page'])?$_GET['page']:1; // get the requested page
+  $limit = isset($_GET['rows'])?$_GET['rows']:20; // get how many rows we want to have into the grid
+  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'pemohon'; // get index row - i.e. user click to sort
+  $sord = isset($_GET['sord'])?$_GET['sord']:'';
+
   if(!$sidx) $sidx=1;
 
   // << searching _filter ------------------------------
@@ -58,9 +63,9 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
 
   $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
-  $response['page']     = $page;
-  $response['total']    = $total_pages;
-  $response['records']  = $count;
+  $responce['page']     = $page;
+  $responce['total']    = $total_pages;
+  $responce['records']  = $count;
 
   $i=0;
   foreach($data1 as $line){
