@@ -176,7 +176,7 @@ error_reporting(0);
 	$ids=substr($ids,0,-1);
     $id_faktur1=$_GET['id_trans1'];
     //$id_faktur=TSO18020021;
-	$sql_m1="SELECT a.*,b.nama AS dropshipper,c.nama as exp,c.kode_warna,d.kecamatan,d.kabupaten,d.provinsi,i.id_ship as id_kirim FROM olnso a 
+	$sql_m1="SELECT a.*,b.nama AS dropshipper,c.nama as exp,c.kode_warna,d.kecamatan,d.kabupaten,d.provinsi,i.id as id_kirim FROM olnso a 
 	left join mst_dropshipper b on a.id_dropshipper = b.id
 	left join mst_expedition c on a.id_expedition = c.id
 	left join mst_address d on a.id_address = d.id
