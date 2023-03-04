@@ -40,7 +40,7 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
 		$where .=" AND DATE(p.lastmodified) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y')";
 		}
 		//((p.ref_code like '%$filter%') or (j.nama like '%$filter%') or (p.nama like '%$filter%') or (e.nama like '%$filter%') or (p.exp_code like '%$filter%'))
-		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition,i.id as id_kirim, date(p.lastmodified) as tanggal FROM `tbl_backdatecancel` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) Left Join `olnso_id` i on (p.id_trans=i.id_trans) ".$where;
+		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition,i.id_ship as id_kirim, date(p.lastmodified) as tanggal FROM `tbl_backdatecancel` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) Left Join `olnso_id` i on (p.id_trans=i.id_trans) ".$where;
         // var_dump($sql);die;
 		$q = $db->query($sql);
 		$count = $q->rowCount();
@@ -88,7 +88,7 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
 
         	$responce['rows'][$i]['id']   = $line['id_trans'];
             $responce['rows'][$i]['cell'] = array(
-                $line['id_kirim'],
+                // $line['id_kirim'],
                 $line['id_trans'],
                 $line['ref_kode'],                
                 $line['dropshipper'],                
@@ -401,9 +401,9 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
             },*/
             datatype: "json",
             //colNames:['ID','Customer','Tanggal Transaksi','Qty','Faktur','Ongkos Kuli','Total Faktur','Tunai','Bank','View','Delete'],
-            colNames:['ID_ship','ID_oln','ID_web','Dropshipper','Post.Date','Receiver','Address','Exp_fee','Expedition','Exp.Code','Qty'],
+            colNames:['ID_oln','ID_web','Dropshipper','Post.Date','Receiver','Address','Exp_fee','Expedition','Exp.Code','Qty'],
             colModel:[
-                {name:'id_kirim',index:'id_kirim', align:'right', width:20, search:true, stype:'text', searchoptions:{sopt:['cn']}},
+                // {name:'id_kirim',index:'id_kirim', align:'right', width:20, search:true, stype:'text', searchoptions:{sopt:['cn']}},
                 {name:'id_trans',index:'id_trans', width:40, search:true, stype:'text', searchoptions:{sopt:['cn']}},
                 {name:'ref_kode',index:'ref_kode', align:'right', width:25, search:true, stype:'text', searchoptions:{sopt:['cn']}},
                 {name:'dropshipper',index:'dropshipper', width:60, searchoptions: {sopt:['cn']}},                

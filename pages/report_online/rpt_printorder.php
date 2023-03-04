@@ -176,14 +176,14 @@ error_reporting(0);
 	*/
 	if(($ship_start != null) and ($ship_end != null))
 	{
-	$filter_title=" AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y') AND i.id BETWEEN '$ship_start' AND '$ship_end'";
+	$filter_title=" AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y') AND i.id_ship BETWEEN '$ship_start' AND '$ship_end'";
 	}
 	else
 	{
 	$filter_title=" AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y') ";
 	}
 	
-	$sql_title ="SELECT (SELECT i.id as id_kirim FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY i.id ASC LIMIT 1) AS first_ship,(SELECT i.id as id_kirim FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY i.id DESC LIMIT 1) AS last_ship,(SELECT so.id_trans FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY so.id_trans ASC LIMIT 1) AS first_order,
+	$sql_title ="SELECT (SELECT i.id_ship as id_kirim FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY i.id ASC LIMIT 1) AS first_ship,(SELECT i.id_ship as id_kirim FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY i.id DESC LIMIT 1) AS last_ship,(SELECT so.id_trans FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans)  WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY so.id_trans ASC LIMIT 1) AS first_order,
     (SELECT so.id_trans FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans) WHERE (so.state='1') and (so.deleted=0) $filter_title ORDER BY so.id_trans DESC LIMIT 1) AS last_order ,
     (SELECT COUNT(so.id_trans) FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans) WHERE (so.state='1') and (so.deleted=0) $filter_title) AS jumlah_order,
 	(SELECT SUM(so.totalqty) FROM olnso so LEFT JOIN `olnso_id` i on (so.id_trans=i.id_trans) WHERE (so.state='1') and (so.deleted=0) $filter_title) AS jumlah_qty";
@@ -282,7 +282,7 @@ error_reporting(0);
 	
 	
     
-	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id as id_kirim FROM olnsodetail dt
+	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id_ship as id_kirim FROM olnsodetail dt
     INNER JOIN olnso m ON dt.id_trans = m.id_trans
     LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
     LEFT JOIN olnso_id i ON m.id_trans = i.id_trans 

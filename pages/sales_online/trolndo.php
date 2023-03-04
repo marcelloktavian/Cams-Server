@@ -41,7 +41,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 		$where .=" AND DATE(p.lastmodified) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y')";
 		}
 		//((p.ref_code like '%$filter%') or (j.nama like '%$filter%') or (p.nama like '%$filter%') or (e.nama like '%$filter%') or (p.exp_code like '%$filter%'))
-		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition,i.id as id_kirim, date(p.lastmodified) as tanggal FROM `olnso` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) Left Join `olnso_id` i on (p.id_trans=i.id_trans) ".$where;
+		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition,i.id_ship as id_kirim, date(p.lastmodified) as tanggal FROM `olnso` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) Left Join `olnso_id` i on (p.id_trans=i.id_trans) ".$where;
         //var_dump($sql);die;
 		$q = $db->query($sql);
 		$count = $q->rowCount();
