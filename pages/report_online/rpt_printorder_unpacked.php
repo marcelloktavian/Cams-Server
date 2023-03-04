@@ -289,7 +289,7 @@ $filter_title="";
 	*/
 	if(($ship_start != null) and ($ship_end != null))
 	{
-		$where .=" AND i.id BETWEEN '$ship_start' AND '$ship_end'";
+		$where .=" AND i.id_ship BETWEEN '$ship_start' AND '$ship_end'";
 	}
 	
 	if ($id_exp != null)
