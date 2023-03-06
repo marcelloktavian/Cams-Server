@@ -1431,9 +1431,12 @@ function cetak(){
     var tglkirim        = form2.tglkirim.value;
     var tgljatuhtempo   = form2.tgljatuhtempo.value;
     var id_expedition   = form2.id_expedition.value;
+    var totalkirim   	= form2.totalkirim.value;
 	
 	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
-	    
+	if (totalkirim == '') {
+            pesan = 'Total tidak boleh kosong\n';
+        }  
 	if (tgljatuhtempo == '') {
             pesan = 'Tanggal jatuh tempo tidak boleh kosong\n';
         }
