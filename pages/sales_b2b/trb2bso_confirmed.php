@@ -178,7 +178,7 @@ foreach($data1 as $line) {
         // $masterNo=$q['nomor'];
 
         // // insert jurnal
-        // $stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW() FROM jurnal WHERE keterangan LIKE '%".$_POST['id']."%') ");
+        // $stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'B2B' FROM jurnal WHERE keterangan LIKE '%".$_POST['id']."%') ");
         // $stmt->execute();
 
         // //get master id terakhir
@@ -232,7 +232,7 @@ foreach($data1 as $line) {
             // $masterNo=$q['nomor'];
 
             // // insert jurnal
-            // $stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW() FROM jurnal WHERE keterangan LIKE '%".$_GET['id']."%') ");
+            // $stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'B2B' FROM jurnal WHERE keterangan LIKE '%".$_GET['id']."%') ");
             // $stmt->execute();
 
             // //get master id terakhir

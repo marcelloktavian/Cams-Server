@@ -190,7 +190,7 @@ Keterangan Retur
 ?>
 
 <script type="text/javascript">
-	var valuenya = parseFloat(document.getElementById("totalhidden").value);
+	var valuenya = parseInt(document.getElementById("totalhidden").value);
 	document.getElementById("totalhidden").value = valuenya.toLocaleString('IND', {style: 'currency', currency: 'IDR'});
 
 //autocomplete pada grid
@@ -541,7 +541,7 @@ function hitungtotal(){
           document.getElementById("disc_faktur").value = 0;
 	}
 	discfaktur=document.getElementById("disc_faktur").value;
-	var discfaktur_murni=parseFloat(discfaktur.replace(".", ""));
+	var discfaktur_murni=parseInt(discfaktur.replace(".", ""));
 	
     for (var i=1; i<=baris1;i++){
 	var barcode=document.getElementById("BARCODE"+i+"");
@@ -567,10 +567,10 @@ function hitungtotal(){
 		}
 
 		//alert("subtotal ="+subtotal.toString())
-		totalreturn+= parseFloat(subtotal);
-		totalqty+= parseFloat(qty);
-		totalqtyreturn+= parseFloat(qtyreturn);
-		totalpenalty+= parseFloat(penalty);
+		totalreturn+= parseInt(subtotal);
+		totalqty+= parseInt(qty);
+		totalqtyreturn+= parseInt(qtyreturn);
+		totalpenalty+= parseInt(penalty);
 		
 	 }
 		//else{}
@@ -580,11 +580,10 @@ function hitungtotal(){
     //alert("totalqtyreturn="+totalqtyreturn.toString()+"disc_faktur"+discfaktur_murni.toString());
 	
 	
-	document.getElementById("faktur").value = Math.ceil(totalreturn);	
+	document.getElementById("faktur").value = totalreturn;	
     
 	//totalreturn dikurangi disc_faktur
 	totalreturn=totalreturn- discfaktur_murni;
-	totalreturn = Math.ceil(totalreturn);
     document.getElementById("tunai").value = 0;	
     //totalhidden dipake buat validasi saja
 	document.getElementById("totalreturnhidden").value = totalreturn;	

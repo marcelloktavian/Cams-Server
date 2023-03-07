@@ -76,6 +76,8 @@ for($i=1; $i<$row; $i++){
     $remaining            = $_POST['total_sisa_inv'.$i];
 
     $sql_detail = "INSERT INTO `det_ap` (`id_ap`,`id_invoice`,`no_invoice`,`tanggal_invoice`,`tanggal_jatuh_tempo`,`qty`,`remaining`,`total`) VALUES ('$id_ap[0]','$id_invoice','$no_invoice','$tanggal_invoice','$tanggal_jatuh_tempo','$qty','$remaining','$total')";
+
+    var_dump($sql_detail);
     
     $query      = mysql_query($sql_detail);
   }
@@ -89,7 +91,6 @@ $query    = mysql_query($qty_ap);
 $query    = mysql_query($rem_ap);
 
 ?>
-
 <script language="javascript">
   window.close();
 </script>

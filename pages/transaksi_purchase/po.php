@@ -14,6 +14,11 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $sidx   = $_GET['sidx'];
   $sord   = $_GET['sord'];
 
+  $page = isset($_GET['page'])?$_GET['page']:1; // get the requested page
+  $limit = isset($_GET['rows'])?$_GET['rows']:20; // get how many rows we want to have into the grid
+  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'id'; // get index row - i.e. user click to sort
+  $sord = isset($_GET['sord'])?$_GET['sord']:'';
+
   if(!$sidx) $sidx = 1;
 
   // << searching _filter ------------------------------
@@ -42,11 +47,9 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
   $count = $q->rowCount();
   $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
-
   if ($page > $total_pages) $page=$total_pages;
-
   $start = $limit*$page - $limit;
-  if($start<0) $start = 0;
+  if($start <0) $start = 0;
 
   $q = $db->query($sql_po.$where." 
     ORDER BY `".$sidx."` ".$sord." 
@@ -55,11 +58,11 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
   $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
-  $response['page']     = $page;
-  $response['total']    = $total_pages;
-  $response['records']  = $count;
+  $responce['page'] = $page;
+  $responce['total'] = $total_pages;
+  $responce['records'] = $count;
   
-  $responce = array();
+  // $responce = array();
   $i=0;
   foreach($data1 as $line){
 
@@ -124,7 +127,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       number_format($line['total_dpp'],0),
       number_format($line['ppn'],0),
       number_format($line['grand_total'],0),
-      number_format($line['pengiriman'],0),
+      // number_format($line['pengiriman'],0),
       $line['catatan'],
       $postApproval,
       $edit,
@@ -317,7 +320,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_po').jqGrid({
       url       : '<?= BASE_URL.'pages/transaksi_purchase/po.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID','Dokumen','Pemohon','Supplier','Tgl PO','ETA Pengiriman','Total Qty','Total DPP','PPN','Grand Total','Pengiriman','Catatan','Approval','Edit','Delete','Print'],
+      colNames  : ['ID','Dokumen','Pemohon','Supplier','Tgl PO','ETA Pengiriman','Total Qty','Total DPP','PPN','Grand Total','Catatan','Approval','Edit','Delete','Print'],
       colModel  : [
         {name:'id', index: 'id', align: 'right', width:15, searchoptions: {sopt:['cn']}},
         {name:'dokumen', index: 'dokumen', align: 'left', width:40, searchoptions: {sopt:['cn']}},
@@ -329,7 +332,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         {name:'total_dpp', index:'total_odpp', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         {name:'ppn', index:'ppn', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
         {name:'grand_total', index:'grand_total', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
-        {name:'pengiriman', index:'pengiriman', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
+        // {name:'pengiriman', index:'pengiriman', align:'right', width: 40, searchoptions: {sopt: ['cn']}},
         {name:'Catatan', index:'catatan', align: 'left', searchoptions: {sopt: ['cn']}},
         {name: 'Approval', index:'approval', align:'center', width:25, sortable: false},
         {name: 'Delete', index:'delete', align:'center', width:30, sortable: false},

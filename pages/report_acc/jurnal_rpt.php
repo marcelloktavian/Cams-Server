@@ -5,20 +5,20 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
     $sql_products ="SELECT a.* FROM `mst_coa` a ";
     $query = '';
     $countnya = 0;
-    $q = $db->query($sql_products.' where a.deleted=0');
+    $q = $db->query($sql_products.' where a.deleted=0 ORDER BY noakun ASC');
     $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
     foreach($data1 as $line) {
         if ($countnya == 0) {
-            $query .= "select id, noakun, nama, jenis from mst_coa where id='".$line['id']."' ";
+            $query .= "(select id, noakun, nama, jenis from mst_coa where id='".$line['id']."'  ORDER BY noakun ASC)";
             
         } else {
-            $query .= " UNION ALL select id, noakun, nama, jenis from mst_coa  where id='".$line['id']."' ";
+            $query .= " UNION ALL (select id, noakun, nama, jenis from mst_coa  where id='".$line['id']."'  ORDER BY noakun ASC) ";
         }
         $countnya++;
         $q2 = $db->query("SELECT * FROM det_coa WHERE id_parent='".$line['id']."' ORDER by noakun ASC");
         $data2 = $q2->fetchAll(PDO::FETCH_ASSOC);
         foreach($data2 as $line2) {
-            $query .= " UNION ALL select '' as id, noakun, nama, '' as jenis from det_coa where id='".$line2['id']."' ";
+            $query .= " UNION ALL (select '' as id, noakun, nama, '' as jenis from det_coa where id='".$line2['id']."' ORDER BY noakun ASC) ";
         }
         
     }

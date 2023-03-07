@@ -293,7 +293,7 @@ include("../../include/koneksi.php");
 	$masterNo=$q['nomor'];
 
 	// execute for master
-	$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`) VALUES ('$masterNo','$tgl','Penjualan B2B - $namacustomer - $no_faktur - $ref_kode','$total','$total','0','$id_user',NOW()) ";
+	$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo','$tgl','Penjualan B2B - $namacustomer - $no_faktur - $ref_kode','$total','$total','0','$id_user',NOW(),'B2B') ";
 	mysql_query($sql_master) or die (mysql_error());
 
 	//get master id terakhir

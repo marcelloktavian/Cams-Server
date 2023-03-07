@@ -5,19 +5,20 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
     $sql_products ="SELECT a.* FROM `mst_coa` a ";
     $query = '';
     $countnya = 0;
-    $q = $db->query($sql_products.' where a.deleted=0');
+    $q = $db->query($sql_products.' where a.deleted=0 ORDER BY noakun ASC');
     $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
     foreach($data1 as $line) {
         if ($countnya == 0) {
-            $query .= "select id, noakun, nama, jenis from mst_coa where id='".$line['id']."' ";
+            $query .= "(select id, noakun, nama, jenis from mst_coa where id='".$line['id']."'  ORDER BY noakun ASC)";
+            
         } else {
-            $query .= " UNION ALL select id, noakun, nama, jenis from mst_coa  where id='".$line['id']."' ";
+            $query .= " UNION ALL (select id, noakun, nama, jenis from mst_coa  where id='".$line['id']."'  ORDER BY noakun ASC) ";
         }
         $countnya++;
         $q2 = $db->query("SELECT * FROM det_coa WHERE id_parent='".$line['id']."' ORDER by noakun ASC");
         $data2 = $q2->fetchAll(PDO::FETCH_ASSOC);
         foreach($data2 as $line2) {
-            $query .= " UNION ALL select '' as id, noakun, nama, '' as jenis from det_coa where id='".$line2['id']."' ";
+            $query .= " UNION ALL (select '' as id, noakun, nama, '' as jenis from det_coa where id='".$line2['id']."' ORDER BY noakun ASC) ";
         }
         
     }
@@ -38,12 +39,15 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
     </div>
     <div class="ui-widget-content ui-corner-bottom">
         <form id="report_project_form" method="" action="" class="ui-helper-clearfix">
-        	<label for="project_id" class="ui-helper-reset label-control">Tanggal</label>
+        	<label for="project_id" class="ui-helper-reset label-control">Bulan</label>
             <div class="ui-corner-all form-control">
             	<table>
 				<tr>
 				<td>
 				 <input value="" type="text" class="required datepicker"   id="startdate_bukubesarrpt" name="startdate_bukubesarrpt">
+				</td>
+                <td> s.d.  
+				<input value="" type="text" class="required datepicker"  id="enddate_bukubesarrpt" name="enddate_bukubesarrpt">
 				</td>
 				</tr>
 				</table>
@@ -81,18 +85,22 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 -->
 <script type="text/javascript">
 	 
-	$('#startdate_bukubesarrpt').datepicker({
-		dateFormat: "mm/yy",
+     $('#startdate_bukubesarrpt').datepicker({
+		dateFormat: "dd/mm/yy",
 	});
-	$( "#startdate_bukubesarrpt" ).datepicker( 'setDate', 'today' );
+	$('#enddate_bukubesarrpt').datepicker({
+		dateFormat: "dd/mm/yy",
+	});
+	$( "#startdate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('1/m/Y')?>' );
+	$( "#enddate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('t/m/Y')?>' );
 	
 	function printbukubesar() {
 		var startdate = $('#startdate_bukubesarrpt').val();
+		var enddate = $('#enddate_bukubesarrpt').val();
 		var akun = $('#noakunbukubesar_id').val();
 		// console.log(filter+' '+lokasi_list);
 
-		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
-		
+		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&end='+enddate+'&akun='+akun);
 	}
 
     load_pelanggan = function (){

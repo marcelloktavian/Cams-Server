@@ -107,6 +107,8 @@ require_once "../../include/config.php";
         <th>Satuan</th>
         <th>DPP/Unit</th>
         <th>Subtotal Sisa</th>
+        <th>Nomor Akun</th>
+        <th>Nama Akun</th>
       </tr>
     </thead>
     <tbody>
@@ -142,6 +144,10 @@ require_once "../../include/config.php";
             <td class="table-light"><input class="text-left" type="text" name="dpp_formatted<?= $baris ?>" id="dpp_formatted<?= $baris ?>" value="" style="text-align:left; border: 0;" size="10" readonly /><input class="text-right" type="hidden" name="dpp_unit<?= $baris ?>" id="dpp_unit<?= $baris ?>" value="<?= $det_po['price'] ?>" size="10" style="text-align:left; border: 0;" readonly></td>
 
             <td class="table-light"><input type="hidden" name="subtotal_value" id="subtotal_value" value="<?= $det_po['subtotal']+($det_po['subtotal']*$det_po['persen_ppn']/100) ?>" /><input type="hidden" name="subtotal_hidden<?= $baris ?>" id="subtotal_hidden<?= $baris ?>" value="<?= $det_po['subtotal']+($det_po['subtotal']*$det_po['persen_ppn']/100) ?>" readonly><input type="text" name="subtotal<?= $baris ?>" id="subtotal<?= $baris ?>" value="" style="text-align:left; border: 0;" readonly></td>
+
+            <td class="table-light"><input type="hidden" name="id_akun<?= $baris ?>" id="id_akun<?= $baris ?>" value="<?= $det_po['id_akun'] ?>" /><input type="text" name="nomor_akun<?= $baris ?>" id="nomor_akun<?= $baris ?>" value="<?= $det_po['nomor_akun'] ?>" /></td>
+
+            <td class="table-light"><input type="text" name="nama_akun<?= $baris ?>" id="nama_akun<?= $baris ?>" value="<?= $det_po['nama_akun'] ?>" /></td>
 
             <input type="hidden" id="persen_po<?= $baris ?>" name="persen_po<?= $baris ?>" value="<?= $det_po['persen_ppn'] ?>">
 
@@ -202,6 +208,9 @@ require_once "../../include/config.php";
             window.opener.document.getElementById('qty_payment'+(window.opener.baris1-1)).value = $('#qty_terbayar'+i).val();
             window.opener.document.getElementById('satuan'+(window.opener.baris1-1)).value = $('#satuan'+i).val();
             window.opener.document.getElementById('dpp_unit'+(window.opener.baris1-1)).value = $('#dpp_unit'+i).val();
+            window.opener.document.getElementById('idAkun'+(window.opener.baris1-1)).value = $('#id_akun'+i).val();
+            window.opener.document.getElementById('nomorAkun'+(window.opener.baris1-1)).value = $('#nomor_akun'+i).val();
+            window.opener.document.getElementById('namaAkun'+(window.opener.baris1-1)).value = $('#nama_akun'+i).val();
             window.opener.addNewRow1();
           }
         }

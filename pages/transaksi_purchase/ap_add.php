@@ -190,6 +190,15 @@
     var akun          = $('#ap_add').find('input[name="akun"]').val();
     var total_ap      = $('#total_ap_value').val();
 
+    for(var i = 0; i<baris1; i++){
+      if((typeof $('#id_invoice'+i) != undefined) && ($('#id_invoice'+i).val() != '')){
+        if(parseInt($('#total_inv'+i).val()) == 0){
+          pesan = "Total pembayaran nomor invoice - "+ $('#nomor_invoice'+i).val() +" masih kosong.";
+          i = baris1;
+        }
+      }
+    }
+
     if(tanggal_ap == ''){
       pesan = 'Tanggal AP tidak boleh kosong\n';
     }

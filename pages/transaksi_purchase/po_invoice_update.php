@@ -39,6 +39,9 @@ for($i=1; $i<$row; $i++){
     $satuan           = $_POST['satuan'.$i];
     $persen_ppn       = $_POST['persen_ppn'.$i];
     $subtotal         = $_POST['subtotal_inv'.$i];
+    $idAkun           = $_POST['idAkun'.$i];
+    $nomorAkun        = $_POST['nomorAkun'.$i];
+    $namaAkun         = $_POST['namaAkun'.$i];
 
     $sql_detail_check = "SELECT * FROM `det_invoice` WHERE `id_po`=".$id_po." AND `id_produk`=".$id_produk." AND `id`='$id_detail'";
 
@@ -49,7 +52,7 @@ for($i=1; $i<$row; $i++){
       $sql_detail       = "UPDATE `det_invoice` SET `qty`='$qty', `subtotal`='$subtotal',`deleted`=0 WHERE `id`='$id_detail'";
     }
     else {
-      $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`) VALUES ('$id_po','$id_detail','$id_invoice','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal')";
+      $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
     }
 
     // var_dump($sql_detail);

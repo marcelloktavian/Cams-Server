@@ -24,6 +24,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
         $sord = isset($_GET['sord'])?$_GET['sord']:''; 
 	    
 		$filter=$_GET['filter'];
+		$status=$_GET['status_jurnal'];
 
         $where = "WHERE TRUE AND deleted=0 ";
 		
@@ -33,9 +34,12 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 		if($filter != null){
 			$where .= " AND (no_jurnal like '%$filter%' OR keterangan  like '%$filter%') ";
 		}
+		if($status != '' && $status != 'ALL'){
+			$where .= " AND (`status`='$status') ";
+		}
         $sql = "SELECT * FROM `jurnal` ".$where;
         
-		//var_dump($sql);
+		// var_dump($sql);
         
 		$q = $db->query($sql);
 		$count = $q->rowCount();
@@ -202,7 +206,24 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 				<input value="" type="text" class="required datepicker"  id="end_jurnal" name="end_jurnal">
 				</td>
 				<td> Filter
-				 <input value="" type="text" id="filter" name="filter">(No Jurnal, Keterangan)
+				 <input value="" type="text" id="filter_jurnal" name="filter_jurnal">(No Jurnal, Keterangan)
+				</td>
+				</tr>
+				</table>
+            </div>
+			<label for="project_id" class="ui-helper-reset label-control">Status</label>
+            <div class="ui-corner-all form-control">
+            	<table>
+				<tr>
+				<td>
+				 	<select id="status_jurnal" name="status_jurnal">
+						<option value="ALL">ALL</option>
+						<option value="MANUAL">MANUAL</option>
+						<option value="OLN">OLN</option>
+						<option value="B2B">B2B</option>
+						<option value="RETUR">RETUR</option>
+						<option value="AP">AP</option>
+					</select>
 				</td>
 				</tr>
 				</table>
@@ -249,12 +270,13 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 	$( "#start_jurnal" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
 	$( "#end_jurnal" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
 	
-	
 	function gridReloadJurnal(){
 		var start_jurnal = $("#start_jurnal").val();
 		var end_jurnal = $("#end_jurnal").val();
-		var filter = $("#filter").val();
-		var v_url ='<?php echo BASE_URL?>pages/Transaksi_acc/jurnalmanual.php?action=json&start_jurnal='+start_jurnal+'&end_jurnal='+end_jurnal+'&filter='+filter ;
+		var filter = $("#filter_jurnal").val();
+		var status_jurnal = $("#status_jurnal").val();
+		
+		var v_url ='<?php echo BASE_URL?>pages/Transaksi_acc/jurnalmanual.php?action=json&start_jurnal='+start_jurnal+'&end_jurnal='+end_jurnal+'&filter='+filter+'&status_jurnal='+status_jurnal ;
 		jQuery("#table_jurnal").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
 	}
 

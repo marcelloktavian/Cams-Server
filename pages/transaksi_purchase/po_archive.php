@@ -1,6 +1,7 @@
 <?php
 
 require_once '../../include/config.php';
+include "../../include/koneksi.php";
 
 $group_access   = unserialize(file_get_contents('../../GROUP_ACCESS_CACHE'.$_SESSION['user']['group_id']));
 $allow_add      = is_show_menu(ADD_POLICY   , po, $group_access);
@@ -13,6 +14,11 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $limit  = $_GET['rows'];
   $sidx   = $_GET['sidx'];
   $sord   = $_GET['sord'];
+
+  $page = isset($_GET['page'])?$_GET['page']:1; // get the requested page
+  $limit = isset($_GET['rows'])?$_GET['rows']:20; // get how many rows we want to have into the grid
+  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'id'; // get index row - i.e. user click to sort
+  $sord = isset($_GET['sord'])?$_GET['sord']:'';
 
   if(!$sidx) $sidx = 1;
 
@@ -70,11 +76,11 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
   $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
-  $response['page']     = $page;
-  $response['total']    = $total_pages;
-  $response['records']  = $count;
+  $responce['page']     = $page;
+  $responce['total']    = $total_pages;
+  $responce['records']  = $count;
   
-  $responce = array();
+  // $responce = array();
   $i=0;
 
   foreach($data1 as $line){
@@ -172,6 +178,71 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
   include 'ap_add.php'; exit(); exit;
 }
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
+  $id_user=$_SESSION['user']['username'];
+
+  $nomor_ap = "(SELECT ap_num FROM mst_ap WHERE `id`='".$_GET['id']."')";
+
+  if($_GET['val'] == 1){
+
+    $no_jurnal = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1))))))) AS nomor FROM jurnal ORDER BY id DESC LIMIT 1");
+
+    if(mysql_num_rows($no_jurnal) == '1'){
+    }else{
+      $no_jurnal = mysql_query("select CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001') as nomor ");
+    }
+
+    $q = mysql_fetch_array($no_jurnal);
+      $nomor_jurnal=$q['nomor'];
+
+    $tgl_ap = "(SELECT DATE_FORMAT(NOW(), '%Y-%m-%d'))";
+
+    $vendor_ap  = "(SELECT CONCAT(a.`vendor`,' ',a.`telp`) FROM mst_supplier a INNER JOIN mst_ap b ON b.id_supplier=a.id AND b.`id`=".$_GET['id'].")";
+
+    $keterangan_ap = "(SELECT CONCAT('Account Payable - ',$vendor_ap,' - ',$nomor_ap))";
+
+    $total_kredit = "(SELECT grand_total FROM mst_ap WHERE id = '$_GET[id]')";
+
+    $total_debet = "(SELECT SUM(a.subtotal) AS akun_debet FROM det_invoice a INNER JOIN det_ap b ON b.id_invoice = a.id_invoice AND b.id_ap = '$_GET[id]' AND b.`deleted` = 0 AND a.`deleted` = 0)";
+
+    $user_ap = $_SESSION['user']['username'];
+
+    $q_jurnal = "INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `user`, `lastmodified`) 
+    VALUES (
+      $nomor_jurnal, $tgl_ap,$keterangan_ap,$total_debet,$total_kredit,'$user_ap',NOW()
+    )";
+
+    $q_jurnal = mysql_query($q_jurnal);
+
+    $get_jurnal_id = "(SELECT `id` FROM `jurnal` WHERE `no_jurnal`=($nomor_jurnal))";
+    $id_akun = "(SELECT id_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
+    $no_akun = "(SELECT no_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
+    $nama_akun = "(SELECT nama_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
+
+    $q_jurnal_detail = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`kredit`,`user`,`lastmodified`) VALUES ($get_jurnal_id, $id_akun, $no_akun, $nama_akun, 'AP', $total_kredit, '$user_ap', NOW())";
+
+    $q_jurnal_detail = mysql_query($q_jurnal_detail);
+
+    $sql_detail = mysql_query("SELECT a.id,a.id_detail,a.id_akun,a.nomor_akun,a.nama_akun,a.subtotal FROM det_invoice a INNER JOIN det_ap b ON b.id_invoice=a.id_invoice AND b.id_ap=".$_GET['id']." AND b.`deleted`=0 AND a.`deleted`=0");
+
+    while($rs=mysql_fetch_array($sql_detail)){
+      $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$rs['nama_akun']."', 'AP', ".$rs['subtotal'].", '$user_ap', NOW())";
+
+      $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
+    }
+  }
+  else if($_GET['val'] == 0){
+    $nomor_ap = mysql_query($nomor_ap);
+    $no_ap = mysql_fetch_array($nomor_ap);
+
+    $get_jurnal_id = "SELECT id FROM `jurnal` WHERE keterangan LIKE '%$no_ap[0]%'";
+    $get_jurnal_id = mysql_query($get_jurnal_id);
+    $get_jurnal_id = mysql_fetch_array($get_jurnal_id);
+
+    $sql_master = "DELETE FROM `jurnal` WHERE keterangan LIKE '%$no_ap[0]%'";
+    $sql_detail = "DELETE FROM `jurnal_detail` WHERE id_parent = $get_jurnal_id[0]";
+    $sql = mysql_query($sql_master); $sql = mysql_query($sql_detail);
+  }
+
   $q_post = $db->prepare("UPDATE `mst_ap` SET `posting`=? WHERE `id`=?");
   $q_post->execute(array($_GET['val'], $_GET['id']));
 

@@ -152,11 +152,11 @@
         </ul>
       </td><td class="text-right td-border td-title title-sm" style="width:12%;">PPN :</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;"><?= intToIDR($ppn) ;?></td>
     </tr>
-    <tr>
+    <tr hidden>
       <td class="text-right td-border td-title title-sm" style="width:12%;">PENGIRIMAN :</td><td class="text-right td-border" style="width:15%; padding-left:15px; padding-right:10px;"><?= intToIDR($pengiriman) ?></td>
     </tr>
     <tr>
-      <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 1em; padding-bottom: 1em;">GRAND TOTAL :</td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.5em; padding-bottom: 1em; padding-left:15px; padding-right:10px; vertical-align:center;"><?= intToIDR($grand_total+$pengiriman) ;?></td>
+      <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 1em; padding-bottom: 1em;">GRAND TOTAL :</td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.5em; padding-bottom: 1em; padding-left:15px; padding-right:10px; vertical-align:center;"><?= intToIDR($grand_total) ;?></td>
     </tr>
   </table>
 

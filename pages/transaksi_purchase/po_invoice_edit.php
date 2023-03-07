@@ -300,6 +300,21 @@
     idx.type="text"; idx.name="subtotal_inv"+index; idx.id="subtotal_inv"+index; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="30"; idx.style.textAlign = "right"; idx.value="0"; return idx;
   }
 
+  function generateIdAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="idAkun"+index; idx.id="idAkun"+index; return idx;
+  }
+
+  function generateNomorAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="nomorAkun"+index; idx.id="nomorAkun"+index; idx.size="15" ;return idx;
+  }
+
+  function generateNamaAkun(index){
+    var idx = document.createElement("input");
+    idx.type="hidden"; idx.name="namaAkun"+index; idx.id="namaAkun"+index;  idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="30"; return idx;
+  }
+
   function generateDelete(index){
     var idx = document.createElement("input");
     idx.type = "button"; idx.name = "del1"+index+""; idx.id = "del1"+index+""; idx.size = "10"; idx.value = "X"; idx.onclick = "delRow1("+index+")"; return idx;
@@ -320,6 +335,7 @@
 
     var td0 = document.createElement("td");
     var td1 = document.createElement("td");
+    var td2 = document.createElement("td");
     var td3 = document.createElement("td");
     var td4 = document.createElement("td");
     var td5 = document.createElement("td");
@@ -329,24 +345,30 @@
     var td9 = document.createElement("td");
     var td10 = document.createElement("td");
 
+    td9.hidden = "hidden";
+
     td0.appendChild(generateInvoiceDetail(baris1));
     td1.appendChild(generateIdPO(baris1));
     td1.appendChild(generateNomorDokumen(baris1));
     td1.appendChild(generatePersenPPN(baris1));
     td1.appendChild(generateKode(baris1));
-    td3.appendChild(generateIdProduk(baris1));
-    td3.appendChild(generateProdukJasa(baris1));
-    td4.appendChild(generateQuantity(baris1));
-    td4.appendChild(generateQuantityHidden(baris1));
-    td5.appendChild(generateQuantityPayment(baris1));
-    td6.appendChild(generateQuantityRemaining(baris1));
-    td7.appendChild(generateSatuan(baris1));
-    td8.appendChild(generateHargaSatuan(baris1));
-    td9.appendChild(generateSubTotal(baris1));
+    td2.appendChild(generateIdProduk(baris1));
+    td2.appendChild(generateProdukJasa(baris1));
+    td3.appendChild(generateQuantity(baris1));
+    td3.appendChild(generateQuantityHidden(baris1));
+    td4.appendChild(generateQuantityPayment(baris1));
+    td5.appendChild(generateQuantityRemaining(baris1));
+    td6.appendChild(generateSatuan(baris1));
+    td7.appendChild(generateHargaSatuan(baris1));
+    td8.appendChild(generateSubTotal(baris1));
+    td9.appendChild(generateIdAkun(baris1));
+    td9.appendChild(generateNomorAkun(baris1));
+    td9.appendChild(generateNamaAkun(baris1));
     td10.appendChild(generateDelete(baris1));
 
     row.appendChild(td0);
     row.appendChild(td1);
+    row.appendChild(td2);
     row.appendChild(td3);
     row.appendChild(td4);
     row.appendChild(td5);

@@ -131,7 +131,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 		$masterNo=$q['nomor'];
 
 		// insert jurnal
-		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penambahan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW() FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
+		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penambahan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'DEPOSIT' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
 		$stmt->execute();
 
 		//get master id terakhir
@@ -198,7 +198,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 				$masterNo=$q['nomor'];
 
 				// execute for master
-				$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`) VALUES ('$masterNo',NOW(),'Penambahan Saldo Dropdhipper - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW()) ";
+				$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',NOW(),'Penambahan Saldo Dropdhipper - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW(),'DEPOSIT') ";
 				mysql_query($sql_master) or die (mysql_error());
 
 				//get master id terakhir

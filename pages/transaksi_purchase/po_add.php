@@ -34,7 +34,7 @@
         <td class="fontjudul">TOTAL DPP<input type="text" class="" name="total_dpp_view" id="total_dpp_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="total_dpp" id="total_dpp" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">PPN<input type="text" class="" name="ppn_view" id="ppn_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="ppn" id="ppn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">GRAND TOTAL<input type="text" class="" name="grand_total_view" id="grand_total_view" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="grand_total" id="grand_total" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
-        <td class="fontjudul" style="width:18%;">GRAND TOTAL <span style="font-size:0.8em; font-weight: bold;">(+pengiriman)</span><input type="text" class="" name="grand_view" id="grand_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="grand" id="grand" style="text-align: right; font-size: 30px; background-color: white; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
+        <td class="fontjudul" style="width:18%;" hidden>GRAND TOTAL <span style="font-size:0.8em; font-weight: bold;">(+pengiriman)</span><input type="text" class="" name="grand_view" id="grand_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" class="" name="grand" id="grand" style="text-align: right; font-size: 30px; background-color: white; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
       </tr>
     </table>
 
@@ -79,7 +79,7 @@
       </thead>
     </table>
 
-    <table width="100%">
+    <table>
       <tr>
         <td>
           <p><img src='../../assets/images/tambah_baris.png' id='baru' onClick='addNewRow1()'/></p>
@@ -90,7 +90,7 @@
         <td>
           <p><img src='../../assets/images/batal.png' id='baru' onClick='tutup()'/></p>
         </td>
-        <td width="100%">
+        <td width="100%" hidden>
           <p class="fontjudul text-right">Biaya Pengiriman : <input type='text' id="pengiriman" name="pengiriman" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" /></p>
         </td>
       </tr>

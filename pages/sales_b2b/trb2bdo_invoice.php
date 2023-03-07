@@ -201,21 +201,18 @@ font-family:MS Reference Sans Serif;
 .style9_detail {    color: #000000;
     font-size: 9pt;
     font-family: Arial;
-    padding-top: 5px;
-    padding-left: 3px;
+    padding: 3px;
 }
 .style9_detail2 {   color: #000000;
     font-size: 9pt;
     font-family: Arial;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding:5.5px;
     padding-left: 3px;
 }
 .style9_detail_akhir {  color: #000000;
     font-size: 8pt;
     font-family: Arial;
-    padding-top: 5px;
-    padding-left: 3px;
+    padding: 3px;
 }
 .style19b { color: #000000;
     font-size: 11pt;
@@ -269,10 +266,10 @@ error_reporting(0);
           <tr>  
             <td colspan="13" class="style9_title_no"><div align="left" style="margin-left: 120px;"><?=$rs['nofaktur'];?></div></td>
           <th colspan="4" class="style11btlr" ><div align="left" style="margin-left: 55px"><?= $rs['customer'];?></div><br>
-          <div align="left" style="margin-left: 55px"><?=$rs['alamat'];?><?php if ($rs['kabupaten'] != '') {
-            echo ", ".$rs['kabupaten'];
+          <div align="left" style="margin-left: 55px"><?=$rs['alamat'];?> <?php if ($rs['kabupaten'] != '') {
+            echo ",".$rs['kabupaten'];
           }
-          if (strlen($rs['alamat'].', '.$rs['kabupaten'])<=40) {
+          if (strlen($rs['alamat'].', '.$rs['kabupaten'])<=42) {
             echo "<br>&nbsp;";
           }
           ?></div>
@@ -1158,12 +1155,8 @@ error_reporting(0);
             // }else{/
                 // echo "<td class='style9_detail'><div align='center'></div></td>";
             // }
-            echo"<td class='style9_titlebrg2'><div align='left' style='color:white'>&nbsp;</div></td>";
-            echo "<td class='style11btla_detail' colspan='11'><div align='left'>&nbsp;</div></td>";
-            echo "<td class='style9_detail2'><div align='center'>&nbsp;</div></td>";
-            echo "<td class='style9_detail'><div align='center'>&nbsp;</div></td>";
-            echo "<td class='style9_detail'><div align='center'>&nbsp;</div></td>";
-            echo "<td class='style9_detail'><div align='right'>&nbsp;</div></td>";
+            echo"<td class='style9_titlebrg'><div align='left' style='color:white'>".$i."</div></td>";
+            echo "<td class='style11btla_detail' colspan='11'><div align='left'></div></td>";
             // echo "<td class='style11btl_detail'><div align='center'></div></td>";
             // echo "<td class='style11btl_detail'><div align='center'></div></td>";
             // echo "<td class='style11btl_detail'><div align='center'></div></td>";
@@ -1196,8 +1189,8 @@ error_reporting(0);
             <td class="style9_detail_akhir" colspan="2">
                 No. PO : <?=$rs['no_po'];?>
             </td>  
-            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
-             <td class="style9_detail_akhir" colspan="5" style="padding-top:10px;">
+            <td class="style9_detail" colspan="11">&nbsp;</td>
+             <td class="style9_detail_akhir" colspan="5" style="padding-top:15px;">
                 <?=$rs['expedition'];?>
              </td>  
     </tr>
@@ -1205,7 +1198,7 @@ error_reporting(0);
         <td class="style9_detail_akhir" colspan="2">
                 Tgl. PO : <?=$rs['tglsales'];?>
             </td>  
-            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
+            <td class="style9_detail" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
                 <?=$rs['nokendaraan'];?>
              </td>  
@@ -1213,16 +1206,15 @@ error_reporting(0);
     <tr>
         <td class="style9_detail_akhir" colspan="2">
             </td>  
-            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
+            <td class="style9_detail" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
-                <?php $date=date_create($rs['lastmodified']) ?>
-                <?=$rs['lastmodified']=='' || $rs['lastmodified'] == null ? date("d M Y") : date_format($date,"d M Y");?>
+                <?=date("d M Y");?>
              </td>  
     </tr>
     <tr>
         <td class="style9_detail_akhir" colspan="2">
             </td>  
-            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
+            <td class="style9_detail" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
                 <?=$rs['operator'];?>
              </td>  
