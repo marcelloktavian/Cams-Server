@@ -206,9 +206,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
     $user_ap = $_SESSION['user']['username'];
 
-    $q_jurnal = "INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `user`, `lastmodified`) 
+    $q_jurnal = "INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `user`, `lastmodified`,`status`) 
     VALUES (
-      $nomor_jurnal, $tgl_ap,$keterangan_ap,$total_debet,$total_kredit,'$user_ap',NOW()
+      $nomor_jurnal, $tgl_ap,$keterangan_ap,$total_debet,$total_kredit,'$user_ap',NOW(),'AP'
     )";
 
     $q_jurnal = mysql_query($q_jurnal);
