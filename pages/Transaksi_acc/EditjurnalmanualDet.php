@@ -430,8 +430,8 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
             document.getElementById('status'+<?=$i;?>+'').value = '<?=$result['status'];?>';
             document.getElementById('noakun'+<?=$i;?>+'').value = '<?=$result['no_akun'];?>';
             document.getElementById('namaakun'+<?=$i;?>+'').value = '<?=$result['nama_akun'];?>';
-            document.getElementById('debet'+<?=$i;?>+'').value = '<?=$result['debet'];?>';
-            document.getElementById('kredit'+<?=$i;?>+'').value = '<?=$result['kredit'];?>';
+            document.getElementById('debet'+<?=$i;?>+'').value = '<?=$result['debet']==null?'0':$result['debet'];?>';
+            document.getElementById('kredit'+<?=$i;?>+'').value = '<?=$result['kredit']==null?'0':$result['kredit'];?>';
             document.getElementById('keterangan'+<?=$i;?>+'').value = '<?=$result['keterangan'];?>';
         <?php 
         $i++;
