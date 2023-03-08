@@ -227,7 +227,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 			$idparent=$q['id'];
 
 			// insert jurnal detail
-			$stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
+			$stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,jurnal_detail.`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
 			$stmt->execute();
 
 			// update trolnso agar state jadi nol dan dikembalikan ke sales_order dan stkirim jadi 0 lagi
@@ -292,7 +292,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 		$idparent=$q['id'];
 
 		// insert jurnal detail
-		$stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
+		$stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,jurnal_detail.`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
 		$stmt->execute();
 		
 		// update trolnso agar state jadi nol dan dikembalikan ke sales_order dan stkirim jadi 0 lagi
