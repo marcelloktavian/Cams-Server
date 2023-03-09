@@ -110,29 +110,37 @@
 </style>
 <?php
 require "../../include/koneksi.php";
-$startdate = $_GET['start'];
-$enddate = $_GET['end'];
+$startdate = '01/'.$_GET['start'];
+$enddate = '31/'.$_GET['start'];
+
+$arrNamaBulan = array("01"=>"Januari", "02"=>"Februari", "03"=>"Maret", "04"=>"April", "05"=>"Mei", "06"=>"Juni", "07"=>"Juli", "08"=>"Agustus", "09"=>"September", "10"=>"Oktober", "11"=>"November", "12"=>"Desember");
 
 $akun = $_GET['akun'];
 if($akun == ''){
-    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
+    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
     LEFT JOIN jurnal mst ON mst.id=det.id_parent
     WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC"; 
 }else{
-    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
+    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
     LEFT JOIN jurnal mst ON mst.id=det.id_parent
     WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun`='$akun' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC";
 }
 
 $result= mysql_query($sql);
 $data = mysql_fetch_array($result); 
+
+// header("Content-type: application/vnd.ms-excel");
+// header("Content-Disposition: attachment; filename=BUKU BESAR ".STRTOUPPER($arrNamaBulan[$data['bulan']])." ".$data['tahun'].".xls");
+// header("Cache-Control: no-cache, must-revalidate");
+// header("Pragma: no-cache");
+
 ?>
 </head><body><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
     <tbody><tr>
-        <td colspan="12" class="judul" align="center">
+        <td colspan="9" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>
             BUKU BESAR<br>
-            PERIODE <?php echo strtoupper($data['tglawal']) ?> - <?php echo strtoupper($data['tglakhir']) ?><br>
+            PERIODE <?= STRTOUPPER($arrNamaBulan[$data['bulan']])?> <?=$data['tahun']?><br>
             <br>
         </td>
     </tr>
@@ -145,53 +153,48 @@ $data = mysql_fetch_array($result);
     <tr>
         <td class="header text center" width="10%" colspan=5></td>
         <td class="header2 text left" width="10%" colspan=4>
-            NOMOR AKUN <?=$data2['no_akun']?>
+            <b>NOMOR AKUN <?=$data2['no_akun']?></b>
         </td>
     </tr>
     <tr>
-        <td class="header text center" width="10%" rowspan=2>
-            TANGGAL
+        <td class="header text center" width="10%" >
+            <center><b>TANGGAL</b></center>
         </td>
-        <td class="header text center" width="10%" rowspan=2>
-            NO JURNAL
+        <td class="header text center" width="10%" >
+            <center><b>NO JURNAL</b></center>
         </td>
-        <td class="header text center" width="10%" rowspan=2>
-            NO AKUN
+        <td class="header text center" width="10%" >
+            <center><b>NO AKUN</b></center>
         </td>
-        <td class="header text center" width="13%" rowspan=2>
-            NAMA AKUN
+        <td class="header text center" width="13%" >
+            <center><b>NAMA AKUN</b></center>
         </td>
-        <td class="header text center" width="17%" rowspan=2>
-            DESKRIPSI
+        <td class="header text center" width="17%" >
+            <center><b>DESKRIPSI</b></center>
         </td>
-        <td class="header text center" width="10%" rowspan=2>
-            DEBET
+        <td class="header text center" width="10%" >
+            <center><b>DEBET</b></center>
         </td>
-        <td class="header text center" width="10%" rowspan=2>
-            CREDIT
+        <td class="header text center" width="10%" >
+            <center><b>KREDIT</b></center>
         </td>
-        <td class="header2 text center" width="20%" colspan=2>
-            SALDO
-        </td>
-    </tr>
-    <tr>
         <td class="header text center" width="10%">
-            DEBET
+            <center><b>SALDO DEBET</b></center>
         </td>
         <td class="header2 text center" width="10%">
-            CREDIT
+            <center><b>SALDO KREDIT</b></center>
         </td>
     </tr>
     <?php } 
 
     if($akun == ''){
-        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
+        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
         LEFT JOIN jurnal mst ON mst.id=det.id_parent
-        WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY no_jurnal ASC, det.id ASC "; 
+        WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC "; 
     }else{
-        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
+        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
         LEFT JOIN jurnal mst ON mst.id=det.id_parent
-        WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY det.no_akun ASC, no_jurnal ASC, det.id ASC ";
+        WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, det.no_akun ASC, no_jurnal ASC, det.id ASC ";
     }
     $debet = 0;
     $kredit = 0;
@@ -204,10 +207,10 @@ $data = mysql_fetch_array($result);
             <td class='detail text'><?=$data3['no_akun']?></td>
             <td class='detail text'><?=$data3['nama_akun']?></td>
             <td class='detail text'><?=$data3['keterangan']?></td>
-            <td class='detail text right'><?=number_format($data3['debet'],0)?></td>
-            <td class='detail text right'><?=number_format($data3['kredit'],0)?></td>
-            <td class='detail text right'><?=number_format(0,0)?></td>
-            <td class='detail4 text right'><?=number_format(0,0)?></td>
+            <td class='detail text right'><?=number_format($data3['debet'],0,',','.')?></td>
+            <td class='detail text right'><?=number_format($data3['kredit'],0,',','.')?></td>
+            <td class='detail text right'><?=number_format(0,0,',','.')?></td>
+            <td class='detail4 text right'><?=number_format(0,0,',','.')?></td>
         </tr>
         <?php
         $debet += $data3['debet'];
@@ -217,19 +220,16 @@ $data = mysql_fetch_array($result);
         if($akun != $data2['no_akun']){
     ?>
     <tr>
-        <td class="footer text" align="right" colspan="5">TOTAL</td>
-        <td class="footer2 text" align="right"><?= number_format($debet,0) ?></td>
-        <td class="footer2 text" align="right"><?= number_format($kredit,0) ?></td>
-        <td class="footer2 text" align="right"><?= number_format(0,0) ?></td>
-        <td class="footer3 text" align="right"><?= number_format(0,0) ?></td>
+        <td class="footer text" align="right" colspan="5"><b>TOTAL</b></td>
+        <td class="footer2 text" align="right"><?= number_format($debet,0,',','.') ?></td>
+        <td class="footer2 text" align="right"><?= number_format($kredit,0,',','.') ?></td>
+        <td class="footer2 text" align="right"><?= number_format(0,0,',','.') ?></td>
+        <td class="footer3 text" align="right"><?= number_format(0,0,',','.') ?></td>
     </tr>
     <tr>
-        <td>&nbsp;</td>
+        <td colspan=9>&nbsp;<br>&nbsp;<br>&nbsp;</td>
     </tr>
-    <tr>
-        <td>&nbsp;</td>
-    </tr>
-
+  
     <?php 
             $akun = $data2['no_akun'];
         }
