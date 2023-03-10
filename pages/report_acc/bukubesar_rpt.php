@@ -46,9 +46,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 				<td>
 				 <input value="" type="text" class="required datepicker"   id="startdate_bukubesarrpt" name="startdate_bukubesarrpt">
 				</td>
-                <td> s.d.  
+                <!-- <td> s.d.  
 				<input value="" type="text" class="required datepicker"  id="enddate_bukubesarrpt" name="enddate_bukubesarrpt">
-				</td>
+				</td> -->
 				</tr>
 				</table>
             </div>
@@ -86,21 +86,21 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 <script type="text/javascript">
 	 
      $('#startdate_bukubesarrpt').datepicker({
-		dateFormat: "dd/mm/yy",
+		dateFormat: "mm/yy",
 	});
-	$('#enddate_bukubesarrpt').datepicker({
-		dateFormat: "dd/mm/yy",
-	});
-	$( "#startdate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('1/m/Y')?>' );
-	$( "#enddate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('t/m/Y')?>' );
+	// $('#enddate_bukubesarrpt').datepicker({
+	// 	dateFormat: "dd/mm/yy",
+	// });
+	$( "#startdate_bukubesarrpt" ).datepicker( 'setDate', 'today' );
+	// $( "#enddate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('t/m/Y')?>' );
 	
 	function printbukubesar() {
 		var startdate = $('#startdate_bukubesarrpt').val();
-		var enddate = $('#enddate_bukubesarrpt').val();
+		// var enddate = $('#enddate_bukubesarrpt').val();
 		var akun = $('#noakunbukubesar_id').val();
 		// console.log(filter+' '+lokasi_list);
 
-		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&end='+enddate+'&akun='+akun);
+		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
 	}
 
     load_pelanggan = function (){
