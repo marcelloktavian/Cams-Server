@@ -85,7 +85,7 @@ include("../../include/koneksi.php");
 	{
 		//---tarik parameter detail---
 		$id_product = $_POST['IDP'.$i];
-		$namabrg = $_POST['NamaBrg'.$i];
+		$namabrg = mysql_real_escape_string($_POST['NamaBrg'.$i]);
 		//var_dump($namabrg.'-iduser='.$id_user);die;
 		$Qty = $_POST['Qty'.$i];
 		$Return = $_POST['Return'.$i];
