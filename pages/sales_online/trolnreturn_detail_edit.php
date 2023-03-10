@@ -713,7 +713,7 @@ function cetak(){
 			document.getElementById('Id'+<?=$i;?>+'').value = '<?=$rs1['id_so_d'];?>';
 			document.getElementById('BARCODE'+<?=$i;?>+'').value = '<?=$rs1['id_product'];?>';
 			document.getElementById('IDP'+<?=$i;?>+'').value = '<?=$rs1['id_product'];?>';
-			document.getElementById('NamaBrg'+<?=$i;?>+'').value = '<?=$rs1['namabrg'];?>';
+			document.getElementById('NamaBrg'+<?=$i;?>+'').value = "<?=$rs1['namabrg'];?>";
 			document.getElementById('Harga'+<?=$i;?>+'').value = '<?=$rs1['harga_satuan'];?>';
 			document.getElementById('Qty'+<?=$i;?>+'').value = '<?=$rs1['jumlah_beli'];?>';
 			document.getElementById('Size'+<?=$i;?>+'').value = '<?=$rs1['size'];?>';
