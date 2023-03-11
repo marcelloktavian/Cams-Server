@@ -212,7 +212,7 @@ font-family:MS Reference Sans Serif;
 .style9_detail_akhir {  color: #000000;
     font-size: 8pt;
     font-family: Arial;
-    padding: 2.5px;
+    padding: 2px;
 }
 .style19b { color: #000000;
     font-size: 11pt;
@@ -1190,7 +1190,7 @@ error_reporting(0);
                 No. PO : <?=$rs['no_po'];?>
             </td>  
             <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
-             <td class="style9_detail_akhir" colspan="5" style="padding-top:12px;">
+             <td class="style9_detail_akhir" colspan="5" style="padding-top:15px;">
                 <?=$rs['expedition'];?>
              </td>  
     </tr>
