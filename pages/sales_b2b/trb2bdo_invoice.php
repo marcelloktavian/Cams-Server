@@ -1190,7 +1190,7 @@ error_reporting(0);
                 No. PO : <?=$rs['no_po'];?>
             </td>  
             <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
-             <td class="style9_detail_akhir" colspan="5" style="padding-top:10px;">
+             <td class="style9_detail_akhir" colspan="5" style="padding-top:12px;">
                 <?=$rs['expedition'];?>
              </td>  
     </tr>
