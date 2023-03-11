@@ -1189,7 +1189,7 @@ error_reporting(0);
             <td class="style9_detail_akhir" colspan="2">
                 No. PO : <?=$rs['no_po'];?>
             </td>  
-            <td class="style9_detail" colspan="11">&nbsp;</td>
+            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5" style="padding-top:10px;">
                 <?=$rs['expedition'];?>
              </td>  
@@ -1198,7 +1198,7 @@ error_reporting(0);
         <td class="style9_detail_akhir" colspan="2">
                 Tgl. PO : <?=$rs['tglsales'];?>
             </td>  
-            <td class="style9_detail" colspan="11">&nbsp;</td>
+            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
                 <?=$rs['nokendaraan'];?>
              </td>  
@@ -1206,7 +1206,7 @@ error_reporting(0);
     <tr>
         <td class="style9_detail_akhir" colspan="2">
             </td>  
-            <td class="style9_detail" colspan="11">&nbsp;</td>
+            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
                 <?=date("d M Y");?>
              </td>  
@@ -1214,7 +1214,7 @@ error_reporting(0);
     <tr>
         <td class="style9_detail_akhir" colspan="2">
             </td>  
-            <td class="style9_detail" colspan="11">&nbsp;</td>
+            <td class="style9_detail_akhir" colspan="11">&nbsp;</td>
              <td class="style9_detail_akhir" colspan="5">
                 <?=$rs['operator'];?>
              </td>  
