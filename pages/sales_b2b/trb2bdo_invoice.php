@@ -206,7 +206,7 @@ font-family:MS Reference Sans Serif;
 .style9_detail2 {   color: #000000;
     font-size: 9pt;
     font-family: Arial;
-    padding:5.3px;
+    padding:5px;
     padding-left: 3px;
 }
 .style9_detail_akhir {  color: #000000;
