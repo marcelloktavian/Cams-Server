@@ -169,7 +169,7 @@ font-family:MS Reference Sans Serif;
     font-family: Arial;
     border-top : 1px solid black;
     border-right : 1px solid black;
-    padding:7.5px;
+    padding:7px;
     padding-left: 3px;  
 }
 .style9_titlebrg2 {color: #000000;
