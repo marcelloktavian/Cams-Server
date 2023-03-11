@@ -212,7 +212,7 @@ font-family:MS Reference Sans Serif;
 .style9_detail_akhir {  color: #000000;
     font-size: 8pt;
     font-family: Arial;
-    padding: 3px;
+    padding: 2.5px;
 }
 .style19b { color: #000000;
     font-size: 11pt;
