@@ -76,7 +76,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
                 $delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Delete</a>';
             } else {
 			if($allow_edit)
-                $edit = '<a onclick="window.open(\''.BASE_URL.'pages/Transaksi_acc/EditjurnalmanualDet.php?action=edit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
+                // $edit = '<a onclick="window.open(\''.BASE_URL.'pages/Transaksi_acc/EditjurnalmanualDet.php?action=edit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
+				$edit = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=passedit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
 			else
 				$edit = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Edit</a>';
         	
@@ -114,6 +115,11 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 		include 'jurnalmanual_form.php';exit();
 		exit;
 	}
+	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'passedit') {
+		//tgl beda
+		include 'jurnalmanual_formedit.php';exit();
+		exit;
+	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass') {
 		//cek apakah pass sama atau tidak
 		$stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
@@ -121,7 +127,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 		
 		$affected_rows = $stmt->rowCount();
 		if($affected_rows > 0) {
-			
 			$user = $_SESSION['user']['username'];
 
 			$stmt = $db->prepare("UPDATE jurnal_detail SET deleted=1, user=?, lastmodified=NOW() WHERE id_parent=?");
@@ -138,6 +143,26 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 			$r['message'] = 'Failed';
 		}
 		echo json_encode($r);
+		exit;
+	}
+
+	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_passedit') {
+
+		//cek apakah pass sama atau tidak
+		$stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_jm_edit']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+		$stmt->execute();
+
+		$affected_rows = $stmt->rowCount();
+
+		if ($affected_rows > 0) {
+			$r['stat'] = 1; $r['message'] = 'Success';
+			$url = BASE_URL . 'pages/Transaksi_acc/EditjurnalmanualDet.php?id='.$_POST['id'];
+			echo "<script>parent.window.open($url)</script>";
+			header("Location: $url");
+		}	
+		else {
+			echo "<script>window.close();</script>";
+		}
 		exit;
 	}
 	

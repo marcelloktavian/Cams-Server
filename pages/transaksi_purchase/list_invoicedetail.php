@@ -191,6 +191,7 @@ function intToIDR($val) {
             window.opener.document.getElementById('tanggal_invoice'+(window.opener.baris1-1)).value = $('#tanggal_invoice'+i).val();
             window.opener.document.getElementById('tanggal_jatuh_tempo'+(window.opener.baris1-1)).value = $('#tanggal_jatuh_tempo'+i).val();
             window.opener.document.getElementById('qty'+(window.opener.baris1-1)).value = $('#qty'+i).val();
+            window.opener.document.getElementById('total_inv'+(window.opener.baris1-1)).value = $('#total_remaining'+i).val();
             window.opener.document.getElementById('total_terbayar_inv'+(window.opener.baris1-1)).value = $('#total_payment'+i).val();
             window.opener.document.getElementById('total_sisa_inv'+(window.opener.baris1-1)).value = $('#total_remaining'+i).val();
             window.opener.addNewRow1();

@@ -155,7 +155,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $responce = '';
 
   foreach ($data1 as $line){
-    
     $responce->rows[$i]['id']   = $line['id'];
     $responce->rows[$i]['cell'] = array(
       $i + 1,

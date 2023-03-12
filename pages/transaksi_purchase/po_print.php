@@ -8,13 +8,14 @@
     return 'Rp ' . number_format($val, 0, ',', '.') . ',-';
   }
 
-  $sql_mst    = "SELECT a.*,b.alamat,b.`pic`,b.`telp`,b.`email` FROM `mst_po` a LEFT JOIN `mst_supplier` b ON a.`id_supplier`=b.`id` WHERE a.`id`='".$_GET['id']."'";
+  $sql_mst    = "SELECT a.*,b.npwp,b.alamat,b.`pic`,b.`telp`,b.`email` FROM `mst_po` a LEFT JOIN `mst_supplier` b ON a.`id_supplier`=b.`id` WHERE a.`id`='".$_GET['id']."'";
   $get_mst    = mysql_query($sql_mst) or die(mysql_error());
   $mst_po     = mysql_fetch_array($get_mst);
     $id_mst         = $mst_po['id'];
     $no_dokumen     = $mst_po['dokumen'];
     $id_supplier    = $mst_po['id_supplier'];
     $nama_supplier  = $mst_po['nama_supplier'];
+    $npwp_supplier  = $mst_po['npwp'];
     $alamat_mst     = $mst_po['alamat'];
     $no_telepon     = $mst_po['telp'];
     $pic_mst        = $mst_po['pic'];
@@ -38,6 +39,7 @@
 <style>
   body{
     font-family:arial;
+    zoom: 0.85;
   }
 </style>
 
@@ -93,8 +95,13 @@
       <td class="title-sm" style="width:1%;">PIC&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $pic_mst ;?></td><td></td><td class="title-sm" style="width:1%;">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>(022) 540-1972</td></td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td class="title-sm">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $no_telepon ;?></td><td></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
+      <td class="title-sm">NPWP&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $npwp_supplier ;?></td><td></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
     </tr>
+
+    <tr style="font-size:0.9em;">
+      <td class="title-sm">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $no_telepon ;?></td>
+    </tr>
+    
     <tr style="font-size:0.9em;">
       <td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $email_mst ;?></td><td colspan="4"></td>
     </tr>
@@ -108,7 +115,7 @@
       <td colspan="3" class="title-sm td-title text-center td-border">CATATAN TAMBAHAN</td><td class="title-sm td-title text-center td-border" style="width:13%">DELIVERY SCHEDULE</td><td class="title-sm td-title text-center td-border" style="width:15%">REQUISITIONER</td>
     </tr>
     <tr>
-      <td colspan="3" class="text-left td-border" style="height: 4em; padding-left:15px; padding-right:15px;"><?= substr($catatan,0,420) ;?></td><td class="text-center td-border" style="width:12%"><?= date_format(date_create($eta_pengiriman), "d M Y") ;?></td><td class="text-center td-border" style="width:15%; padding-left:15px; padding-right:15px;"><?= $nama_pemohon?></td>
+      <td colspan="3" class="text-left td-border" style="height: 4em; padding : 10px !important;"><?= substr($catatan,0,420) ;?></td><td class="text-center td-border" style="width:12%"><?= date_format(date_create($eta_pengiriman), "d M Y") ;?></td><td class="text-center td-border" style="width:15%;  padding : 10px !important;"><?= $nama_pemohon?></td>
     </tr>
   </table>
 

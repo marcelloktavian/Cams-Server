@@ -32,7 +32,18 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
     echo json_encode($response);
     exit;
 }
+
+$qlog = $db->query("SELECT * FROM tbl_logyec WHERE closed=1");
+$datalog = $qlog->fetchAll(PDO::FETCH_ASSOC);
+$month='';
+$year='';
+foreach($datalog as $linelog) {
+    $month = $linelog['month'];
+    $year = $linelog['year'];
+}
 ?>
+<input type="hidden" name="monthbuku" id="monthbuku" value="<?=$month?>">
+<input type="hidden" name="yearbuku" id="yearbuku" value="<?=$year?>">
 <div class="ui-widget ui-form" style="margin-bottom:5px">
  <div class="ui-widget-header ui-corner-top padding5">
         Print Buku Besar
@@ -84,7 +95,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 ?>
 -->
 <script type="text/javascript">
-	 
      $('#startdate_bukubesarrpt').datepicker({
 		dateFormat: "mm/yy",
 	});
@@ -95,12 +105,26 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'get_pelanggan') {
 	// $( "#enddate_bukubesarrpt" ).datepicker( 'setDate', '<?php echo date('t/m/Y')?>' );
 	
 	function printbukubesar() {
+        var month = $("#monthbuku").val();
+        var year = $("#yearbuku").val();
+        
 		var startdate = $('#startdate_bukubesarrpt').val();
 		// var enddate = $('#enddate_bukubesarrpt').val();
 		var akun = $('#noakunbukubesar_id').val();
 		// console.log(filter+' '+lokasi_list);
 
-		window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
+        if(month != '' && year != ''){
+            var ex1 = startdate.split("/");
+
+            if(startdate <= (month+"/"+year)){
+                alert('Tanggal Sudah Tutup Buku');
+            }else{
+                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
+            }
+        }else{
+            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
+        }
+
 	}
 
     load_pelanggan = function (){

@@ -1,9 +1,9 @@
 <html><head><script src="../../assets/js/jsbilangan.js" type="text/javascript"></script>
 <?php
-// header("Content-type: application/vnd.ms-excel");
-// header("Content-Disposition: attachment; filename=JURNAL TRANSAKSI ".$_GET['start']." - ".$_GET['end'].".xls");
-// header("Cache-Control: no-cache, must-revalidate");
-// header("Pragma: no-cache");
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=JURNAL TRANSAKSI ".$_GET['start']." - ".$_GET['end'].".xls");
+header("Cache-Control: no-cache, must-revalidate");
+header("Pragma: no-cache");
 ?>
 <style type="text/css">
 
@@ -133,7 +133,7 @@ if($akun == ''){
 $result= mysql_query($sql);
 $data = mysql_fetch_array($result);
 ?>
-</head><body><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+</head><body><table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
     <tbody><tr>
         <td colspan="5" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>

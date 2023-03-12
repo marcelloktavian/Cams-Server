@@ -113,13 +113,19 @@ require "../../include/koneksi.php";
 $startdate = '01/'.$_GET['start'];
 $enddate = '31/'.$_GET['start'];
 
+$ex1 = explode('/',$_GET['start']);
+$date = "$ex1[1]-$ex1[0]-01";
+$startdatelast = date('Y-m-d', strtotime($date. ' - 1 months'));
+$date = "$ex1[1]-$ex1[0]-31";
+$enddatelast = date('Y-m-d', strtotime($date. ' - 1 months'));
+
 $arrNamaBulan = array("01"=>"Januari", "02"=>"Februari", "03"=>"Maret", "04"=>"April", "05"=>"Mei", "06"=>"Juni", "07"=>"Juli", "08"=>"Agustus", "09"=>"September", "10"=>"Oktober", "11"=>"November", "12"=>"Desember");
 
 $akun = $_GET['akun'];
 if($akun == ''){
     $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
     LEFT JOIN jurnal mst ON mst.id=det.id_parent
-    WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC"; 
+    WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC LIMIT 5"; 
 }else{
     $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
     LEFT JOIN jurnal mst ON mst.id=det.id_parent
@@ -135,7 +141,7 @@ $data = mysql_fetch_array($result);
 // header("Pragma: no-cache");
 
 ?>
-</head><body><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+</head><body><table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
     <tbody><tr>
         <td colspan="9" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>
@@ -146,9 +152,13 @@ $data = mysql_fetch_array($result);
     </tr>
     <?php
     $akun = '';
+    $totalsaldodb = 0;
+    $totalsaldocr = 0;
     $result2= mysql_query($sql);
     while($data2 = mysql_fetch_array($result2)){
         if($akun != $data2['no_akun']){
+            $totalsaldodb = 0;
+            $totalsaldocr = 0;  
     ?>
     <tr>
         <td class="header text center" width="10%" colspan=5></td>
@@ -185,6 +195,55 @@ $data = mysql_fetch_array($result);
             <center><b>SALDO KREDIT</b></center>
         </td>
     </tr>
+    <?php
+        if($akun == ''){
+            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
+            LEFT JOIN jurnal mst ON mst.id=det.id_parent
+            WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl < STR_TO_DATE('$startdate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC "; 
+        }else{
+            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
+            LEFT JOIN jurnal mst ON mst.id=det.id_parent
+            WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['no_akun']."' AND mst.tgl < STR_TO_DATE('$startdate','%d/%m/%Y') ORDER BY mst.tgl ASC, det.no_akun ASC, no_jurnal ASC, det.id ASC ";
+        }
+        $saldodebet = 0;
+        $saldokredit = 0;
+        $resultsaldo = mysql_query($sqlsaldo);
+        while($datasaldo = mysql_fetch_array($resultsaldo)){
+            $saldodebet = $datasaldo['totdebet'];
+            $saldokredit = $datasaldo['totkredit'];
+        }
+
+        $totalsaldodb += $saldodebet;
+        $totalsaldocr += $saldokredit;  
+    ?>
+    <tr>
+        <td class='detail text'></td>
+        <td class='detail text'></td>
+        <td class='detail text'><?=$data2['no_akun']?></td>
+        <td class='detail text'><?=$data2['nama_akun']?></td>
+        <td class='detail text'>SALDO AWAL</td>
+        <td class='detail text right'><?=number_format($saldodebet,0,',','.')?></td>
+        <td class='detail text right'><?=number_format($saldokredit,0,',','.')?></td>
+        <?php
+        if(($saldodebet-$saldokredit) < 0){
+            ?>
+                <td class='detail text right'><?=number_format(0,0,',','.')?></td>
+                <td class='detail4 text right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
+            <?php
+            $db = 0;
+            $cr = abs($saldodebet-$saldokredit);
+        }else{
+            ?>
+                <td class='detail text right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
+                <td class='detail4 text right'><?=number_format(0,0,',','.')?></td>
+            <?php
+            $db = abs($saldodebet-$saldokredit);
+            $cr = 0;
+        }
+        ?>
+        
+
+    </tr>
     <?php } 
 
     if($akun == ''){
@@ -198,8 +257,18 @@ $data = mysql_fetch_array($result);
     }
     $debet = 0;
     $kredit = 0;
+    $totaldebet = 0;
+    $totalkredit = 0;
+    
+    $debet += $saldodebet;
+    $kredit += $saldokredit;
+
+    $totaldebet += $db;
+    $totalkredit += $cr;
+
     $result3= mysql_query($sql3);
     while($data3 = mysql_fetch_array($result3)){
+        $saldo = $data3['debet']-$data3['kredit'];
         ?>
         <tr>
             <td class='detail text center'><?=$data3['tanggal']?></td>
@@ -209,12 +278,22 @@ $data = mysql_fetch_array($result);
             <td class='detail text'><?=$data3['keterangan']?></td>
             <td class='detail text right'><?=number_format($data3['debet'],0,',','.')?></td>
             <td class='detail text right'><?=number_format($data3['kredit'],0,',','.')?></td>
-            <td class='detail text right'><?=number_format(0,0,',','.')?></td>
-            <td class='detail4 text right'><?=number_format(0,0,',','.')?></td>
+            <?php
+            if((($totaldebet - $totalkredit)+($saldo))>0){
+                $totaldebet = (($totaldebet - $totalkredit)+($saldo));
+                $totalkredit = 0;
+            }else{
+                $totalkredit = abs(($totaldebet - $totalkredit)+($saldo));
+                $totaldebet = 0;
+            }
+            ?>
+            <td class='detail text right'><?=number_format($totaldebet,0,',','.')?></td>
+            <td class='detail4 text right'><?=number_format($totalkredit,0,',','.')?></td>
         </tr>
         <?php
         $debet += $data3['debet'];
         $kredit += $data3['kredit'];
+        
     }
 
         if($akun != $data2['no_akun']){
@@ -223,8 +302,20 @@ $data = mysql_fetch_array($result);
         <td class="footer text" align="right" colspan="5"><b>TOTAL</b></td>
         <td class="footer2 text" align="right"><?= number_format($debet,0,',','.') ?></td>
         <td class="footer2 text" align="right"><?= number_format($kredit,0,',','.') ?></td>
-        <td class="footer2 text" align="right"><?= number_format(0,0,',','.') ?></td>
-        <td class="footer3 text" align="right"><?= number_format(0,0,',','.') ?></td>
+        <?php
+        if(($debet-$kredit) < 0){
+            ?>
+                <td class="footer2 text" align="right"><?= number_format(0,0,',','.') ?></td>
+                <td class="footer3 text" align="right"><?= number_format(abs($debet-$kredit),0,',','.') ?></td>
+            <?php
+        }else{
+            ?>
+                <td class="footer2 text" align="right"><?= number_format(abs($debet-$kredit),0,',','.') ?></td>
+                <td class="footer3 text" align="right"><?= number_format(0,0,',','.') ?></td>
+            <?php
+        }
+        ?>
+        
     </tr>
     <tr>
         <td colspan=9>&nbsp;<br>&nbsp;<br>&nbsp;</td>

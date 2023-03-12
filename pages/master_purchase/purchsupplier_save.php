@@ -1,4 +1,5 @@
 <?php
+$id_user=$_SESSION['id_user'];
 include "../../include/koneksi.php";
 
 // general variable -------------------------
@@ -31,12 +32,33 @@ $check_count = $check_val[0];
 
 if($check_count != null){
   $sql_master = "UPDATE `mst_supplier` SET `vendor`='$supplier', `pic`='$pic', `alamat`='$alamat', `telp`='$contact', `email`='$email', `ktp`='$ktp', `bank`='$bank', `rekening`='$rekening', `npwp`='$npwp' , `pkp`='$pkp', `item`='$totalqty', `lastmodified`=NOW() WHERE id='$id_supplier'";
+  
+  $sql = mysql_query($sql_master);
 }
 else{
   $sql_master = "INSERT INTO `mst_supplier` (vendor, pic, alamat, telp, email, ktp, bank, rekening, npwp, pkp, item, lastmodified) VALUES ('$supplier', '$pic', '$alamat', '$contact', '$email', '$ktp', '$bank', '$rekening','$npwp', '$pkp', '$totalqty', NOW())";
+  $sql = mysql_query($sql_master);
+
+  $last_id = mysql_insert_id();
+	$akun = '';
+	$namaakun = '';
+	$idakun = '';
+
+	// Akun Hutang Dagang Vendor
+	$query_mysql = mysql_query("SELECT id, CONCAT(SUBSTR(noakun,1,6),'1', IF(LENGTH('$last_id')=1,'000',IF(LENGTH('$last_id')=2,'00',IF(LENGTH('$last_id')=3,'0',''))), '$last_id') AS akun, noakun, nama
+	FROM mst_coa WHERE noakun = '02.01.00000' AND deleted=0")or die(mysql_error());
+	while($data = mysql_fetch_array($query_mysql)){
+		$akun = $data['akun'];
+		$namaakun = $data['nama'].' - '.$supplier;
+		$idakun = $data['id'];
+		$user = $_SESSION['user']['username'];
+		
+		$sqlinsert="INSERT INTO det_coa VALUES(NULL, '$idakun', '$akun', '$namaakun', '$user', NOW())";
+		mysql_query($sqlinsert) or die (mysql_error());
+	}
 }
 
-$sql = mysql_query($sql_master);
+
 
 // detail data processing -----------------
 if($id_supplier == 0){

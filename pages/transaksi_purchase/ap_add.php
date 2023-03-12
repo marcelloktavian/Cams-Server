@@ -92,9 +92,21 @@
   $(document).ready(function(){
     $("#supplier").autocomplete("posupplier_list.php", {width: 400});
 
-    $('#supplier').result(function(){
+    $('#supplier').result(function(event, data, formatted){
       var sup   = ($('#supplier').val()).split(':');
       sup_q     = sup[0];
+
+      $.ajax({
+        url       : 'posupplier_lookup_detail.php?id='+sup_q,
+        dataType  : 'json',
+        data      : 'nama='+formatted,
+        success   : function(data){
+          var id_akun = data.id_akun;
+          var nama_akun = data.nama_akun;
+          var nomor_akun = data.nomor_akun;
+          $('#akun').val(id_akun+':'+nomor_akun+' | '+nama_akun);
+        }
+      });
 
       for(var i = 0; i<=baris1; i++){
         var element = $('#t1'+i);
@@ -261,7 +273,7 @@
 
   function generateTotal(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="total_inv"+index; idx.id="total_inv"+index; idx.size="20"; idx.style.textAlign = "right"; idx.value="0"; return idx;
+    idx.type="text"; idx.name="total_inv"+index; idx.id="total_inv"+index; idx.size="20"; idx.style.textAlign = "right"; idx.readOnly="readonly"; idx.style.border="#4f4f4f dotted 1px"; idx.style.backgroundColor="#dcdcdc"; idx.value="0"; return idx;
   }
 
   function generateTotalTerbayar(index){

@@ -355,4 +355,23 @@
 
   ?>
 hitungTotal();
+
+$(document).ready(function(){
+  var sup   = ($('#supplier').val()).split(':');
+  sup_q     = sup[0];
+
+  var formatted = $('#supplier').val();
+
+  $.ajax({
+    url       : 'posupplier_lookup_detail.php?id='+sup_q,
+    dataType  : 'json',
+    data      : 'nama='+formatted,
+    success   : function(data){
+      var id_akun = data.id_akun;
+      var nama_akun = data.nama_akun;
+      var nomor_akun = data.nomor_akun;
+      $('#akun').val(id_akun+':'+nomor_akun+' | '+nama_akun);
+    }
+  });
+});
 </script>
