@@ -135,10 +135,10 @@ if($akun == ''){
 $result= mysql_query($sql);
 $data = mysql_fetch_array($result); 
 
-// header("Content-type: application/vnd.ms-excel");
-// header("Content-Disposition: attachment; filename=BUKU BESAR ".STRTOUPPER($arrNamaBulan[$data['bulan']])." ".$data['tahun'].".xls");
-// header("Cache-Control: no-cache, must-revalidate");
-// header("Pragma: no-cache");
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=BUKU BESAR ".STRTOUPPER($arrNamaBulan[$data['bulan']])." ".$data['tahun'].".xls");
+header("Cache-Control: no-cache, must-revalidate");
+header("Pragma: no-cache");
 
 ?>
 </head><body><table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
