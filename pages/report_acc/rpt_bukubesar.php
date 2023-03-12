@@ -222,20 +222,20 @@ header("Pragma: no-cache");
         <td class='detail text'><?=$data2['no_akun']?></td>
         <td class='detail text'><?=$data2['nama_akun']?></td>
         <td class='detail text'>SALDO AWAL</td>
-        <td class='detail text right'><?=number_format($saldodebet,0,',','.')?></td>
-        <td class='detail text right'><?=number_format($saldokredit,0,',','.')?></td>
+        <td class='detail text right' align='right'><?=number_format($saldodebet,0,',','.')?></td>
+        <td class='detail text right' align='right'><?=number_format($saldokredit,0,',','.')?></td>
         <?php
         if(($saldodebet-$saldokredit) < 0){
             ?>
-                <td class='detail text right'><?=number_format(0,0,',','.')?></td>
-                <td class='detail4 text right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
+                <td class='detail text right' align='right'><?=number_format(0,0,',','.')?></td>
+                <td class='detail4 text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
             <?php
             $db = 0;
             $cr = abs($saldodebet-$saldokredit);
         }else{
             ?>
-                <td class='detail text right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
-                <td class='detail4 text right'><?=number_format(0,0,',','.')?></td>
+                <td class='detail text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
+                <td class='detail4 text right' align='right'><?=number_format(0,0,',','.')?></td>
             <?php
             $db = abs($saldodebet-$saldokredit);
             $cr = 0;
@@ -276,8 +276,8 @@ header("Pragma: no-cache");
             <td class='detail text'><?=$data3['no_akun']?></td>
             <td class='detail text'><?=$data3['nama_akun']?></td>
             <td class='detail text'><?=$data3['keterangan']?></td>
-            <td class='detail text right'><?=number_format($data3['debet'],0,',','.')?></td>
-            <td class='detail text right'><?=number_format($data3['kredit'],0,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($data3['debet'],0,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($data3['kredit'],0,',','.')?></td>
             <?php
             if((($totaldebet - $totalkredit)+($saldo))>0){
                 $totaldebet = (($totaldebet - $totalkredit)+($saldo));
@@ -287,8 +287,8 @@ header("Pragma: no-cache");
                 $totaldebet = 0;
             }
             ?>
-            <td class='detail text right'><?=number_format($totaldebet,0,',','.')?></td>
-            <td class='detail4 text right'><?=number_format($totalkredit,0,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($totaldebet,0,',','.')?></td>
+            <td class='detail4 text right' align='right'><?=number_format($totalkredit,0,',','.')?></td>
         </tr>
         <?php
         $debet += $data3['debet'];
