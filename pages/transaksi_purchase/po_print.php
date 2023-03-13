@@ -92,14 +92,16 @@
       <td style="width:60%;" colspan=3><span style="padding:1em;"></span></td><td></td><td style="width:40%;" colspan=3><span style="padding:1em;"></span></td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td class="title-sm" style="width:1%;">PIC&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $pic_mst ;?></td><td></td><td class="title-sm" style="width:1%;">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>(022) 540-1972</td></td>
+      <td class="title-sm" style="width:1%;">PIC&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $pic_mst ;?></td><td></td>
+      <td class="title-sm">NPWP&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>01.448.609.6-445.000</td>
     </tr>
     <tr style="font-size:0.85em;">
-      <td class="title-sm">NPWP&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $npwp_supplier ;?></td><td></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
+      <td class="title-sm">NPWP&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $npwp_supplier ;?></td><td></td><td class="title-sm" style="width:1%;">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>(022) 540-1972</td></td>
     </tr>
 
     <tr style="font-size:0.9em;">
       <td class="title-sm">TEL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td><?= $no_telepon ;?></td>
+      <td></td><td class="title-sm">EMAIL&nbsp;</td><td class="title-sm" style="width:1%;">:&nbsp;</td><td>contact@akwoutsole.com</td>
     </tr>
     
     <tr style="font-size:0.9em;">

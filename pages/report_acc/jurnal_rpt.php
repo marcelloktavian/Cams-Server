@@ -78,6 +78,7 @@ foreach($datalog as $linelog) {
             <label for="" class="ui-helper-reset label-control">&nbsp;</label>
             <div class="ui-corner-all form-control">
 				<button onclick="printjurnal()" class="btn" type="button">Cetak</button>
+				<button onclick="printjurnalExcel()" class="btn" type="button">Excel</button>
 				<!-- <button onclick="printrptharian()" class="btn" type="button">Cetak Harian</button> -->
 			</div>
        	</form>
@@ -120,10 +121,32 @@ foreach($datalog as $linelog) {
             if(((ex1[1]+"/"+ex1[2]) <= (month+"/"+year)) || ((ex2[1]+"/"+ex2[2]) <= (month+"/"+year))){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
-                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=preview&start='+startdate+'&end='+enddate+'&akun='+akun);
+                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=print&start='+startdate+'&end='+enddate+'&akun='+akun);
             }
         }else{
-            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=preview&start='+startdate+'&end='+enddate+'&akun='+akun);
+            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=print&start='+startdate+'&end='+enddate+'&akun='+akun);
+        }
+	}
+
+    function printjurnalExcel() {
+        var month = $("#monthjurnal").val();
+        var year = $("#yearjurnal").val();
+
+        var startdate = $('#startdate_jurnalrpt').val();
+		var enddate = $('#enddate_jurnalrpt').val();
+		var akun = $('#noakun_id').val();
+
+        if(month != '' && year != ''){
+            var ex1 = startdate.split("/");
+            var ex2 = enddate.split("/");
+
+            if(((ex1[1]+"/"+ex1[2]) <= (month+"/"+year)) || ((ex2[1]+"/"+ex2[2]) <= (month+"/"+year))){
+                alert('Tanggal Sudah Tutup Buku');
+            }else{
+                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=excel&start='+startdate+'&end='+enddate+'&akun='+akun);
+            }
+        }else{
+            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=excel&start='+startdate+'&end='+enddate+'&akun='+akun);
         }
 	}
 

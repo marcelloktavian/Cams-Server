@@ -78,6 +78,7 @@ foreach($datalog as $linelog) {
             <label for="" class="ui-helper-reset label-control">&nbsp;</label>
             <div class="ui-corner-all form-control">
 				<button onclick="printbukubesar()" class="btn" type="button">Cetak</button>
+				<button onclick="printbukubesarExcel()" class="btn" type="button">Excel</button>
 				<!-- <button onclick="printrptharian()" class="btn" type="button">Cetak Harian</button> -->
 			</div>
        	</form>
@@ -119,10 +120,33 @@ foreach($datalog as $linelog) {
             if(startdate <= (month+"/"+year)){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
-                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
+                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=print&start='+startdate+'&akun='+akun);
             }
         }else{
-            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=preview&start='+startdate+'&akun='+akun);
+            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=print&start='+startdate+'&akun='+akun);
+        }
+
+	}
+
+    function printbukubesarExcel() {
+        var month = $("#monthbuku").val();
+        var year = $("#yearbuku").val();
+        
+		var startdate = $('#startdate_bukubesarrpt').val();
+		// var enddate = $('#enddate_bukubesarrpt').val();
+		var akun = $('#noakunbukubesar_id').val();
+		// console.log(filter+' '+lokasi_list);
+
+        if(month != '' && year != ''){
+            var ex1 = startdate.split("/");
+
+            if(startdate <= (month+"/"+year)){
+                alert('Tanggal Sudah Tutup Buku');
+            }else{
+                window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=excel&start='+startdate+'&akun='+akun);
+            }
+        }else{
+            window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=excel&start='+startdate+'&akun='+akun);
         }
 
 	}
