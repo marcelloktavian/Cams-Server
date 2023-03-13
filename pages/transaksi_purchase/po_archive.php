@@ -198,7 +198,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
     $vendor_ap  = "(SELECT CONCAT(a.`vendor`,' ',a.`telp`) FROM mst_supplier a INNER JOIN mst_ap b ON b.id_supplier=a.id AND b.`id`=".$_GET['id'].")";
 
-    $keterangan_ap = "(SELECT CONCAT('Pembayaran Hutang AP - ',$vendor_ap))";
+    $keterangan_ap = "(SELECT CONCAT('Hutang Vendor - ',$vendor_ap))";
 
     $total_kredit = "(SELECT grand_total FROM mst_ap WHERE id = '$_GET[id]')";
 
