@@ -46,6 +46,8 @@
 			$totRef=0;
 			$totXls=0;
 			$totPreso=0;
+			$totXlsTemp=0;
+			$totBarang=0;
 			$i = 0;
 			$duplicate = '';
 			$od = '';
@@ -61,6 +63,112 @@
 						echo "<h1>ID Product Kosong</h1>";
 						die;
 					}
+
+					$getTotXls3="SELECT COUNT(*) AS totxls FROM `oln_xlscamou_cr_temp` WHERE (oln_order_id='".$Row[0]."' AND oln_productid='".$Row[1]."')";
+					// var_dump($getTotXls3);
+					$data3 = mysql_query($getTotXls3);
+					$rs3 = mysql_fetch_array($data3);
+					$totXlsTemp+=$rs3['totxls'];
+
+					$penerima="";
+					if ($Row[0]!=null || $Row[0]!='') {
+
+						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".$Row[7]."'";
+						$data = mysql_query($getHarga);
+						$rs = mysql_fetch_array($data);
+						$harga=$rs['harga'];
+						$stok=$rs['stok'];
+
+						$getDisc="SELECT disc FROM `mst_dropshipper` WHERE `oln_customer_id`='".$Row[12]."'";
+						$data = mysql_query($getDisc);
+						$rs = mysql_fetch_array($data);
+						$disc=$rs['disc'];
+
+						$harga_disc = (int)$harga - ceil((float)$harga * (float)$disc);
+						$harga_akhir = ceil($harga_disc/1.11);
+
+						if ($idnya != $Row[0]) {
+							$total = (($harga_akhir*$Row[4])+(ceil(($harga_akhir*$Row[4])*0.11)));
+						}else{
+							$total = $total + (($harga_akhir*$Row[4])+ceil((($harga_akhir*$Row[4])*0.11)));
+						}
+
+						$idnya = $Row[0];
+
+						$penerima=$Row[16]." ".$Row[17];
+
+						$address = str_replace("'", "", str_replace("&#39;", "", $Row[18]));
+						
+						$sql_insert="INSERT into oln_xlscamou_cr_temp(
+						`oln_order_id`,
+						`oln_productid`,
+						`oln_productname`,
+						`oln_price`,
+						`oln_qty`,
+						`oln_totalprice`,
+						`oln_tax`,
+						`oln_size`,
+						`oln_note`,
+						`oln_ordertotal`,
+						`oln_orderstatus`,
+						`oln_customer`,
+						`oln_customerid`,
+						`oln_customer_email`,
+						`oln_customer_telp`,
+						`oln_expnote`,
+						`oln_penerima`,
+						`oln_address`,
+						`oln_telp`,
+						`oln_provinsi`,
+						`oln_postalcode`,
+						`oln_kotakab`,
+						`oln_kecamatan`,
+						`oln_shipmethod`,
+						`oln_customer_address`,
+						`oln_customer_provinsi`,
+						`oln_customer_postalcode`,
+						`oln_customer_kotakab`,
+						`oln_customer_kecamatan`,
+						`oln_tgl`,
+						`oln_expeditionid`) VALUES(
+						'".$Row[0]."',
+						'".$Row[1]."',
+						'".addslashes($Row[2])."',
+						'".$harga_akhir."',
+						'".$Row[4]."',
+						'".($harga_akhir*$Row[4])."',
+						'".ceil((($harga_akhir*$Row[4])*0.11))."',
+						'".$Row[7]."',
+						'".$Row[8]."',
+						'".$total."',
+						'".$Row[10]."',
+						'".$Row[11]."',
+						'".$Row[12]."',
+						'".$Row[13]."',
+						'".$Row[14]."',
+						'".$Row[15]."',
+						'".$penerima."',
+						'".$address."',
+						'".$Row[19]."',
+						'".$Row[20]."',
+						'".$Row[21]."',
+						'".$Row[22]."',
+						'".$Row[23]."',
+						'".$Row[24]."',
+						'".$Row[25]."',
+						'".$Row[26]."',
+						'".$Row[27]."',
+						'".$Row[28]."',
+						'".$Row[29]."',
+						'".$Row[30]."',
+						'".$Row[31]."')";
+		
+						$query=mysql_query($sql_insert);
+
+						if(($stok - $Row[4])<0){
+							$totBarang++;
+						}
+					}	
 
 					$getRefCode="SELECT COUNT(*) AS totoln FROM `olnso` WHERE (ref_kode = '".$Row[0]."' AND exp_code='".$Row[15]."') AND deleted=0";
 					//$getRefCode="SELECT COUNT(*) AS totoln FROM `olnso` WHERE (exp_code <> '' AND exp_code is NOT NULL AND exp_code='".$Row[15]."') AND deleted=0";
@@ -98,13 +206,34 @@
 
 					// $od=$Row[0];
 
+					if($totXlsTemp>0){
+						$sql_delete="TRUNCATE TABLE oln_xlscamou_cr_temp";	
+						$hasil_delete=mysql_query($sql_delete);
+
+						echo "<h1>Ada Barang Yang Terduplikasi</h1>";
+						die;
+					}
+
+					if($totBarang>0){
+						$sql_delete="TRUNCATE TABLE oln_xlscamou_temp";	
+						$hasil_delete=mysql_query($sql_delete);
+
+						echo "<h1>Cek Ulang Stok Barang</h1>";
+						die;
+					}
 
 					if ($totXls>0 || $totPreso>0 || $totRef>0) {
+						$sql_delete="TRUNCATE TABLE oln_xlscamou_cr_temp";	
+						$hasil_delete=mysql_query($sql_delete);
+
 						echo "<h1>Duplicate Import</h1>";
 						die;
 					}
 
 					if ($Row[4] == '0') {
+						$sql_delete="TRUNCATE TABLE oln_xlscamou_cr_temp";	
+						$hasil_delete=mysql_query($sql_delete);
+
 						echo "<h1>Cek Ulang Qty Import ".$Row[0]."</h1>";
 						die;
 					}
@@ -114,6 +243,9 @@
 					$rs = mysql_fetch_array($data);
 					$harga=$rs['harga'];
 					if ($harga == '' || $harga == '0') {
+						$sql_delete="TRUNCATE TABLE oln_xlscamou_cr_temp";	
+						$hasil_delete=mysql_query($sql_delete);
+
 						echo "<h1>Cek Ulang Barang/Size ".$Row[0]."</h1>";
 						die;
 					}
@@ -123,6 +255,8 @@
 			
 			// var_dump($totXls.' '. $totPreso.' '.$totRef);die;
 			if ($totXls==0 && $totPreso==0 && $totRef==0) {
+				$sql_delete = "TRUNCATE TABLE oln_xlscamou_cr_temp;";
+				$query=mysql_query($sql_delete);
 				foreach ($Reader as $Key => $Row)
 				{
 			// import data excel mulai baris ke-2 (karena ada header pada baris 1)
