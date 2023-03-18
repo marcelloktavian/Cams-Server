@@ -59,7 +59,7 @@
     }else{
         $id = $_POST['idparent'];
         // execute for master
-        $sql_master="UPDATE jurnal SET tgl='$masterTanggal', keterangan='$masterKeterangan', total_debet='$masterTotalDebet', total_kredit='$masterTotalKredit', `user`='$id_user', lastmodified=NOW() WHERE id='$id' ";
+        $sql_master="UPDATE jurnal SET tgl='$masterTanggal', keterangan='$masterKeterangan', total_debet='$masterTotalDebet', total_kredit='$masterTotalKredit', `user`='$id_user', lastmodified=NOW(), state_edit=0 WHERE id='$id' ";
         mysql_query($sql_master) or die (mysql_error());
 
         // looping detail

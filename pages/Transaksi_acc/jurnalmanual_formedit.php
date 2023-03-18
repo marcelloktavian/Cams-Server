@@ -6,16 +6,16 @@
         ?>
     </div>
     <div class="ui-widget-content ui-corner-bottom">
-        <form id="trolndo_pass_form" method="post" action="pages/Transaksi_acc/jurnalmanual.php?action=process_passedit" class="ui-helper-clearfix" target="_blank">
-			<label for="password" class="ui-helper-reset label-control">Password</label>
+        <form id="trolndo_pass_form" method="post" action="<?php echo BASE_URL ?>pages/Transaksi_acc/jurnalmanual.php?action=process_passedit" class="ui-helper-clearfix">
+			  <label for="password" class="ui-helper-reset label-control">Password</label>
             <div class="ui-corner-all form-control">
                 <input value="<?php echo $_GET['id'] ?>" type="hidden" id="id" name="id">
-                <input value="" type="password" class="required" id="pass_jm_edit" name="pass_jm_edit">	
+                <input value="" type="password" class="required" id="pass_jm_edit" name="pass_jm_edit">
             </div>
         </form>
     </div>
 </div>
-
+<!-- 
 <style>
   .hideee{
     display: none !important;
@@ -38,4 +38,4 @@
     }, 2);
     
   });
-</script>
+</script> -->

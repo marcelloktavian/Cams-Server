@@ -38,67 +38,75 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 			$where .= " AND (`status`='$status') ";
 		}
         $sql = "SELECT * FROM `jurnal` ".$where;
-        
-		// var_dump($sql);
-        
+
 		$q = $db->query($sql);
 		$count = $q->rowCount();
-        
-        $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
-        if ($page > $total_pages) $page=$total_pages;
-        $start = $limit*$page - $limit;
-        if($start <0) $start = 0;
-        
-        $q = $db->query($sql."
-							 ORDER BY `".$sidx."` ".$sord."
-							 LIMIT ".$start.", ".$limit);
+
+		$count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
+		if ($page > $total_pages) $page=$total_pages;
+		$start = $limit*$page - $limit;
+		if($start <0) $start = 0;
+
+		$q = $db->query($sql."
+			ORDER BY `".$sidx."` ".$sord."
+			LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
 		$statusToko = '';
-        $getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
-        $getStat->execute();
-        $stat = $getStat->fetchAll();
-        foreach ($stat as $stats) {
-            // $id = $stats['id'];
-            $statusToko = $stats['status'];
-        }
+		$getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
+		$getStat->execute();
+		$stat = $getStat->fetchAll();
+		foreach ($stat as $stats) {
+			$statusToko = $stats['status'];
+		}
 
-        $responce['page'] = $page;
-        $responce['total'] = $total_pages;
-        $responce['records'] = $count;
-        $i=0;
+		$responce['page'] = $page;
+		$responce['total'] = $total_pages;
+		$responce['records'] = $count;
+		$i=0;
+
 		$grand_totaldebet=0;$grand_totalkredit=0;
-        foreach($data1 as $line) {
-        	// $allowEdit = array(1,2,3);
+		foreach($data1 as $line) {
+			// $allowEdit = array(1,2,3);
 			// $allowDelete = array(1,2,3);
-        	if ($statusToko == 'Tutup') {
-                $edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Edit</a>';
-                $delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Delete</a>';
-            } else {
-			if($allow_edit)
-                // $edit = '<a onclick="window.open(\''.BASE_URL.'pages/Transaksi_acc/EditjurnalmanualDet.php?action=edit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
-				$edit = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=passedit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
+			if ($statusToko == 'Tutup') {
+				$edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Edit</a>';
+				$delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Delete</a>';
+			} else {
+			if($allow_edit){
+				if($line['state_edit'] == '0'){
+					$edit = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=passedit&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Edit</a>';
+				}
+				else{
+					$edit = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/Transaksi_acc/EditjurnalmanualDet.php?&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;"  style="color:blue;">Edit</a>';
+				}
+			}
 			else
 				$edit = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Edit</a>';
-        	
 			if($allow_delete)
 				// $delete = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=delete&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Delete</a>';
-				$delete = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=pass&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Delete</a>';
+				if($line['state_edit'] == '0'){
+					$delete = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=pass&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;">Delete</a>';
+				}
+				else{
+					$delete = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=pass&id='.$line['id'].'\',\'table_jurnal\')" href="javascript:;" style="color:blue;">Delete</a>';
+				}
+				
 			else
 				$delete = '<a onclick="javascript:custom_alert(\'Not Allowed\')" href="javascript:;">Delete</a>';
 			}
-
-            $responce['rows'][$i]['id']   = $line['id'];
-            $responce['rows'][$i]['cell'] = array(
-                $line['id'],
-                $line['no_jurnal'],
-                $line['tgl'],               
-				number_format($line['total_debet'],0),                
-				number_format($line['total_kredit'],0),                
-                $line['keterangan'],                
-                $edit,
-				$delete,
-            );
+				$responce['rows'][$i]['id']   = $line['id'];
+				$responce['rows'][$i]['cell'] = array(
+					$line['id'],
+					$line['no_jurnal'],
+					$line['tgl'],               
+					number_format($line['total_debet'],0),                
+					number_format($line['total_kredit'],0),                
+					$line['keterangan'],                
+					$edit,
+					$delete,
+					$line['state_edit'],
+        );
 			$grand_totaldebet+=$line['total_debet'];
 			$grand_totalkredit+=$line['total_kredit'];
 			
@@ -145,30 +153,26 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 		echo json_encode($r);
 		exit;
 	}
-
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_passedit') {
-
 		//cek apakah pass sama atau tidak
 		$stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_jm_edit']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
 		$stmt->execute();
 
 		$affected_rows = $stmt->rowCount();
-
 		if ($affected_rows > 0) {
 			$r['stat'] = 1; $r['message'] = 'Success';
-			$url = BASE_URL . 'pages/Transaksi_acc/EditjurnalmanualDet.php?id='.$_POST['id'];
-			echo "<script>parent.window.open($url)</script>";
-			header("Location: $url");
-		}	
-		else {
-			echo "<script>window.close();</script>";
+			$stmt = $db->prepare("UPDATE `jurnal` SET `state_edit`=1 WHERE id=".$_POST['id']."");
+			$stmt->execute();
 		}
+		else {
+			$r['stat'] = 0; $r['message'] = 'Failed';
+		}
+		echo json_encode($r);
 		exit;
 	}
-	
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
-        $user = $_SESSION['user']['username'];
-        $stmt = $db->prepare("UPDATE jurnal_detail SET deleted=1, user=?, lastmodified=NOW() WHERE id_parent=?");
+		$user = $_SESSION['user']['username'];
+		$stmt = $db->prepare("UPDATE jurnal_detail SET deleted=1, user=?, lastmodified=NOW() WHERE id_parent=?");
 		$stmt->execute(array($user, $_GET['id']));
 
 		$stmt = $db->prepare("UPDATE jurnal SET deleted=1, user=?, lastmodified=NOW() WHERE id=?");
@@ -188,8 +192,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
     elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
 		error_reporting(0);
 		$id = $_GET["id"];
-		$where = "WHERE id_parent = '".$id."' AND deleted=0";
-        $q = $db->query("SELECT * FROM jurnal_detail ".$where);
+		$where = " AND id_parent = '".$id."' AND deleted=0";
+        $q = $db->query("(SELECT * FROM jurnal_detail WHERE debet>0 ".$where.") UNION ALL (SELECT * FROM jurnal_detail WHERE kredit>0 ".$where.")");
 		
 		$count = $q->rowCount();
 		
@@ -261,8 +265,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
    	</div>
 </div>
 
-<table id="table_jurnal"></table>
-<div id="pager_table_jurnal"></div>
 <div class="btn_box">
 <?php
 
@@ -285,6 +287,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 	
 ?>
 </div>
+<table id="table_jurnal"></table>
+<div id="pager_table_jurnal"></div>
+
 <script type="text/javascript">
     $('#start_jurnal').datepicker({
 		dateFormat: "dd/mm/yy"
@@ -308,44 +313,51 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
     $(document).ready(function(){
 
         $("#table_jurnal").jqGrid({
-            url:'<?php echo BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=json'; ?>',
-			  
-            datatype: "json",
-            colNames:['ID','No Jurnal','Tgl.Jurnal','Total Debet','Total Kredit','Keterangan','Edit','Delete'],
-            colModel:[
-                {name:'id',index:'id', align:'right', width:20, searchoptions: {sopt:['cn']}},
-                {name:'no_jurnal',index:'no_jurnal', width:100, searchoptions: {sopt:['cn']}},  
-                {name:'tgl',index:'tgl', width:60, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},                
-                {name:'total_debet',index:'total_debet',align:'right', width:70, searchoptions: {sopt:['cn']}},                
-                {name:'total_kredit',index:'total_kredit',align:'right', width:70, searchoptions: {sopt:['cn']}},
-                {name:'keterangan',index:'keterangan', width:200, searchoptions: {sopt:['cn']}},  
-				{name:'Edit',index:'edit', align:'center', width:30, sortable: false, search: false},
-                {name:'Delete',index:'delete', align:'center', width:30, sortable: false, search: false},
-            ],
-            rowNum:20,
-            rowList:[20,30,40],
-            pager: '#pager_table_jurnal',
-            sortname: 'id',
-            autowidth: true,
-            height: '460',
-            viewrecords: true,
-            rownumbers: true,
-            sortorder: "desc",
-            caption:"Transaksi Jurnal Manual",
-            ondblClickRow: function(rowid) {
-                alert(rowid);
-            },
-			footerrow : true,
-			userDataOnFooter : true,
-            subGrid : true,
-            subGridUrl : '<?php echo BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=json_sub'; ?>',
-            subGridModel: [
-			            	{ 
-			            		name : ['No','No Akun','Nama Akun','Debet','Kredit','Keterangan'], 
-			            		width : [40,100,200,70,70, 200],
-			            		align : ['center','left','left','right','right', 'left'],
-			            	} 
-			            ],
+					url:'<?php echo BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=json'; ?>',
+			
+					datatype: "json",
+					colNames:['ID','No Jurnal','Tgl.Jurnal','Total Debet','Total Kredit','Keterangan','Edit','Delete','State'],
+					colModel:[
+						{name:'id',index:'id', align:'right', width:20, searchoptions: {sopt:['cn']}},
+						{name:'no_jurnal',index:'no_jurnal', width:100, searchoptions: {sopt:['cn']}},  
+						{name:'tgl',index:'tgl', width:60, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},                
+						{name:'total_debet',index:'total_debet',align:'right', width:70, searchoptions: {sopt:['cn']}},                
+						{name:'total_kredit',index:'total_kredit',align:'right', width:70, searchoptions: {sopt:['cn']}},
+						{name:'keterangan',index:'keterangan', width:200, searchoptions: {sopt:['cn']}},  
+						{name:'Edit',index:'edit', align:'center', width:30, sortable: false, search: false},
+						{name:'Delete',index:'delete', align:'center', width:30, sortable: false, search: false},
+						{name:'State', index:'state',hidden:true},
+					],
+					rowNum:20,
+					rowList:[20,30,40],
+					rowattr: function (rowData) {
+						if (rowData.State == "1") {
+							console.log(rowData.State);
+							return {"style": "color:blue;"};
+						}
+					},
+					pager: '#pager_table_jurnal',
+					sortname: 'id',
+					autowidth: true,
+					height: '460',
+					viewrecords: true,
+					rownumbers: true,
+					sortorder: "desc",
+					caption:"Transaksi Jurnal Manual",
+					ondblClickRow: function(rowid) {
+							alert(rowid);
+					},
+					footerrow : true,
+					userDataOnFooter : true,
+					subGrid : true,
+					subGridUrl : '<?php echo BASE_URL.'pages/Transaksi_acc/jurnalmanual.php?action=json_sub'; ?>',
+					subGridModel: [
+					{ 
+						name : ['No','No Akun','Nama Akun','Debet','Kredit','Keterangan'], 
+						width : [40,100,200,70,70, 200],
+						align : ['center','left','left','right','right', 'left'],
+					} 
+					],
         });
         $("#table_jurnal").jqGrid('navGrid','#pager_table_jurnal',{edit:false,add:false,del:false});
     })

@@ -336,8 +336,6 @@ require "../../include/config.php";
 			return false;
 		}
 
-
-
 		function hitungrow() {
 			document.form2.jum.value = baris1;
 		}

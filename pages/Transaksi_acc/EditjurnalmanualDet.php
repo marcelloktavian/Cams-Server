@@ -419,8 +419,8 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
 		}
 
         <?php
-        $sqldetail = $db->prepare("SELECT * FROM jurnal_detail WHERE id_parent=?");
-        $sqldetail->execute(array($_GET["id"]));
+        $sqldetail = $db->prepare("(SELECT * FROM jurnal_detail WHERE debet>0 AND id_parent=? AND deleted=0) UNION ALL (SELECT * FROM jurnal_detail WHERE kredit>0 AND id_parent=? AND deleted=0)");
+        $sqldetail->execute(array($_GET["id"],$_GET["id"]));
         $i=1;
         while($result = $sqldetail->fetch(PDO::FETCH_ASSOC)){
         ?>
