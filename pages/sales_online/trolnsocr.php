@@ -9,16 +9,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 
 	if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 		$page  = $_GET['page'];
-		$limit = $_GET['rows'];
-		$sidx  = $_GET['sidx'];
-		$sord  = $_GET['sord'];
+        $limit = $_GET['rows'];
+        $sidx  = $_GET['sidx'];
+        $sord  = $_GET['sord'];
 		
 		if(!$sidx) $sidx=1;
-		if ($_REQUEST["_search"] == "false") {
-			//all transaction kecuali yang batal
-			$where = "WHERE TRUE AND p.state='0' AND (p.totalqty <> 0) AND (p.piutang> 0)";
-		} else {
-			$operations = array(
+               if ($_REQUEST["_search"] == "false") {
+	   //all transaction kecuali yang batal
+	   $where = "WHERE TRUE AND p.state='0' AND (p.totalqty <> 0) AND (p.piutang> 0)";
+	   } else {
+       $operations = array(
         'eq' => "= '%s'",            // Equal
         'ne' => "<> '%s'",           // Not equal
         'lt' => "< '%s'",            // Less than
@@ -35,80 +35,86 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
         'nc' => "not like '%%%s%%'", // Does not contain
         'nu' => "is null",           // Is null
         'nn' => "is not null"        // Is not null
-			);
+		);
 		$value = $_REQUEST["searchString"];
 		$where = sprintf(" where TRUE AND (p.totalqty <> 0) AND (p.state ='0') AND (p.piutang> 0) and (p.deleted=0) AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 		}
 		//0= SALES,1=DO,3=ARCHIVE_DO
 		//MENAMPILKAN PENJUALAN YANG BARU INPUT STATE=0 DAN TOTALQTY<>0 KRN BUKAN TRANSAKSI CANCEL dan TRANSAKSI YANG BLM LUNAS /Credit(PIUTANG>0)
+   	
 		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition FROM `olnso` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) ".$where;
-		$q = $db->query($sql);
+        $q = $db->query($sql);
 		$count = $q->rowCount();
+        //var_dump($sql);
+        $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
+        if ($page > $total_pages) $page=$total_pages;
+        $start = $limit*$page - $limit;
+        if($start <0) $start = 0;
 
-		//var_dump($sql);
-		$count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
-		if ($page > $total_pages) $page=$total_pages;
-		$start = $limit*$page - $limit;
-		if($start <0) $start = 0;
-
-		$q = $db->query($sql."ORDER BY `".$sidx."` ".$sord."LIMIT ".$start.", ".$limit);
+        $q = $db->query($sql."
+							 ORDER BY `".$sidx."` ".$sord."
+							 LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
 		$statusToko = '';
-		$getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
-		$getStat->execute();
-		$stat = $getStat->fetchAll();
-		foreach ($stat as $stats) {
-			// $id = $stats['id'];
-			$statusToko = $stats['status'];
-		}
+        $getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
+        $getStat->execute();
+        $stat = $getStat->fetchAll();
+        foreach ($stat as $stats) {
+            // $id = $stats['id'];
+            $statusToko = $stats['status'];
+        }
 
-		$responce['page'] = $page;
-		$responce['total'] = $total_pages;
-		$responce['records'] = $count;
-		$i=0;
-
+        $responce['page'] = $page;
+        $responce['total'] = $total_pages;
+        $responce['records'] = $count;
+        $i=0;
 		$grand_qty=0;$grand_faktur=0;$grand_totalfaktur=0;$grand_piutang=0;$grand_tunai=0;$grand_transfer=0;$grand_biaya=0 ;
-		foreach($data1 as $line) {
+        foreach($data1 as $line) {
+        	
 			// $allowEdit = array(1,2,3);
 			// $allowDelete = array(1,2,3);
-			if ($statusToko == 'Tutup') {
-				$edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Posting</a>';
-				$delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Cancel</a>';
-			} else {
-				if($allow_post){
-					$edit = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=posting&id='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Posting</a>';
-				}
-				else
-					$edit = '<a onclick="javascript:custom_alert(\'Tidak Boleh Print Nota\')" href="javascript:;">Posting</a>';
+        	if ($statusToko == 'Tutup') {
+                $edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Posting</a>';
+                $delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Cancel</a>';
+            } else {
+		    if($allow_post){
+			$edit = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=posting&id='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Posting</a>';
+			}
+			else
+				$edit = '<a onclick="javascript:custom_alert(\'Tidak Boleh Print Nota\')" href="javascript:;">Posting</a>';
 			
-				if($allow_delete)
-					$delete = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=delete&id='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Cancel</a>';
-				else
-					$delete = '<a onclick="javascript:custom_alert(\'Tidak Boleh dibatalkan\')" href="javascript:;">Cancel</a>';
+			if($allow_delete)
+				$delete = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=delete&id='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Cancel</a>';
+			else
+				$delete = '<a onclick="javascript:custom_alert(\'Tidak Boleh dibatalkan\')" href="javascript:;">Cancel</a>';
+			
 			    //$select = '<input type="checkbox" class="chkPrint" name="select"  value='.$line['id_trans'].'>';
 			}
-
-      $responce['rows'][$i]['id']   = $line['id_trans'];
-			$responce['rows'][$i]['cell'] = array(
-			$line['id_trans'],
-			$line['ref_kode'],                
-			$line['dropshipper'],                
-			$line['tgl_trans'],
-			$line['nama'],
-			$line['alamat'],
-			number_format($line['exp_fee'],0),
-			$line['expedition'],
-			$line['exp_code'],
-			number_format($line['totalqty'],0),
-			$edit,
-			$delete,
+        	$responce['rows'][$i]['id']   = $line['id_trans'];
+            $responce['rows'][$i]['cell'] = array(
+                $line['id_trans'],
+                $line['ref_kode'],                
+                $line['dropshipper'],                
+                $line['tgl_trans'],
+                $line['nama'],
+                $line['alamat'],
+				number_format($line['exp_fee'],0),
+                $line['expedition'],
+                $line['exp_code'],
+                number_format($line['totalqty'],0),
+				$edit,
+				$delete,
 			//	$select,
-      );
-
-			$grand_qty+=$line['totalqty']; $grand_faktur+=$line['faktur']; $grand_totalfaktur+=$line['total']; $grand_piutang+=$line['piutang']; $grand_tunai+=$line['tunai']; $grand_transfer+=$line['transfer']; $grand_biaya+=$line['exp_fee'];
-
-			$i++;
+            );
+			$grand_qty+=$line['totalqty'];
+			$grand_faktur+=$line['faktur'];
+			$grand_totalfaktur+=$line['total'];
+			$grand_piutang+=$line['piutang'];
+			$grand_tunai+=$line['tunai'];
+			$grand_transfer+=$line['transfer'];
+			$grand_biaya+=$line['exp_fee'];
+            $i++;
         }
 		/*
 		$responce['userdata']['totalqty'] 		= number_format($grand_qty,0);
@@ -118,8 +124,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$responce['userdata']['tunai'] 			= number_format($grand_tunai,0);
 		$responce['userdata']['transfer']		= number_format($grand_transfer,0);
 		$responce['userdata']['exp_fee'] 			= number_format($grand_biaya,0);
-    */
+        */
 		echo json_encode($responce);
+		
 		exit;
 	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'posting') {
@@ -152,18 +159,18 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$namadropshipper=$q['nama'];
 
 		//insert
-			$masterNo = '';
-			$q = mysql_fetch_array( mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor
-			FROM jurnal ORDER BY id DESC LIMIT 1"));
-			$masterNo=$q['nomor'];
+        $masterNo = '';
+        $q = mysql_fetch_array( mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor
+        FROM jurnal ORDER BY id DESC LIMIT 1"));
+        $masterNo=$q['nomor'];
 
-			// execute for master
-			$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',NOW(),'Penjualan OLN Kredit - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW(),'OLN') ";
-			mysql_query($sql_master) or die (mysql_error());
+        // execute for master
+        $sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',NOW(),'Penjualan OLN Kredit - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW(),'OLN') ";
+        mysql_query($sql_master) or die (mysql_error());
 
-			//get master id terakhir
-			$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
-			$idparent=$q['id'];
+        //get master id terakhir
+        $q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
+        $idparent=$q['id'];
 		
 		$dpp = round($total / 1.11);
 		$ppn = round($total / 1.11 * 0.11);
@@ -236,31 +243,33 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$id = $_GET['id'];
 		//$id = $line['id_trans'];
 		$where = "WHERE pd.id_trans = '".$id."' ";
-		$q = $db->query("SELECT pd.* FROM `olnsodetail` pd ".$where);
+        $q = $db->query("SELECT pd.* FROM `olnsodetail` pd ".$where);
 		
 		$count = $q->rowCount();
 		
 		//$q = $db->query("SELECT pd.id_detail,pd.id_barang,b.nm_barang,b.kode_brg,pd.id_trans,pd.qty,pd.harga,(pd.qty * pd.harga) as subtotal FROM `trjual_detail` pd INNER JOIN `barang` b ON (pd.kode_brg=b.kode_brg) ".$where);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 		
-		$i=0;
-		$responce = '';
-		foreach($data1 as $line){
-			$responce->rows[$i]['id']   = $line['id_so_d'];
-			$responce->rows[$i]['cell'] = array(
-				$i+1,
-				$line['id_product'],
-				$line['namabrg'],
+        $i=0;
+        $responce = '';
+        foreach($data1 as $line){
+            $responce->rows[$i]['id']   = $line['id_so_d'];
+            $responce->rows[$i]['cell'] = array(
+                $i+1,
+                $line['id_product'],
+                $line['namabrg'],
 				$line['size'],
-				number_format($line['harga_satuan'],0),
-				number_format($line['jumlah_beli'],0),                
-				number_format($line['subtotal'],0),                
-			);
-			$i++;
-		}
+                 number_format($line['harga_satuan'],0),
+                 number_format($line['jumlah_beli'],0),                
+                 number_format($line['subtotal'],0),                
+            );
+            $i++;
+        }
         echo json_encode($responce);
 		exit;
 	}
+	 
+	 
 ?>
 <div class="btn_box">
 	<?php
@@ -321,19 +330,117 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 			colNames: ['ID', 'ID_web', 'Dropshipper', 'Date', 'Receiver', 'Address', 'Exp.Fee',
 				'Expedition', 'Exp.Code', 'Qty', 'Posting', 'Cancel'
 			],
-			colModel: [
-				{name: 'id_trans', index: 'id_trans', width: 40, search: true, stype: 'text', searchoptions: {sopt: ['cn']}},
-				{name: 'ref_kode', index: 'ref_kode', width: 30, search: true, stype: 'text', searchoptions: {sopt: ['cn']}},
-				{name: 'j.nama', index: 'j.nama', width: 100, searchoptions: {sopt: ['cn']}},
-				{name: 'tgl_trans', index: 'tgl_trans', width: 35, searchoptions: {sopt: ['cn']}, formatter: "date", formatoptions: {srcformat: "Y-m-d", newformat: "d/m/Y"}, align: 'center'},
-				{name: 'p.nama', index: 'p.nama', align: 'left', width: 80, searchoptions: {sopt: ['cn']}},
-				{name: 'alamat', index: 'alamat', align: 'left', width: 130, searchoptions: {sopt: ['cn']}},
-				{name: 'exp_fee', index: 'exp_fee', align: 'right', width: 20, searchoptions: {sopt: ['cn']}},
-				{name: 'e.nama', index: 'e.nama', align: 'left', width: 35, searchoptions: {sopt: ['cn']}},
-				{name: 'exp_code', index: 'exp.code', align: 'left', width: 35, searchoptions: {sopt: ['cn']}},
-				{name: 'totalqty', index: 'totalqty', align: 'right', width: 20, searchoptions: {sopt: ['cn']}},
-				{name: 'edit', index: 'edit', align: 'center', width: 30, sortable: false, search: false},
-				{name: 'delete', index: 'delete', align: 'center', width: 30, sortable: false, search: false
+			colModel: [{
+					name: 'id_trans',
+					index: 'id_trans',
+					width: 40,
+					search: true,
+					stype: 'text',
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'ref_kode',
+					index: 'ref_kode',
+					width: 30,
+					search: true,
+					stype: 'text',
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'j.nama',
+					index: 'j.nama',
+					width: 100,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'tgl_trans',
+					index: 'tgl_trans',
+					width: 35,
+					searchoptions: {
+						sopt: ['cn']
+					},
+					formatter: "date",
+					formatoptions: {
+						srcformat: "Y-m-d",
+						newformat: "d/m/Y"
+					},
+					align: 'center'
+				},
+				{
+					name: 'p.nama',
+					index: 'p.nama',
+					align: 'left',
+					width: 80,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'alamat',
+					index: 'alamat',
+					align: 'left',
+					width: 130,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'exp_fee',
+					index: 'exp_fee',
+					align: 'right',
+					width: 20,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'e.nama',
+					index: 'e.nama',
+					align: 'left',
+					width: 35,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'exp_code',
+					index: 'exp.code',
+					align: 'left',
+					width: 35,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'totalqty',
+					index: 'totalqty',
+					align: 'right',
+					width: 20,
+					searchoptions: {
+						sopt: ['cn']
+					}
+				},
+				{
+					name: 'edit',
+					index: 'edit',
+					align: 'center',
+					width: 30,
+					sortable: false,
+					search: false
+				},
+				{
+					name: 'delete',
+					index: 'delete',
+					align: 'center',
+					width: 30,
+					sortable: false,
+					search: false
 				},
 				//  {name:'select',index:'select', align:'center', width:30, sortable: false, search: false},
 			],
