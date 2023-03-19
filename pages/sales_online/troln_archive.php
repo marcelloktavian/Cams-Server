@@ -217,8 +217,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 		}
 
 		?>
-		<table id="table_jualarchive"></table>
-		<div id="pager_table_jualarchive"></div>
 		<div class="btn_box">
 			    <?php
     $statusToko = '';
@@ -239,6 +237,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 	<?php } ?>
 		</br>
 	</div>
+		<table id="table_jualarchive"></table>
+		<div id="pager_table_jualarchive"></div>
+		
 
 	<script type="text/javascript">
 		$(document).ready(function(){

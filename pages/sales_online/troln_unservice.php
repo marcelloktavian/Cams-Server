@@ -164,14 +164,15 @@ $allow_delete = is_show_menu(DELETE_POLICY, PendingOrder, $group_acess);
 	}
 	
 ?>
-<table id="table_jualunservice"></table>
-<div id="pager_table_jualunservice"></div>
 <div class="btn_box">
 <a href="javascript: void(0)" 
    onclick="window.open('pages/summary_online/oln_unpaidrpt.php')">
    <button class="btn btn-success">Cetak</button></a>  
 </br>
 </div>
+<table id="table_jualunservice"></table>
+<div id="pager_table_jualunservice"></div>
+
 
 <script type="text/javascript">
     $(document).ready(function(){

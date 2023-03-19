@@ -278,9 +278,9 @@ Keterangan
 </tr>
 <tr>
 <td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
-<td class='fonttext'>Piutang</td>
-<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' onkeyup='hitungpiutang();'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
+<td class='fonttext' hidden>Piutang</td>
+<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;' hidden></td>
 </tr>
 </table>
 
@@ -704,21 +704,26 @@ function hitungpiutang()
     
 	total_blmdisc=total_blmdisc+ongkir_murni - discfaktur_murni;
 	sisa = (total)-(tunai_murni+transfer_murni+byr_deposit_murni);
+
+	sisa2 = (total)-(tunai_murni+transfer_murni);
+	// console.log('sisa '+sisa2);
+	// console.log(total);
 	//mengecek nilai piutang yang lebih kecil dari nol,diubah menjadi nol
 	//artinya pembayaran lebih besar dari faktur sehingga dianggap sebagai deposit
 	//alert("sisa="+sisa+",total="+total+",ongkir_murni="+ongkir_murni+",tunai="+tunai+",transfer="+transfer+",disc_dp="+disc_dropshipper);
 	//console.log(byr_deposit);
 	//alert("ref.code="+document.getElementById("ref_code").value);
 	
-	if (sisa < 0){
+	// if (sisa <= 0){
 	//dimasukan ke deposit
-	document.getElementById("simpan_deposit").value = -sisa;
-    document.getElementById("piutang").value = 0;
-    }
-	else{
-	document.getElementById("piutang").value = sisa;
-    document.getElementById("simpan_deposit").value = 0;
-    }
+	document.getElementById("byr_deposit").value = sisa2;
+    // document.getElementById("piutang").value = 0;
+    // }
+	// else{
+	// sisa3 = (total)-(tunai_murni+transfer_murni+sisa2);
+	// document.getElementById("piutang").value = sisa3;
+    // document.getElementById("byr_deposit").value = 0;
+    // }
 	
 	//totalhidden dipake buat validasi saja
 	document.getElementById("totalhidden").value = total;	   
@@ -904,7 +909,7 @@ function cetak(){
     var simpan_deposit  = parseInt(form2.simpan_deposit.value);
     var byr_deposit     = parseInt(form2.byr_deposit.value);
     var temp_total      = tunai + transfer;
-
+	var totalsemua 		= tunai + transfer + byr_deposit;
 	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
 	
 	//validasi untuk menghitung ulang total
@@ -964,6 +969,10 @@ function cetak(){
 	if (id_expedition == '') {
             pesan = 'Ekspedisi tidak boleh kosong\n';
         }
+
+	if(totalsemua != totalfaktur){
+		pesan = 'Cek kembali totalan\n';
+	}
 
 	// if ((form2.transfer.value != '' && form2.transfer.value != '0') && (form2.byr_deposit.value != '' && form2.byr_deposit.value != '0')) {
  //            pesan = 'Isi salah satu transfer atau deposit\n';

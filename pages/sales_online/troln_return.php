@@ -208,14 +208,14 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 			}
 		}
 
-		$query4=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('02.02.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
-		while($akun4 = mysql_fetch_array($query4)){
-			// saldo dropshipper
-			$sqlakun4="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun4['id']."','".$akun4['noakun']."','".$akun4['nama']."','".$akun4['status']."','0','$totalreturn','','0', '$id_user',NOW()) ";
-			mysql_query($sqlakun4) or die (mysql_error());
-		}
-
 		if($type=='Cash'){
+			$query4=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('02.02.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
+			while($akun4 = mysql_fetch_array($query4)){
+				// saldo dropshipper
+				$sqlakun4="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun4['id']."','".$akun4['noakun']."','".$akun4['nama']."','".$akun4['status']."','0','$totalreturn','','0', '$id_user',NOW()) ";
+				mysql_query($sqlakun4) or die (mysql_error());
+			}
+			
 			$select2 = $db->prepare("Select max(substring(kode,3,10)+1) as kode_id from olndeposit where kode like 'TD%'");
 			$select2->execute();
 			$row2  = $select2->fetch(PDO::FETCH_ASSOC);
@@ -225,6 +225,13 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 			$sqlsaldo="INSERT INTO `olndeposit` VALUES
 				('$kode','$kode','$tgl','$dropshipper','','REFUND ORDER #$ref_kode','DEPOSIT','0','0',NULL,'$totalreturn','$totalreturn','0','0', '0','$totalreturn','0','0','$id_user',NOW());";
 			mysql_query($sqlsaldo) or die (mysql_error());
+		}else{
+			$query4=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('01.04.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
+			while($akun4 = mysql_fetch_array($query4)){
+				// piutang dropshipper
+				$sqlakun4="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun4['id']."','".$akun4['noakun']."','".$akun4['nama']."','".$akun4['status']."','0','$totalreturn','','0', '$id_user',NOW()) ";
+				mysql_query($sqlakun4) or die (mysql_error());
+			}
 		}
 
 		//update olnsoreturn agar jadi 1 krn return confirmed,tapi statenya dikasih string='1' krn tipe datanya enum

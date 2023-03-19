@@ -288,8 +288,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
    	</div>
 </div>
 
-<table id="table_trdeposit"></table>
-<div id="pager_table_trdeposit"></div>
 <div class="btn_box">
 <?php
 
@@ -312,6 +310,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 	
 ?>
 </div>
+<table id="table_trdeposit"></table>
+<div id="pager_table_trdeposit"></div>
+
 <script type="text/javascript">
     $('#start_trdeposit').datepicker({
 		dateFormat: "dd/mm/yy"

@@ -348,12 +348,12 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
     }
     
     if ($statusToko == 'Tutup') {
-        echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Add</button>';
+        echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Add Online Credit</button>';
     }else{
 	if ($allow_add) {
 	?>
 		<a href="javascript: void(0)" onclick="window.open('pages/sales_online/trolnso_detail.php');">
- 		<button class="btn btn-success">Add</button></a>   
+ 		<button class="btn btn-success">Add Online Cash</button></a>   
 	<?php
 	}}
 	?>

@@ -113,8 +113,6 @@
 	}
 	
 ?>
-<table id="table_jual_cancel"></table>
-<div id="pager_table_jual_cancel"></div>
 <div class="btn_box">
     <?php
     $statusToko = '';
@@ -135,6 +133,9 @@
 <?php } ?>
 </br>
 </div>
+<table id="table_jual_cancel"></table>
+<div id="pager_table_jual_cancel"></div>
+
 
 <script type="text/javascript">
     $(document).ready(function(){
