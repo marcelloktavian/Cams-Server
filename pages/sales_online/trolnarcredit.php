@@ -99,12 +99,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
       $delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Cancel</a>';
     } else {
       if($allow_post){
-        $edit = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=posting&id='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Posting</a>';
+        $edit = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_online/trolnsocr.php?action=posting&id='.$line['id_trans'].'\',\'table_jualcrAR\')" href="javascript:;">Posting</a>';
       }
       else
         $edit = '<a onclick="javascript:custom_alert(\'Tidak Boleh Print Nota\')" href="javascript:;">Posting</a>';
 
-        $pay = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_online/trolnarcredit_lunasi.php?start_date='.$_GET['startdate_olnsoar'].'&end_date='.$_GET['enddate_olnsoar'].'&ids='.$line['id_trans'].'\',\'table_jualcr\')" href="javascript:;">Pay</a>';
+        $pay = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_online/trolnarcredit_lunasi.php?start_date='.$_GET['startdate_olnsoar'].'&end_date='.$_GET['enddate_olnsoar'].'&ids='.$line['id_trans'].'\',\'table_jualcrAR\')" href="javascript:;">Pay</a>';
 
         $detail = '<a href="javascript:;" onclick="opendetail('.$line['id_dropshipper'].')">Detail</a>';
     }
@@ -264,14 +264,14 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
       </div>
       <label for="" class="ui-helper-reset label-control">&nbsp;</label>
       <div class="ui-corner-all form-control">
-        <button onclick="gridReloadTR()" class="btn" type="button">Cari</button>
+        <button onclick="gridReloadTRAR()" class="btn" type="button">Cari</button>
       </div>
     </form>
   </div>
 </div>
 
-<table id="table_jualcr"></table>
-<div id="pager_table_jualcr"></div>
+<table id="table_jualcrAR"></table>
+<div id="pager_table_jualcrAR"></div>
 
 <script type="text/javascript">
   $('#startdate_olnsoar').datepicker({dateFormat: "dd-mm-yy"});
@@ -280,7 +280,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
 	$("#startdate_olnsoar").datepicker('setDate', '<?php echo date('d-m-Y')?>');
 	$("#enddate_olnsoar").datepicker('setDate', '<?php echo date('d-m-Y')?>');
 
-  function gridReloadTR(){
+  function gridReloadTRAR(){
     var startdate     = ($("#startdate_olnsoar").val()).split("-");
     var enddate       = ($("#enddate_olnsoar").val()).split("-");
 
@@ -290,7 +290,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
     var filter      = $("#filtervalue_olnsoar").val();
 
 		var v_url       = '<?php echo BASE_URL?>pages/sales_online/trolnarcredit.php?action=json&startdate_olnsoar='+startdate+'&enddate_olnsoar='+enddate+'&filter='+filter;
-		jQuery("#table_jualcr").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
+		jQuery("#table_jualcrAR").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
   }
 
   function opendetail(id){
@@ -306,7 +306,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
   }
 
   $(document).ready(function(){
-    $("#table_jualcr").jqGrid({
+    $("#table_jualcrAR").jqGrid({
 			url: '<?php echo BASE_URL.'pages/sales_online/trolnarcredit.php?action=json'; ?>',
       datatype : "json",
       colNames: ['Dropshipper', 'Type', 'Total Qty', 'Total Faktur', 'Payment', 'Remaining', 'Pay', 'Detail'],
@@ -323,7 +323,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
 			],
       rowNum: 20,
 			rowList: [10, 20, 30],
-			pager: '#pager_table_jualcr',
+			pager: '#pager_table_jualcrAR',
 			sortname: 'id_trans',
 			autowidth: true,
       height: '300',
@@ -338,6 +338,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete') {
 			userDataOnFooter: true,
 			subGrid: false,
     });
-    $("#table_jualcr").jqGrid('navGrid', '#pager_table_jualcr', {edit: false, add: false, del: false, search: true});
+    $("#table_jualcrAR").jqGrid('navGrid', '#pager_table_jualcrAR', {edit: false, add: false, del: false, search: true});
   });
 </script>
