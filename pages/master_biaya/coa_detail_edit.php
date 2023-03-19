@@ -109,7 +109,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
     <tr>
 	<td align='center' width='30%' class='fonttext'>No Akun</td>
 	<td align='center' width='45%' class='fonttext'>Nama Akun</td>
-	<td align='center' width='5%' class='fonttext'>Hapus</td>    
+	<!-- <td align='center' width='5%' class='fonttext'>Hapus</td>   --> 
     </tr>
 </thead>
 </table>
@@ -185,7 +185,7 @@ row.id = 't1'+baris1;
 
 var td0 = document.createElement("td");
 var td1 = document.createElement("td");
-var td2 = document.createElement("td");
+// var td2 = document.createElement("td");
 // var td3 = document.createElement("td");
 
 td0.appendChild(generateId(baris1));
@@ -194,11 +194,11 @@ td1.appendChild(generateNama(baris1));
 //id untuk dimasukin id_product
 // td2.appendChild(generateSize(baris1));
 // td2.appendChild(generateJenis(baris1));
-td2.appendChild(generateDel1(baris1));
+// td2.appendChild(generateDel1(baris1));
 
 row.appendChild(td0);
 row.appendChild(td1);
-row.appendChild(td2);
+// row.appendChild(td2);
 // row.appendChild(td3);
 
 document.getElementById('Nama'+baris1+'').focus();

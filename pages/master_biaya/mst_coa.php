@@ -95,7 +95,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
                 $line['jenis'],
                 $edit,
                 $editdetail,
-				$delete,
+				// $delete,
             );
             $i++;
         }
@@ -196,8 +196,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_mst_coa"></table>
-<div id="pager_table_mst_coa"></div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3);
@@ -218,13 +216,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 	}}
 ?>
 </div>
+<table id="table_mst_coa"></table>
+<div id="pager_table_mst_coa"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 
         $("#table_mst_coa").jqGrid({
             url:'<?php echo BASE_URL.'pages/master_biaya/mst_coa.php?action=json'; ?>',
             datatype: "json",
-            colNames:['ID','Account Number','Account Name','Type','Edit','Edit Detail','Delete'],
+            colNames:['ID','Account Number','Account Name','Type','Edit','Edit Detail'],
             colModel:[
                 {name:'ID',index:'id', width:1, hidden: true , searchoptions: {sopt:['cn']}},
                 {name:'noakun',index:'noakun', width:170, searchoptions: {sopt:['cn']}},
@@ -232,7 +233,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
                 {name:'jenis',index:'jenis', align:'center',width:70, searchoptions: {sopt:['cn']}},
                 {name:'Edit',index:'edit', align:'center', width:50, sortable: false, search: false},
                 {name:'EditDetail',index:'EditDetail', align:'center', width:50, sortable: false, search: false},
-                {name:'Delete',index:'delete', align:'center', width:50, sortable: false, search: false},
+                // {name:'Delete',index:'delete', align:'center', width:50, sortable: false, search: false},
             ],
             rowNum:20,
             rowList:[10,20,30],
