@@ -53,7 +53,7 @@
 				$namadropshipper=$q['nama'];
 
 				$id_user = 'marcell';
-				$total = $d['total_debet'];
+				// $total = $d['total_debet'];
 				$idparent=$d['id'];
 				
 				$dpp = round($total / 1.11);
