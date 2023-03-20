@@ -357,7 +357,7 @@ Keterangan
 </tr>
 <tr>
 <td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' ><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' value='$sumdeposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;background-color:#D3D3D3' value='$deposit' readonly><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' value='$sumdeposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
 <td class='fonttext' hidden>Piutang</td>
 <td hidden><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
 </tr>
