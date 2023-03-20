@@ -23,11 +23,11 @@
 			</thead>
 			<?php 		
 			$no=1;
-			$data = mysql_query("  SELECT jurnal.id, no_jurnal, total_debet AS a, SUM(debet) AS b, RIGHT(jurnal.keterangan,12) as oln  FROM jurnal
-            LEFT JOIN jurnal_detail ON jurnal.id=jurnal_detail.id_parent
-            WHERE DATE(tgl)=DATE(NOW()) AND jurnal.keterangan LIKE '%Cash%'
-            GROUP BY jurnal.id 
-            HAVING total_debet <> SUM(debet)");
+			$data = mysql_query("  SELECT jurnal.id, no_jurnal, total_debet AS a, IFNULL(SUM(debet),0) AS b, RIGHT(jurnal.keterangan,12) AS oln  FROM jurnal
+		    LEFT JOIN jurnal_detail ON jurnal.id=jurnal_detail.id_parent
+		    WHERE DATE(tgl)=DATE(NOW()) AND jurnal.keterangan LIKE '%Cash%'
+		    GROUP BY jurnal.id 
+		    HAVING total_debet <> IFNULL(SUM(debet),0)");
 			while($d = mysql_fetch_array($data)){
 				?>
 				<tr>
