@@ -736,7 +736,6 @@ function hitungpiutang()
 }
 
 function hitungtotal(){
-    
 	var total=0;
 	var totalqty=0;
 	var sisa_tf=0;
@@ -824,10 +823,10 @@ function hitungtotal(){
 	
 	else if (saldo_deposit < total){
 	//defaultnya byr_deposit saja bila sisa <total
-	total=sisa_tf;
+	totalakhir=sisa_tf;
 	//alert('total2='+total);
 	document.getElementById("byr_deposit").value = saldo_deposit;
-	document.getElementById("transfer").value = total;	
+	document.getElementById("transfer").value = totalakhir;	
 	}
 	
 	if (saldo_deposit <= 0)
