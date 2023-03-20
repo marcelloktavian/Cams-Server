@@ -51,6 +51,7 @@
 			$i = 0;
 			$duplicate = '';
 			$od = '';
+			$barang = '';
 
 			foreach ($Reader as $Key => $Row)
 			{	
@@ -161,6 +162,7 @@
 
 						if(($stok - $Row[4])<0){
 							$totBarang++;
+							$barang += ' ORDER ID : '.$Row[0].", PRODUCT ID : ".$Row[1].", SIZE : ".$size[1];
 						}
 					}
 
@@ -206,6 +208,7 @@
 						$hasil_delete=mysql_query($sql_delete);
 
 						echo "<h1>Ada Barang Yang Terduplikasi</h1>";
+						echo $barang;
 						die;
 					}
 
