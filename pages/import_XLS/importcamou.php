@@ -61,8 +61,9 @@
 						echo "<h1>ID Product Kosong</h1>";
 						die;
 					}
+					$size = explode("::",$Row[7]);
 
-					$getTotXls3="SELECT COUNT(*) AS totxls FROM `oln_xlscamou_temp` WHERE (oln_order_id='".$Row[0]."' AND oln_productid='".$Row[1]."')";
+					$getTotXls3="SELECT COUNT(*) AS totxls FROM `oln_xlscamou_temp` WHERE (oln_order_id='".$Row[0]."' AND oln_productid='".$Row[1]."' AND size='".$size[1]."')";
 					// var_dump($getTotXls3);
 					$data3 = mysql_query($getTotXls3);
 					$rs3 = mysql_fetch_array($data3);
