@@ -76,7 +76,7 @@
 						$size = explode("::",$Row[7]);
 
 						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".trim($size[1])."'";
-						// var_dump($getHarga);
+						var_dump($getHarga);
 						$data = mysql_query($getHarga);
 						$rs = mysql_fetch_array($data);
 						$harga=$rs['harga'];
@@ -162,7 +162,7 @@
 
 						if(($stok - $Row[4])<0){
 							$totBarang++;
-							$barang = 'ORDER ID : '.$Row[0].", PRODUCT ID : ".$Row[1].", SIZE : ".$size[1];
+							$barang = 'ORDER ID : '.$Row[0].", PRODUCT ID : ".$Row[1].", SIZE : ".$size[1].", STOK : ".$stok;
 						}
 					}
 
