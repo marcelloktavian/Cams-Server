@@ -75,8 +75,8 @@
 					if ($Row[0]!=null || $Row[0]!='') {
 						$size = explode("::",$Row[7]);
 
-						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".trim($size[1])."'";
-						var_dump($getHarga);
+						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".trim($size[1])."' AND deleted=0";
+						// var_dump($getHarga);
 						$data = mysql_query($getHarga);
 						$rs = mysql_fetch_array($data);
 						$harga=$rs['harga'];

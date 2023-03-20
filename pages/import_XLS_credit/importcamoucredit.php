@@ -73,7 +73,7 @@
 					$penerima="";
 					if ($Row[0]!=null || $Row[0]!='') {
 
-						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".$Row[7]."'";
+						$getHarga="SELECT harga, stok FROM `inventory_balance` WHERE `oln_product_id`='".$Row[1]."' AND size='".$Row[7]."'  AND deleted=0";
 						$data = mysql_query($getHarga);
 						$rs = mysql_fetch_array($data);
 						$harga=$rs['harga'];
