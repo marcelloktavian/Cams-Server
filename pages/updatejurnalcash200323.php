@@ -23,7 +23,7 @@
 			</thead>
 			<?php 		
 			$no=1;
-			$data = mysql_query("  SELECT jurnal.id, no_jurnal, total_debet AS a, SUM(debet) AS b, RIGHT(keterangan,12) as oln  FROM jurnal
+			$data = mysql_query("  SELECT jurnal.id, no_jurnal, total_debet AS a, SUM(debet) AS b, RIGHT(jurnal.keterangan,12) as oln  FROM jurnal
             LEFT JOIN jurnal_detail ON jurnal.id=jurnal_detail.id_parent
             WHERE DATE(tgl)=DATE(NOW()) AND jurnal.keterangan LIKE '%Cash%'
             GROUP BY jurnal.id 
