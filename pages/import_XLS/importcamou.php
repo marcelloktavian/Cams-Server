@@ -208,7 +208,6 @@
 						$hasil_delete=mysql_query($sql_delete);
 
 						echo "<h1>Ada Barang Yang Terduplikasi</h1>";
-						echo $barang;
 						die;
 					}
 
@@ -217,6 +216,7 @@
 						$hasil_delete=mysql_query($sql_delete);
 
 						echo "<h1>Cek Ulang Stok Barang</h1>";
+						echo $barang;
 						die;
 					}
 
