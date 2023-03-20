@@ -131,7 +131,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 		$masterNo=$q['nomor'];
 
 		// insert jurnal
-		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penambahan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'DEPOSIT' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
+		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penambahan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'DEPOSIT','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
 		$stmt->execute();
 
 		//get master id terakhir

@@ -219,7 +219,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 			$masterNo=$q['nomor'];
 
 			// insert jurnal
-			$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
+			$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
 			$stmt->execute();
 
 			//get master id terakhir
@@ -284,7 +284,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 		$masterNo=$q['nomor'];
 
 		// insert jurnal
-		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
+		$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_GET['id']."%') ");
 		$stmt->execute();
 
 		//get master id terakhir
