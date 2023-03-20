@@ -207,10 +207,11 @@ document.getElementById('Nomor'+baris1+'').value='<?=$noakun?>';
 // document.getElementById('Size'+baris1+'').setAttribute('onChange', 'hitungjml('+baris1+')');
 //document.getElementById('Next'+baris1+'').setAttribute('onkeydown', 'addNewRow1()');
 // document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')');
-document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')');
+// document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')');
 
 // get_products(baris1);
 baris1++;
+// console.log(baris1);
 }
 
 function generateId(index) {
