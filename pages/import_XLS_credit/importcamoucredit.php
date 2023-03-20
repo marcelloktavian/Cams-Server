@@ -64,12 +64,12 @@
 						die;
 					}
 
-					$getTotXls3="SELECT COUNT(*) AS totxls FROM `oln_xlscamou_cr_temp` WHERE (oln_order_id='".$Row[0]."' AND oln_productid='".$Row[1]."')";
+					$getTotXls3="SELECT COUNT(*) AS totxls FROM `oln_xlscamou_cr_temp` WHERE (oln_order_id='".$Row[0]."' AND oln_productid='".$Row[1]."' AND size='".$Row[7]."')";
 					// var_dump($getTotXls3);
 					$data3 = mysql_query($getTotXls3);
 					$rs3 = mysql_fetch_array($data3);
 					$totXlsTemp+=$rs3['totxls'];
-
+				
 					$penerima="";
 					if ($Row[0]!=null || $Row[0]!='') {
 
