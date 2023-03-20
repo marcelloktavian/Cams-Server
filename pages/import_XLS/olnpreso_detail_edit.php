@@ -3,7 +3,7 @@ include("../../include/koneksi.php");
 // error_reporting(0);
 //inisialisasi input penjualan B2B
 $id=$_GET['ids'];
-$sql_init="SELECT p.deposit,sum(p.harga_satuan) as harga_satuan,sum(p.tax) as tax,p.total as grandtotal,p.subtotal ,p.oln_customer_telp,p.oln_order_id,p.oln_tgl,p.oln_customerid,p.oln_customer,p.id_dropshipper,p.oln_tgl,p.oln_penerima,p.oln_address,p.oln_provinsi,p.oln_postalcode,p.oln_kotakab,p.oln_kecamatan,p.oln_telp,p.oln_expnote,sum(p.jumlah_beli) as qty, sum(p.subtotal) as total,sum(p.deposit) as grand_deposit,p.oln_note,p.oln_expnote,p.oln_noteexp,p.oln_keterangan,d.disc as discdp, p.id_expedition, ex.nama as expedition, (SELECT SUM(IFNULL(deposit,0)) AS deposit FROM olndeposit od where od.id_dropshipper=d.id
+$sql_init="SELECT p.deposit,sum(p.harga_satuan) as harga_satuan,sum(p.tax) as tax, p.total as grandtotal,p.subtotal ,p.oln_customer_telp,p.oln_order_id,p.oln_tgl,p.oln_customerid,p.oln_customer,p.id_dropshipper,p.oln_tgl,p.oln_penerima,p.oln_address,p.oln_provinsi,p.oln_postalcode,p.oln_kotakab,p.oln_kecamatan,p.oln_telp,p.oln_expnote,sum(p.jumlah_beli) as qty, sum(p.subtotal) as total,sum(p.deposit) as grand_deposit,p.oln_note,p.oln_expnote,p.oln_noteexp,p.oln_keterangan,d.disc as discdp, p.id_expedition, ex.nama as expedition, (SELECT SUM(IFNULL(deposit,0)) AS deposit FROM olndeposit od where od.id_dropshipper=d.id
 GROUP BY id_dropshipper ) AS deposit FROM `olnpreso` p LEFT JOIN mst_dropshipper d on p.id_dropshipper=d.id LEFT JOIN mst_expedition ex ON ex.id=p.id_expedition  WHERE p.oln_order_id ='".$id."'  GROUP by p.oln_order_id ";
 // var_dump($sql_init);die;
 $data = mysql_query($sql_init);
@@ -46,6 +46,10 @@ $harga_satuan = $rs['harga_satuan'];
 	//$expedisifee = $grandtotal - ($harga_satuan + $tax );
 		$expedisifee = round($grandtotal-($total * 1.11));
 		$displayTotal = $rs['grandtotal'];
+	}
+
+	if($expedisifee == '-0'){
+		$expedisifee = 0;
 	}
 
 ?>

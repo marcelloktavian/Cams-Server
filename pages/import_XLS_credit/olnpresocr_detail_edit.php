@@ -49,6 +49,10 @@ if( $rs['grandtotal'] == 0){
 	$displayTotal = $rs['grandtotal'];
 }
 
+if($expedisifee == '-0'){
+	$expedisifee = 0;
+}
+
 ?>
 <head>
 	<title>ONLINE PRE SALES CREDIT</title>
