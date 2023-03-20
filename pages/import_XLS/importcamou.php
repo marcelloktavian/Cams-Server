@@ -162,7 +162,7 @@
 
 						if(($stok - $Row[4])<0){
 							$totBarang++;
-							$barang += ' ORDER ID : '.$Row[0].", PRODUCT ID : ".$Row[1].", SIZE : ".$size[1];
+							$barang = 'ORDER ID : '.$Row[0].", PRODUCT ID : ".$Row[1].", SIZE : ".$size[1];
 						}
 					}
 
