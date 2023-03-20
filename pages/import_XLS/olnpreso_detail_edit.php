@@ -856,21 +856,33 @@ function hitungtotal(){
 	discfaktur=document.getElementById("disc_faktur").value;
 	var discfaktur_murni=parseInt(discfaktur.replace(".", ""));
 	
-    for (var i=1; i<=baris1;i++){
-	var barcode=document.getElementById("BARCODE"+i+"");
-	 if (barcode != null)
-	 {   
-	    if(document.getElementById("SUBTOTAL"+i+"").value == "") {
-		var subtotal = 0;}
-		else{
-		var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
-		var qty = document.getElementById("Qty"+i+"").value;
-		}
-	    //alert("subtotal ="+subtotal.toString())
-		total+= Math.ceil(parseInt(subtotal));
-		totalqty+= parseInt(qty);
-		total_blmdisc+= parseInt(subtotal);
-	 }
+	for (var i=1; i<baris1;i++){
+		// console.log("baris = "+baris1);
+		// console.log(i);
+		// console.log("BARCODE"+i+"");
+
+		var barcode=document.getElementById("BARCODE"+i+"");
+		if (barcode != null)
+		{   
+			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
+				var subtotal = 0;
+			}else{
+				var harga = document.getElementById("Harga"+i+"").value;
+				// console.log(harga);
+				var sub = parseInt(harga) + parseInt(1 * Math.ceil(harga * 0.11));
+				// alert(harga * disc_dropshipper);
+				var qty = document.getElementById("Qty"+i+"").value;
+				var subtotal = sub * qty;
+				totalhid += parseInt(qty)*parseInt(harga);
+			}
+			// console.log(sub);
+
+	    // alert("subtotal ="+subtotal.toString())
+	    
+	    total+= parseInt(subtotal);
+	    totalqty+= parseInt(qty);
+	    // total_blmdisc+= parseInt(subtotal);
+	}
 		//else{}
 		//return false;
 	}
@@ -886,7 +898,7 @@ function hitungtotal(){
 	//totalfaktur ditambah dengan ongkir dikurangi disc_faktur
 	total=total+ongkir - discfaktur_murni;
     total_blmdisc=total_blmdisc + ongkir - discfaktur_murni;
-	
+
 	//sisa_tf merupakan sisa bila total > saldo depositnya shg defaultnya jadi ke tf	
 	sisa_tf=total-saldo_deposit;
 	//total=sisa_tf;
@@ -901,10 +913,10 @@ function hitungtotal(){
 	
 	else if (saldo_deposit < total){
 	//defaultnya byr_deposit saja bila sisa <total
-	total=sisa_tf;
+	totaltf=sisa_tf;
 	//alert('total2='+total);
 	document.getElementById("byr_deposit").value = saldo_deposit;
-	document.getElementById("transfer").value = total;	
+	document.getElementById("transfer").value = totaltf;	
 	}
 	
 	if (saldo_deposit <= 0)
