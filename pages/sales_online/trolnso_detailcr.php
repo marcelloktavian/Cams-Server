@@ -265,22 +265,19 @@ Keterangan
 <td class='fonttext'>Disc.Faktur </td>
 <td><input type='text' class='inputform' name='disc_faktur' id='disc_faktur' style='text-align:right;' onkeyup='hitungtotal();'></td>
 </tr>
-
 <tr>
-<td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
-<td class='fonttext'>Piutang</td>
-<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
-</tr>
-
-<tr hidden>
 <td class='fonttext'>Tunai </td>
 <td><input type='text' class='inputform' name='tunai' id='tunai' style='text-align:right;' onkeyup='hitungpiutang();'><input type='hidden' class='inputform' name='faktur' id='faktur' /></td>
 <td class='fonttext' >Tf.Bank</td>
 <td><input type='text' class='inputform' name='transfer' id='transfer' style='text-align:right;'onkeyup='hitungpiutang();'></td>
 <td class='fonttext' >&nbsp;</td>
 </tr>
-
+<tr>
+<td class='fonttext' >Bayar dg Deposit</td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
+<td class='fonttext'>Piutang</td>
+<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
+</tr>
 </table>
 
 </table>
