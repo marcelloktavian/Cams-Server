@@ -48,6 +48,10 @@ $harga_satuan = $rs['harga_satuan'];
 		$displayTotal = $rs['grandtotal'];
 	}
 
+	if($expedisifee == '-0'){
+		$expedisifee = 0;
+	}
+
 ?>
 <head>
 <title>ONLINE PRE SALES</title>
@@ -336,7 +340,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
 	 </tr>
 	 <tr>
 	    <td class='fonttext'>Exp.Fee</td>
-        <td><input type='text' class='inputform' name='exp_fee' id='exp_fee' placeholder='Biaya Ekspedisi' value='$expedisifee' onkeyup='hitungtotal();'/></td>
+        <td><input type='text' class='inputform' name='exp_fee' id='exp_fee' placeholder='Biaya Ekspedisi' value='$expedisifee' onkeyup='hitungtotaldisable();' readonly/></td>
 		<td class='fonttext'>Exp.Note</td>
         <td><textarea name='exp_note' id='exp_note' cols='31' rows='2' placeholder='Catatan Ekspedisi' >$expnote</textarea></td>
 	 </tr>
@@ -346,7 +350,7 @@ Keterangan
 </td>
 <td colspan=1 align='left'><textarea name='txtbrg' id='txtbrg' cols='55' rows='2' >$keterangan</textarea></td>
 <td class='fonttext'>Disc.Faktur </td>
-<td><input type='text' class='inputform' name='disc_faktur' id='disc_faktur' style='text-align:right;' onkeyup='hitungtotal();'></td>
+<td><input type='text' class='inputform' name='disc_faktur' id='disc_faktur' style='text-align:right;' onkeyup='hitungtotaldisable();' readonly></td>
 </tr>
 <tr>
 <td class='fonttext'>Tunai </td>
