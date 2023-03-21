@@ -111,10 +111,10 @@
           $grandtotal = 0;
     }
 	else{
-	$grandtotal = $_POST['total'];
+	$grandtotal = $_POST['totalhidden'];
 	}
 		//grandtotal untuk diisi di olnso	  
-	    $grandtotalolnso = $_POST['total'];
+	    $grandtotalolnso = $_POST['totalhidden'];
 
         // looping
         for ($i=1; $i<$row; $i++)

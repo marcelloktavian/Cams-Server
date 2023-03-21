@@ -230,7 +230,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
 		<td class='fontjudul'> TOTAL QTY <input type='text' class='' name='totalqty' id='totalqty' value='$totalqty' style='text-align:right;font-size: 30px;background-color:white;height:40px;border:1px dotted #f30; border-radius:4px; -moz-border-radius:4px;' />
 		<!-- Hidden krn tidak diacc sama Enrico-->
 		<input type='hidden' class='' name='total_blmdisc' id='total_blmdisc' style='text-align:right;font-size: 30px;background-color:white;height:40px;border:1px dotted #f30; border-radius:4px; -moz-border-radius:4px;' />
-		<input type='hidden' name='totalhidden' id='totalhidden'/>
+		<input type='hidden' name='totalhidden' id='totalhidden' value='$displayTotal'/>
 		</td>
     </tr>
 </table>
@@ -360,7 +360,7 @@ Keterangan
 </tr>
 <tr>
 <td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' ><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' value='$sumdeposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' ><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' /><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
 <td class='fonttext' hidden>Piutang</td>
 <td hidden><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
 </tr>
@@ -756,7 +756,7 @@ function hitungpiutang()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-			var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
+			var subtotal = (1.11*document.getElementById("SUBTOTAL"+i+"").value);
 			var qty = document.getElementById("Qty"+i+"").value;
 			}
 	        total+= parseInt(subtotal);
@@ -769,9 +769,9 @@ function hitungpiutang()
 	}
 	//total dengan ongkir tp sudah dikurangi disc
     // total=Math.ceil((1-disc_dropshipper)*total);	
-	total=total+ongkir_murni-discfaktur_murni;
+	total=total+ongkir_murni;
     
-	total_blmdisc=total_blmdisc+ongkir_murni - discfaktur_murni;
+	total_blmdisc=total_blmdisc+ongkir_murni;
 	sisa = (total)-(tunai_murni+transfer_murni+byr_deposit_murni);
 console.log(total);
 	sisa2 = (total)-(tunai_murni+transfer_murni);
