@@ -91,7 +91,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   $responce['records'] = $count;
   $i=0;
 
-  $grand_qty=0;$grand_faktur=0;$grand_total=0;
+  $grand_qty=0;$grand_faktur=0;$grand_total=0;$grand_remaining=0;$grand_payment=0;
 
   foreach($data1 as $line) {
     if ($statusToko == 'Tutup') {
@@ -122,7 +122,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
     // $edit,
     );
 
-    $grand_qty+=$line['totalqty']; $grand_total+=$line['sumTotal'];
+    $grand_qty+=$line['sumTotalQty']; $grand_total+=$line['sumTotal'];$grand_remaining+=$line['sumTotal'];$grand_payment+=0;
 
     $i++;
   }
@@ -131,6 +131,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   }
   $responce['userdata']['totalqty']     = number_format($grand_qty, 0);
   $responce['userdata']['sumtotal']     = number_format($grand_total, 0);
+  $responce['userdata']['payment']     = number_format($grand_payment, 0);
+  $responce['userdata']['remaining']     = number_format($grand_remaining, 0);
   echo json_encode($responce);
   exit;
 }

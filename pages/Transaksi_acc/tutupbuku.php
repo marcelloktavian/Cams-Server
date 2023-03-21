@@ -51,8 +51,8 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
     $responce['rows'][$i]['cell'] = array(
       date('F', mktime(0, 0, 0, $line['month'], 1)).' '.$line['year'],
       $line['nama_pic'],
-      $line['hari'].' '.$line['bulan'].' '.$line['tahun'],
-      $detail,
+      $line['hari'].' '.$line['bulan'].' '.$line['tahun'].' '.$line['waktu'],
+      // $detail,
     );
     $i++;
   }
@@ -70,12 +70,14 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
 
   if($affected_rows > 0){
 
-    $check_log_yec = $db->prepare("SELECT * FROM `tbl_logyec` WHERE closed = 1");
-    $check_log_yec->execute();
-
+    $stmt = $db->prepare("SELECT * FROM `tbl_logyec` WHERE closed = 1");
+    $stmt->execute();
+    $monthbaru = explode('/',$_POST['date_yec'])[0].'/'.explode('/',$_POST['date_yec'])[1];
     $affected_rows = $stmt->rowCount();
-    if($affected_rows > 0){
-      $q_move = mysql_query("INSERT INTO `jurnal_archive` (`id_ori`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`) SELECT `id`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status` FROM `jurnal`");
+    if($affected_rows == 0){
+      $q_to = date('Y-m-t', strtotime(explode('/',$_POST['date_yec'])[1].'-'.explode('/',$_POST['date_yec'])[0]));
+
+      $q_move = mysql_query("INSERT INTO `jurnal_archive` (`id_ori`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`,`id_logyec`) SELECT `id`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`,'$monthbaru' FROM `jurnal` where date(tgl) <= date('$q_to')");
 
       $gt_min_id = mysql_query("SELECT MIN(`id_ori`) as start_id FROM `jurnal_archive`");
       $gt_min_id = mysql_fetch_array($gt_min_id);
@@ -85,7 +87,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
       $gt_max_id = mysql_fetch_array($gt_max_id);
       $max_id = $gt_max_id['end_id'];
 
-      $q_detmove = mysql_query("INSERT INTO `jurnal_detail_archive` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`) SELECT `id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified` FROM `jurnal_detail` WHERE jurnal_detail.id_parent BETWEEN $min_id AND $max_id");
+      $q_detmove = mysql_query("INSERT INTO `jurnal_detail_archive` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`,`id_logyec`) SELECT `id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`,'$monthbaru' FROM `jurnal_detail` WHERE jurnal_detail.id_parent BETWEEN $min_id AND $max_id");
     }
     else{
       $q_from = mysql_query("SELECT CONCAT(CASE WHEN `month` = 12 THEN CAST(`year` AS UNSIGNED) + 1 ELSE CAST(`year` AS UNSIGNED) END, '-', CASE WHEN `month` = 12 THEN '01' ELSE LPAD(`month` + 1, 2, '0') END, '-01') AS `start_date` FROM `tbl_logyec` WHERE closed = 1");
@@ -94,7 +96,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
 
       $q_to = date('Y-m-t', strtotime(explode('/',$_POST['date_yec'])[1].'-'.explode('/',$_POST['date_yec'])[0]));
       
-      $q_move = mysql_query("INSERT INTO `jurnal_archive` (`id_ori`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`) SELECT `id`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status` FROM `jurnal` WHERE jurnal.tgl BETWEEN '$q_from' AND '$q_to'");
+      $q_move = mysql_query("INSERT INTO `jurnal_archive` (`id_ori`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`,`id_logyec`) SELECT `id`,`no_jurnal`,`tgl`,`keterangan`,`total_debet`,`total_kredit`,`deleted`,`user`,`lastmodified`,`status`,'$monthbaru' FROM `jurnal` WHERE jurnal.tgl BETWEEN '$q_from' AND '$q_to'");
 
       $gt_min_id = mysql_query("SELECT MIN(`id_ori`) as start_id FROM `jurnal_archive`");
       $gt_min_id = mysql_fetch_array($gt_min_id);
@@ -104,9 +106,8 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
       $gt_max_id = mysql_fetch_array($gt_max_id);
       $max_id = $gt_max_id['end_id'];
 
-      $q_detmove = mysql_query("INSERT INTO `jurnal_detail_archive` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`) SELECT `id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified` FROM `jurnal_detail` WHERE jurnal_detail.id_parent BETWEEN $min_id AND $max_id");
+      $q_detmove = mysql_query("INSERT INTO `jurnal_detail_archive` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`,`id_logyec`) SELECT `id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`deleted`,`user`,`lastmodified`,'$monthbaru' FROM `jurnal_detail` WHERE jurnal_detail.id_parent BETWEEN $min_id AND $max_id");
     }
-
 
     $user = $_SESSION['user']['user_id'];
     $month = date('n', strtotime(explode('/',$_POST['date_yec'])[1].'/'.explode('/',$_POST['date_yec'])[0].'/01'));
@@ -116,7 +117,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
     $q_reset->execute();
 
     $q_post   = $db->prepare("INSERT `tbl_logyec` (`pic`,`month`,`year`,`lastmodified`,`closed`) VALUES (?, ?, ?, ?, ?)");
-    $q_post->execute(array($user, $month, $year, date('Y-m-d H:i:s'), 1));
+    $q_post->execute(array($user, $month, $year, date('Y-m-d H:i:s'), 1));  
 
     $affected_rows = $q_post->rowCount();
 
@@ -126,9 +127,70 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
     else{
       $r['stat'] = 0; $r['message'] = 'Failed';
     }
-    echo json_encode($r);
-    exit;
+  }else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
   }
+  echo json_encode($r);
+  exit;
+    }elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
+      error_reporting(0);
+      $id = $_GET["id"];
+
+      $sql_products ="SELECT a.* FROM `mst_coa` a ";
+      $query = '';
+      $countnya = 0;
+      $q = $db->query($sql_products.' where a.deleted=0 ORDER BY noakun ASC');
+      $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
+      foreach($data1 as $line) {
+          if ($countnya == 0) {
+              $query .= "(select id, noakun, nama, jenis from mst_coa where id='".$line['id']."'  ORDER BY noakun ASC)";
+              
+          } else {
+              $query .= " UNION ALL (select id, noakun, nama, jenis from mst_coa  where id='".$line['id']."'  ORDER BY noakun ASC) ";
+          }
+          $countnya++;
+          $q2 = $db->query("SELECT * FROM det_coa WHERE id_parent='".$line['id']."' ORDER by noakun ASC");
+          $data2 = $q2->fetchAll(PDO::FETCH_ASSOC);
+          foreach($data2 as $line2) {
+              $query .= " UNION ALL (select '' as id, noakun, nama, '' as jenis from det_coa where id='".$line2['id']."' ORDER BY noakun ASC) ";
+          }
+          
+      }
+      $i = 0;
+      $p = $db->query($query);
+      $rows = $p->fetchAll(PDO::FETCH_ASSOC);
+      $responce = '';
+      foreach($rows as $lines){
+        $month = '';
+        $qmonth = "SELECT *, IF(length(month)=1,concat('0',month),month) as bulannya FROM tbl_logyec WHERE id=".$id;
+        $pmonth = $db->query($qmonth);
+        $rowsmonth = $pmonth->fetchAll(PDO::FETCH_ASSOC);
+        foreach($rowsmonth as $r){
+          $month = $r['bulannya'].'/'.$r['year'];
+        }
+
+        $qsaldo = "SELECT SUM(debet) AS db, SUM(kredit) AS cr FROM jurnal_detail_archive WHERE no_akun='".$lines['noakun']."' AND id_logyec='$month' ";
+        $debet = 0;
+        $kredit = 0;
+        $psaldo = $db->query($qsaldo);
+        $rowssalso = $psaldo->fetchAll(PDO::FETCH_ASSOC);
+        foreach($rowssalso as $rs){
+          $debet = $rs['db'];
+          $kredit = $rs['cr'];
+        }
+        
+        $responce->rows[$i]['id']   = $lines['id'];
+        $responce->rows[$i]['cell'] = array(
+            $i+1,
+            $lines['noakun'],
+            $lines['nama'],
+            number_format($debet),
+            number_format($kredit),
+        );
+        $i++;
+      }
+      echo json_encode($responce);
+      exit;
 }
 ?>
 
@@ -164,19 +226,18 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
   $("#periode").datepicker( 'setDate', 'today' );
 
   function closeButton(){
-    popup_form('<?= BASE_URL ?>pages/Transaksi_acc/tutupbuku_closePass.php?date='+$('#periode').val()+'');
+    popup_form('<?= BASE_URL ?>pages/Transaksi_acc/tutupbuku_closePass.php?date='+$('#periode').val()+'','table_yec');
   }
 
   $(document).ready(function(){
     $('#table_yec').jqGrid({
       url       : '<?= BASE_URL.'pages/Transaksi_acc/tutupbuku.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['Periode Tutup Buku','PIC','Tanggal Tutup Buku','Detail'],
+      colNames  : ['Periode Tutup Buku','PIC','Tanggal Tutup Buku'],
       colModel  : [
-        {name:'periodeTutupBuku', index: 'periodeTutupBuku', align: 'right', width:100, searchoptions: {sopt:['cn']}},
-        {name:'pic', index: 'pic', align: 'right', width:100, searchoptions: {sopt:['cn']}},
-        {name:'tanggalTutupBuku', index: 'tanggalTutupBuku', align: 'right', width:100, searchoptions: {sopt:['cn']}},
-        {name:'detail', index: 'detail', align: 'right', width:30, searchoptions: {sopt:['cn']}, sortable: false},
+        {name:'periodeTutupBuku', index: 'periodeTutupBuku', align: 'center', width:100, searchoptions: {sopt:['cn']}},
+        {name:'pic', index: 'pic', align: 'center', width:100, searchoptions: {sopt:['cn']}},
+        {name:'tanggalTutupBuku', index: 'tanggalTutupBuku', align: 'center', width:100, searchoptions: {sopt:['cn']}},
       ],
       rowNum        : 20,
       rowList       : [10, 20, 30],
@@ -188,6 +249,15 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_close')
       rownumbers    : true,
       sortorder     : 'desc',
       caption       : "Tutup Buku",
+      subGrid : true,
+      subGridUrl : '<?php echo BASE_URL.'pages/Transaksi_acc/tutupbuku.php?action=json_sub'; ?>',
+      subGridModel: [
+      { 
+        name : ['No','No Akun','Nama Akun','Debet','Kredit'], 
+        width : [40,100,200,70,70],
+        align : ['center','left','left','right','right'],
+      } 
+      ],
       ondblClickRow : function(rowid){
         alert(rowid);
       },
