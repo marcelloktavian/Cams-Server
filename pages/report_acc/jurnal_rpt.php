@@ -118,6 +118,10 @@ foreach($datalog as $linelog) {
             var ex1 = startdate.split("/");
             var ex2 = enddate.split("/");
 
+            if(month < 10){
+                month = '0'+month;
+            }
+            
             if(((ex1[1]+"/"+ex1[2]) <= (month+"/"+year)) || ((ex2[1]+"/"+ex2[2]) <= (month+"/"+year))){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
