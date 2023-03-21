@@ -25,15 +25,15 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   }
 
   if((!isset($_GET['startdate_olnsoar']) && !isset($_GET['enddate_olnsoar']))||($_GET['startdate_olnsoar'] == '' && $_GET['enddate_olnsoar'] == '')){
-    $where = " WHERE j.deleted=0 AND p.tgl_trans>='".date("Y-m-d")."' AND p.tgl_trans<='".date("Y-m-d")."'".$filter_value;
+    $where = " WHERE j.deleted=0 AND date(p.lastmodified)>='".date("Y-m-d")."' AND date(p.lastmodified)<='".date("Y-m-d")."'".$filter_value;
   }else if($_GET['startdate_olnsoar'] != '' && $_GET['enddate_olnsoar'] == ''){
-    $where = " WHERE j.deleted=0 AND p.tgl_trans>='".$_GET['startdate_olnsoar']."'".$filter_value;
+    $where = " WHERE j.deleted=0 AND date(p.lastmodified)>='".$_GET['startdate_olnsoar']."'".$filter_value;
   }
   else if($_GET['startdate_olnsoar'] == '' && $_GET['enddate_olnsoar'] != ''){
-    $where = " WHERE j.deleted=0 AND p.tgl_trans<='".$_GET['enddate_olnsoar']."'".$filter_value;
+    $where = " WHERE j.deleted=0 AND date(p.lastmodified)<='".$_GET['enddate_olnsoar']."'".$filter_value;
   }
   else{
-    $where = " WHERE j.deleted=0 AND p.tgl_trans>='".$_GET['startdate_olnsoar']."' AND p.tgl_trans<='".$_GET['enddate_olnsoar']."'".$filter_value;
+    $where = " WHERE j.deleted=0 AND date(p.lastmodified)>='".$_GET['startdate_olnsoar']."' AND date(p.lastmodified)<='".$_GET['enddate_olnsoar']."'".$filter_value;
   }
   // -------------------- end of searching _filter >>
 
