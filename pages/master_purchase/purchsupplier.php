@@ -159,9 +159,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   exit;
 }
 ?>
-<table id="table_purchsupplier"></table>
-<div id="pager_table_purchsupplier"></div>
-
 <div class="btn_box">
   <?php if ($allow_add) {?>
     <a href="javascript: void(0)">
@@ -169,6 +166,11 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     </a>
   <?php }?>
 </div>
+
+<table id="table_purchsupplier"></table>
+<div id="pager_table_purchsupplier"></div>
+
+
 
 <script type="text/javascript">
   $(document).ready(function(){

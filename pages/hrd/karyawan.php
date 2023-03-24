@@ -210,8 +210,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, karyawan, $group_acess);
 	 
 	 
 ?> 
-<table id="table_karyawan"></table>
-<div id="pager_table_karyawan"></div>
 <div class="btn_box">
 	<?php
 		$statusToko = '';
@@ -237,6 +235,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, karyawan, $group_acess);
 <button id="btn-print"  class="btn btn-success">Print</button>
 -->
 </div>
+<table id="table_karyawan"></table>
+<div id="pager_table_karyawan"></div>
+
 
 <!--
 <?php

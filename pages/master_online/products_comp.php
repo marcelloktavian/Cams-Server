@@ -206,8 +206,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, ProductsComposition, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_products_comp"></table>
-<div id="pager_table_products_comp"></div>
 <div class="btn_box">
 <!--
 <a href="javascript: void(0)" 
@@ -230,6 +228,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, ProductsComposition, $group_acess);
 	
 ?>
 </div>
+<table id="table_products_comp"></table>
+<div id="pager_table_products_comp"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

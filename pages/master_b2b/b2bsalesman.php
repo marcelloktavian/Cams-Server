@@ -199,8 +199,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_b2bsalesman"></table>
-<div id="pager_table_b2bsalesman"></div>
 <div class="btn_box">
 <!--
 <a href="javascript: void(0)" 
@@ -227,6 +225,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
 	
 ?>
 </div>
+<table id="table_b2bsalesman"></table>
+<div id="pager_table_b2bsalesman"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

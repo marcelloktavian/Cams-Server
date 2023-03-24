@@ -108,7 +108,7 @@ include("../../include/koneksi.php");
 
 	// Penjualan B2B
 	$query_mysql = mysql_query("SELECT id, CONCAT(SUBSTR(noakun,1,6), IF(LENGTH('$last_id')=1,'0000',IF(LENGTH('$last_id')=2,'000',IF(LENGTH('$last_id')=3,'00',IF(LENGTH('$last_id')=4,'0','')))), '$last_id') AS akun, noakun, nama
-	FROM mst_coa WHERE noakun = '04.03.00000' ")or die(mysql_error());
+	FROM mst_coa WHERE noakun = '04.03.00000'  AND deleted=0")or die(mysql_error());
 	while($data = mysql_fetch_array($query_mysql)){
 		$akun = $data['akun'];
 		$namaakun = $data['nama'].' - '.$nama;

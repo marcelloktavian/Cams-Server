@@ -311,9 +311,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   </div>
 </div>
 
-<table id="table_ap"></table>
-<div id="pager_table_ap"></div>
-
 <div class="btn_box">
   <?php
   if($allow_add){?>
@@ -323,7 +320,8 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   <?php } ?>
 </div>
 
-</table>
+<table id="table_ap"></table>
+<div id="pager_table_ap"></div>
 
 <script type="text/javascript">
   $('#startdate_ap').datepicker({

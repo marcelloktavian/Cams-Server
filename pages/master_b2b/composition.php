@@ -157,8 +157,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, CompositionProducts, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_composition"></table>
-<div id="pager_table_composition"></div>
 <div class="btn_box">
 <!--
 <a href="javascript: void(0)" 
@@ -185,6 +183,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, CompositionProducts, $group_acess);
 	}
 ?>
 </div>
+<table id="table_composition"></table>
+<div id="pager_table_composition"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

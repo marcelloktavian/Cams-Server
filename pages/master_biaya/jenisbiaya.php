@@ -146,8 +146,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, JenisBiaya, $group_acess);
 	}
 	
 ?>
-<table id="table_jenisbiaya"></table>
-<div id="pager_table_jenisbiaya"></div>
 <div class="btn_box">
     <?php
     $statusToko = '';
@@ -179,6 +177,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, JenisBiaya, $group_acess);
 	
 ?>
 </div>
+<table id="table_jenisbiaya"></table>
+<div id="pager_table_jenisbiaya"></div>
 <script type="text/javascript">
     $(document).ready(function(){
 

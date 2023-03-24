@@ -152,8 +152,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, departemen, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_tabel_departemen"></table>
-<div id="pager_table_tabel_departemen"></div>
 <div class="btn_box">
 <?php
 	$statusToko = '';
@@ -173,6 +171,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, departemen, $group_acess);
 	}
 ?>
 </div>
+<table id="table_tabel_departemen"></table>
+<div id="pager_table_tabel_departemen"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

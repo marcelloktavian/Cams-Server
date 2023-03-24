@@ -177,7 +177,7 @@ function get_products(a){
 			$("#NamaBrg"+a+"").val(composition);
 		var id_composition  = data.id;
 			$("#IDP"+a+"").val(id_composition);
-		var	size = data.size
+		//var	size = data.size
 			$("#Size"+a+"").val(size);
 			$("#Size"+a+"").focus();
         }

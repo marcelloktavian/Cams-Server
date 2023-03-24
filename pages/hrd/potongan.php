@@ -171,8 +171,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, potongan, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_tabel_potongan"></table>
-<div id="pager_table_tabel_potongan"></div>
 <div class="btn_box">
 <?php
 	$statusToko = '';
@@ -192,6 +190,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, potongan, $group_acess);
 	}
 ?>
 </div>
+<table id="table_tabel_potongan"></table>
+<div id="pager_table_tabel_potongan"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

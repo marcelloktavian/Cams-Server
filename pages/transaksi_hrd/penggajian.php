@@ -561,8 +561,6 @@ function roundDown($decimal, $precision)
    	</div>
 </div>
 
-<table id="table_penggajian"></table>
-<div id="pager_table_penggajian"></div>
 <div class="btn_box">
 <?php
 
@@ -585,6 +583,9 @@ function roundDown($decimal, $precision)
 	
 ?>
 </div>
+<table id="table_penggajian"></table>
+<div id="pager_table_penggajian"></div>
+
 <script type="text/javascript">
     $('#start_penggajian').datepicker({
 		dateFormat: "dd/mm/yy"

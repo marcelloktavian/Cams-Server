@@ -150,8 +150,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, KategoriBiaya, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_kategoribiaya"></table>
-<div id="pager_table_kategoribiaya"></div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3);
@@ -172,6 +170,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, KategoriBiaya, $group_acess);
 	}}
 ?>
 </div>
+<table id="table_kategoribiaya"></table>
+<div id="pager_table_kategoribiaya"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

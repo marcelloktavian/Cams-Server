@@ -380,8 +380,6 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
 			return false;
 		}
 
-
-
 		function hitungrow() {
 			document.form2.jum.value = baris1;
 		}

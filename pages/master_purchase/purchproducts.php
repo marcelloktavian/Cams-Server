@@ -176,16 +176,17 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
   exit;
 }
 ?>
-
-<table id="table_purchproducts"></table>
-<div id="pager_table_purchproducts"></div>
-
 <div class="btn_box">
   <?php if ($allow_add) {?>
     <a href="javascript: void(0)">
     <?php echo '<button type="button" onclick="javascript:popup_form(\''.BASE_URL.'pages/master_purchase/purchproducts.php?action=add\',\'table_purchproducts\')" class="btn">Tambah</button>'; ?>
   <?php } ?>
 </div>
+
+<table id="table_purchproducts"></table>
+<div id="pager_table_purchproducts"></div>
+
+
 
 <script type="text/javascript">
   $(document).ready(function(){

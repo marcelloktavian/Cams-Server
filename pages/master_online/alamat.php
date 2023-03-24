@@ -158,8 +158,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, Address, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_alamat"></table>
-<div id="pager_table_alamat"></div>
 <div class="btn_box">
 <!--
 <a href="javascript: void(0)" 
@@ -186,6 +184,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, Address, $group_acess);
 	}
 ?>
 </div>
+<table id="table_alamat"></table>
+<div id="pager_table_alamat"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

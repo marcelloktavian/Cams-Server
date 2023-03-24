@@ -197,7 +197,7 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
                     $namaakun = '';
                     $idakun = '';
                     
-                    $q = $db->query("SELECT CONCAT(SUBSTR(noakun,1,6), IF(LENGTH('$id')=1,'0000',IF(LENGTH('$id')=2,'000',IF(LENGTH('$id')=3,'00',IF(LENGTH('$id')=4,'0','')))), '$id') AS akun, noakun, nama, id FROM mst_coa WHERE noakun = '02.02.00000' OR noakun = '01.04.00000' OR noakun = '04.01.00000' OR noakun = '04.02.00000'");
+                    $q = $db->query("SELECT CONCAT(SUBSTR(noakun,1,6), IF(LENGTH('$id')=1,'0000',IF(LENGTH('$id')=2,'000',IF(LENGTH('$id')=3,'00',IF(LENGTH('$id')=4,'0','')))), '$id') AS akun, noakun, nama, id FROM mst_coa WHERE (noakun = '02.02.00000' OR noakun = '01.04.00000' OR noakun = '04.01.00000' OR noakun = '04.02.00000')  AND deleted=0");
                     $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach($data1 as $line) {
@@ -239,8 +239,6 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_dropshipper"></table>
-<div id="pager_table_dropshipper"></div>
 <div class="btn_box">
 <!--
 <a href="javascript: void(0)" 
@@ -269,6 +267,9 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
 	
 ?>
 </div>
+<table id="table_dropshipper"></table>
+<div id="pager_table_dropshipper"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

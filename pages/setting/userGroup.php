@@ -170,8 +170,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
 	exit;
 }
 ?>
-<table id="table_dataUserGroup"></table>
-<div id="pager_tabledataUserGroup"></div>
 <div class="btn_box">
 	<?php
 	$statusToko = '';
@@ -190,6 +188,10 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
 	}}
 	?>
 </div>
+
+<table id="table_dataUserGroup"></table>
+<div id="pager_tabledataUserGroup"></div>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 

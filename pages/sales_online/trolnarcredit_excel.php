@@ -1,205 +1,257 @@
+<?php
+require_once '../../include/config.php';
+include '../../include/koneksi.php';
+
+$sql_header = "SELECT a.id, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE a.`no_akun` = '".$_GET['no_akun']."' LIMIT 1";
+
+$run_header = mysql_query($sql_header);
+$fetch_header = mysql_fetch_array($run_header);
+
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=AR OLN CREDIT ".$fetch_header['nama']." ".date('d_m_Y').".xls");
+header("Cache-Control: no-cache, must-revalidate");
+header("Pragma: no-cache");
+
+$sql_excel = "SELECT a.id, c.no_jurnal, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE a.`no_akun` = '".$_GET['no_akun']."' ORDER BY c.tgl DESC";
+
+$run_excel = mysql_query($sql_excel);
+
+function intToIDR($val) {
+	return 'Rp ' . number_format($val, 0, ',', '.') . ',-';
+}
+?>
+
 <script src="../../assets/js/jsbilangan.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../assets/js/jquery-1.4.js"></script>
 <style type="text/css">
-.style9 {
-font-size: 9pt; 
-font-family:Tahoma;
-}
-.style9b {color: #000000;
-	font-size: 9pt;
-	font-weight: bold;
+*{
 	font-family: Tahoma;
-}.style99 {font-size: 13pt; font-family:Tahoma}
-.style10 {font-size: 10pt; font-family:Tahoma; text-align:right}
-.style19 {font-size: 10pt; font-weight: bold; font-family:Tahoma; font-style:italic}
-.style11 {
-	color: #000000;
-	font-size: 8pt;
-	font-weight: normal;
-	font-family: MS Reference Sans Serif;
-	
-}
-.style20b {font-size: 8pt;font-weight: bold; font-family:Tahoma}
-.style20 {font-size: 8pt; font-family:Tahoma}
-.style16 {font-size: 9pt; font-family:Tahoma}
-.style21 {color: #000000;
-	font-size: 10pt;
-	font-weight: bold;
-	font-family: Tahoma;
-}
-.style18 {color: #000000;
-	font-size: 9pt;
-	font-weight: normal;
-	font-family: Tahoma;
-}
-.style_footer {color: #000000;
-	font-size: 11pt;	
-	font-family: Tahoma;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	border-right: 1px solid black;
-	border-left: 1px solid black;
-	
-}
-.style19b {	color: #000000;
-	font-size: 11pt;
-	font-weight: bold;
-	font-family: Tahoma;
-}
-.style_title {	color: #000000;
-	font-size: 11pt;	
-	font-family: Tahoma;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	border-right: 1px solid black;
-	
-	
-	padding: 3px;
-}
-.style_title_left {	color: #000000;
-	font-size: 11pt;	
-	font-family: Tahoma;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	border-right: 1px solid black;
-	border-left: 1px solid black;
-	
-	padding: 3px;
-}
-.style_detail {	color: #000000;
-	font-size: 9pt;	
-	font-family: Tahoma;
-	border-bottom: 1px dashed black;
-	border-right: 1px solid black;
-	padding: 3px;
-}
-.style_detail_left {	color: #000000;
-	font-size: 9pt;	
-	font-family: Tahoma;
-	border-bottom: 1px dashed black;
-	border-left: 1px solid black;
-	border-right: 1px solid black;
-	padding: 3px;
 }
 @page {
-        size: A4;
-        margin: 15px;
-    }
+	zoom: 0.8;
+	size: A4;
+	margin: 15px;
+}
+.fontsmall {
+  color:#777777;
+  font-size:10px;
+}
+.fonttext {
+	color:#777777;
+	font-size:14px;
+}
+.fontjudul {
+	color:#777777;
+	font-size:20px;
+	text-align:center;
+}
+hr {
+	border-color:#E0E0E0;
+	margin-bottom:10px;
+}
+
+.inputform {
+	text-align:left;
+	height:25px;
+	width:245px;
+	font-size:14px;
+	color:#777777;
+	padding:3px;
+	padding-left:8px;
+}
+
+.Nama_Jasa {
+	text-align:left;
+	height:25px;
+	width:5px;
+	font-size:14px;
+	color:#777777;
+	padding:3px;
+	padding-left:8px;
+}
+
+.fixed-table{
+	table-layout: fixed;
+	width : 100%;
+}
+
+.fit-column{
+	width				: 1%;
+	white-space	: nowrap;
+}
+
+.title-big{
+	font-family : 'Arial';
+	font-weight : bold;
+	font-size   : 1.8em;
+}
+
+.title-md{
+	font-weight : bold;
+	font-size		: 1.3em;
+}
+
+.title-sm{
+	font-weight : bold;
+}
+
+.text-left{
+	text-align : left;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.text-right{
+	text-align: right;
+}
+
+table.detail_table tr td{
+	padding: 0.2em; height: 1.5em;
+}
+
+table.detail_table tr:not(:first-child) td{
+	font-size : 0.8em;
+}
+
+tr td.td-border{
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr td.td-border:last-child{
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+	border-right : 1px solid black;
+}
+
+tr:first-child td.td-border{
+	border-top : 1px solid black;
+	border-left : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr:first-child td.td-border:last-child{
+	border-top : 1px solid black;
+	border-left : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+tr:last-child td.td-border:last-child{
+	border-left : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom : 1px solid black;
+}
+
+.td-title{
+	background-color : #efefef;
+}
+
+#form2 textarea {
+	font-size:14px;
+	color:#777777;
+	font-family:arial;
+	padding:3px;
+	padding-left:8px;
+}
+
+#form2 input[type="submit"] {
+	width: 135px;
+	background-color: #2b6597;
+	border:0px;
+	color:#FFF;
+	font-size:14px;
+	padding:8px 0px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+#form2 input[type="submit"]:hover {
+	background-color:#5084b1;
+
+}
+
+#New2 {
+	width: 135px;
+	background-color: #2c963a;
+	border:0px;
+	color:#FFF;
+	font-size:14px;
+	padding:4px 0px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+#New2:hover {
+	background-color: #5baf66;
+}
+
+thead {
+	background-color:#eaeaea;
+	text-align:center;
+	color:c1c1c1;
+	height:35px;
+}
+table tr td{
+	padding-left: 5px !important; padding-right: 5px !important;
+}
 </style>
-<?php
 
+<table cellpadding=0 cellspacing=0 border=1>
+	<tr>
+		<td width="100%" colspan=7 class="text-center"><b>AR OLN CREDIT DETAIL</b></td>
+	</tr>
+	<tr>
+		<td width="100%"colspan=7  class="text-center">Dropshipper : <?= $fetch_header['nama'] ?></td>
+	</tr>
+	<tr>
+		<td width="100%"colspan=7  class="text-center">Tanggal Print :
+			<?php
+				date_default_timezone_set('Asia/Jakarta');
+				echo $timestamp = date('d/m/Y H:i:s');
+			?></td>
+	</tr>
 
-error_reporting(0);
-	include("../../include/koneksi.php");
-	
-    $start = $_GET['startdate_olnsoar'];
-    $end = $_GET['enddate_olnsoar'];
-    $id = $_GET['id'];
+	<tr>
+		<td class="title-sm td-title text-center td-border" align="center"><b>Nomor Jurnal</b></td>
+		<td class="title-sm td-title text-center td-border" align="center"><b>Tanggal Jurnal</b></td>
+		<td class="title-sm td-title text-center td-border" align="center"><b>Nomor Akun</b></td>
+		<td class="title-sm td-title text-center td-border" align="center" width="60%"><b>Nama Akun</b></td>
+		<td class="title-sm td-title text-center td-border" align="center" width="1%"><b>Type</b></td>
+		<td class="title-sm td-title text-center td-border" align="center" width="10%"><b>Debet</b></td>
+		<td class="title-sm td-title text-center td-border" align="center" width="10%"><b>Kredit</b></td>
+	</tr>
 
-    $sql_detail = "SELECT p.*,j.nama AS dropshipper, j.type AS dsType, e.nama AS expedition FROM `olnso` p LEFT JOIN `mst_dropshipper` j ON (p.id_dropshipper=j.id) LEFT JOIN `mst_expedition` e ON (p.id_expedition=e.id) WHERE j.deleted=0 AND p.tgl_trans>='$start' AND p.tgl_trans<='$end' AND p.stkirim='1' AND (p.totalqty <> 0) AND (p.piutang> 0) AND `id_dropshipper` = '$id' ";
-	$sq2 = mysql_query($sql_detail);
-	$sq3 = mysql_query($sql_detail);
-    $dropshipper = '';
-    while($rs3=mysql_fetch_array($sq3))
-	{ 
-        $dropshipper=strtoupper($rs3['dropshipper']);
-    }
+	<?php 
+	$total_credit = 0; $total_debet = 0;
+	while($line = mysql_fetch_array($run_excel)){
+		?>
+	<tr>
+		<td class="td-border text-center" align="center"><?= $line['no_jurnal'] ?></td>
+		<td class="td-border text-center" align="center"><?= $line['tgl_formatted'] ?></td>
+		<td class="td-border text-center" align="center"><?= $line['no_akun'] ?></td>
+		<td class="td-border"><?= $line['nama_akun'] ?></td>
+		<td class="text-center td-border" align="center"><?= $line['type'] ?></td>
+		<td class="td-border text-right" align="right"><?= intToIDR($line['debet']) ?></td>
+		<td class="td-border text-right" align="right"><?= intToIDR($line['kredit']) ?></td>
+	</tr>
+		<?php
+		$total_credit += $line['kredit']; $total_debet += $line['debet'];
+	}
+	?>
 
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=ar_oln_credit_".$dropshipper.".xls");
-    header("Cache-Control: no-cache, must-revalidate");
-    header("Pragma: no-cache");
-?>
-
-
-<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)">
-  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-    <tr>
-      <td height="123" valign="top"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-          
-          <tr>
-            <td width="100%" class="style99" colspan="4"><strong>
-			AR OLN CREDIT DETAIL 
-        <br><?=$dropshipper?></strong></td>
-			<td style="text-align:right">
-				<div id="timestamp">
-				<?php
-					date_default_timezone_set('Asia/Jakarta');
-					echo $timestamp = date('d/m/Y H:i:s');
-				?>
-				</div>	
-				
-			</td>
-          </tr>
-          <tr>
-            <td colspan="5" class="style9">&nbsp;</td>
-          </tr>
-          		  
-  </table>  
-    
-    
-  <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
-  
-        
-      <tr>
-      <th width="30%" class="style_title_left"><div align="center">OLN</div></td>
-      <th width="10%" class="style_title"><div align="center">Qty</div></td>
-      <th width="15%" class="style_title"><div align="center">Faktur</div></td>
-      <th width="15%" class="style_title"><div align="right">Total Ongkir</div></td>
- 	  <th width="15%" class="style_title"><div align="right">Total Faktur</div></td>
-      
-    </tr>
-    <?php
-	$i=1;
-	$nomer=0;
-	$grand_qty=0;
-	$grand_faktur=0;
-	$grand_order=0;
-	$grand_ongkir=0;
-	$sisa=0;
-	$grand_total=0;
-	$biaya=0;
-	while($rs2=mysql_fetch_array($sq2))
-	{ 
-	  $nomer++;
-
-  ?>
-    <tr>
-      <td class="style_detail_left"><div align="left"><?=$rs2['id_trans'];?>
-	  </div></td>
-      <td class="style_detail"><div align="center"><?=number_format($rs2['totalqty'],0,',','.');?></div></td>
-      <td class="style_detail"><div align="right"><?=number_format($rs2['faktur'],0,',','.');?></div></td>
-      <td class="style_detail"><div align="right"><?=number_format($rs2['exp_fee'],0,',','.');?>
-      <td class="style_detail"><div align="right"><?=number_format($rs2['total'],0,',','.');?></div></td>
-	  </div></td>
-    </tr>  <?
-	$grand_qty+=$rs2['totalqty'];
-	$grand_faktur+=$rs2['faktur'];
-	$grand_ongkir+=$rs2['exp_fee'];
-	$grand_total+=$rs2['total'];
-  }
- 	
-  ?>
-       <tr>
-            <td class="style_footer"><div align="right">GrandTotal :</div></td>
-            <td class="style_footer"><div align="center"><?=number_format($grand_qty,0,',','.');?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_faktur,0,',','.');?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_ongkir,0,',','.');?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_total,0,',','.');?></div></td>
-       </tr>
-	   
-	
-  </table>
-   
-  
-   
-  
-  <div align="center"></div>
-</form>
+	<tr>
+		<td class="td-border" colspan="5" align="right"><b>GRAND TOTAL :</b></td>
+		<td class="td-border text-right" align="right"><b><?= intToIDR($total_debet) ?></b></td>
+		<td class="td-border text-right" align="right"><b><?= intToIDR($total_credit )?></b></td>
+	</tr>
+</table>
 
 <script language="javascript">
-		$(document).ready(function() {
-    	setInterval(timestamp, 1000);
+$(document).ready(function() {
+	setInterval(timestamp, 1000);
 });
 
 function timestamp() {
@@ -213,6 +265,3 @@ function timestamp() {
 
 window.print();
 </script>
-  <div align="center"><span class="style20">
-   
-  </span> </div>

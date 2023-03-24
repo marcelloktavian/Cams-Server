@@ -154,8 +154,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_expedition"></table>
-<div id="pager_table_expedition"></div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3);
@@ -176,6 +174,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
 	}}
 ?>
 </div>
+<table id="table_expedition"></table>
+<div id="pager_table_expedition"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

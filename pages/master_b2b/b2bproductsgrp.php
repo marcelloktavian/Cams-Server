@@ -158,8 +158,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProductsGroup, $group_acess);
 	}
 	
 ?>
-<table id="table_b2bproductsgrp"></table>
-<div id="pager_table_b2bproductsgrp"></div>
 <div class="btn_box">
     <?php
     $statusToko = '';
@@ -191,6 +189,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProductsGroup, $group_acess);
 	
 ?>
 </div>
+<table id="table_b2bproductsgrp"></table>
+<div id="pager_table_b2bproductsgrp"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

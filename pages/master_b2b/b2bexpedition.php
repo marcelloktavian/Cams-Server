@@ -151,8 +151,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BExpedition, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_b2bexpedition"></table>
-<div id="pager_table_b2bexpedition"></div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3);
@@ -172,6 +170,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BExpedition, $group_acess);
 	}}
 ?>
 </div>
+<table id="table_b2bexpedition"></table>
+<div id="pager_table_b2bexpedition"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

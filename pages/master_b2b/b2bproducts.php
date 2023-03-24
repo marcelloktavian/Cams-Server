@@ -203,8 +203,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_b2bproducts"></table>
-<div id="pager_table_b2bproducts"></div>
 <div class="btn_box">
 
 <?php
@@ -233,6 +231,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
 	
 ?>
 </div>
+<table id="table_b2bproducts"></table>
+<div id="pager_table_b2bproducts"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

@@ -148,8 +148,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BCustomer, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_b2bcustomer"></table>
-<div id="pager_table_b2bcustomer"></div>
 <div class="btn_box">
 <?php
 if ($allow_add) {
@@ -170,6 +168,9 @@ if ($allow_add) {
 	*/
 ?>
 </div>
+<table id="table_b2bcustomer"></table>
+<div id="pager_table_b2bcustomer"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

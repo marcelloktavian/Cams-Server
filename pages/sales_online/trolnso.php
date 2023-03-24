@@ -348,7 +348,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
     }
     
     if ($statusToko == 'Tutup') {
-        echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Add Online Credit</button>';
+        echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Add</button>';
     }else{
 	if ($allow_add) {
 	?>

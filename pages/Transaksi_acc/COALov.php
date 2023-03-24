@@ -27,8 +27,6 @@ if (!$q) return;
         }
     }
 
-	
-
 	$sql = mysql_query($query);
 	while($r = mysql_fetch_array($sql)) {
 	$nama = $r['id'].":".$r['nama'].";".$r['noakun'];

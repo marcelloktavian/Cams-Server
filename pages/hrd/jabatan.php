@@ -158,8 +158,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, jabatan, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_tabel_job"></table>
-<div id="pager_table_tabel_job"></div>
 <div class="btn_box">
 <?php
 	$statusToko = '';
@@ -183,6 +181,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, jabatan, $group_acess);
 	}
 ?>
 </div>
+<table id="table_tabel_job"></table>
+<div id="pager_table_tabel_job"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
     

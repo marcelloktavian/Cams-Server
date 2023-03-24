@@ -148,8 +148,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, Category, $group_acess);
 		exit;
 	}
 ?>
-<table id="table_category"></table>
-<div id="pager_table_category"></div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3)
@@ -170,6 +168,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, Category, $group_acess);
 	}}
 ?>
 </div>
+<table id="table_category"></table>
+<div id="pager_table_category"></div>
+
 <script type="text/javascript">
     $(document).ready(function(){
 

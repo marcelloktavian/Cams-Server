@@ -235,6 +235,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
       	<td align='center' width='5%' class='fonttext'>Size</td>
       	<td align='center' width='10%' class='fonttext'>Disc@</td>
       	<td align='center' width='25%' class='fonttext'>Subtotal</td>
+      	<td align='center' width='25%' class='fonttext'>NETT</td>
       	<td align='center' width='5%' class='fonttext'>Hapus</td>    
     </tr>
 </thead>
@@ -261,22 +262,32 @@ echo"<form id='form2' name='form2' action='' method='post'>
 <td class='fonttext' style='width:20px;'>
 Keterangan
 </td>
-<td colspan=1 align='left'><textarea name='txtbrg' id='txtbrg' cols='55' rows='2' ></textarea></td>
+<td colspan=2 align='left'><textarea name='txtbrg' id='txtbrg' cols='55' rows='2' ></textarea></td>
+</tr>
+
+<tr>
 <td class='fonttext'>Disc.Faktur </td>
 <td><input type='text' class='inputform' name='disc_faktur' id='disc_faktur' style='text-align:right;' onkeyup='hitungtotal();'></td>
 </tr>
+
+
 <tr>
+<td class='fonttext'>Piutang</td>
+<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
+</tr>
+
+
+<tr hidden>
 <td class='fonttext'>Tunai </td>
 <td><input type='text' class='inputform' name='tunai' id='tunai' style='text-align:right;' onkeyup='hitungpiutang();'><input type='hidden' class='inputform' name='faktur' id='faktur' /></td>
 <td class='fonttext' >Tf.Bank</td>
 <td><input type='text' class='inputform' name='transfer' id='transfer' style='text-align:right;'onkeyup='hitungpiutang();'></td>
 <td class='fonttext' >&nbsp;</td>
 </tr>
-<tr>
+<tr hidden>
 <td class='fonttext' >Bayar dg Deposit</td>
 <td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
-<td class='fonttext'>Piutang</td>
-<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
+
 </tr>
 </table>
 
@@ -428,6 +439,7 @@ var td4 = document.createElement("td");
 var td5 = document.createElement("td");
 var td6 = document.createElement("td");
 var td7 = document.createElement("td");
+var td8 = document.createElement("td");
 
 td0.appendChild(generateId(baris1));
 td0.appendChild(generateBARCODE(baris1));
@@ -440,7 +452,8 @@ td3.appendChild(generateStok(baris1));
 td4.appendChild(generateSize(baris1));
 td5.appendChild(generateDisc(baris1));
 td6.appendChild(generateSUBTOTAL(baris1));
-td7.appendChild(generateDel1(baris1));
+td7.appendChild(generateNETT(baris1));
+td8.appendChild(generateDel1(baris1));
 
 row.appendChild(td0);
 row.appendChild(td1);
@@ -450,6 +463,7 @@ row.appendChild(td4);
 row.appendChild(td5);
 row.appendChild(td6);
 row.appendChild(td7);
+row.appendChild(td8);
 
 document.getElementById('BARCODE'+baris1+'').focus();
 document.getElementById('BARCODE'+baris1+'').setAttribute('onChange', 'hitungjml('+baris1+')');
@@ -460,7 +474,7 @@ document.getElementById('BARCODE'+baris1+'').setAttribute('onChange', 'hitungjml
 //document.getElementById('Cari2['+baris1+']').setAttribute('onclick', 'popkategori('+baris1+')');
 document.getElementById('Qty'+baris1+'').setAttribute('onChange', 'hitungjml('+baris1+')');
 document.getElementById('Disc'+baris1+'').setAttribute('onChange', 'hitungjml('+baris1+')');
-document.getElementById('SUBTOTAL'+baris1+'').setAttribute('onkeydown', 'addNewRow1()');
+document.getElementById('NETT'+baris1+'').setAttribute('onkeydown', 'addNewRow1()');
 document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')');
 get_products(baris1);
 baris1++;
@@ -599,6 +613,19 @@ function generateSUBTOTAL(index) {
 	idx.name = "SUBTOTAL"+index+"";
 	//idx.name = "SUBTOTAL[]";
 	idx.id = "SUBTOTAL"+index+"";
+	idx.align= "right";
+	idx.readOnly = "readonly";
+	idx.style="text-align:right;";
+	idx.size = "25";
+	return idx;
+}
+
+function generateNETT(index) {
+    //var idx = document.createElement("div");
+    var idx = document.createElement("input");
+	idx.name = "NETT"+index+"";
+	//idx.name = "SUBTOTAL[]";
+	idx.id = "NETT"+index+"";
 	idx.align= "right";
 	idx.readOnly = "readonly";
 	idx.style="text-align:right;";
@@ -872,7 +899,12 @@ function hitungjml(a)
 		
 		jml=qty*(harga-disc);
     
- 	document.getElementById("SUBTOTAL"+a+"").value = jml;	
+ 	document.getElementById("SUBTOTAL"+a+"").value = jml;
+	
+	var disc_dropshipper = document.getElementById("disc_dropshipper").value;
+	var tot = Math.ceil(parseInt(jml)*(1-disc_dropshipper));
+	document.getElementById("NETT"+a+"").value = tot
+	
  	hitungtotal();
 	
 }
