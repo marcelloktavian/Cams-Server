@@ -199,21 +199,21 @@ table tr td{
 }
 </style>
 
-<table cellpadding=0 cellspacing=0 border=1>
+<table>
 	<tr>
-		<td width="100%" colspan=7 class="text-center"><b>AR OLN CREDIT DETAIL</b></td>
-	</tr>
-	<tr>
-		<td width="100%"colspan=7  class="text-center">Dropshipper : <?= $fetch_header['nama'] ?></td>
-	</tr>
-	<tr>
-		<td width="100%"colspan=7  class="text-center">Tanggal Print :
+		<td class="style99" width="100%" colspan=6 class="text-left"><b>AR OLN CREDIT DETAIL<br>
+		<?= strtoupper($fetch_header['nama']) ?></b></td>
+		<td class="text-right">
 			<?php
 				date_default_timezone_set('Asia/Jakarta');
-				echo $timestamp = date('d/m/Y H:i:s');
-			?></td>
+				echo date('d/m/Y').'<br>';
+				echo date('H:i:s');
+			?>
+		</td>
 	</tr>
+</table>
 
+<table cellpadding=0 cellspacing=0 border=1>
 	<tr>
 		<td class="title-sm td-title text-center td-border" align="center"><b>Nomor Jurnal</b></td>
 		<td class="title-sm td-title text-center td-border" align="center"><b>Tanggal Jurnal</b></td>
@@ -234,8 +234,8 @@ table tr td{
 		<td class="td-border text-center" align="center"><?= $line['no_akun'] ?></td>
 		<td class="td-border"><?= $line['nama_akun'] ?></td>
 		<td class="text-center td-border" align="center"><?= $line['type'] ?></td>
-		<td class="td-border text-right" align="right"><?= intToIDR($line['debet']) ?></td>
-		<td class="td-border text-right" align="right"><?= intToIDR($line['kredit']) ?></td>
+		<td class="td-border text-right" align="right"><?= number_format($line['debet'],0,',','.') ?></td>
+		<td class="td-border text-right" align="right"><?= number_format($line['kredit'],0,',','.') ?></td>
 	</tr>
 		<?php
 		$total_credit += $line['kredit']; $total_debet += $line['debet'];
@@ -244,8 +244,8 @@ table tr td{
 
 	<tr>
 		<td class="td-border" colspan="5" align="right"><b>GRAND TOTAL :</b></td>
-		<td class="td-border text-right" align="right"><b><?= intToIDR($total_debet) ?></b></td>
-		<td class="td-border text-right" align="right"><b><?= intToIDR($total_credit )?></b></td>
+		<td class="td-border text-right" align="right"><b><?= number_format($total_debet,0,',','.') ?></b></td>
+		<td class="td-border text-right" align="right"><b><?= number_format($total_credit,0,',','.')?></b></td>
 	</tr>
 </table>
 
