@@ -40,9 +40,9 @@ $().ready(function() {
 			$('#id_dropshipper').val(id_dropshipper);
 		var disc_dropshipper  = data.disc;
 		   $('#disc_dropshipper').val(disc_dropshipper);
-        var deposit  = data.trdeposit;
+        // var deposit  = data.trdeposit;
 		    //$('#byr_deposit').val(deposit);
-		    $('#saldo_deposit').val(deposit);
+		    // $('#saldo_deposit').val(deposit);
 		}
 	});	
 			
