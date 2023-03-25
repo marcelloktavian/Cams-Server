@@ -18,11 +18,12 @@
       </div>
       <label for="payment_arcrpay" class="ui-helper-reset label-control">Payment</label>
       <div class="ui-corner-all form-control">
-        <input value="" type="text" class="required" id="payment_arcrpay" name="payment_arcrpay">	
+        <input value="" type="text" class="required" id="payment_arcrpay" name="payment_arcrpay" onkeypress="return event.charCode >= 48 && event.charCode <= 57">	
       </div>
       <label for="sisa_piutang" class="ui-helper-reset label-control">Sisa Piutang</label>
       <div class="ui-corner-all form-control">
-        <input value="<?= number_format($_GET['sisa_piutang'], 0) ?>" type="text" class="required" id="sisa_piutang" name="sisa_piutang" style="background-color:#eae8dd;" readonly>	
+        <input value="<?= number_format($_GET['sisa_piutang'], 0) ?>" type="text" class="required" id="" name="" style="background-color:#eae8dd;" readonly>
+        <input value="<?= $_GET['sisa_piutang'] ?>" type="hidden" class="required" id="sisa_piutang" name="sisa_piutang" style="background-color:#eae8dd;" readonly>
       </div>
       <input id="no_akun" name="no_akun" value="<?= $_GET['no_akun'] ?>" hidden>
     </form>
