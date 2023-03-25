@@ -276,17 +276,6 @@ function validasiPembayaran(){
   transferValidasi.value = parseInt(totalValidasi.value) - parseInt(tunaiValidasi.value) - parseInt(depositValidasi.value);
 };
 
-function validasiPembayaranTF(){
-  const totalValidasi = document.getElementById('totalhidden');
-  const transferValidasi = document.getElementById('transfer');
-  const tunaiValidasi = document.getElementById('tunai');
-  const depositValidasi = document.getElementById('byr_deposit');
-
-  if(parseInt(transferValidasi.value) + parseInt(tunaiValidasi.value) + parseInt(depositValidasi.value) != parseInt(totalValidasi.value)){
-    return "Pembayaran belum sesuai dengan GRAND TOTAL";
-  }
-};
-
 function cetak(){
   var pesan           = '';
   var nama_input      = form2.nama.value;
@@ -316,7 +305,7 @@ function cetak(){
       if (tmpsubtotal != subtotal) {
         pesan = 'Maaf,Subtotal ada yang salah!! Silakan lakukan pengecekan ulang.';
       }
-    }			    		
+    }
 	}
 
   for (var i=1; i<=baris1;i++){
@@ -333,8 +322,6 @@ function cetak(){
     }
   }
 
-  pesan = validasiPembayaranTF();
-
 	if (nama_input == '') {
     pesan = 'Nama Penerima tidak boleh kosong\n';
   }
@@ -346,6 +333,9 @@ function cetak(){
   }
 	if (id_expedition == '') {
     pesan = 'Ekspedisi tidak boleh kosong\n';
+  }
+  if(transfer + tunai + byr_deposit != totalfaktur){
+    pesan = "Pembayaran belum sesuai dengan GRAND TOTAL";
   }
 
 	$.ajax({
