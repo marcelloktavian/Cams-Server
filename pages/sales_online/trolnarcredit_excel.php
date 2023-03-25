@@ -215,13 +215,13 @@ table tr td{
 
 <table cellpadding=0 cellspacing=0 border=1>
 	<tr>
-		<td class="title-sm td-title text-center td-border" align="center"><b>Nomor Jurnal</b></td>
-		<td class="title-sm td-title text-center td-border" align="center"><b>Tanggal Jurnal</b></td>
-		<td class="title-sm td-title text-center td-border" align="center"><b>Nomor Akun</b></td>
-		<td class="title-sm td-title text-center td-border" align="center" width="60%"><b>Nama Akun</b></td>
-		<td class="title-sm td-title text-center td-border" align="center" width="1%"><b>Type</b></td>
-		<td class="title-sm td-title text-center td-border" align="center" width="10%"><b>Debet</b></td>
-		<td class="title-sm td-title text-center td-border" align="center" width="10%"><b>Kredit</b></td>
+		<td class="title-sm td-title text-center" align="center"><b>Nomor Jurnal</b></td>
+		<td class="title-sm td-title text-center" align="center"><b>Tanggal Jurnal</b></td>
+		<td class="title-sm td-title text-center" align="center"><b>Nomor Akun</b></td>
+		<td class="title-sm td-title text-center" align="center" width="60%"><b>Nama Akun</b></td>
+		<td class="title-sm td-title text-center" align="center" width="1%"><b>Type</b></td>
+		<td class="title-sm td-title text-center" align="center" width="10%"><b>Debet</b></td>
+		<td class="title-sm td-title text-center" align="center" width="10%"><b>Kredit</b></td>
 	</tr>
 
 	<?php 
@@ -233,7 +233,7 @@ table tr td{
 		<td class="td-border text-center" align="center"><?= $line['tgl_formatted'] ?></td>
 		<td class="td-border text-center" align="center"><?= $line['no_akun'] ?></td>
 		<td class="td-border"><?= $line['nama_akun'] ?></td>
-		<td class="text-center td-border" align="center"><?= $line['type'] ?></td>
+		<td class="text-center" align="center"><?= $line['type'] ?></td>
 		<td class="td-border text-right" align="right"><?= number_format($line['debet'],0,',','.') ?></td>
 		<td class="td-border text-right" align="right"><?= number_format($line['kredit'],0,',','.') ?></td>
 	</tr>
