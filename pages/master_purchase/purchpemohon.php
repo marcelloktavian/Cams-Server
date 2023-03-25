@@ -138,17 +138,17 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
   exit;
 }
 ?>
+
 <div class="btn_box">
   <?php if ($allow_add) {?>
     <a href="javascript: void(0)">
       <?php echo '<button type="button" onclick="javascript:popup_form(\''.BASE_URL.'pages/master_purchase/purchpemohon.php?action=add\',\'table_purchpemohon\')" class="btn">Tambah</button>'; ?>
   <?php } ?>
+    </a>
 </div>
 
 <table id="table_purchpemohon"></table>
 <div id="pager_table_purchpemohon"></div>
-
-
 
 <script type="text/javascript">
   $(document).ready(function(){

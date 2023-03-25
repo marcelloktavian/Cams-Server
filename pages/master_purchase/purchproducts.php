@@ -181,6 +181,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
     <a href="javascript: void(0)">
     <?php echo '<button type="button" onclick="javascript:popup_form(\''.BASE_URL.'pages/master_purchase/purchproducts.php?action=add\',\'table_purchproducts\')" class="btn">Tambah</button>'; ?>
   <?php } ?>
+    </a>
 </div>
 
 <table id="table_purchproducts"></table>
