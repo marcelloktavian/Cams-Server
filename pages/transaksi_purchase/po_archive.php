@@ -103,9 +103,11 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       else{
         $postAP = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_archive.php?action=postap&val=1&id='.$line['id'].'\',\'table_ap\')" href="javascript:void(0);">Post</a>';
       }
+      $payAP = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/ap_pay.php?id='.$line['id'].'\',\'table_ap\')" href="javascript:void(0);">Pay</a>';
     }
     else{
       $postAP = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Post</a>';
+      $payAP = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Post</a>';
     }
 
     if($allow_delete){
@@ -132,6 +134,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       number_format($line['grand_total']),
       $line['catatan'],
       $postAP,
+      $payAP,
       $edit,
       $delete,
     );
@@ -368,7 +371,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_ap').jqGrid({
       url           : '<?= BASE_URL.'pages/transaksi_purchase/po_archive.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['ID','Nomor AP','Tanggal AP','Supplier','Nomor Akun','Nama Akun','Total Qty','Total','Keterangan','Post','Edit','Delete'],
+      colNames      : ['ID','Nomor AP','Tanggal AP','Supplier','Nomor Akun','Nama Akun','Total Qty','Total','Keterangan','Post','Pay','Edit','Delete'],
       colModel      : [
         {name: 'id', index: 'id', align: 'right', width: 15, searchoptions: {sopt: ['cn']}},
         {name: 'nomor_ap', index: 'nomor_ap', align: 'left', width: 40, searchoptions:{sopt: ['cn']}},
@@ -380,6 +383,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         {name: 'grand_total', index: 'grand_total', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'keterangan', index: 'keterangan', align: 'left', searchoptions:{sopt: ['cn']}},
         {name: 'post', index: 'post', align: 'center', width: 25, searchoptions:{sopt: ['cn']}},
+        {name: 'pay', index: 'pay', align: 'center', width: 25, searchoptions:{sopt: ['cn']}},
         {name: 'edit', index: 'edit', align: 'center', width: 25, searchoptions:{sopt: ['cn']}},
         {name: 'delete', index: 'delete', align: 'center', width: 25, searchoptions:{sopt: ['cn']}},
       ],
