@@ -248,7 +248,7 @@ $id_pkb = getnewnotrxwait2();
       </tr>
       <tr>
         <td class='fonttext' >Bayar dg Deposit</td>
-        <td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' onkeyup='hitungpiutang();'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
+        <td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' onkeyup='validasiPembayaran(); hitungpiutang();'><input type='text' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;'></td>
         <td class='fonttext' hidden>Piutang</td>
         <td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;' hidden></td>
       </tr>
@@ -268,6 +268,10 @@ $id_pkb = getnewnotrxwait2();
 <script>
 
 function validasiPembayaran(){
+  if(document.getElementById("byr_deposit").value == "") {
+    document.getElementById("byr_deposit").value = 0;
+	}
+
   const totalValidasi = document.getElementById('totalhidden');
   const transferValidasi = document.getElementById('transfer');
   const tunaiValidasi = document.getElementById('tunai');
@@ -589,7 +593,6 @@ idx.id = "del1"+index+"";
 idx.size = "10";
 idx.value = "X";
 return idx;
-
 }
 
 function delRow1(id){ 
@@ -703,9 +706,7 @@ function hitungpiutang(){
 }
 
 $(document).ready(function(){
-  document.getElementById('tunai').setAttribute('onChange', 'validasiPembayaran()');
-
-  document.getElementById('byr_deposit').setAttribute('onChange', 'validasiPembayaran()');
+  document.getElementById('tunai').setAttribute('onKeyUp', 'validasiPembayaran()');
 });
 
 function hitungtotal(){
