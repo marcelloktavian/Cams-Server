@@ -150,17 +150,18 @@ if($akun == ''){
 
     $query = '';
     $countnya = 0;
-    $sql1 = mysql_query($sql_products." where a.deleted=0 AND (noakun = '$akun') ");
+    $sql1 = mysql_query($sql_products." where a.deleted=0 ");
+
     while($r1 = mysql_fetch_array($sql1)) {
         if ($countnya == 0) {
             $query .= "select id, noakun, nama, jenis from mst_coa where id='".$r1['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000' AND (noakun = '$akun') ";
         } else {
-            $query .= " UNION ALL select id, noakun, nama, jenis from mst_coa  where id='".$r1['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000' AND (noakun = '$akun') ";
+            $query .= " UNION ALL (select id, noakun, nama, jenis from mst_coa  where id='".$r1['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000' AND (noakun = '$akun')) ";
         }
         $countnya++;
         $sql2 = mysql_query("SELECT * FROM det_coa WHERE id_parent='".$r1['id']."' ORDER by noakun ASC");
         while($r2 = mysql_fetch_array($sql2)) {
-            $query .= " UNION ALL select id, noakun, nama, '' as jenis from det_coa where id='".$r2['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000'  AND (noakun = '$akun') ";
+            $query .= " UNION ALL (select id, noakun, nama, '' as jenis from det_coa where id='".$r2['id']."' AND SUBSTR(noakun,4,2)<>'00' AND SUBSTR(noakun,7,5)<>'00000'  AND (noakun = '$akun')) ";
         }
     }
 
