@@ -64,8 +64,9 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $responce['records']  = $count;
   
   // $responce = array();
-  $i=0;
+  $total_qty = 0; $total_inv = 0; $total_payment = 0; $total_remaining = 0;
 
+  $i=0;
   foreach($data1 as $line){
     if($allow_edit){
       if($line['post_ap'] == '1'){
@@ -84,10 +85,10 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
         $postInvoice = '<a onclick="javascript:custom_alert(\'Invoice sudah diproses pada AP.\')" href="javascript:void(0);">Unpost</a>';
       }
       else if($line['post_ap'] == '1'){
-        $postInvoice = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_invoice_post_pass.php?action=postap&val=0&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Unpost</a>';
+        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=0&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Unpost</a>';
       }
       else{
-        $postInvoice = '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/transaksi_purchase/po_invoice_post_pass.php?action=postap&val=1&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Post</a>';
+        $postInvoice = '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/transaksi_purchase/po_approval.php?action=postap&val=1&id='.$line['id'].'\',\'table_invoice\')" href="javascript:void(0);">Post</a>';
       }
     }
     else{
@@ -113,7 +114,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       $line['tanggal_invoice'],
       $line['tanggal_jatuh_tempo'],
       $line['supplier'],
-      $line['qty'],
+      number_format($line['qty']),
       number_format($line['total']),
       number_format($line['total_payment']),
       number_format($line['total_remaining']),
@@ -122,8 +123,20 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       $edit,
       $delete,
     );
+
+    $total_qty += $line['qty'];
+    $total_inv += $line['total'];
+    $total_payment += $line['total_payment'];
+    $total_remaining += $line['total_remaining'];
+
     $i++;
   }
+
+  $responce['userdata']['qty'] = number_format($total_qty,0);
+  $responce['userdata']['total'] = number_format($total_inv,0);
+  $responce['userdata']['total_payment'] = number_format($total_payment,0);
+  $responce['userdata']['total_remaining'] = number_format($total_remaining,0);
+
   if(!isset($responce)){
     $responce = [];
   }
@@ -170,36 +183,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'add'){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
   $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
   $q_post->execute(array($_GET['val'], $_GET['id']));
-  
-  $affected_rows = $q_post->rowCount();
-}
-elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass'){
-  $id_user=$_SESSION['user']['username'];
-
-	//cek apakah pass sama atau tidak
-  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_inv']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
-  $stmt->execute();
-
-  $affected_rows = $stmt->rowCount();
-  if($affected_rows > 0){
-    $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
-    $q_post->execute(array($_GET['val'], $_POST['id_inv']));
-
-    $affected_rows = $q_post->rowCount();
-
-    if($affected_rows > 0){
-      $r['stat'] = 1; $r['message'] = 'Succes';
-    }
-    else{
-      $r['stat'] = 0; $r['message'] = 'Failed';
-    }
-    echo json_encode($r);
-    exit;
-  }
-}
-elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
-  $q_post   = $db->prepare("UPDATE `mst_invoice` SET `post_ap`=? WHERE `id`=?");
-  $q_post->execute(array($_GET['val'], $_POST['id']));
   
   $affected_rows = $q_post->rowCount();
 
@@ -332,7 +315,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
           width : [30,100,70,250,70,70,70,90,70,100],
           align : ['right','left','center','left','right','right','right','right','center','right'],
         }
-      ]
+      ],
+      footerrow : true,
+      userDataOnFooter : true,
     });
     $('#table_invoice').jqGrid('navGrid', '#pager_table_invoice', {edit:false, add:false, del:false, search:false});
   });

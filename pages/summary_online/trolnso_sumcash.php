@@ -118,6 +118,7 @@
                 $line['lastmodified'],
                 number_format($line['totalqty'],0),
 				number_format($line['faktur'],0),
+				number_format($line['discount_faktur'],0),
 				number_format($line['exp_fee'],0),
 				number_format($line['total'],0),
 				number_format($line['tunai'],0),
@@ -345,7 +346,7 @@
             },*/
             datatype: "json",
             //colNames:['ID','Customer','Tanggal Transaksi','Qty','Faktur','Ongkos Kuli','Total Faktur','Tunai','Bank','View','Delete'],
-            colNames:['ID','Dropshipper','OLN.Date','POST.Date','Qty','Value','Exp.Fee','Total Value','Cash','Transfer','Deposit','Receiver','Expedition','Exp_code','Inv.','Print'],
+            colNames:['ID','Dropshipper','OLN.Date','POST.Date','Qty','Value','Disc','Exp.Fee','Total Value','Cash','Transfer','Deposit','Receiver','Expedition','Exp_code','Inv.','Print'],
             colModel:[
                 {name:'id_trans',index:'id_trans', width:50, search:true, stype:'text', searchoptions:{sopt:['cn']}},
                 {name:'dropshipper',index:'dropshipper', width:100, searchoptions: {sopt:['cn']}},                
@@ -353,6 +354,7 @@
                 {name:'lastmodified',index:'lastmodified', width:80, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},
                 {name:'totalqty',index:'totalqty', align:'right', width:30, searchoptions: {sopt:['cn']}},
                 {name:'faktur',index:'faktur', align:'right', width:80, searchoptions: {sopt:['cn']}},
+                {name:'disc',index:'disc', align:'right', width:80, searchoptions: {sopt:['cn']}},
                 {name:'exp_fee',index:'exp_fee', align:'right', width:60, searchoptions: {sopt:['cn']}},
                 {name:'total',index:'total', align:'right', width:80, searchoptions: {sopt:['cn']}},
                 {name:'tunai',index:'tunai', align:'right', width:80, searchoptions: {sopt:['cn']}},

@@ -69,7 +69,6 @@ foreach($datalog as $linelog) {
 				<tr>
 				<td> 
                 <select name="noakunbukubesar_id" id="noakunbukubesar_id" class="my-select">
-                           
                 </select>
 				</td>
 				</tr>
@@ -84,7 +83,6 @@ foreach($datalog as $linelog) {
        	</form>
    	</div>
 </div>
- 
 <!--
 <?php
 	/*
@@ -121,7 +119,7 @@ foreach($datalog as $linelog) {
                 month = '0'+month;
             }
             
-            if(startdate <= (month+"/"+year)){
+            if(ex1[0] <= month && ex1[1] <= year){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
                 window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_bukubesar.php?action=print&start='+startdate+'&akun='+akun);

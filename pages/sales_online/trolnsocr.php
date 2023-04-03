@@ -39,13 +39,12 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
 		$value = $_REQUEST["searchString"];
 		$where = sprintf(" where TRUE AND (p.totalqty <> 0) AND (p.state ='0') AND (p.piutang> 0) and (p.deleted=0) AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 		}
+
 		//0= SALES,1=DO,3=ARCHIVE_DO
 		//MENAMPILKAN PENJUALAN YANG BARU INPUT STATE=0 DAN TOTALQTY<>0 KRN BUKAN TRANSAKSI CANCEL dan TRANSAKSI YANG BLM LUNAS /Credit(PIUTANG>0)
-   	
 		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition FROM `olnso` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) ".$where;
         $q = $db->query($sql);
 		$count = $q->rowCount();
-        //var_dump($sql);
         $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
         if ($page > $total_pages) $page=$total_pages;
         $start = $limit*$page - $limit;
@@ -71,9 +70,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
         $i=0;
 		$grand_qty=0;$grand_faktur=0;$grand_totalfaktur=0;$grand_piutang=0;$grand_tunai=0;$grand_transfer=0;$grand_biaya=0 ;
         foreach($data1 as $line) {
-        	
-			// $allowEdit = array(1,2,3);
-			// $allowDelete = array(1,2,3);
         	if ($statusToko == 'Tutup') {
                 $edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Posting</a>';
                 $delete = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Cancel</a>';

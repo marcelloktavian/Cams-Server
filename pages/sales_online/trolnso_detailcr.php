@@ -233,7 +233,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
     	<td align='center' width='10%' class='fonttext'>Price@</td>
       	<td align='center' width='5%' class='fonttext'>Qty</td>
       	<td align='center' width='5%' class='fonttext'>Size</td>
-      	<td align='center' width='10%' class='fonttext'>Disc@</td>
+      	<td align='center' width='10%' class='fonttext' hidden>Disc@</td>
       	<td align='center' width='25%' class='fonttext'>Subtotal</td>
       	<td align='center' width='25%' class='fonttext'>NETT</td>
       	<td align='center' width='5%' class='fonttext'>Hapus</td>    
@@ -440,6 +440,8 @@ var td5 = document.createElement("td");
 var td6 = document.createElement("td");
 var td7 = document.createElement("td");
 var td8 = document.createElement("td");
+
+td5.setAttribute('hidden', true);
 
 td0.appendChild(generateId(baris1));
 td0.appendChild(generateBARCODE(baris1));

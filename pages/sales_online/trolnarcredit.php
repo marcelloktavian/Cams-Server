@@ -16,11 +16,11 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   if(!$sidx) $sidx=1;
 
-    if(isset($_GET['nomor_akun']) && $_GET['nomor_akun'] != ''){
-    $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id WHERE a.`nama_akun` LIKE 'Piutang OLN - %' AND a.`no_akun` LIKE '%".$_GET['nomor_akun']."%' GROUP BY a.`no_akun`";
+  if(isset($_GET['nomor_akun']) && $_GET['nomor_akun'] != ''){
+  $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' AND a.`no_akun` LIKE '%".$_GET['nomor_akun']."%' GROUP BY a.`no_akun`";
   }
   else{
-    $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id WHERE a.`nama_akun` LIKE 'Piutang OLN - %' GROUP BY a.`no_akun`";
+    $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' GROUP BY a.`no_akun`";
   }
 
   $q = $db->query($sql_arcr);

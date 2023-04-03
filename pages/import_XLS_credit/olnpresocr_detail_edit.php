@@ -323,7 +323,7 @@ $id_pkb = getnewnotrxwait2();
 	<td align='center' width='10%' class='fonttext'>Price@</td>
 	<td align='center' width='5%' class='fonttext'>Qty</td>
 	<td align='center' width='5%' class='fonttext'>Size</td>
-	<td align='center' width='10%' class='fonttext'>Disc@</td>
+	<td align='center' width='10%' class='fonttext' hidden>Disc@</td>
 	<td align='center' width='25%' class='fonttext'>Subtotal</td>
 	<td align='center' width='5%' class='fonttext'>Hapus</td>    
 	</tr>
@@ -352,22 +352,30 @@ $id_pkb = getnewnotrxwait2();
 	<td class='fonttext' style='width:20px;'>
 	Keterangan
 	</td>
-	<td colspan=1 align='left'><textarea name='txtbrg' id='txtbrg' cols='55' rows='2' >$keterangan</textarea></td>
+	<td colspan=2 align='left'><textarea name='txtbrg' id='txtbrg' cols='55' rows='2' >$keterangan</textarea></td>
+	</tr>
+
+	<tr>
 	<td class='fonttext'>Disc.Faktur </td>
 	<td><input type='text' class='inputform' name='disc_faktur' id='disc_faktur' style='text-align:right;' onkeyup='hitungtotaldisable();'></td>
 	</tr>
+
 	<tr>
+	<td class='fonttext'>Piutang</td>
+	<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;' value='$grandtotal'></td>
+	</tr>
+
+	<tr hidden>
 	<td class='fonttext'>Tunai </td>
 	<td><input type='text' class='inputform' name='tunai' id='tunai' style='text-align:right;' onkeyup='hitungpiutang();' value='0'><input type='hidden' class='inputform' name='faktur' id='faktur' /></td>
 	<td class='fonttext' >Tf.Bank</td>
 	<td><input type='text' class='inputform' name='transfer' id='transfer' style='text-align:right;'onkeyup='hitungpiutang();' value='0'></td>
 	<td class='fonttext' >&nbsp;</td>
 	</tr>
-	<tr>
+	
+	<tr hidden>
 	<td class='fonttext' >Bayar dg Deposit</td>
 	<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' ><input type='hidden' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit'/><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
-	<td class='fonttext'>Piutang</td>
-	<td><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;' value='$grandtotal'></td>
 	</tr>
 	</table>
 
@@ -526,6 +534,8 @@ function addNewRow1()
 	var td5 = document.createElement("td");
 	var td6 = document.createElement("td");
 	var td7 = document.createElement("td");
+
+	td5.setAttribute('hidden', true);
 
 	td0.appendChild(generateId(baris1));
 	td0.appendChild(generateBARCODE(baris1));

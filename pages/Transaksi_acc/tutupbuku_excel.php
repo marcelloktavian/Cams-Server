@@ -204,21 +204,21 @@ header("Pragma: no-cache");
 
 <table cellpadding=0 cellspacing=0 style="width:97%;">
   <tr>
-  <td colspan="5" class="text-center" style="vertical-align:bottom; width: 5em"><b>TUTUP BUKU</b></td>
+  <td colspan="6" class="text-center" style="vertical-align:bottom; width: 5em"><b>TUTUP BUKU</b></td>
   </tr>
   <tr>
-    <td colspan="5" class="text-center" style="vertical-align:bottom; width: 5em"><b>PERIODE</b>&nbsp;:<?= date_format(date_create($string_data_master['year'].'/'.$string_data_master['month'].'/01'), "M Y");?></td>
+    <td colspan="6" class="text-center" style="vertical-align:bottom; width: 5em"><b>PERIODE</b>&nbsp;:<?= date_format(date_create($string_data_master['year'].'/'.$string_data_master['month'].'/01'), "M Y");?></td>
   <tr>
-    <td colspan="5" class="text-center">PIC&nbsp;:<?= $string_data_master['nama_pic'] ;?></td>
+    <td colspan="6" class="text-center">PIC&nbsp;:<?= $string_data_master['nama_pic'] ;?></td>
   </tr>
   <tr>
-    <td colspan="5" class="text-center" style="vertical-align:top;">TANGGAL&nbsp;:<?= date_format(date_create($string_data_master['lastmodified']), "d M Y");?></td>
+    <td colspan="6" class="text-center" style="vertical-align:top;">TANGGAL&nbsp;:<?= date_format(date_create($string_data_master['lastmodified']), "d M Y");?></td>
   </tr>
 </table>
 
 <table cellpadding=0 cellspacing=0 style="width:97%;" border=1>
   <tr>
-    <td class="title-sm td-title text-center td-border" style="width:3%;"><b>NO.</b></td><td class="title-sm td-title text-center td-border"><b>NOMOR AKUN</b></td><td class="title-sm td-title text-center td-border" style="width:40%"><b>NAMA AKUN</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>DEBET</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>KREDIT</b></td>
+    <td class="title-sm td-title text-center td-border"><b>NOMOR AKUN</b></td><td class="title-sm td-title text-center td-border" style="width:40%"><b>NAMA AKUN</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>DEBET</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>KREDIT</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>BALANCE DEBET</b></td><td class="title-sm td-title text-center td-border" style="width:15%"><b>BALANCE KREDIT</b></td>
   </tr>
   <?php
     error_reporting(0);
@@ -265,24 +265,31 @@ header("Pragma: no-cache");
       foreach($rowssalso as $rs){
         $debet = $rs['db'];
         $kredit = $rs['cr'];
+
+        $balance = $debet-$kredit;
+        $balance_debet = $balance >= 0 ? $balance : 0;
+        $balance_credit = $balance < 0 ? $balance*-1 : 0;
+
         $total_debet += $debet;
         $total_credit += $kredit;
+        $total_balance_debet += $balance_debet;
+        $total_balance_credit += $balance_credit;
       }
-      
       ?>
       <tr>
-        <td class="text-left td-border" style="padding-left:12px; padding-right:12px;"><?= $i+1 ?></td>
         <td class="text-left td-border" style="padding-left:12px; padding-right:12px;"><?= $lines['noakun'] ?></td>
         <td class="text-left td-border" style="padding-left:12px; padding-right:12px;"><?= $lines['nama'] ?></td>
-        <td class="text-right td-border" style="padding-left:12px; padding-right:12px;"><?= intToIDR($debet) ?></td>
-        <td class="text-right td-border" style="padding-left:12px; padding-right:12px;"><?= intToIDR($kredit) ?></td>
+        <td class="text-right td-border" align="right" style="padding-left:12px; padding-right:12px;"><?= number_format($debet, 0) ?></td>
+        <td class="text-right td-border" align="right" style="padding-left:12px; padding-right:12px;"><?= number_format($kredit, 0) ?></td>
+        <td class="text-right td-border" align="right" style="padding-left:12px; padding-right:12px;"><?= number_format($balance_debet) ?></td>
+        <td class="text-right td-border" align="right" style="padding-left:12px; padding-right:12px;"><?= number_format($balance_credit) ?></td>
       </tr>
       <?
       $i++;
     }
   ?>
   <tr>
-    <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em;" colspan=3><b>TOTAL</b></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_debet) ?></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_credit) ?></td>
+    <td class="text-right td-border td-title title-sm" style="width:12%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em;" colspan=2><b>TOTAL</b></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_debet) ?></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_credit) ?></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_balance_debet) ?></td><td class="title-sm text-right td-border" style="width:15%; border-top: 2px solid black !important; padding-top: 0.2em; padding-bottom: 0.2em; padding-left:10px; padding-right:10px; vertical-align:center;"><?= intToIDR($total_balance_credit) ?></td>
   </tr>
 </table>
 

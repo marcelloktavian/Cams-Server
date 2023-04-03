@@ -542,8 +542,6 @@ return true;
     
 }	
 
-       
-
 <?php 
 	$sql_detail = "select a.id_trans,a.kode,a.tgl_trans,a.faktur,a.total,a.piutang,a.pelunasan,(a.piutang-a.pelunasan) as sisapiutang,b.nama from olnso a left join mst_dropshipper b on (a.id_dropshipper=b.id) where a.id_trans = '".$_GET['ids']."'";
     //var_dump($sql_detail);die;

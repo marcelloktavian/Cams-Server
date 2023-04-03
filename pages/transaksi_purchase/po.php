@@ -61,8 +61,9 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $responce['page'] = $page;
   $responce['total'] = $total_pages;
   $responce['records'] = $count;
-  
-  // $responce = array();
+
+  $total_qty = 0; $total_dpp = 0; $total_ppn = 0; $total_grand = 0;
+
   $i=0;
   foreach($data1 as $line){
 
@@ -127,15 +128,26 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       number_format($line['total_dpp'],0),
       number_format($line['ppn'],0),
       number_format($line['grand_total'],0),
-      // number_format($line['pengiriman'],0),
       $line['catatan'],
       $postApproval,
       $edit,
       $delete,
       $print,
     );
+
+    $total_qty += $line['total_qty'];
+    $total_dpp  += $line['total_dpp'];
+    $total_ppn += $line['ppn'];
+    $total_grand += $line['grand_total'];
+
     $i++;
   }
+
+  $responce['userdata']['total_qty'] = number_format($total_qty,0);
+  $responce['userdata']['total_dpp'] = number_format($total_dpp,0);
+  $responce['userdata']['ppn'] = number_format($total_ppn,0);
+  $responce['userdata']['grand_total'] = number_format($total_grand,0);
+
   if(!isset($responce)){
     $responce = [];
   }
@@ -362,6 +374,8 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
           align : ['right','left','center','center','center','right','right','center','left'],
         }
       ],
+      footerrow : true,
+      userDataOnFooter : true,
     });
     $('#table_po').jqGrid('navGrid', '#pager_table_po', {edit:false, add:false, del:false, search:false});
   });

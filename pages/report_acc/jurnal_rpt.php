@@ -122,7 +122,7 @@ foreach($datalog as $linelog) {
                 month = '0'+month;
             }
             
-            if(((ex1[1]+"/"+ex1[2]) <= (month+"/"+year)) || ((ex2[1]+"/"+ex2[2]) <= (month+"/"+year))){
+            if((ex1[1] <= month && ex1[2] <= year) || (ex2[1] <= month && ex2[2] <= year)){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
                 window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=print&start='+startdate+'&end='+enddate+'&akun='+akun);
@@ -144,7 +144,7 @@ foreach($datalog as $linelog) {
             var ex1 = startdate.split("/");
             var ex2 = enddate.split("/");
 
-            if(((ex1[1]+"/"+ex1[2]) <= (month+"/"+year)) || ((ex2[1]+"/"+ex2[2]) <= (month+"/"+year))){
+            if((ex1[1] <= month && ex1[2] <= year) || (ex2[1] <= month && ex2[2] <= year)){
                 alert('Tanggal Sudah Tutup Buku');
             }else{
                 window_open('<?php echo BASE_URL ?>pages/report_acc/rpt_jurnal.php?action=excel&start='+startdate+'&end='+enddate+'&akun='+akun);
