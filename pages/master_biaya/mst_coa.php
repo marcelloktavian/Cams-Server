@@ -42,7 +42,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
      }
 //--------------end of searching--------------------		
      //   $where = "WHERE deleted=0 ";
+
+		if(isset($_GET['filter'])){
+            $filter = $_GET['filter'];
+            if($_GET['filter'] != null){
+			    $where .= " AND (noakun like '%$filter%' OR nama like '%$filter%') ";
+            }
+		}
+
         $q = $db->query("SELECT * FROM `mst_coa` a ".$where);
+
 		$count = $q->rowCount();
         
         $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
@@ -196,6 +205,29 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 		exit;
 	}
 ?>
+<div class="ui-widget ui-form" style="margin-bottom:5px">
+ <div class="ui-widget-header ui-corner-top padding5">
+        Filter Data
+    </div>
+    <div class="ui-widget-content ui-corner-bottom">
+        <form id="report_project_form" method="" action="" class="ui-helper-clearfix">
+        	<label for="project_id" class="ui-helper-reset label-control">Nomor / Nama Akun</label>
+            <div class="ui-corner-all form-control">
+            	<table>
+				<tr>
+				<td>
+				 <input value="" type="text" class="required"   id="filter_coa" name="filter_coa">
+				</td>
+				</tr>
+				</table>
+            </div>
+            <label for="" class="ui-helper-reset label-control">&nbsp;</label>
+            <div class="ui-corner-all form-control">
+            	<button onclick="gridReloadCOA()" class="btn" type="button">Cari</button>
+            </div>
+       	</form>
+   	</div>
+</div>
 <div class="btn_box">
 <?php
 	// $allow = array(1,2,3);
@@ -220,6 +252,13 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 <div id="pager_table_mst_coa"></div>
 
 <script type="text/javascript">
+    function gridReloadCOA(){
+        var filter = $("#filter_coa").val();
+        
+        var v_url ='<?php echo BASE_URL?>pages/master_biaya/mst_coa.php?action=json&filter='+filter;
+        jQuery("#table_mst_coa").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
+    }
+    
     $(document).ready(function(){
 
         $("#table_mst_coa").jqGrid({
@@ -258,6 +297,6 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
                 alert(rowid);
             }
         });
-        $("#table_mst_coa").jqGrid('navGrid','#pager_table_mst_coa',{edit:false,add:false,del:false});
+        $("#table_mst_coa").jqGrid('navGrid','#pager_table_mst_coa',{edit:false,add:false,del:false, search: false});
     })
 </script>
