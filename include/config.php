@@ -146,7 +146,7 @@
 	define("PaymentCheck", 15);	
 	define("ReturnConfirmed", 16);
 	define("archivepo", 17);	
-	define("PaymentCheck", 18);	
+	define("aplist", 18);	
 	define("TutupBuku", 19);	
 
 	define("TaxesRpt", 21);	
