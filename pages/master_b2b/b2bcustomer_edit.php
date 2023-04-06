@@ -497,8 +497,8 @@ function cetak(){
 			
 			document.getElementById('Id'+<?=$i;?>+'').value = '<?=$rs1['b2bcustomer_detail_id'];?>';
 			document.getElementById('IDP'+<?=$i;?>+'').value = '<?=$rs1['products_id'];?>';
-			document.getElementById('BARCODE'+<?=$i;?>+'').value = '<?=$rs1['nama_produk'];?>';
-			document.getElementById('NamaBrg'+<?=$i;?>+'').value = '<?=$rs1['nama_produk'];?>';
+			document.getElementById('BARCODE'+<?=$i;?>+'').value = "<?=$rs1['nama_produk'];?>";
+			document.getElementById('NamaBrg'+<?=$i;?>+'').value = "<?=$rs1['nama_produk'];?>";
 			document.getElementById('Harga'+<?=$i;?>+'').value = '<?=$rs1['price'];?>';
 			document.getElementById('Disc'+<?=$i;?>+'').value = '<?=$rs1['disc'];?>';
 			document.getElementById('NettPrice'+<?=$i;?>+'').value = '<?=$rs1['nett_price'];?>';
