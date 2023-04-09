@@ -144,7 +144,7 @@ $data = mysql_fetch_array($result);
 ?>
 </head><body><table width="100%" border="<?=$_GET['action']=='excel'?'1':'0'?>" align="center" cellpadding="0" cellspacing="0">
     <tbody><tr>
-        <td colspan="100%" class="judul" align="center">
+        <td colspan="6" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>
             JURNAL TRANSAKSI<br>
             PERIODE <?php echo strtoupper($data['tglawal']) ?> - <?php echo strtoupper($data['tglakhir']) ?><br>
