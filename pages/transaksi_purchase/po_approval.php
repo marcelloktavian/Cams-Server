@@ -285,7 +285,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         {name:'tanggal_invoice', index: 'tanggal_invoice', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name:'tanggal_jatuh_tempo', index: 'tanggal_jatuh_tempo', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name:'supplier', index:'supplier', align: 'left', width:80, searchoptions: {sopt: ['cn']}},
-        {name:'total_qty', index:'total_qty', align:'right', width:25, searchoptions: {sopt: ['cn']}},
+        {name:'qty', index:'qty', align:'right', width:25, searchoptions: {sopt: ['cn']}},
         {name:'total', index:'total', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         {name:'total_payment', index:'total_payment', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         {name:'total_remaining', index:'total_remaining', align: 'right', width:40, searchoptions: {sopt: ['cn']}},

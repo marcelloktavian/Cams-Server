@@ -38,7 +38,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, PreSALES, $group_acess);
 		$value = $_REQUEST["searchString"];
 		$where = sprintf(" where TRUE AND (p.state=0) %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 	 	}			
-				
+
 		$sql = "SELECT p.total as grandtotal,sum(p.deposit) as deposit,p.oln_order_id,p.oln_customer,p.oln_tgl,p.oln_penerima,p.oln_address,sum(p.jumlah_beli) as qty, sum(p.subtotal) as total,p.oln_note,p.oln_expnote FROM `olnpreso` p ".$where. " GROUP by p.oln_order_id";
         //var_dump($sql);die;
 		$q = $db->query($sql);

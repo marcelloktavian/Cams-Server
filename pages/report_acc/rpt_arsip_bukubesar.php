@@ -214,7 +214,7 @@ if($_GET['action']=='excel'){
     <tbody><tr>
         <td colspan="9" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>
-            BUKU BESAR<br>
+            ARSIP BUKU BESAR<br>
             PERIODE <?= STRTOUPPER($arrNamaBulan[explode('/',$_GET['start'])[0]])?> <?=explode('/',$_GET['start'])[1]?><br>
             <br>
         </td>

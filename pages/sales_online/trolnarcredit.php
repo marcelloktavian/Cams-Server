@@ -17,10 +17,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   if(!$sidx) $sidx=1;
 
   if(isset($_GET['nomor_akun']) && $_GET['nomor_akun'] != ''){
-  $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' AND a.`no_akun` LIKE '%".$_GET['nomor_akun']."%' GROUP BY a.`no_akun`";
+  $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' AND a.`no_akun` LIKE '%".$_GET['nomor_akun']."%' GROUP BY a.`no_akun` HAVING (SUM(a.debet) - SUM(a.kredit)) > 0 ";
   }
   else{
-    $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' GROUP BY a.`no_akun`";
+    $sql_arcr = "SELECT a.no_akun, a.nama_akun, b.nama, b.type, SUM(a.debet) as total_piutang, SUM(a.kredit) as total_pembayaran, (SUM(a.debet) - SUM(a.kredit)) as sisa_piutang FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON c.id=a.id_parent WHERE DATE(c.tgl) > '2023-01-01' AND a.`nama_akun` LIKE 'Piutang OLN - %' GROUP BY a.`no_akun` HAVING (SUM(a.debet) - SUM(a.kredit)) > 0 ";
   }
 
   $q = $db->query($sql_arcr);
@@ -90,8 +90,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
   $id_user=$_SESSION['user']['username'];
   
   $masterNo = '';
-  $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor
-  FROM jurnal ORDER BY id DESC LIMIT 1");
+  $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor FROM jurnal ORDER BY id DESC LIMIT 1");
   if(mysql_num_rows($query) == '1'){
   }else{
     $query = mysql_query("select CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001') as nomor ");

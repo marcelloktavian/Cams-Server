@@ -1,0 +1,53 @@
+<style>
+  #sisa_piutang:focus{
+    outline:none;
+  }
+</style>
+
+<div class="ui-widget ui-form">
+  <div class="ui-widget-header ui-corner-top padding5">AP Pay</div>
+  <div class="ui-widget-content ui-corner-bottom">
+    <form id="trolndo_pass_form" method="post" action="pages/transaksi_purchase/aplist.php?action=pembayaran" class="ui-helper-clearfix">
+      <label for="date_aplist" class="ui-helper-reset label-control">Tanggal Pembayaran</label>
+      <div class="ui-corner-all form-control">
+        <input value="" type="text" class="required datepicker" id="date_aplist" name="date_aplist" readonly>
+      </div>
+      <label for="akun_kredit_aplist" class="ui-helper-reset label-control">Akun Kredit</label>
+      <div class="ui-corner-all form-control">
+        <input value="" type="text" class="required" id="akun_kredit_aplist" name="akun_kredit_aplist">	
+      </div>
+      <label for="payment_aplist" class="ui-helper-reset label-control">Payment</label>
+      <div class="ui-corner-all form-control">
+        <input value="" type="text" class="required" id="payment_aplist" name="payment_aplist" onkeypress="return event.charCode >= 48 && event.charCode <= 57">	
+      </div>
+      <label for="sisa_piutang" class="ui-helper-reset label-control">Sisa Piutang</label>
+      <div class="ui-corner-all form-control">
+        <input value="<?= number_format($_GET['sisa_piutang'], 0) ?>" type="text" class="required" id="" name="" style="background-color:#eae8dd;" readonly>
+        <input value="<?= round($_GET['sisa_piutang']) ?>" type="hidden" class="required" id="sisa_piutang" name="sisa_piutang" style="background-color:#eae8dd;" readonly>
+      </div>
+      <input id="no_akun" name="no_akun" value="<?= $_GET['no_akun'] ?>" hidden>
+      <input id="no_telp" name="no_telp" value="<?= $_GET['no_telp'] ?>" hidden>
+    </form>
+  </div>
+</div>
+
+<script>
+  $('#date_aplist').datepicker({
+    dateFormat: "dd/mm/yy",
+  });
+  $("#date_aplist").datepicker( 'setDate', 'today' );
+
+  $('#akun_kredit_aplist').autocomplete("pages/transaksi_purchase/aplist_lookup_akun.php?action=getdebet", {width: 400});
+
+  $('#payment_aplist').on('keydown',function(){
+    if(parseInt($('#payment_aplist').val()) > parseInt($('#sisa_piutang').val())){
+      $('#payment_aplist').val($('#sisa_piutang').val());
+    }
+  });
+
+  $('#payment_aplist').on('keyup',function(){
+    if(parseInt($('#payment_aplist').val()) > parseInt($('#sisa_piutang').val())){
+      $('#payment_aplist').val($('#sisa_piutang').val());
+    }
+  });
+</script>

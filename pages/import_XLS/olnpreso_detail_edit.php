@@ -47,10 +47,19 @@ $harga_satuan = $rs['harga_satuan'];
 		$displayTotal = $rs['grandtotal'];
 	}
 
-	if($expedisifee == '-0'){
+	if($expedisifee == '-0' || (int)$expedisifee < 0){
 		$expedisifee = 0;
 	}
 
+$sql_note_dropshipper="SELECT d.id, d.nama,d.disc,d.type,d.note,jual.deposit AS trdeposit FROM mst_dropshipper d LEFT JOIN (SELECT id_dropshipper,SUM(IFNULL(deposit,0)) AS deposit FROM olndeposit od 
+GROUP BY id_dropshipper ) AS jual ON d.id = jual.id_dropshipper where (d.deleted=0) and d.id = '".$id_dropshipper."' LIMIT 1";
+//$sql_note="select * from mst_dropshipper where (deleted=0) and id = '".$id."' LIMIT 1";
+//$sql = mysql_query("select * from mst_dropshipper where (deleted=0) and nama = '".$id."' LIMIT 1");
+//var_dump($sql_note);die;
+$get_dropshipper = mysql_query($sql_note_dropshipper);
+$line_dropshipper = mysql_fetch_array($get_dropshipper);
+
+$saldo_dropshipper_deposit = $line_dropshipper['trdeposit'];
 ?>
 <head>
 <title>ONLINE PRE SALES</title>
@@ -339,7 +348,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
 	 </tr>
 	 <tr>
 	    <td class='fonttext'>Exp.Fee</td>
-        <td><input type='text' class='inputform' name='exp_fee' id='exp_fee' placeholder='Biaya Ekspedisi' value='$expedisifee' onkeyup='hitungpiutang();'/></td>
+        <td><input type='text' class='inputform' name='exp_fee' id='exp_fee' placeholder='Biaya Ekspedisi' value='$expedisifee' onkeydown='return isNumberKey(event);' onkeyup='hitungpiutang();'/></td>
 		<td class='fonttext'>Exp.Note</td>
         <td><textarea name='exp_note' id='exp_note' cols='31' rows='2' placeholder='Catatan Ekspedisi' >$expnote</textarea></td>
 	 </tr>
@@ -357,7 +366,7 @@ Keterangan
 
 <tr>
 <td class='fonttext'>Tunai </td>
-<td><input type='text' class='inputform' name='tunai' id='tunai' style='text-align:right;' onkeyup='hitungpiutangdisable();'><input type='hidden' class='inputform' name='faktur' id='faktur' /></td>
+<td><input type='text' class='inputform' name='tunai' id='tunai' style='text-align:right;' onkeyup='hitungpiutang(); hitungpiutangdisable();'><input type='hidden' class='inputform' name='faktur' id='faktur' /></td>
 <td class='fonttext' hidden>Piutang</td>
 <td hidden><input type='text' class='inputform' name='piutang' id='piutang' style='text-align:right;'></td>
 </tr>
@@ -370,7 +379,7 @@ Keterangan
 
 <tr>
 <td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' ><input type='hidden' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' /><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$saldo_dropshipper_deposit' onKeyUp='hitungpiutang()'><input class='inputform'  type='text' value='$saldo_dropshipper_deposit' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' /><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
 </tr>
 </table>
 
@@ -394,6 +403,14 @@ Keterangan
 ?>
 
 <script type="text/javascript">
+function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)){
+        return false;
+    }
+    return true;
+}
+
 //autocomplete pada grid
 function get_products(a){  
    $("#BARCODE"+a+"").autocomplete("lookup_products.php?", {
@@ -714,14 +731,29 @@ if (pesan != '') {
 	}    	
 }
 
+function validasiTotal(){
+	const tunai = parseInt(document.getElementById("tunai").value);
+	const transfer = parseInt(document.getElementById("transfer").value);
+	const byr_deposit = parseInt(document.getElementById("byr_deposit").value);
+
+	const total = parseInt(document.getElementById("totalhidden").value);
+
+	if(total == (tunai+transfer+byr_deposit)){
+		return "";
+	}
+	else{
+		return "Pembayaran belum sesuai dengan GRAND TOTAL";
+	}
+}
+
 function hitungpiutang() 
 {   
 	var total=0;
 	var totalqty=0;
-    var ongkir=0;
-    var tunai=0;
-    var transfer=0;
-    var sisa=0;
+	var ongkir=0;
+	var tunai=0;
+	var transfer=0;
+	var sisa=0;
 	var byr_deposit=0;
 	var total_blmdisc=0;
 	
@@ -743,15 +775,19 @@ function hitungpiutang()
 	}
 	ongkir=document.getElementById("exp_fee").value;
 	var ongkir_murni=parseInt(ongkir.replace(".", ""));
-	
-	
 	if(document.getElementById("byr_deposit").value == "") {
           document.getElementById("byr_deposit").value = 0;
 	}
 	byr_deposit=document.getElementById("byr_deposit").value;
 	var byr_deposit_murni=parseInt(byr_deposit.replace(".", ""));
-	
-	
+
+	if(document.getElementById("saldo_deposit").value == "") {
+    var saldo_deposit=0;
+	}
+	else{
+		var saldo_deposit=parseInt(document.getElementById("saldo_deposit").value);
+	}
+
 	//dihitung ulang untuk mengetahui baris
 	//alert("baris ="+baris1.toString())
 	for (var i=1; i<=baris1;i++){
@@ -792,10 +828,9 @@ console.log(total);
 	//alert("sisa="+sisa+",total="+total+",ongkir_murni="+ongkir_murni+",tunai="+tunai+",transfer="+transfer+",disc_dp="+disc_dropshipper);
 	//console.log(byr_deposit);
 	//alert("ref.code="+document.getElementById("ref_code").value);
-	
+
 	// if (sisa <= 0){
 	//dimasukan ke deposit
-	document.getElementById("byr_deposit").value = sisa2;
     // document.getElementById("piutang").value = 0;
     // }
 	// else{
@@ -803,23 +838,27 @@ console.log(total);
 	// document.getElementById("piutang").value = sisa3;
     // document.getElementById("byr_deposit").value = 0;
     // }
-	
+
 	//totalhidden dipake buat validasi saja
 	document.getElementById("totalhidden").value = total;	   
 	document.getElementById("total").value = total.toLocaleString('IND', {style: 'currency', currency: 'IDR'});
 	//totalqty
 	document.getElementById("totalqty").value = totalqty;
-	
-	//total dipake buat yang byr deposit
-	if (byr_deposit > 0)
-	{
-	document.getElementById("byr_deposit").value = total;
-    }	
-	//total buat yang transfer > 0
-    if (transfer > 0)
-	{
-	document.getElementById("transfer").value = total;	
-    }
+
+	if(document.getElementById("byr_deposit").value > saldo_deposit){
+		document.getElementById("byr_deposit").value=saldo_deposit;
+	}
+
+	if(document.getElementById("byr_deposit").value > total){
+		document.getElementById("byr_deposit").value=total;
+	}
+
+	document.getElementById("transfer").value = total-parseInt(document.getElementById("byr_deposit").value)-parseInt(document.getElementById("tunai").value);
+
+	if(document.getElementById("transfer").value < 0){
+		document.getElementById("transfer").value = 0;
+		document.getElementById("tunai").value = total-parseInt(document.getElementById("byr_deposit").value)-parseInt(document.getElementById("transfer").value)
+	}
 }
 
 function hitungtotal(){
@@ -831,7 +870,7 @@ function hitungtotal(){
     var total_blmdisc=0;
 	
 	if(document.getElementById("exp_fee").value == "") {
-       var ongkir=0;;
+      var ongkir=0;;
 	}
 	else{
 	ongkir=parseInt(document.getElementById("exp_fee").value);
@@ -846,10 +885,14 @@ function hitungtotal(){
 	}
 	
 	if(document.getElementById("saldo_deposit").value == "") {
-       var saldo_deposit=0;;
+    var saldo_deposit=0;
 	}
 	else{
-	   var saldo_deposit=parseInt(document.getElementById("saldo_deposit").value);
+		var saldo_deposit=parseInt(document.getElementById("saldo_deposit").value);
+	}
+
+	if(byr_deposit > saldo_deposit){
+		document.getElementById("byr_deposit").value=saldo_deposit;
 	}
 	
 	if(document.getElementById("disc_dropshipper").value == "") {
@@ -868,9 +911,9 @@ function hitungtotal(){
 	
     for (var i=1; i<=baris1;i++){
 	var barcode=document.getElementById("BARCODE"+i+"");
-	 if (barcode != null)
-	 {   
-	    if(document.getElementById("SUBTOTAL"+i+"").value == "") {
+		if (barcode != null)
+	{   
+	  if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 		var subtotal = 0;}
 		else{
 		var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
@@ -983,6 +1026,7 @@ window.close();
 }
 
 function cetak(){
+
     var pesan           = '';
     var nama_input      = form2.nama.value;
     //var tgl             = form2.tanggal.value;..dimatikan krn tanggal harus now()
@@ -990,13 +1034,13 @@ function cetak(){
     var id_address      = form2.id_address.value;
     var id_expedition   = form2.id_expedition.value;
     // var txtbarang	    = form2.txtbarang.value;
-	var totalfaktur     = parseInt(form2.totalhidden.value);
+		var totalfaktur     = parseInt(form2.totalhidden.value);
     var tunai           = parseInt(form2.tunai.value);
     var transfer        = parseInt(form2.transfer.value);
     var simpan_deposit  = parseInt(form2.simpan_deposit.value);
     var byr_deposit     = parseInt(form2.byr_deposit.value);
-	var temp_total      = tunai + transfer;
-	var disc_dropshipper = form2.disc_dropshipper.value;
+		var temp_total      = tunai + transfer;
+		var disc_dropshipper = form2.disc_dropshipper.value;
 	
 	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
 	
@@ -1057,21 +1101,26 @@ function cetak(){
     			break;
 			}
     	}
-    	
     }
     
 	if (nama_input == '') {
             pesan = 'Nama Penerima tidak boleh kosong\n';
 		}
 	if( disc_dropshipper == ''){
-		pesan = 'Diskon Dropshipper tidak boleh kosong';
+		pesan = 'Diskon Dropshipper tidak boleh kosong\n';
 	}
 	if( id_expedition == ''){
-		pesan = ' Expedisi Harus Di Entry\n';
+		pesan = 'Expedisi Harus Di Entry\n';
+	}
+	if(parseInt(document.getElementById('exp_fee').value) < 0){
+		pesan = 'Biaya Ekspedisi Minus\n';
 	}
 	// if ((form2.transfer.value != '' && form2.transfer.value != '0') && (form2.byr_deposit.value != '' && form2.byr_deposit.value != '0')) {
  //            pesan = 'Isi salah satu transfer atau deposit\n';
  //        }
+
+	if(validasiTotal() != "")
+		pesan = validasiTotal();
 
 	if(pesan != ''){
 		alert('Maaf ada kesalahan pengisian nota : \n'+pesan);
@@ -1094,35 +1143,29 @@ function cetak(){
 }	
 
 function cetak2(){
-    var pesan           = '';
-    var nama_input      = form2.nama.value;
-    //var tgl             = form2.tanggal.value;..dimatikan krn tanggal harus now()
-    var id_dropshipper  = form2.id_dropshipper.value;
-    var id_address      = form2.id_address.value;
-    var id_expedition   = form2.id_expedition.value;
+	var pesan           = '';
+	var nama_input      = form2.nama.value;
+	var id_dropshipper  = form2.id_dropshipper.value;
+	var id_address      = form2.id_address.value;
+	var id_expedition   = form2.id_expedition.value;
 	var totalfaktur     = parseInt(form2.totalhidden.value);
-    var tunai           = parseInt(form2.tunai.value);
-    var transfer        = parseInt(form2.transfer.value);
-    var simpan_deposit  = parseInt(form2.simpan_deposit.value);
-    var byr_deposit     = parseInt(form2.byr_deposit.value);
+	var tunai           = parseInt(form2.tunai.value);
+	var transfer        = parseInt(form2.transfer.value);
+	var simpan_deposit  = parseInt(form2.simpan_deposit.value);
+	var byr_deposit     = parseInt(form2.byr_deposit.value);
 	var temp_total      = tunai + transfer;
 	var disc_dropshipper = form2.disc_dropshipper.value;
-	
-	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
-	
-	//validasi untuk menghitung ulang total
+
     for (var i=1; i<baris1;i++){
 		var barcode=document.getElementById("BARCODE"+i+"").value;
 	    var nama= document.getElementById("NamaBrg"+i+"").value;
 		if(barcode != null){ 
 			if(barcode==0){
-		    // alert('Kolom Barcode Kosong='+barcode+',baris='+i+',Nama Barang Kosong='+nama);
 			pesan = 'ID product tidak terdaftar di CAMS silakan entry ulang';
 		}
-       }		 
+  }		 
 	}
 
-	//validasi qty
 	var qtydetail = 0;
 	for (var i=1; i<baris1;i++){
 		if(document.getElementById("Qty"+i+"").value != null){ 
@@ -1138,7 +1181,6 @@ function cetak2(){
 		pesan = 'Cek kembali total QTY\n';
 	}
 
-	//validasi total harga
 	var totaldetail = 0;
 	for (var i=1; i<baris1;i++){
 		if(document.getElementById("SUBTOTAL"+i+"").value != null){ 
@@ -1164,9 +1206,12 @@ function cetak2(){
 	if( id_expedition == ''){
 		pesan = ' Expedisi Harus Di Entry\n';
 	}
-	// if ((form2.transfer.value != '' && form2.transfer.value != '0') && (form2.byr_deposit.value != '' && form2.byr_deposit.value != '0')) {
- //            pesan = 'Isi salah satu transfer atau deposit\n';
- //        }
+	if(parseInt(document.getElementById('exp_fee').value) < 0){
+			pesan = 'Biaya Ekspedisi Minus\n';
+		}
+
+	if(validasiTotal() != "")
+		pesan = validasiTotal();
 
 	if(pesan != ''){
 		alert('Maaf ada kesalahan pengisian nota : \n'+pesan);
@@ -1184,14 +1229,12 @@ function cetak2(){
 		}
 		else
 		{}
-    /* } */
     }	
 }	
 var totalhid = 0;
 <?php 
 
 $sql_edit = "Select a.* from olnpreso a where a.oln_order_id = '".$_GET['ids']."'";
-//var_dump($sql_edit);
 $sql1 = mysql_query($sql_edit);
 $i=1;
 			while($rs1=mysql_fetch_array($sql1)){
@@ -1221,6 +1264,8 @@ $i=1;
 		$i++;
 		} ?>
 document.getElementById('total_blmdisc').value = totalhid;
+
+hitungpiutang();
 </script>
 
 

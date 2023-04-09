@@ -52,7 +52,7 @@
         $responce['total'] = $total_pages;
         $responce['records'] = $count;
         $i=0;
-		$grand_qty=0;$grand_faktur=0;$grand_totalfaktur=0;$grand_piutang=0;$grand_tunai=0;$grand_transfer=0;$grand_biaya=0 ;
+		$grand_qty=0;$grand_faktur=0;$grand_totalfaktur=0;$grand_piutang=0;$grand_tunai=0;$grand_transfer=0;$grand_disc=0;$grand_value=0;$grand_biaya=0 ;
         foreach($data1 as $line) {
         	
 			$allowInvoice = array(1,2,3);
@@ -112,12 +112,16 @@
 			$grand_piutang+=$line['piutang'];
 			$grand_tunai+=$line['tunai'];
 			$grand_transfer+=$line['transfer'];
+			$grand_disc+=$line['discount_faktur'];
+			$grand_value+=$line['total'];
 			
             $i++;
         }
 		
 		$responce['userdata']['totalqty'] 		= number_format($grand_qty,0);
+		$responce['userdata']['disc'] 			= number_format($grand_disc,0);
 		$responce['userdata']['faktur'] 		= number_format($grand_faktur,0);
+		$responce['userdata']['total'] 			= number_format($grand_value,0);
 		$responce['userdata']['totalfaktur'] 	= number_format($grand_totalfaktur,0);
 		$responce['userdata']['piutang'] 		= number_format($grand_piutang,0);
 		$responce['userdata']['tunai'] 			= number_format($grand_tunai,0);

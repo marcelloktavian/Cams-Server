@@ -182,6 +182,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
   $nomor_ap = "(SELECT ap_num FROM mst_ap WHERE `id`='".$_GET['id']."')";
 
+  $nomor_ap = mysql_query($nomor_ap);
+  $no_ap = mysql_fetch_array($nomor_ap);
+
   if($_GET['val'] == 1){
 
     $no_jurnal = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1))))))) AS nomor FROM jurnal ORDER BY id DESC LIMIT 1");
@@ -198,7 +201,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
     $vendor_ap  = "(SELECT CONCAT(a.`vendor`,' ',a.`telp`) FROM mst_supplier a INNER JOIN mst_ap b ON b.id_supplier=a.id AND b.`id`=".$_GET['id'].")";
 
-    $keterangan_ap = "(SELECT CONCAT('Hutang Vendor - ',$vendor_ap))";
+    $keterangan_ap = "(SELECT CONCAT('Hutang Vendor - ',$vendor_ap,' - ','$no_ap[0]'))";
 
     $total_kredit = "(SELECT grand_total FROM mst_ap WHERE id = '$_GET[id]')";
 
@@ -232,9 +235,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
   }
   else if($_GET['val'] == 0){
-    $nomor_ap = mysql_query($nomor_ap);
-    $no_ap = mysql_fetch_array($nomor_ap);
-
     $get_jurnal_id = "SELECT id FROM `jurnal` WHERE keterangan LIKE '%$no_ap[0]%'";
     $get_jurnal_id = mysql_query($get_jurnal_id);
     $get_jurnal_id = mysql_fetch_array($get_jurnal_id);

@@ -13,7 +13,6 @@ if($_GET['action']=='excel'){
 @page {
         size: A4;
         margin: 15px;
-        /* -webkit-print-color-adjust:exact; */
     }
 
     .header{
@@ -124,13 +123,20 @@ $enddate = $_GET['end'];
 
 $akun = $_GET['akun'];
 if($akun == ''){
-    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
+    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` , mst.`keterangan`, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
     LEFT JOIN jurnal mst ON mst.id=det.id_parent
-    WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC"; 
+    WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, CASE WHEN det.kredit = 0 THEN 0 ELSE 1 END"; 
 }else{
-    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det
-    LEFT JOIN jurnal mst ON mst.id=det.id_parent
-    WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun`='$akun' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC";
+    $detail_akun = "(SELECT a.`noakun` FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE b.`noakun`='$akun')";
+
+    $get_detail = mysql_query($detail_akun);
+
+    if(mysql_num_rows($get_detail) == 0){
+        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.`keterangan` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det LEFT JOIN jurnal mst ON mst.id=det.id_parent WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun`='$akun' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%Y/%m/%d') AND STR_TO_DATE('$enddate','%Y/%m/%d') ORDER BY mst.tgl ASC, no_jurnal ASC, CASE WHEN det.kredit = 0 THEN 0 ELSE 1 END";
+    }
+    else{
+        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.`keterangan` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%d/%m/%Y') AS tglawal, DATE_FORMAT(STR_TO_DATE('$enddate','%d/%m/%Y'),'%d/%m/%Y') AS tglakhir FROM jurnal_detail det LEFT JOIN jurnal mst ON mst.id=det.id_parent WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun` IN ".$detail_akun." AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%Y/%m/%d') AND STR_TO_DATE('$enddate','%Y/%m/%d') ORDER BY mst.tgl ASC, no_jurnal ASC, CASE WHEN det.kredit = 0 THEN 0 ELSE 1 END";
+    }
 }
 
 $result= mysql_query($sql);
@@ -138,7 +144,7 @@ $data = mysql_fetch_array($result);
 ?>
 </head><body><table width="100%" border="<?=$_GET['action']=='excel'?'1':'0'?>" align="center" cellpadding="0" cellspacing="0">
     <tbody><tr>
-        <td colspan="5" class="judul" align="center">
+        <td colspan="100%" class="judul" align="center">
             PT. AGUNG KEMUNINGWIJAYA<br>
             JURNAL TRANSAKSI<br>
             PERIODE <?php echo strtoupper($data['tglawal']) ?> - <?php echo strtoupper($data['tglakhir']) ?><br>
@@ -146,14 +152,17 @@ $data = mysql_fetch_array($result);
         </td>
     </tr>
     <tr>
-        <td class="header text center" width="15%">
+        <td class="header text center" width="10%">
             <center><b>TANGGAL</b></center>
         </td>
-        <td class="header text center" width="15%">
+        <td class="header text center" width="10%">
             <center><b>NO JURNAL</b></center>
         </td>
         <td class="header text center" width="40%">
-            <center><b>DESKRIPSI</b></center>
+            <center><b>AKUN</b></center>
+        </td>
+        <td class="header text center" width="40%">
+            <center><b>KETERANGAN</b></center>
         </td>
         <td class="header text center" width="15%">
             <center><b>DEBET</b></center>
@@ -175,6 +184,7 @@ $data = mysql_fetch_array($result);
             echo "<td class='detail3 text center'></td>";
             echo "<td class='detail3 text center'></td>";
             echo "<td class='detail3 text'>(".$data2['no_akun'].") ".$data2['nama_akun']."</td>";
+            echo "<td class='detail3 text'></td>";
             echo "<td class='detail3 text right'>".number_format($data2['debet'],0,',','.')."</td>";
             echo "<td class='detail2 text right'>".number_format($data2['kredit'],0,',','.')."</td>";
             echo "</tr>";
@@ -183,6 +193,7 @@ $data = mysql_fetch_array($result);
             echo "<td class='detail text center'>".$data2['tanggal']."</td>";
             echo "<td class='detail text center'>".$data2['no_jurnal']."</td>";
             echo "<td class='detail text'>(".$data2['no_akun'].") ".$data2['nama_akun']."</td>";
+            echo "<td class='detail text'>".$data2['keterangan']."</td>";
             echo "<td class='detail text right'>".number_format($data2['debet'],0,',','.')."</td>";
             echo "<td class='detail4 text right'>".number_format($data2['kredit'],0,',','.')."</td>";
             echo "</tr>";
@@ -196,7 +207,7 @@ $data = mysql_fetch_array($result);
     }
     ?>
     <tr>
-        <td class="footer text" align="right" colspan="3"><b>TOTAL</b></td>
+        <td class="footer text" align="right" colspan="4"><b>TOTAL</b></td>
         <td class="footer2 text" align="right"><?= number_format($totaldebet,0,',','.') ?></td>
         <td class="footer3 text" align="right"><?= number_format($totalkredit,0,',','.') ?></td>
     </tr>
