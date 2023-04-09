@@ -141,8 +141,8 @@ if($akun == ''){
         }
     }
 
-    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
-    LEFT JOIN jurnal mst ON mst.id=det.id_parent
+    $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail_archive det
+    LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
     WHERE det.deleted=0 AND mst.deleted=0 AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC LIMIT 5"; 
 }else{
     $detail_akun = "(SELECT a.`noakun` FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE b.`noakun`='$akun')";
@@ -169,8 +169,8 @@ if($akun == ''){
             }
         }
 
-        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
-        LEFT JOIN jurnal mst ON mst.id=det.id_parent
+        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail_archive det
+        LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
         WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun`='$akun' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC";
     }
     else{
@@ -193,8 +193,8 @@ if($akun == ''){
             }
         }
 
-        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail det
-        LEFT JOIN jurnal mst ON mst.id=det.id_parent
+        $sql="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal` ,DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%m') AS bulan, DATE_FORMAT(STR_TO_DATE('$startdate','%d/%m/%Y'),'%Y') AS tahun FROM jurnal_detail_archive det
+        LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
         WHERE det.deleted=0 AND mst.deleted=0 AND det.`no_akun`='$akun' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') GROUP BY det.no_akun ORDER BY det.no_akun ASC";
     }
 }
@@ -266,12 +266,12 @@ if($_GET['action']=='excel'){
     </tr>
     <?php
         if($akun == ''){
-            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
-            LEFT JOIN jurnal mst ON mst.id=det.id_parent
+            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail_archive det
+            LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
             WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['noakun']."' AND mst.tgl < STR_TO_DATE('$startdate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC "; 
         }else{
-            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
-            LEFT JOIN jurnal mst ON mst.id=det.id_parent
+            $sqlsaldo="SELECT det.`no_akun`, det.`nama_akun`, SUM(det.`debet`) as totdebet, SUM(det.`kredit`) as totkredit, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail_archive det
+            LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
             WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['noakun']."' AND mst.tgl < STR_TO_DATE('$startdate','%d/%m/%Y') ORDER BY mst.tgl ASC, det.no_akun ASC, no_jurnal ASC, det.id ASC ";
         }
         $saldodebet = 0;
@@ -316,12 +316,12 @@ if($_GET['action']=='excel'){
     <?php } 
 
     if($akun == ''){
-        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
-        LEFT JOIN jurnal mst ON mst.id=det.id_parent
+        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail_archive det
+        LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
         WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['noakun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, no_jurnal ASC, det.id ASC "; 
     }else{
-        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail det
-        LEFT JOIN jurnal mst ON mst.id=det.id_parent
+        $sql3="SELECT det.`no_akun`, det.`nama_akun`, det.`debet`, det.`kredit`, DATE_FORMAT(mst.`tgl`,'%d/%m/%Y') AS tanggal, mst.`no_jurnal`, mst.keterangan FROM jurnal_detail_archive det
+        LEFT JOIN jurnal_archive mst ON mst.id=det.id_parent
         WHERE det.deleted=0 AND mst.deleted=0 AND det.no_akun = '".$data2['noakun']."' AND mst.tgl BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ORDER BY mst.tgl ASC, det.no_akun ASC, no_jurnal ASC, det.id ASC ";
     }
     $debet = 0;
