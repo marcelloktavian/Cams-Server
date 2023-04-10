@@ -1,3 +1,4 @@
+@@ -0,0 +1,233 @@
 <?php
     // include
     error_reporting(0);
@@ -31,9 +32,6 @@
     $id_onlineDropshipper = $_POST['id_onlineDropshipper'];
     $telp_dropshipper = $_POST['telp_dropshipper'];
     $grandtotal = $_POST['total'];
-
-
-
 
     $row=$_POST['jum'];
 
@@ -161,9 +159,9 @@
   //       b.oln_expnote,b.exp_fee,'$disc_dropshipper','Y','0' FROM olnpreso b WHERE (b.oln_order_id = '$ref') ";
         $queryMaster = " INSERT INTO olnso (id_trans,ref_kode,tgl_trans,nama,alamat,telp,tunai,transfer,deposit,faktur,total,piutang,totalqty,id_dropshipper,
         id_address,id_expedition,exp_code,exp_fee,discount,aktif,exp_note,note,state) SELECT '$idolnso','$ref',b.oln_tgl,b.oln_penerima, CONCAT(b.oln_address,' (kec ',b.oln_kecamatan,', ',b.oln_kotakab,', ',b.oln_provinsi,')') AS oln_address,
-        b.oln_telp,b.tunai,b.transfer,sum(b.deposit),sum(b.jumlah_beli * (b.harga_satuan + b.tax)),'$grandtotalolnso','0',SUM(b.jumlah_beli),b.id_dropshipper,'0',b.id_expedition,
+        b.oln_telp,'$tunai','$transfer','$byr_deposit',sum(b.jumlah_beli * (b.harga_satuan + b.tax)),'$grandtotalolnso','0',SUM(b.jumlah_beli),b.id_dropshipper,'0',b.id_expedition,
         b.oln_expnote,b.exp_fee,'$disc_dropshipper','Y',oln_noteexp,oln_keterangan,'0' FROM olnpreso b WHERE (b.oln_order_id = '$ref') ";
-         $hasilMaster = mysql_query($queryMaster) or die (mysql_error());
+        $hasilMaster = mysql_query($queryMaster) or die (mysql_error());
 
         // last Insert Id
         $idolnauto = mysql_insert_id();

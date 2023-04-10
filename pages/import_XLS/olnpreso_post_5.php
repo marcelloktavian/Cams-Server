@@ -32,9 +32,6 @@
     $telp_dropshipper = $_POST['telp_dropshipper'];
     $grandtotal = $_POST['total'];
 
-
-
-
     $row=$_POST['jum'];
 
     function getincrementnumber2()
@@ -111,10 +108,10 @@
           $grandtotal = 0;
     }
 	else{
-	$grandtotal = $_POST['total'];
+	$grandtotal = $_POST['totalhidden'];
 	}
 		//grandtotal untuk diisi di olnso	  
-	    $grandtotalolnso = $_POST['total'];
+	    $grandtotalolnso = $_POST['totalhidden'];
 
         // looping
         for ($i=1; $i<$row; $i++)
@@ -131,10 +128,16 @@
             $tax = $harga * 0.11;
             $totaldet = $harga+$tax;
             // end define dom
-            
+            if ($byr_deposit > 0)
+	        {
+                $query = " UPDATE olnpreso SET id_product='$IDP',namabrg='$Namabarang',size='$size',jumlah_beli='$qty',harga_satuan='$harga',tax='$tax',subtotal='$subtotal',total='$grandtotal',oln_order_id='$ref',oln_note='$keterangan',oln_customer='$dropshipper',oln_customer_telp='$telp',oln_expnote='$exp_code',tunai='$tunai',transfer='$transfer',id_expedition='$id_expedisi',deposit=deposit+'$exp_fee',exp_fee='$exp_fee',oln_noteexp='$exp_note', oln_keterangan='$keterangan_bawah' WHERE id='$Iddetail' ";
+                // var_dump($query);die;
+                 $hasil = mysql_query($query) or die (mysql_error());
+            }else{
                 $query = " UPDATE olnpreso SET id_product='$IDP',namabrg='$Namabarang',size='$size',jumlah_beli='$qty',harga_satuan='$harga',tax='$tax',subtotal='$subtotal',total='$grandtotal',oln_order_id='$ref',oln_note='$keterangan',oln_customer='$dropshipper',oln_customer_telp='$telp',oln_expnote='$exp_code',tunai='$tunai',transfer='$transfer',id_expedition='$id_expedisi',exp_fee='$exp_fee',oln_noteexp='$exp_note', oln_keterangan='$keterangan_bawah' WHERE id='$Iddetail' ";
                 // var_dump($query);die;
                  $hasil = mysql_query($query) or die (mysql_error());
+            }
         }
     
         
@@ -155,9 +158,9 @@
   //       b.oln_expnote,b.exp_fee,'$disc_dropshipper','Y','0' FROM olnpreso b WHERE (b.oln_order_id = '$ref') ";
         $queryMaster = " INSERT INTO olnso (id_trans,ref_kode,tgl_trans,nama,alamat,telp,tunai,transfer,deposit,faktur,total,piutang,totalqty,id_dropshipper,
         id_address,id_expedition,exp_code,exp_fee,discount,aktif,exp_note,note,state) SELECT '$idolnso','$ref',b.oln_tgl,b.oln_penerima, CONCAT(b.oln_address,' (kec ',b.oln_kecamatan,', ',b.oln_kotakab,', ',b.oln_provinsi,')') AS oln_address,
-        b.oln_telp,b.tunai,b.transfer,sum(b.deposit),sum(b.jumlah_beli * (b.harga_satuan + b.tax)),'$grandtotalolnso','0',SUM(b.jumlah_beli),b.id_dropshipper,'0',b.id_expedition,
+        b.oln_telp,'$tunai','$transfer','$byr_deposit',sum(b.jumlah_beli * (b.harga_satuan + b.tax)),'$grandtotalolnso','0',SUM(b.jumlah_beli),b.id_dropshipper,'0',b.id_expedition,
         b.oln_expnote,b.exp_fee,'$disc_dropshipper','Y',oln_noteexp,oln_keterangan,'0' FROM olnpreso b WHERE (b.oln_order_id = '$ref') ";
-         $hasilMaster = mysql_query($queryMaster) or die (mysql_error());
+        $hasilMaster = mysql_query($queryMaster) or die (mysql_error());
 
         // last Insert Id
         $idolnauto = mysql_insert_id();
@@ -210,7 +213,7 @@
         }
                 if($status == 'cash'){
                     if($d['deposit']!=0){
-                        $sqldetail="UPDATE olnso AS so JOIN (SELECT SUM(CEIL(dt.subtotal * (1-m.discount))) AS total FROM olnsodetail dt INNER JOIN olnso m ON dt.id_trans = m.id_trans WHERE ((m.deleted=0) AND (m.state='0') AND m.id_trans='".$d['id_trans']."') GROUP BY dt.id_trans) AS tot SET so.total=CEIL(tot.total), so.faktur=CEIL(tot.total), so.deposit=CEIL(tot.total) WHERE so.id_trans='".$d['id_trans']."';";
+                        $sqldetail="UPDATE olnso AS so JOIN (SELECT SUM(CEIL(dt.subtotal * (1-m.discount))) AS total, m.exp_fee FROM olnsodetail dt INNER JOIN olnso m ON dt.id_trans = m.id_trans WHERE ((m.deleted=0) AND (m.state='0') AND m.id_trans='".$d['id_trans']."') GROUP BY dt.id_trans) AS tot SET so.total=CEIL(tot.total), so.faktur=CEIL(tot.total), so.deposit=(CEIL(tot.total)+tot.exp_fee) WHERE so.id_trans='".$d['id_trans']."';";
                     }else if($d['transfer']!=0){
                         $sqldetail="UPDATE olnso AS so JOIN (SELECT SUM(CEIL(dt.subtotal * (1-m.discount))) AS total FROM olnsodetail dt INNER JOIN olnso m ON dt.id_trans = m.id_trans WHERE ((m.deleted=0) AND (m.state='0') AND m.id_trans='".$d['id_trans']."') GROUP BY dt.id_trans) AS tot SET so.total=CEIL(tot.total), so.faktur=CEIL(tot.total), so.transfer=CEIL(tot.total) WHERE so.id_trans='".$d['id_trans']."';" ; 
                     }
