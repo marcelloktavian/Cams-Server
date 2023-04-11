@@ -2,7 +2,7 @@
 require_once '../../include/config.php';
 include '../../include/koneksi.php';
 
-$sql_header = "SELECT a.id, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE a.`no_akun` = '".$_GET['no_akun']."' LIMIT 1";
+$sql_header = "SELECT a.id, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE c.deleted=0 AND a.`no_akun` = '".$_GET['no_akun']."' LIMIT 1";
 
 $run_header = mysql_query($sql_header);
 $fetch_header = mysql_fetch_array($run_header);
@@ -12,7 +12,7 @@ header("Content-Disposition: attachment; filename=AR OLN CREDIT ".$fetch_header[
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 
-$sql_excel = "SELECT a.id, c.no_jurnal, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE a.`no_akun` = '".$_GET['no_akun']."' ORDER BY c.tgl DESC";
+$sql_excel = "SELECT a.id, c.no_jurnal, a.no_akun, a.nama_akun, b.nama, b.type, DATE_FORMAT(c.tgl, '%d/%m/%Y') AS tgl_formatted, a.debet, a.kredit FROM `jurnal_detail` a LEFT JOIN `mst_dropshipper` b ON CAST(SUBSTRING(a.`no_akun`, 7) AS INT)=b.id LEFT JOIN `jurnal` c ON a.id_parent=c.id WHERE c.deleted=0 AND a.`no_akun` = '".$_GET['no_akun']."' ORDER BY c.tgl DESC";
 
 $run_excel = mysql_query($sql_excel);
 
@@ -234,8 +234,8 @@ table tr td{
 		<td class="td-border text-center" align="center"><?= $line['no_akun'] ?></td>
 		<td class="td-border"><?= $line['nama_akun'] ?></td>
 		<td class="text-center" align="center"><?= $line['type'] ?></td>
-		<td class="td-border text-right" align="right"><?= number_format($line['debet'],0,',','.') ?></td>
-		<td class="td-border text-right" align="right"><?= number_format($line['kredit'],0,',','.') ?></td>
+		<td class="td-border text-right" align="right"><?= $line['debet'] ?></td>
+		<td class="td-border text-right" align="right"><?= $line['kredit'] ?></td>
 	</tr>
 		<?php
 		$total_credit += $line['kredit']; $total_debet += $line['debet'];
@@ -244,8 +244,8 @@ table tr td{
 
 	<tr>
 		<td class="td-border" colspan="5" align="right"><b>GRAND TOTAL :</b></td>
-		<td class="td-border text-right" align="right"><b><?= number_format($total_debet,0,',','.') ?></b></td>
-		<td class="td-border text-right" align="right"><b><?= number_format($total_credit,0,',','.')?></b></td>
+		<td class="td-border text-right" align="right"><b><?= $total_debet ?></b></td>
+		<td class="td-border text-right" align="right"><b><?= $total_credit?></b></td>
 	</tr>
 </table>
 
