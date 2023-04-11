@@ -1,4 +1,3 @@
-@@ -0,0 +1,1390 @@
 <?php
 include("../../include/koneksi.php");
 // error_reporting(0);
