@@ -120,7 +120,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $id       = $_GET['id'];
   $tgl_jto  = $_GET['tgl_jto'];
 
-  $sql_sub  = "SELECT * FROM `det_ap` a  LEFT JOIN `mst_ap` b ON a.id_ap=b.id WHERE a.`tanggal_jatuh_tempo` <= '".($tgl_jto==''?date("Y-m-d"):$tgl_jto)."' AND b.`id_supplier`='".$id."' AND b.posting=1";
+  $sql_sub  = "SELECT *, date_format(tanggal_invoice,'%d-%m-%Y') as tglinv, date_format(tanggal_jatuh_tempo,'%d-%m-%Y') as tgljto, date_format(ap_date,'%d-%m-%Y') as tglap FROM `det_ap` a  LEFT JOIN `mst_ap` b ON a.id_ap=b.id WHERE a.`tanggal_jatuh_tempo` <= '".($tgl_jto==''?date("Y-m-d"):$tgl_jto)."' AND b.`id_supplier`='".$id."' AND b.posting=1";
 
   $query    = $db->query($sql_sub);
   $count    = $query->rowCount();
@@ -134,10 +134,10 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
     $responce->rows[$i]['id']   = $line['id'];
     $responce->rows[$i]['cell'] = array(
       $line['ap_num'],
-      str_replace("-", "/", $line['ap_date']),
+      $line['tglap'],
       $line['no_invoice'],
-      str_replace("-", "/", $line['tanggal_invoice']),
-      str_replace("-", "/", $line['tanggal_jatuh_tempo']),
+      $line['tglinv'],
+      $line['tgljto'],
       number_format($line['total']),
     );
     $i++;
