@@ -424,7 +424,7 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
         ?>
             addNewRow1();
             document.getElementById('iddetail'+<?=$i;?>+'').value = '<?=$result['id'];?>';
-            document.getElementById('idakun'+<?=$i;?>+'').value = '<?=$result['no_akun'];?>';
+            document.getElementById('idakun'+<?=$i;?>+'').value = '<?=$result['id_akun'];?>';
             document.getElementById('status'+<?=$i;?>+'').value = '<?=$result['status'];?>';
             document.getElementById('noakun'+<?=$i;?>+'').value = '<?=$result['no_akun'];?>';
             document.getElementById('namaakun'+<?=$i;?>+'').value = '<?=$result['nama_akun'];?>';
