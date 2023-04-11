@@ -18,7 +18,7 @@
       </div>
       <label for="payment_arcrpay" class="ui-helper-reset label-control">Payment</label>
       <div class="ui-corner-all form-control">
-        <input value="" type="text" class="required" id="payment_arcrpay" name="payment_arcrpay" onkeypress="return event.charCode >= 48 && event.charCode <= 57">	
+        <input value="" type="text" class="required" id="payment_arcrpay" name="payment_arcrpay" onkeypress="return event.charCode >= 48 && event.charCode <= 57" autocomplete="off">	
       </div>
       <label for="sisa_piutang" class="ui-helper-reset label-control">Sisa Piutang</label>
       <div class="ui-corner-all form-control">
