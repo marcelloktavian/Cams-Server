@@ -317,6 +317,7 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
 			idx.id = "kredit" + index + "";
 			idx.size = "15";
 			idx.style = "text-align:right;";
+			idx.autocomplete = "off";
 			return idx;
 		}
 
@@ -327,6 +328,7 @@ while($result = $sqlmaster->fetch(PDO::FETCH_ASSOC)){
 			idx.id = "debet" + index + "";
 			idx.size = "15";
 			idx.style = "text-align:right;";
+			idx.autocomplete = "off";
 			return idx;
 		}
 

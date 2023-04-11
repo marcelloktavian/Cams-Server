@@ -296,6 +296,7 @@ require "../../include/config.php";
 			idx.id = "kredit" + index + "";
 			idx.size = "15";
 			idx.style = "text-align:right;";
+			idx.autocomplete = "off";
 			return idx;
 		}
 
@@ -306,6 +307,7 @@ require "../../include/config.php";
 			idx.id = "debet" + index + "";
 			idx.size = "15";
 			idx.style = "text-align:right;";
+			idx.autocomplete = "off";
 			return idx;
 		}
 
