@@ -161,7 +161,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DeliveryOrderB2B, $group_acess);
 			$masterNo=$q['nomor'];
 
 			// insert jurnal
-			$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['nofaktur']."%') ");
+			$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'B2B','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['nofaktur']."%') ");
 			$stmt->execute();
 
 			//get master id terakhir
