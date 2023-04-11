@@ -305,7 +305,7 @@
                 {name:'lastmodified',index:'lastmodified', width:80, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},
                 {name:'totalqty',index:'totalqty', align:'right', width:30, searchoptions: {sopt:['cn']}},
                 {name:'faktur',index:'faktur', align:'right', width:80, searchoptions: {sopt:['cn']}},
-                {name:'disc',index:'disc', align:'right', width:80, searchoptions: {sopt:['cn']}},
+                {name:'discount_faktur',index:'discount_faktur', align:'right', width:80, searchoptions: {sopt:['cn']}},
                 {name:'exp_fee',index:'exp_fee', align:'right', width:60, searchoptions: {sopt:['cn']}},
                 {name:'total',index:'total', align:'right', width:80, searchoptions: {sopt:['cn']}},
                 {name:'tunai',index:'tunai', align:'right', width:80, searchoptions: {sopt:['cn']}},
