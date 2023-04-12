@@ -131,9 +131,10 @@
             // end define dom
             
                 $query = " UPDATE olnpreso_cr SET id_product='$IDP',namabrg='$Namabarang',size='$size',jumlah_beli='$qty',harga_satuan='$harga',tax='$tax',subtotal='$subtotal',total='$grandtotal',oln_order_id='$ref',oln_note='$keterangan',oln_customer='$dropshipper',oln_customer_telp='$telp',oln_expnote='$exp_code',tunai='$tunai',transfer='$transfer',id_expedition='$id_expedisi',exp_fee='$exp_fee',oln_noteexp='$exp_note', oln_keterangan='$keterangan_bawah' WHERE id='$Iddetail' ";
-                // var_dump($query);die;
+                var_dump($query);
                  $hasil = mysql_query($query) or die (mysql_error());
         }
+        die;
     
 
         // Master Insert to olnso
