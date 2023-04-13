@@ -109,8 +109,8 @@
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
 	
 		$id = $_GET['id'];
-		$where = " WHERE d.id_dropshipper = '".$id."' and d.tgl_trans BETWEEN DATE_SUB(CURDATE() ,INTERVAL 7 DAY) AND CURDATE() ORDER BY d.tgl_trans, d.id_trans";
-        $sql_sub="Select d.id_trans,d.kode,d.tgl_trans,d.id_customer,p.nama,d.totalfaktur,d.tunai,d.transfer,d.deposit,d.keterangan,d.catatan from olndeposit d left join mst_dropshipper p on d.id_dropshipper=p.id".$where;
+		$where = " WHERE d.id_dropshipper = '".$id."' and d.tgl_trans BETWEEN DATE_SUB(NOW() ,INTERVAL 7 DAY) AND NOW() ORDER BY d.tgl_trans";
+        $sql_sub="Select d.id_trans,d.kode,d.tgl_trans,d.id_customer,d.totalfaktur,d.tunai,d.transfer,d.deposit,d.keterangan,d.catatan from olndeposit d ".$where;
 		//var_dump($sql_sub);die;
 		$q = $db->query($sql_sub);
 		
