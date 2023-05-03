@@ -1,3 +1,15 @@
+
+<link rel="stylesheet" type="text/css" href="assets/css/jquery.autocomplete.css" />
+
+<script type="text/javascript" src="assets/js/jquery.autocomplete.js"></script>
+
+
+<style>
+    .ac_results{
+        z-index: 9999;
+    }
+</style>
+
 <div class="ui-widget ui-form">
     <div class="ui-widget-header ui-corner-top padding5">
         <?php
@@ -29,6 +41,12 @@
             <div class="ui-corner-all form-control">
                 <input value="<?php echo isset($row['nama']) ? $row['nama'] : ''; ?>" type="text" class="required" id="nama" name="nama">	
             </div>
+
+            <label for="akun_ekspedisi" class="ui-helper-reset label-control">Akun</label>
+            <div class="ui-corner-all form-control">
+                <input value="<?php echo isset($row['no_akun']) ? $row['no_akun'].':'.$row['nama_akun'] : ''; ?>" type="text" class="required" id="akun_ekspedisi" name="akun_ekspedisi">	
+            </div>
+
 			<label for="category_id" class="ui-helper-reset label-control">Category Expedition</label>
             <div class="ui-corner-all form-control">
                 <select class="required" name="id_expeditioncat" id="id_expeditioncat">
@@ -51,3 +69,9 @@
         </form>
     </div>
 </div>
+
+<script>
+$(document).ready(function(){
+    $('#akun_ekspedisi').autocomplete("pages/master_online/expedition_lookup_akun.php", {width: 400});
+});
+</script>
