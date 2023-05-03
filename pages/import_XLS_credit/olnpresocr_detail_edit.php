@@ -1109,6 +1109,9 @@ function cetak(){
     if( id_expedition == ''){
     	pesan = ' Expedisi Harus Di Entry\n';
     }
+	if(byr_deposit < 0){
+		pesan = "Cek Ulang Deposit";
+	}
 	// if ((form2.transfer.value != '' && form2.transfer.value != '0') && (form2.byr_deposit.value != '' && form2.byr_deposit.value != '0')) {
  //            pesan = 'Isi salah satu transfer atau deposit\n';
  //        }

@@ -342,6 +342,10 @@ function cetak(){
     pesan = "Pembayaran belum sesuai dengan GRAND TOTAL";
   }
 
+  if(byr_deposit < 0){
+    pesan = "Cek Ulang Deposit";
+  }
+
 	$.ajax({
     type: "POST",
     url: "ajax_expcode.php",

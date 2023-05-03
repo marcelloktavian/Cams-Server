@@ -1152,13 +1152,13 @@ function cetak(){
     var id_address      = form2.id_address.value;
     var id_expedition   = form2.id_expedition.value;
     // var txtbarang	    = form2.txtbarang.value;
-		var totalfaktur     = parseInt(form2.totalhidden.value);
+	var totalfaktur     = parseInt(form2.totalhidden.value);
     var tunai           = parseInt(form2.tunai.value);
     var transfer        = parseInt(form2.transfer.value);
     var simpan_deposit  = parseInt(form2.simpan_deposit.value);
     var byr_deposit     = parseInt(form2.byr_deposit.value);
-		var temp_total      = tunai + transfer;
-		var disc_dropshipper = form2.disc_dropshipper.value;
+	var temp_total      = tunai + transfer;
+	var disc_dropshipper = form2.disc_dropshipper.value;
 	
 	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
 	
@@ -1232,6 +1232,9 @@ function cetak(){
 	}
 	if(parseInt(document.getElementById('exp_fee').value) < 0){
 		pesan = 'Biaya Ekspedisi Minus\n';
+	}
+	if(byr_deposit < 0){
+		pesan = "Cek Ulang Deposit";
 	}
 	// if ((form2.transfer.value != '' && form2.transfer.value != '0') && (form2.byr_deposit.value != '' && form2.byr_deposit.value != '0')) {
  //            pesan = 'Isi salah satu transfer atau deposit\n';

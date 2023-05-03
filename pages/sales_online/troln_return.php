@@ -149,7 +149,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$total='';
 		$dropshipper='';
 		$namadropshipper='';
-		$q = mysql_fetch_array( mysql_query("SELECT olnso.id_trans, olnso.total, olnso.transfer, olnso.deposit, olnso.piutang, olnso.id_dropshipper,mst_dropshipper.nama FROM olnso LEFT JOIN mst_dropshipper ON mst_dropshipper.id=olnso.id_dropshipper WHERE id_trans='".$idoln."' LIMIT 1"));
+		$expfee='';
+		$q = mysql_fetch_array( mysql_query("SELECT olnso.id_trans, olnso.total, olnso.transfer, olnso.deposit, olnso.piutang, olnso.id_dropshipper,mst_dropshipper.nama, IFNULL(olnso.exp_fee,0) as exp_fee FROM olnso LEFT JOIN mst_dropshipper ON mst_dropshipper.id=olnso.id_dropshipper WHERE id_trans='".$idoln."' LIMIT 1"));
 		if($q['piutang'] > 0){
 			$type='Kredit';
 		}else{
@@ -158,6 +159,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$total=$q['total'];
 		$dropshipper=$q['id_dropshipper'];
 		$namadropshipper=$q['nama'];
+		$expfee=$q['exp_fee'];
 
 		//insert
 		$masterNo = '';
@@ -173,8 +175,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 		$idparent=$q['id'];
 			
-		$dpp = round($total / 1.11);
-		$ppn = round($total / 1.11 * 0.11);
+		$dpp = round(($total-$expfee) / 1.11);
+		$ppn = round(($total-$expfee) / 1.11 * 0.11);
 
 		if($type=='Cash'){
 			$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('04.01.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
