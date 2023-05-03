@@ -90,7 +90,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
                 $line['id_oln'],                
                 $line['kode'],                
                 $line['nama'],                
-                $line['category'],                
+                $line['category'],  
+                $line['no_akun'],                
+                $line['nama_akun'],                   
                 $line['kode_warna'],                
                 $line['logo'],                
                 $edit,
@@ -126,8 +128,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
 	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
 		if(isset($_POST['id'])) {
-			$stmt = $db->prepare("UPDATE mst_expedition SET kode=?,id_oln=?,nama=?,id_expeditioncat=?,kode_warna=?,logo=?,user=?, lastmodified = NOW() WHERE id=?");
-			$stmt->execute(array($_POST['kode'],$_POST['id_oln'],strtoupper($_POST['nama']),$_POST['id_expeditioncat'],$_POST['kode_warna'],$_POST['logo'], $_SESSION['user']['username'], $_POST['id']));
+			$stmt = $db->prepare("UPDATE mst_expedition SET kode=?,id_oln=?,nama=?,id_expeditioncat=?,kode_warna=?,logo=?,no_akun=?, nama_akun=? ,user=?, lastmodified = NOW() WHERE id=?");
+			$stmt->execute(array($_POST['kode'],$_POST['id_oln'],strtoupper($_POST['nama']),$_POST['id_expeditioncat'],$_POST['kode_warna'],$_POST['logo'], explode(':',$_POST['akun_ekspedisi'])[0], explode(':',$_POST['akun_ekspedisi'])[1], $_SESSION['user']['username'], $_POST['id']));
 			$affected_rows = $stmt->rowCount();
 			if($affected_rows > 0) {
 				$r['stat'] = 1;
@@ -139,9 +141,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
 			}
 		}
 		else {
-			$stmt = $db->prepare("INSERT INTO  mst_expedition(`kode`,`id_oln`,`nama`,`id_expeditioncat`,`kode_warna`,`logo`,`user`,`lastmodified`) VALUES( ?,  ?,  ?,  ?,  ?,  ?,  ?, NOW())");
+			$stmt = $db->prepare("INSERT INTO  mst_expedition(`kode`,`id_oln`,`nama`,`id_expeditioncat`,`kode_warna`,`logo`,`no_akun`,`nama_akun`,`user`,`lastmodified`) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
 			//var_dump($stmt);die;
-			if($stmt->execute(array($_POST['kode'],$_POST['id_oln'],strtoupper($_POST['nama']),$_POST['id_expeditioncat'],$_POST['kode_warna'],$_POST['logo'],$_SESSION['user']['username']))) {
+			if($stmt->execute(array($_POST['kode'],$_POST['id_oln'],strtoupper($_POST['nama']),$_POST['id_expeditioncat'],$_POST['kode_warna'],$_POST['logo'], explode(':',$_POST['akun_ekspedisi'])[0], explode(':',$_POST['akun_ekspedisi'])[1], $_SESSION['user']['username']))) {
 				$r['stat'] = 1;
 				$r['message'] = 'Success';
 			}
@@ -183,13 +185,15 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
         $("#table_expedition").jqGrid({
             url:'<?php echo BASE_URL.'pages/master_online/expedition.php?action=json'; ?>',
             datatype: "json",
-            colNames:['ID','ID_oln','Kode','Nama','Kategori','Kode_Warna','Logo Expedisi','Edit','Delete'],
+            colNames:['ID','ID_oln','Kode','Nama','Kategori','No Akun','Nama Akun','Kode_Warna','Logo Expedisi','Edit','Delete'],
             colModel:[
                 {name:'ID',index:'id', width:30, searchoptions: {sopt:['cn']}},
                 {name:'id_oln',index:'id_oln', width:30, searchoptions: {sopt:['cn']}},
                 {name:'Kode',index:'kode', width:50, searchoptions: {sopt:['cn']}},
                 {name:'Nama',index:'nama', width:170, searchoptions: {sopt:['cn']}},                
                 {name:'Category',index:'category', width:100, searchoptions: {sopt:['cn']}},                
+                {name:'no_akun',index:'no_akun', width:50, searchoptions: {sopt:['cn']}},                
+                {name:'nama_akun',index:'nama_akun', width:170, searchoptions: {sopt:['cn']}},                
                 {name:'Kode_warna',index:'kode_warna', width:70, searchoptions: {sopt:['cn']}},                
                 {name:'logo',index:'logo', width:90, searchoptions: {sopt:['cn']}},                
                 {name:'Edit',index:'edit', align:'center', width:50, sortable: false, search: false},
@@ -204,7 +208,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, Expedition, $group_acess);
             viewrecords: true,
             rownumbers: true,
             sortorder: "asc",
-            caption:"Master Category",
+            caption:"Master Ekspedisi",
             ondblClickRow: function(rowid) {
                 alert(rowid);
             }
