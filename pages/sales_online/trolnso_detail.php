@@ -346,6 +346,10 @@ function cetak(){
     pesan = "Cek Ulang Deposit";
   }
 
+  if(byr_deposit > 0 && transfer > 0 && tunai > 0){
+    pesan ="Pembayaran Berada di Perbatasan\nCek Ulang Nilai Pembayaran";
+  }
+
 	$.ajax({
     type: "POST",
     url: "ajax_expcode.php",
