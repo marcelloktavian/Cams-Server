@@ -171,13 +171,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			$total='';
 			$dropshipper='';
 			$namadropshipper='';
-			$q = mysql_fetch_array( mysql_query("SELECT olnso.id_trans, olnso.total, olnso.transfer, olnso.tunai, olnso.deposit, olnso.id_dropshipper,mst_dropshipper.nama FROM olnso LEFT JOIN mst_dropshipper ON mst_dropshipper.id=olnso.id_dropshipper WHERE id_trans='".$_GET['id']."' LIMIT 1"));
+			$exp_id='';
+			$exp_fee='';
+			$q = mysql_fetch_array( mysql_query("SELECT olnso.id_trans, olnso.total, olnso.transfer, olnso.tunai, olnso.deposit, olnso.id_dropshipper,mst_dropshipper.nama, id_expedition, exp_fee FROM olnso LEFT JOIN mst_dropshipper ON mst_dropshipper.id=olnso.id_dropshipper WHERE id_trans='".$_GET['id']."' LIMIT 1"));
 			$tunai=$q['tunai'];
 			$transfer=$q['transfer'];
 			$deposit=$q['deposit'];
 			$total=$q['total'];
 			$dropshipper=$q['id_dropshipper'];
 			$namadropshipper=$q['nama'];
+			$exp_id=$q['id_expedition'];
+			$exp_fee=$q['exp_fee'];
 
 			//insert
 			$masterNo = '';
@@ -193,9 +197,13 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 			$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 			$idparent=$q['id'];
 			
-			$dpp = round($total / 1.11);
-			$ppn = round($total / 1.11 * 0.11);
-			
+			if($exp_fee == 0){
+				$dpp = round($total / 1.11);
+				$ppn = round($total / 1.11 * 0.11);
+			}else{
+				$dpp = round(($total-$exp_fee) / 1.11);
+				$ppn = round(($total-$exp_fee) / 1.11 * 0.11);
+			}
 
 			if($tunai > 0){
 				$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun='01.01.00001'");
@@ -248,6 +256,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineSales, $group_acess);
 				// ppn
 				$sqlakun3="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun3['id']."','".$akun3['noakun']."','".$akun3['nama']."','".$akun3['status']."','0','$ppn','','0', '$id_user',NOW()) ";
 				mysql_query($sqlakun3) or die (mysql_error());
+			}
+
+			if($exp_fee > 0){
+				$query4=mysql_query("SELECT det_coa.id, det_coa.noakun, det_coa.nama, 'Detail' AS `status` FROM mst_expedition 
+				LEFT JOIN det_coa ON det_coa.noakun=mst_expedition.`no_akun`
+				WHERE mst_expedition.id=$exp_id ");
+				while($akun4 = mysql_fetch_array($query4)){
+					// saldo titipan
+					$sqlakun4="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun4['id']."','".$akun4['noakun']."','".$akun4['nama']."','".$akun4['status']."','0','$exp_fee','','0', '$id_user',NOW()) ";
+					mysql_query($sqlakun4) or die (mysql_error());
+				}
 			}
 
 			//update olnso agar jadi 1 krn siap kirim,tapi statenya dikasih string='1' krn tipe datanya enum
