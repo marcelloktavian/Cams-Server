@@ -4,9 +4,9 @@ require_once '../../include/config.php';
 include '../../include/koneksi.php';
 
 $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSION['user']['group_id']));
-$allow_add = is_show_menu(ADD_POLICY, OnlineCredit, $group_acess);
-$allow_post = is_show_menu(POST_POLICY, OnlineCredit, $group_acess);
-$allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
+$allow_add = is_show_menu(ADD_POLICY, aplist, $group_acess);
+$allow_post = is_show_menu(POST_POLICY, aplist, $group_acess);
+$allow_delete = is_show_menu(DELETE_POLICY, aplist, $group_acess);
 
 if(isset($_GET['tgl_jto']) && strtolower($_GET['tgl_jto']) != ''){
   $tgl_jto = $_GET['tgl_jto'];

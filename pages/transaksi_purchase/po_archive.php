@@ -197,7 +197,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
     $q = mysql_fetch_array($no_jurnal);
       $nomor_jurnal=$q['nomor'];
 
-    $tgl_ap = "(SELECT DATE_FORMAT(NOW(), '%Y-%m-%d'))";
+    $tgl_ap = "(SELECT MAX(tanggal_invoice) FROM det_ap WHERE id_ap='".$_GET['id']."')";
 
     $vendor_ap  = "(SELECT CONCAT(a.`vendor`,' ',a.`telp`) FROM mst_supplier a INNER JOIN mst_ap b ON b.id_supplier=a.id AND b.`id`=".$_GET['id'].")";
 
