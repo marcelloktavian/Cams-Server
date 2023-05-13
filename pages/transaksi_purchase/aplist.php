@@ -186,6 +186,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
   $parent_id=mysql_fetch_array( mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$masterNo' LIMIT 1"));
   $idparent=$parent_id['id'];
 
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','AP','".$_POST['payment_aplist']."','0','','0', '$id_user',NOW())";
+  mysql_query($sql_detail) or die (mysql_error());
+
   $nomor_akun_kredit = explode(':', $_POST['akun_kredit_aplist'])[0];
 
   $akun_kredit_get=mysql_fetch_array(mysql_query("SELECT id, noakun, nama FROM `mst_coa` WHERE `noakun`='".$nomor_akun_kredit."' LIMIT 1"));
@@ -200,9 +203,6 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
 
   $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','AP','0','".$_POST['payment_aplist']."','','0', '$id_user',NOW())");
   $stmt->execute();
-
-  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','AP','".$_POST['payment_aplist'].",'0'','','0', '$id_user',NOW())";
-  mysql_query($sql_detail) or die (mysql_error());
 
   $affected_rows = $stmt->rowCount();
   if($affected_rows > 0) {
