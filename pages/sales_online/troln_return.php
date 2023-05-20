@@ -143,7 +143,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$tgl = $qoln['tgl_trans'];
 		$idoln=$qoln['id_oln'];
 		$penalty=$qoln['penalty'];
-		$totalreturn=$qoln['total'];
+		$totalreturn=$qoln['total']-$penalty;
 
 		$type = '';
 		$total='';
@@ -156,7 +156,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		}else{
 			$type='Cash';
 		}
-		$total=$q['total'];
+		$total=$qoln['total'];
 		$dropshipper=$q['id_dropshipper'];
 		$namadropshipper=$q['nama'];
 		$expfee=$q['exp_fee'];
@@ -175,8 +175,11 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 		$idparent=$q['id'];
 			
-		$dpp = round(($total-$expfee) / 1.11);
-		$ppn = round(($total-$expfee) / 1.11 * 0.11);
+		// $dpp = round(($total-$expfee) / 1.11);
+		// $ppn = round(($total-$expfee) / 1.11 * 0.11);
+
+		$dpp = round(($total) / 1.11);
+		$ppn = round(($total) / 1.11 * 0.11);
 
 		if($type=='Cash'){
 			$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('04.01.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");

@@ -95,7 +95,7 @@ include("../../include/koneksi.php");
 		$Subtotal= str_replace(",","", $_POST['SUBTOTAL'.$i]);
 		$Pinalty= str_replace(",","", $_POST['Pinalty'.$i]);
 		$totalqtyreturn += str_replace(",","", $_POST['Return'.$i]);
-		$totalpenalty += $Pinalty;
+		$totalpenalty += $Pinalty * $totalqtyreturn;
 		//---akhir tarik parameter detail---
 		//diinput hanya yang ada returnnya
 		if($Return==''){

@@ -235,9 +235,9 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
         $detailNamaAkun = mysql_fetch_array(mysql_query("SELECT nama FROM det_coa WHERE id='".$rs['id_akun']."'"))['nama'];
 
-        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".round($rs['subtotal']-floor($rs['subtotal']*11/100)).",'0', '$user_ap', NOW())";
+        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".round($rs['subtotal']-floor($rs['subtotal']/1.11*0.11)).",'0', '$user_ap', NOW())";
 
-        $total_ppn += floor($rs['subtotal']*11/100);
+        $total_ppn += floor($rs['subtotal']/1.11*0.11);
 
         $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
       }

@@ -570,7 +570,7 @@ function hitungtotal(){
 		totalreturn+= parseInt(subtotal);
 		totalqty+= parseInt(qty);
 		totalqtyreturn+= parseInt(qtyreturn);
-		totalpenalty+= parseInt(penalty);
+		totalpenalty+= parseInt(penalty)*parseInt(qtyreturn);
 		
 	 }
 		//else{}
