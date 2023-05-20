@@ -124,7 +124,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       $line['nama_supplier'],
       $line['tgl_po'],
       $line['eta_pengiriman'],
-      number_format($line['total_qty'],0),
+      number_format($line['total_qty'],2),
       number_format($line['total_dpp'],0),
       number_format($line['ppn'],0),
       number_format($line['grand_total'],0),
@@ -157,7 +157,9 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $id = $_GET['id'];
 
-  $query = "SELECT *,date_format(tgl_quotation, '%d/%m/%Y') as tanggal_quotation_formatted FROM `det_po` WHERE `id_po`='".$id."' AND deleted = 0";
+  $query = "SELECT det_po.*,date_format(tgl_quotation, '%d/%m/%Y') as tanggal_quotation_formatted, det.nama FROM `det_po`
+  LEFT JOIN det_coa det ON det.noakun=det_po.nomor_akun
+   WHERE `id_po`='".$id."' AND deleted = 0";
 
   $exe   = $db->query($query);
   $count = $exe->rowCount();
@@ -177,7 +179,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
       number_format($line['price'],0),
       number_format($line['subtotal'],0),
       $line['nomor_akun'],
-      $line['nama_akun']
+      $line['nama']
     );
     $i++;
   }

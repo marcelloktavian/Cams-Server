@@ -219,7 +219,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
     $get_jurnal_id = "(SELECT `id` FROM `jurnal` WHERE `no_jurnal`=($nomor_jurnal))";
     $id_akun = "(SELECT id_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
     $no_akun = "(SELECT no_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
-    $nama_akun = "(SELECT nama_akun FROM `mst_ap` WHERE id='".$_GET['id']."')";
+    $nama_akun = "(SELECT nama FROM `det_coa` WHERE id=$id_akun)";
 
     $sql_detail = mysql_query("SELECT a.id,a.id_detail,a.id_akun,a.nomor_akun,a.nama_akun,a.subtotal FROM det_invoice a INNER JOIN det_ap b ON b.id_invoice=a.id_invoice AND b.id_ap=".$_GET['id']." AND b.`deleted`=0 AND a.`deleted`=0");
 
@@ -227,12 +227,34 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
     $q_jurnal_detail = mysql_query($q_jurnal_detail);
 
-    while($rs=mysql_fetch_array($sql_detail)){
-      $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$rs['nama_akun']."', 'AP', ".$rs['subtotal'].",'0', '$user_ap', NOW())";
+    $checkppn = mysql_fetch_array(mysql_query("SELECT pkp FROM mst_supplier WHERE ID = (SELECT id_supplier FROM mst_ap WHERE id='".$_GET['id']."') LIMIT 1"));
+
+    if($checkppn['pkp'] == 1){
+      $total_ppn = 0;
+      while($rs=mysql_fetch_array($sql_detail)){
+
+        $detailNamaAkun = mysql_fetch_array(mysql_query("SELECT nama FROM det_coa WHERE id='".$rs['id_akun']."'"))['nama'];
+
+        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".round($rs['subtotal']-floor($rs['subtotal']*11/100)).",'0', '$user_ap', NOW())";
+
+        $total_ppn += floor($rs['subtotal']*11/100);
+
+        $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
+      }
+
+      $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", '39', '09.01.00000', 'PPN', 'AP', ".$total_ppn.",'0', '$user_ap', NOW())";
 
       $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
     }
+    else{
+      while($rs=mysql_fetch_array($sql_detail)){
+        $detailNamaAkun = mysql_fetch_array(mysql_query("SELECT nama FROM det_coa WHERE id='".$rs['id_akun']."'"))['nama'];
 
+        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".$rs['subtotal'].",'0', '$user_ap', NOW())";
+
+        $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
+      }
+    }
   }
   else if($_GET['val'] == 0){
     $get_jurnal_id = "SELECT id FROM `jurnal` WHERE keterangan LIKE '%$no_ap[0]%'";

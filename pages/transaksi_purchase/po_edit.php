@@ -130,22 +130,23 @@
 
   // general function ------------------------
   function hitungsubtotal(idx){
-    var value = parseInt($('#qty'+idx).val())*parseFloat($('#dpp'+idx).val());
+    var value = parseFloat($('#qty'+idx).val())*parseFloat($('#dpp'+idx).val());
     if(isNaN(value)){
       $('#sub_total'+idx).val("0");
     }
     else{
-      $('#sub_total'+idx).val(value);
+      $('#sub_total'+idx).val(Math.ceil(value));
     }
     
   }
 
   function hitungorder(){
     var totalorder = 0;
+
     for (var i=1; i<=baris1;i++){
       var kode=$('#id'+i).val();
       if (kode != null && kode != ''){
-        totalorder = totalorder + parseFloat($('#sub_total'+i).val());
+        totalorder = parseFloat(totalorder) + parseFloat($('#sub_total'+i).val());
       }
     }
 
@@ -161,13 +162,13 @@
       var kode=$('#id'+i).val();
       var pkp=$('#pkp'+i).val();
       if (kode != null && kode != '' && pkp == '1'){
-        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
+        totalppn = parseFloat(totalppn) + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
         $('#persen_ppn').val(<?= $persen_ppn ?>);
       }
     }
 
-    $('#ppn').val(parseFloat(totalppn));
-    $('#ppn_view').val(intToIDR(parseFloat(totalppn)));
+    $('#ppn').val(Math.floor(parseFloat(totalppn)));
+    $('#ppn_view').val(Math.floor(intToIDR(parseFloat(totalppn))));
   }
 
   function hitungdpp(){
@@ -183,11 +184,11 @@
     for (var i=1; i<=baris1;i++){
       var kode=$('#id'+i).val();
       if (kode != null && kode != ''){
-        totalqty = totalqty + parseInt($('#qty'+i).val());
+        totalqty = parseFloat(totalqty) + parseFloat($('#qty'+i).val());
       }
     }
 
-    $('#total_qty').val(parseInt(totalqty));
+    $('#total_qty').val(parseFloat(totalqty));
   }
 
   $('#pengiriman').keyup(function(){
@@ -418,7 +419,7 @@
               $('#idAkun'+a).val(idAkun);
             var nomorAkun = data.nomor_akun;
               $('#nomorAkun'+a).val(nomorAkun);
-            var namaAkun = data.nama_akun;
+            var namaAkun = data.nama;
               $('#namaAkun'+a).val(namaAkun);
             var harga = data.harga;
               $('#dpp'+a).val(harga);
@@ -478,7 +479,7 @@
   }
 <?php
 
-  $sql_detail   = "SELECT x.*, y.pkp FROM (SELECT a.* FROM `det_po` a LEFT JOIN `mst_po` b ON a.id_po=b.id WHERE b.id='".$_GET['id']."' AND a.deleted=0) as x JOIN (SELECT b.pkp,a.id as `po_id` FROM `mst_po` a LEFT JOIN `mst_supplier` b ON a.id_supplier=b.id WHERE a.deleted=0) as y ON x.id_po=y.po_id";
+  $sql_detail   = "SELECT x.*, y.pkp FROM (SELECT a.*,c.nama FROM `det_po` a LEFT JOIN det_coa c ON c.id=a.id_akun LEFT JOIN `mst_po` b ON a.id_po=b.id WHERE b.id='".$_GET['id']."' AND a.deleted=0) as x JOIN (SELECT b.pkp,a.id as `po_id` FROM `mst_po` a LEFT JOIN `mst_supplier` b ON a.id_supplier=b.id WHERE a.deleted=0) as y ON x.id_po=y.po_id";
   $sql_detail   = mysql_query($sql_detail);
 
   $i = 1;
@@ -492,7 +493,7 @@
     $('#tanggal_quotation'+<?= $i ;?>).val('<?= $rs['tgl_quotation'] ?>');
     $('#idAkun'+<?= $i ;?>).val('<?= $rs['id_akun'] ;?>');
     $('#nomorAkun'+<?= $i ;?>).val('<?= $rs['nomor_akun'] ;?>');
-    $('#namaAkun'+<?= $i ;?>).val('<?= $rs['nama_akun'] ;?>');
+    $('#namaAkun'+<?= $i ;?>).val('<?= $rs['nama'] ;?>');
     $('#qty'+<?= $i ;?>).val('<?= $rs['qty'] ;?>');
     $('#dpp'+<?= $i ;?>).val('<?= $rs['price'] ;?>');
     $('#satuan'+<?= $i ;?>).val('<?= $rs['satuan'] ;?>');

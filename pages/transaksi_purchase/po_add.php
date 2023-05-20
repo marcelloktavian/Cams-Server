@@ -106,23 +106,22 @@
 
   // general function ------------------------
   function hitungsubtotal(idx){
-    var value = parseInt($('#qty'+idx).val())*parseFloat($('#dpp'+idx).val());
+    let value = parseFloat($('#qty'+idx).val())*parseFloat($('#dpp'+idx).val());
     if(isNaN(value)){
       $('#sub_total'+idx).val("0");
     }
     else{
-      $('#sub_total'+idx).val(value);
+      $('#sub_total'+idx).val(Math.ceil(value));
     }
-    
   }
 
   function hitungorder(){
-    var totalorder = 0;
+    let totalorder = 0;
 
     for (var i=1; i<=baris1;i++){
       var kode=$('#id'+i).val();
       if (kode != null && kode != ''){
-        totalorder = totalorder + parseFloat($('#sub_total'+i).val());
+        totalorder = parseFloat(totalorder) + parseFloat($('#sub_total'+i).val());
       }
     }
 
@@ -138,13 +137,13 @@
       var kode=$('#id'+i).val();
       var pkp=$('#pkp'+i).val();
       if (kode != null && kode != '' && pkp == '1'){
-        totalppn = totalppn + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
+        totalppn = parseFloat(totalppn) + (parseFloat($('#sub_total'+i).val())*<?= $persen_ppn ?>/100);
         $('#persen_ppn').val(<?= $persen_ppn ?>);
       }
     }
 
-    $('#ppn').val(parseFloat(totalppn));
-    $('#ppn_view').val(intToIDR(parseFloat(totalppn)));
+    $('#ppn').val(Math.floor(parseFloat(totalppn)));
+    $('#ppn_view').val((intToIDR(Math.floor(parseFloat(totalppn)))));
   }
 
   function hitungdpp(){
@@ -159,11 +158,11 @@
     for (var i=1; i<=baris1;i++){
       var kode=$('#id'+i).val();
       if (kode != null && kode != ''){
-        totalqty = totalqty + parseInt($('#qty'+i).val());
+        totalqty = parseFloat(totalqty) + parseFloat($('#qty'+i).val());
       }
     }
 
-    $('#total_qty').val(parseInt(totalqty));
+    $('#total_qty').val(parseFloat(totalqty));
   }
 
   $('#pengiriman').keyup(function(){
@@ -391,7 +390,7 @@
               $('#idAkun'+a).val(idAkun);
             var nomorAkun = data.nomor_akun;
               $('#nomorAkun'+a).val(nomorAkun);
-            var namaAkun = data.nama_akun;
+            var namaAkun = data.nama;
               $('#namaAkun'+a).val(namaAkun);
             var harga = data.harga;
               $('#dpp'+a).val(harga);

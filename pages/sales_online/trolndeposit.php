@@ -155,9 +155,22 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 		exit;
 	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process') {
+
+		$idAkunKredit = "";
+		$nomorAkunKredit = "";
+		$namaAkunKredit = "";
+		$statusAkunKredit = "";
+
+		if(isset($_POST['akun_kredit']) && $_POST['akun_kredit'] != ""){
+			$idAkunKredit = explode(":",$_POST['akun_kredit'])[0];
+			$nomorAkunKredit = explode(":",$_POST['akun_kredit'])[1];
+			$namaAkunKredit = explode(":",$_POST['akun_kredit'])[2];
+			$statusAkunKredit = explode(":",$_POST['akun_kredit'])[3];
+		}
+
 		if(isset($_POST['id'])) {
-			$stmt = $db->prepare("UPDATE olndeposit SET id_trans=?,kode=?,id_dropshipper=?,tgl_trans=?,totalfaktur=?,tunai=?,transfer=?,deposit=?,cashback=?,keterangan=?,catatan=?,user=?, lastmodified = NOW() WHERE id_trans=?");
-			$stmt->execute(array($_POST['kode'],$_POST['kode'],$_POST['id_dropshipper'],$_POST['tgl_trans'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['tunai'],$_POST['transfer'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['cashback'],strtoupper($_POST['keterangan']),'DEPOSIT',$_SESSION['user']['username'],$_POST['kode']));
+			$stmt = $db->prepare("UPDATE olndeposit SET id_trans=?,id_kredit=?,nomor_kredit=?,akun_kredit=?,kode=?,id_dropshipper=?,tgl_trans=?,totalfaktur=?,tunai=?,transfer=?,deposit=?,cashback=?,keterangan=?,catatan=?,user=?, lastmodified = NOW() WHERE id_trans=?");
+			$stmt->execute(array($_POST['kode'],$idAkunKredit,$nomorAkunKredit,$namaAkunKredit,$_POST['kode'],$_POST['id_dropshipper'],$_POST['tgl_trans'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['tunai'],$_POST['transfer'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['cashback'],strtoupper($_POST['keterangan']),'DEPOSIT',$_SESSION['user']['username'],$_POST['kode']));
 			$affected_rows = $stmt->rowCount();
 			if($affected_rows > 0) {
 				$r['stat'] = 1;
@@ -171,8 +184,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 		else {
 			$id_user=$_SESSION['user']['username'];
 
-			$stmt = $db->prepare("INSERT INTO olndeposit(`id_trans`,`kode`,`id_dropshipper`,`tgl_trans`,`totalfaktur`,`tunai`,`transfer`,`deposit`,`cashback`,`keterangan`,`catatan`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-			if($stmt->execute(array($_POST['kode'],$_POST['kode'],$_POST['id_dropshipper'],$_POST['tgl_trans'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['tunai'],
+			$stmt = $db->prepare("INSERT INTO olndeposit(`id_trans`,`id_kredit`,`nomor_kredit`,`akun_kredit`,`kode`,`id_dropshipper`,`tgl_trans`,`totalfaktur`,`tunai`,`transfer`,`deposit`,`cashback`,`keterangan`,`catatan`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+			if($stmt->execute(array($_POST['kode'],$idAkunKredit,$nomorAkunKredit,$namaAkunKredit,$_POST['kode'],$_POST['id_dropshipper'],$_POST['tgl_trans'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['tunai'],
 			$_POST['transfer'],$_POST['tunai']+$_POST['transfer']+$_POST['cashback'],$_POST['cashback'],strtoupper($_POST['keterangan']),'DEPOSIT',$_SESSION['user']['username']))) {
 
 				$idtrans = $_POST['kode'];
@@ -184,10 +197,10 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 				$dropshipper='';
 				$namadropshipper='';
 				$q = mysql_fetch_array( mysql_query("SELECT olndeposit.tunai, olndeposit.transfer, olndeposit.cashback, olndeposit.id_dropshipper,mst_dropshipper.nama FROM olndeposit LEFT JOIN mst_dropshipper ON mst_dropshipper.id=olndeposit.id_dropshipper WHERE id_trans='".$idtrans."' LIMIT 1"));
-				$transfer=$q['transfer'];
-				$tunai=$q['tunai'];
-				$cashback=$q['cashback'];
-				$total = $transfer+$tunai+$cashback;
+				$transfer=abs($q['transfer']);
+				$tunai=abs($q['tunai']);
+				$cashback=abs($q['cashback']);
+				$total = abs($transfer+$tunai+$cashback);
 				$dropshipper=$q['id_dropshipper'];
 				$namadropshipper=$q['nama'];
 
@@ -204,13 +217,13 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 				//get master id terakhir
 				$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
 				$idparent=$q['id'];
-
+	if($nomorAkunKredit == ""){
 				// Insert Detail
 				if($tunai > 0){
 					//Tunai
 					$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun='01.01.00001'");
 					while($akun1 = mysql_fetch_array($query1)){
-						// BCA
+						// Tunai
 						$sqlakun1="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun1['id']."','".$akun1['noakun']."','".$akun1['nama']."','".$akun1['status']."','$tunai','0','','0', '$id_user',NOW()) ";
 						mysql_query($sqlakun1) or die (mysql_error());
 					}
@@ -230,7 +243,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 					//Cashback
 					$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun='06.01.00001'");
 					while($akun1 = mysql_fetch_array($query1)){
-						// BCA
+						// Cashback
 						$sqlakun1="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun1['id']."','".$akun1['noakun']."','".$akun1['nama']."','".$akun1['status']."','$cashback','0','','0', '$id_user',NOW()) ";
 						mysql_query($sqlakun1) or die (mysql_error());
 					}
@@ -242,7 +255,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 					$sqlakun1="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun1['id']."','".$akun1['noakun']."','".$akun1['nama']."','".$akun1['status']."','0','$total','','0', '$id_user',NOW()) ";
 					mysql_query($sqlakun1) or die (mysql_error());
 				}
+			}else{
+				$query1=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('02.02.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
 
+				while($akun1 = mysql_fetch_array($query1)){
+					// saldo titipan
+					$sqlakun1="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun1['id']."','".$akun1['noakun']."','".$akun1['nama']."','".$akun1['status']."','$total','0','','0', '$id_user',NOW()) ";
+					mysql_query($sqlakun1) or die (mysql_error());
+				}
+
+				$query2=mysql_query("INSERT INTO jurnal_detail VALUES(NULL, '$idparent','$idAkunKredit','$namaAkunKredit','$nomorAkunKredit','$statusAkunKredit','0','$total','','0','$id_user',NOW())") or die (mysql_error());
+			}
 				
 				$r['stat'] = 1;
 				$r['message'] = 'Success';
@@ -257,6 +280,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 		exit;
 	}
 ?>
+
+<script type='text/javascript' src='assets/js/jquery.autocomplete.js'></script>
+<link rel="stylesheet" type="text/css" href="assets/css/jquery.autocomplete.css" />
 
 <div class="ui-widget ui-form" style="margin-bottom:5px">
  <div class="ui-widget-header ui-corner-top padding5">

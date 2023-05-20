@@ -47,7 +47,7 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
   }
   // -------------------- end of searching _filter >>
 
-  $sql_purchproducts = "SELECT b.`vendor`,a.* FROM `mst_produk` a LEFT JOIN `mst_supplier` b on b.id = a.id_supplier ";
+  $sql_purchproducts = "SELECT b.`vendor`,a.*,c.nama FROM `mst_produk` a LEFT JOIN det_coa c ON c.id=a.id_akun LEFT JOIN `mst_supplier` b on b.id = a.id_supplier ";
   $q = $db->query($sql_purchproducts.$where);
 
   $count = $q->rowCount();
@@ -92,7 +92,7 @@ if(isset($_GET['action']) && strtolower ($_GET['action'])=='json'){
       $line['satuan'],
       number_format($line['harga'],0),
       $line['nomor_akun'],
-      $line['nama_akun'],
+      $line['nama'],
       // $line['kategori'],
       // number_format($line['penyusutan'],0),
       // $line['hpp'] == 0 ? 'Tidak':'Iya', 

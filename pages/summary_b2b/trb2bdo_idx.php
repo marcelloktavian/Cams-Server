@@ -250,7 +250,7 @@
 -->
 
 <script type="text/javascript">
-	 
+
 	$('#startdate_b2bdo_idx').datepicker({
 		dateFormat: "dd/mm/yy"
 	});

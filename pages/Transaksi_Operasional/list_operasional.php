@@ -12,8 +12,7 @@
   <style>
     body {
       background-color:#E4B65E ;
-    } 
-        
+    }
   </style>
 
 <?php 
@@ -24,7 +23,6 @@ error_reporting(0);
 </head>
 <body>
   <?php
-
         if ($_COOKIE['tglstart']=='' && $_COOKIE['tglend']=='') {
             $kode1 = date("Y/m/d");
             $kode2 = date("Y/m/d");

@@ -16,7 +16,7 @@ error_reporting(0);
 		,xls.oln_expnote,xls.oln_penerima,xls.oln_address,xls.oln_telp,xls.oln_provinsi,xls.oln_postalcode
 		,xls.oln_kotakab,xls.oln_kecamatan,xls.oln_shipmethod,xls.oln_tgl,xls.product_id,xls.dropshipper_id, xls.oln_expeditionid
 		FROM oln_xlscamou_cr xls WHERE (xls.oln_orderstatus<>'Canceled')";
-		// var_dump($sql_post);die;
+		//var_dump($sql_post);die;
 		$hasil_post=mysql_query($sql_post);
 		//menghapus data di xlscamou
 		$sql_delete="";	

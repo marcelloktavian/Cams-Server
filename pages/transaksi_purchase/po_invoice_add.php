@@ -119,8 +119,7 @@
       if(kode != undefined && kode != ''){
         var subtotal_item = parseFloat($('#qty_inv'+i).val())*parseFloat($('#dpp_unit'+i).val());
         var ppn_item = $('#persen_ppn'+i).val();
-        console.log(subtotal_item, ' ',ppn_item);
-        $('#subtotal_inv'+i).val(parseFloat(subtotal_item)+parseFloat(subtotal_item*ppn_item/100));
+        $('#subtotal_inv'+i).val(parseFloat(subtotal_item)+Math.floor((parseInt(subtotal_item*ppn_item/100))));
       }
     }
   }

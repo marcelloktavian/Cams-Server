@@ -59,7 +59,14 @@
             <div class="ui-corner-all form-control">
                 <input value="<?php echo isset($row['transfer']) ? $row['transfer'] : ''; ?>" type="number" style="text-transform: uppercase" id="transfer" name="transfer" onkeyup="changetransfer()">
             </div>
-			
+
+			<div id="showMengurangi" style="display:none">
+				<label for="deposit_name" class="ui-helper-reset label-control">AKUN KREDIT</label>
+				<div class="ui-corner-all form-control">
+						<input value="<?php echo isset($row['akun_kredit']) ? $row['akun_kredit'] : ''; ?>" type="text" style="text-transform: uppercase" id="akunKredit" name="akun_kredit" >
+				</div>
+			</div>
+
 			<label for="deposit_name" class="ui-helper-reset label-control">CASHBACK</label>
             <div class="ui-corner-all form-control">
                 <input value="<?php echo isset($row['cashback']) ? $row['cashback'] : ''; ?>" type="number" style="text-transform: uppercase" id="cashback" name="cashback" onkeyup="changecashback()">
@@ -82,7 +89,25 @@
 		(*) wajib diisi
     </div>
 </div>
+
 <script>
+	const type = document.getElementById('type');
+	const akunKreditView = document.getElementById('showMengurangi');
+	const akunKreditValue = document.getElementById('akunKredit');
+
+	type.addEventListener("change", (event)=>{
+		if(event.target.value == "Mengurang"){
+			akunKreditView.setAttribute("style","");
+			akunKreditValue.classList.add("required");
+		}
+		else{
+			akunKreditView.setAttribute("style","display:none");
+			akunKreditValue.classList.remove("required");
+			akunKreditValue.value = "";
+		}
+	});
+	$('#akunKredit').autocomplete("pages/sales_online/trolndeposit_lookup_akun.php?action=reqakunkredit", {width: 400});
+
 	function changetype(){
 		var tipe = $('#type').val();
 		var tunai = $('#tunai').val();

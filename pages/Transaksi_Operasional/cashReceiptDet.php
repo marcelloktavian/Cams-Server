@@ -147,20 +147,20 @@ function get_products(a){
 			var akun  = data.nama;
 			$("#akun"+a+"").val(akun);
 			
-            var jenis = data.jenis;
-            if (jenis == 'Debet') {
-                $("#debet"+a+"").attr("disabled", false);
-                $("#kredit"+a+"").attr("disabled", true);
-                $("#operasionalBtn"+a+"").attr("disabled", true);
-            } else {
-                $("#debet"+a+"").attr("disabled", true);
-                $("#kredit"+a+"").attr("disabled", false);
-                $("#operasionalBtn"+a+"").attr("disabled", false);
-            }
-            var tgl = $("#tanggal").val().split('-');
-            document.getElementById('bukti'+a+'').value='AK'+tgl[1]+tgl[0].substring(2,4)+'/';
-            $("#uraian"+a+"").focus();
-        }
+			var jenis = data.jenis;
+			if (jenis == 'Debet') {
+				$("#debet"+a+"").attr("disabled", false);
+				$("#kredit"+a+"").attr("disabled", true);
+				$("#operasionalBtn"+a+"").attr("disabled", true);
+			} else {
+				$("#debet"+a+"").attr("disabled", true);
+				$("#kredit"+a+"").attr("disabled", false);
+				$("#operasionalBtn"+a+"").attr("disabled", false);
+			}
+			var tgl = $("#tanggal").val().split('-');
+			document.getElementById('bukti'+a+'').value='AK'+tgl[1]+tgl[0].substring(2,4)+'/';
+			$("#uraian"+a+"").focus();
+    }
 	});	
 			
 	});
@@ -241,17 +241,18 @@ function popOperasional(a){
 };
 
 function validasi(){
-    var pesan='';
-    var tgltransaksi = document.getElementById("tanggal").value;
-    console.log(document.getElementById("tanggal").value);
-    if(tgltransaksi == ''){
-        pesan='Tanggal Tidak Boleh Kosong';	
-    }
-        
-    if (pesan != '') {
-            alert('Maaf, ada kesalahan pengisian form : \n'+pesan);
-            return false;
-        }    	
+	var pesan='';
+	var tgltransaksi = document.getElementById("tanggal").value;
+	console.log(document.getElementById("tanggal").value);
+
+	if(tgltransaksi == ''){
+		pesan='Tanggal Tidak Boleh Kosong';	
+	}
+
+	if (pesan != '') {
+		alert('Maaf, ada kesalahan pengisian form : \n'+pesan);
+		return false;
+	}    	
 }
 
 function hitungtotal(){
@@ -284,7 +285,7 @@ function hitungtotal(){
 	var formatter = new Intl.NumberFormat(locale, options);
 	// 
     document.getElementById("debet").value = debet.toFixed(0);
-	document.getElementById("kredit").value = kredit.toFixed(0);
+		document.getElementById("kredit").value = kredit.toFixed(0);
 
     document.getElementById("debet_tot").value = debet.toFixed(0);
 	document.getElementById("kredit_tot").value = kredit.toFixed(0);
