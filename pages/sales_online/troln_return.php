@@ -143,7 +143,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		$tgl = $qoln['tgl_trans'];
 		$idoln=$qoln['id_oln'];
 		$penalty=$qoln['penalty'];
-		$totalreturn=$qoln['total']-$penalty;
+		$totalreturn=$qoln['total'];
 
 		$type = '';
 		$total='';
@@ -156,7 +156,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 		}else{
 			$type='Cash';
 		}
-		$total=$qoln['total'];
+		$total=$qoln['total']+$qoln['penalty'];
 		$dropshipper=$q['id_dropshipper'];
 		$namadropshipper=$q['nama'];
 		$expfee=$q['exp_fee'];
