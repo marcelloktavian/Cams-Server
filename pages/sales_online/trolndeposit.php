@@ -264,7 +264,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 					mysql_query($sqlakun1) or die (mysql_error());
 				}
 
-				$query2=mysql_query("INSERT INTO jurnal_detail VALUES(NULL, '$idparent','$idAkunKredit','$namaAkunKredit','$nomorAkunKredit','$statusAkunKredit','0','$total','','0','$id_user',NOW())") or die (mysql_error());
+				$query2=mysql_query("INSERT INTO jurnal_detail VALUES(NULL, '$idparent','$idAkunKredit','$nomorAkunKredit','$namaAkunKredit','$statusAkunKredit','0','$total','','0','$id_user',NOW())") or die (mysql_error());
 			}
 				
 				$r['stat'] = 1;
