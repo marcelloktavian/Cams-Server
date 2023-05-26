@@ -117,14 +117,9 @@
     for(var i=1; i<=baris1; i++){
       var kode = $('#id'+i).val();
       if(kode != undefined && kode != ''){
-        var subtotal_item = Math.ceil(parseFloat($('#qty_inv'+i).val())*parseFloat($('#dpp_unit'+i).val()));
+        var subtotal_item = Math.round(parseFloat($('#qty_inv'+i).val())*parseFloat($('#dpp_unit'+i).val()));
         var ppn_item = $('#persen_ppn'+i).val();
-        if(ppn_item == "11"){
-          $('#subtotal_inv'+i).val(parseFloat(subtotal_item)+Math.floor((subtotal_item/1.11*0.11)));
-        }
-        else if(ppn_item == "0"){
-          $('#subtotal_inv'+i).val(parseFloat(subtotal_item));
-        }
+        $('#subtotal_inv'+i).val(parseFloat(subtotal_item)+Math.floor((parseInt(subtotal_item*ppn_item/100))));
       }
     }
   }
