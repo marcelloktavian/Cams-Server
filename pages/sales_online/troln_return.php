@@ -228,7 +228,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 
 			// tambah saldo dropshipper
 			$sqlsaldo="INSERT INTO `olndeposit` VALUES
-				('$kode','$kode','$tgl','$dropshipper','','REFUND ORDER #$ref_kode','DEPOSIT','0','0',NULL,'$totalreturn','$totalreturn','0','0', '0','$totalreturn','0','0','$id_user',NOW());";
+				('$kode',NULL,NULL,NULL,'$kode','$tgl','$dropshipper','','REFUND ORDER #$ref_kode','DEPOSIT','0','0',NULL,'$totalreturn','$totalreturn','0','0', '0','$totalreturn','0','0','$id_user',NOW());";
 			mysql_query($sqlsaldo) or die (mysql_error());
 		}else{
 			$query4=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun=CONCAT('01.04.',IF(LENGTH('$dropshipper')=1,'0000',IF(LENGTH('$dropshipper')=2,'000',IF(LENGTH('$dropshipper')=3,'00',IF(LENGTH('$dropshipper')=4,'0','')))), '$dropshipper')");
