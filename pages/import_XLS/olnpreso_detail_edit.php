@@ -379,7 +379,7 @@ Keterangan
 
 <tr>
 <td class='fonttext' >Bayar dg Deposit</td>
-<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' onKeyUp='hitungpiutang()'><input class='inputform'  type='text' value='$saldo_dropshipper_deposit' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' /><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''></td>
+<td><input type='text' class='inputform' name='byr_deposit' id='byr_deposit' style='text-align:right;' value='$deposit' onKeyUp='hitungpiutang()'><input class='inputform'  type='text' value='$saldo_dropshipper_deposit' readonly placeholder='Saldo Deposit' name='saldo_deposit' id='saldo_deposit' /><input type='hidden' class='inputform' name='simpan_deposit' id='simpan_deposit' style='text-align:right;' value=''><input type='text' name='deposit_xls' id='deposit_xls' value='$deposit'></td>
 </tr>
 </table>
 
@@ -1274,6 +1274,7 @@ function cetak2(){
 	var transfer        = parseInt(form2.transfer.value);
 	var simpan_deposit  = parseInt(form2.simpan_deposit.value);
 	var byr_deposit     = parseInt(form2.byr_deposit.value);
+	var deposit_xls     = parseInt(form2.deposit_xls.value);
 	var temp_total      = tunai + transfer;
 	var disc_dropshipper = form2.disc_dropshipper.value;
 
@@ -1328,8 +1329,12 @@ function cetak2(){
 		pesan = ' Expedisi Harus Di Entry\n';
 	}
 	if(parseInt(document.getElementById('exp_fee').value) < 0){
-			pesan = 'Biaya Ekspedisi Minus\n';
-		}
+		pesan = 'Biaya Ekspedisi Minus\n';
+	}
+
+	if(deposit_xls > byr_deposit){
+		pesan = 'Saldo Kurang\n';
+	}
 
 	if(validasiTotal() != "")
 		pesan = validasiTotal();
