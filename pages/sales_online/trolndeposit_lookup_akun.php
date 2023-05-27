@@ -6,9 +6,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'reqakunkredit') {
   if (!isset($_GET['q'])) return;
   $q = strtolower($_GET['q']);
 
-  $sql_get_master = "SELECT x.id, x.no_akun, x.nama_akun FROM (SELECT DISTINCT(`noakun`) as no_akun, nama as nama_akun, id FROM mst_coa) AS x WHERE x.no_akun LIKE '%$q%' OR x.nama_akun LIKE '%$q%'";
+  $sql_get_master = "SELECT x.id, x.no_akun, x.nama_akun FROM (SELECT DISTINCT(`noakun`) as no_akun, nama as nama_akun, id FROM mst_coa) AS x WHERE x.no_akun LIKE '01.%' AND (x.no_akun LIKE '%$q%' OR x.nama_akun LIKE '%$q%')";
 
-  $sql_get_detail = "SELECT x.id, x.no_akun, x.nama_akun FROM (SELECT DISTINCT(`noakun`) as no_akun, nama as nama_akun, id FROM det_coa) AS x WHERE x.no_akun LIKE '%$q%' OR x.nama_akun LIKE '%$q%'";
+  $sql_get_detail = "SELECT x.id, x.no_akun, x.nama_akun FROM (SELECT DISTINCT(`noakun`) as no_akun, nama as nama_akun, id FROM det_coa) AS x WHERE x.no_akun LIKE '01.%' AND (x.no_akun LIKE '%$q%' OR x.nama_akun LIKE '%$q%')";
 
   $query_get_master = mysql_query($sql_get_master);
 
