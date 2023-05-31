@@ -195,6 +195,7 @@ error_reporting(0);
 	 //$nett_subtotal=$rs2['subtotal'] *(1-$rs2['discdp']);
 	 $disc=$rs2['disc_return'];
 	 $penalty = $rs2['penalty'];
+	 $discFaktur = $rs2['disc_faktur'];
 	 //$disc=$rs2['disc_faktur'];
 	 //total merupakan faktur tanpa ongkir - disc faktur
 	 $total=$rs2['faktur']-$rs2['disc_faktur'];
@@ -216,7 +217,7 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$penalty)."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$penalty+$discFaktur)."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($total)."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($rs2['ongkir'])."</div></td>";
 
@@ -230,8 +231,8 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['namabrg']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format(($nett_price*$rs2['jumlah_return'])+$penalty)."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($disc*$rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$penalty+$discFaktur)."</div></td>";
 		echo"<td class='style_detail'><div align='right'></div></td>";
 	    echo"<td class='style_detail'><div align='right'></div></td>";
 	  }
