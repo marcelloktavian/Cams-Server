@@ -153,7 +153,7 @@ error_reporting(0);
       <th width="5%" class="style_title"><div align="center">UK</div></td>
       <th width="5%" class="style_title"><div align="center">Qty</div></td>
       <th width="10%" class="style_title"><div align="center">NettPrice</div></td>
- 	  <th width="5%" class="style_title"><div align="center">Disc</div></td>
+ 	  <th width="5%" class="style_title"><div align="center">Disc + Penalty</div></td>
  	  <th width="10%" class="style_title"><div align="center">SubTotal</div></td>
  	  <th width="5%" class="style_title"><div align="center">Ongkir</div></td>
       
@@ -170,7 +170,7 @@ error_reporting(0);
 	$where .= " WHERE (m.deleted=0) AND (m.state='1') AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y')  AND STR_TO_DATE('$tglend','%d/%m/%Y') ";
 	}
 	
-	$sql_detail = "SELECT dt.id_trans,m.lastmodified,m.id_oln,m.ref_kode AS id_web,m.exp_fee as ongkir,d.nama AS dropshipper,dt.namabrg,dt.jumlah_return,dt.size,dt.harga_satuan,dt.harga_nett,dt.disc_return,dt.subtotal,dt.subtotal_return,m.nama AS pembeli,e.nama AS expedition,m.state,d.disc as discdp,m.discount_faktur as disc_faktur,m.total,m.faktur FROM olnsoreturn_detail dt
+	$sql_detail = "SELECT dt.id_trans,m.lastmodified,m.id_oln,m.ref_kode AS id_web,m.exp_fee as ongkir,d.nama AS dropshipper,dt.namabrg,dt.jumlah_return,dt.size,dt.harga_satuan,dt.harga_nett,dt.disc_return,dt.subtotal,dt.subtotal_return,m.nama,m.penalty AS pembeli,e.nama AS expedition,m.state,d.disc as discdp,m.discount_faktur as disc_faktur,m.total,m.faktur FROM olnsoreturn_detail dt
     INNER JOIN olnsoreturn m ON dt.id_trans = m.id_trans
     LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
     LEFT JOIN mst_expedition e ON m.id_expedition = e.id ".$where." order by m.id_trans,dt.namabrg asc";
@@ -185,6 +185,7 @@ error_reporting(0);
 	$grand_ongkir=0;
 	$nett_price=0;
 	$nett_subtotal=0;
+	$penalty=0;
 	$kode=""; 
 	while($rs2=mysql_fetch_array($sq2))
 	{ 	
@@ -193,6 +194,7 @@ error_reporting(0);
 	 $nett_subtotal=$rs2['subtotal_return'];
 	 //$nett_subtotal=$rs2['subtotal'] *(1-$rs2['discdp']);
 	 $disc=$rs2['disc_return'];
+	 $penalty = $rs2['penalty'];
 	 //$disc=$rs2['disc_faktur'];
 	 //total merupakan faktur tanpa ongkir - disc faktur
 	 $total=$rs2['faktur']-$rs2['disc_faktur'];
@@ -214,11 +216,10 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($disc*$rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$penalty)."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($total)."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($rs2['ongkir'])."</div></td>";
-		
-		
+
 		$kode=$rs2['id_trans'];
 	  }
       else if($kode=$rs2['id_trans'])
@@ -229,7 +230,7 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['namabrg']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(($nett_price*$rs2['jumlah_return'])+$penalty)."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($disc*$rs2['jumlah_return'])."</div></td>";
 		echo"<td class='style_detail'><div align='right'></div></td>";
 	    echo"<td class='style_detail'><div align='right'></div></td>";
@@ -238,7 +239,7 @@ error_reporting(0);
     </tr>  
 	<?
 	$grand_ongkir+=$rs2['ongkir'];
-	$grand_disc+=$disc*$rs2['jumlah_return'];		
+	$grand_disc+= ($disc*$rs2['jumlah_return'])+$penalty;		
 	$grand_qty+=$rs2['jumlah_return'];
 	$grand_subtotal+=round($nett_price*$rs2['jumlah_return']);
 	//totaldpp bruto didapat dari grand faktur(grand_subtotal)/1.11
