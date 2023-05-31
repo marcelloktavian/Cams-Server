@@ -170,7 +170,7 @@ error_reporting(0);
 	$where .= " WHERE (m.deleted=0) AND (m.state='1') AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y')  AND STR_TO_DATE('$tglend','%d/%m/%Y') ";
 	}
 	
-	$sql_detail = "SELECT dt.id_trans,m.lastmodified,m.id_oln,m.ref_kode AS id_web,m.exp_fee as ongkir,d.nama AS dropshipper,dt.namabrg,dt.jumlah_return,dt.size,dt.harga_satuan,dt.harga_nett,dt.disc_return,dt.subtotal,dt.subtotal_return,m.nama,m.penalty AS pembeli,e.nama AS expedition,m.state,d.disc as discdp,m.discount_faktur as disc_faktur,m.total,m.faktur FROM olnsoreturn_detail dt
+	$sql_detail = "SELECT dt.id_trans,m.lastmodified,m.id_oln,m.ref_kode AS id_web,m.exp_fee as ongkir,d.nama AS dropshipper,dt.namabrg,dt.jumlah_return,dt.size,dt.harga_satuan,dt.harga_nett,dt.disc_return,dt.subtotal,dt.subtotal_return,m.nama AS pembeli,e.nama AS expedition,m.state,d.disc as discdp,m.discount_faktur as disc_faktur,m.total,m.faktur, m.penalty FROM olnsoreturn_detail dt
     INNER JOIN olnsoreturn m ON dt.id_trans = m.id_trans
     LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
     LEFT JOIN mst_expedition e ON m.id_expedition = e.id ".$where." order by m.id_trans,dt.namabrg asc";
