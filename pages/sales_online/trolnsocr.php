@@ -172,7 +172,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineCredit, $group_acess);
         $q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
         $idparent=$q['id'];
 
-		$if($exp_fee == 0){
+		if($exp_fee == 0){
 			$dpp = round($total / 1.11);
 			$ppn = round($total / 1.11 * 0.11);
 		}else{
