@@ -28,7 +28,7 @@ $sql                = mysql_query($sql_qty);
 $reset_sql_detail     = "UPDATE `det_invoice` SET `deleted`=1 WHERE `id_invoice`=".$id_invoice."";
 $reset_sql            = mysql_query($reset_sql_detail);
 
-for($i=1; $i<$row; $i++){
+for($i=1; $i<=$row; $i++){
   if(isset($_POST['id'.$i]) && $_POST['id'.$i] != ''){
     $id_po            = $_POST['id_po'.$i];
     $id_detail        = $_POST['id'.$i];
@@ -52,10 +52,8 @@ for($i=1; $i<$row; $i++){
       $sql_detail       = "UPDATE `det_invoice` SET `qty`='$qty', `subtotal`='$subtotal',`deleted`=0 WHERE `id`='$id_detail'";
     }
     else {
-      $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
+      $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
     }
-
-    // var_dump($sql_detail);
 
     $sql              = mysql_query($sql_detail);
   }

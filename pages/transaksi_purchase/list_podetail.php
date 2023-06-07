@@ -213,6 +213,23 @@ require_once "../../include/config.php";
             window.opener.document.getElementById('namaAkun'+(window.opener.baris1-1)).value = $('#nama_akun'+i).val();
             window.opener.addNewRow1();
           }
+          else{
+            window.opener.addNewRow1();
+            window.opener.document.getElementById('id'+(window.opener.baris1-1)).value = $('#id'+i).val();
+            window.opener.document.getElementById('persen_ppn'+(window.opener.baris1-1)).value = $('#persen_po'+i).val();
+            window.opener.document.getElementById('id_po'+(window.opener.baris1-1)).value = $('#id_po'+i).val();
+            window.opener.document.getElementById('nomor_dokumen'+(window.opener.baris1-1)).value = $('#dokumen_po'+i).val();
+            window.opener.document.getElementById('id_produk'+(window.opener.baris1-1)).value = $('#id_produk'+i).val();
+            window.opener.document.getElementById('produk_jasa'+(window.opener.baris1-1)).value = $('#barang_jasa'+i).val();
+            window.opener.document.getElementById('qty_remaining'+(window.opener.baris1-1)).value = $('#qty'+i).val();
+            window.opener.document.getElementById('qty_payment'+(window.opener.baris1-1)).value = $('#qty_terbayar'+i).val();
+            window.opener.document.getElementById('satuan'+(window.opener.baris1-1)).value = $('#satuan'+i).val();
+            window.opener.document.getElementById('dpp_unit'+(window.opener.baris1-1)).value = $('#dpp_unit'+i).val();
+            window.opener.document.getElementById('idAkun'+(window.opener.baris1-1)).value = $('#id_akun'+i).val();
+            window.opener.document.getElementById('nomorAkun'+(window.opener.baris1-1)).value = $('#nomor_akun'+i).val();
+            window.opener.document.getElementById('namaAkun'+(window.opener.baris1-1)).value = $('#nama_akun'+i).val();
+            window.opener.addNewRow1();
+          }
         }
       }
       window.close();
