@@ -278,7 +278,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_invoice').jqGrid({
       url       : '<?= BASE_URL.'pages/transaksi_purchase/po_approval.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID','Nomor Invoice','Tgl Invoice','Tgl Jatuh Tempo','Supplier','Total Qty','Total','Total Payment','Total Remaining','Keterangan','Post','Edit','Delete'],
+      colNames  : ['ID','Nomor Invoice','Tgl Invoice','Tgl Jatuh Tempo','Supplier','Total Qty','Total Invoice','Total Payment','Total Remaining','Keterangan','Post','Edit','Delete'],
       colModel  : [
         {name:'id', index: 'id', align: 'right', width:15, searchoptions: {sopt:['cn']}},
         {name:'nomor_invoice', index: 'nomor_invoice', align: 'left', width:40, searchoptions: {sopt:['cn']}},
