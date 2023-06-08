@@ -53,9 +53,6 @@ for($i=1; $i<=$row; $i++){
     }
     else {
       $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
-
-      var_dump($sql_detail);
-      die();
     }
 
     $sql              = mysql_query($sql_detail);
