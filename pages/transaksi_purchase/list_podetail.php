@@ -113,7 +113,7 @@ require_once "../../include/config.php";
     </thead>
     <tbody>
       <?php
-        $sql_detail_po  = "SELECT a.*,date_format(b.tgl_po,'%d-%m-%Y') as tgl_po_formatted,b.dokumen,b.tgl_po,b.nama_supplier,b.persen_ppn FROM `det_po` a LEFT JOIN `mst_po` b ON a.id_po=b.id WHERE a.deleted=0 AND b.tgl_po BETWEEN '".$kode1."' AND '".$kode2."' AND b.`id_supplier`='".$supplier_filter."'AND a.`qty` > a.`qty_terbayar` AND b.approval=1 ";
+        $sql_detail_po  = "SELECT a.*,date_format(b.tgl_po,'%d-%m-%Y') as tgl_po_formatted,b.dokumen,b.tgl_po,b.nama_supplier,b.persen_ppn FROM `det_po` a LEFT JOIN `mst_po` b ON a.id_po=b.id WHERE a.deleted=0 AND b.deleted=0 AND b.tgl_po BETWEEN '".$kode1."' AND '".$kode2."' AND b.`id_supplier`='".$supplier_filter."'AND a.`qty` > a.`qty_terbayar` AND b.approval=1 ";
 
         $get_detail_po  = mysql_query($sql_detail_po);        
         $baris = $get_baris;
