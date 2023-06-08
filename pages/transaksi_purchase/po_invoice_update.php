@@ -56,6 +56,11 @@ for($i=1; $i<=$row; $i++){
     }
 
     $sql              = mysql_query($sql_detail);
+
+    if (!$sql) {
+      var_dump($sql_detail);
+      die();
+    }
   }
 }
 
