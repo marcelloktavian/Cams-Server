@@ -233,7 +233,7 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur'])."</div></td>";
-		echo"<td class='style_detail'><div align='right'></div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(ceil($nett_price*$rs2['jumlah_return'])-ceil(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']))."</div></td>";
 	    echo"<td class='style_detail'><div align='right'></div></td>";
 	  }
 	?>
