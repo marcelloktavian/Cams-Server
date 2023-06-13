@@ -215,9 +215,8 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format(ceil(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']))."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($total)."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format($rs2['total']-$rs2['disc_faktur'])."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($rs2['ongkir'])."</div></td>";
-		
 		
 		$kode=$rs2['id_trans'];
 	  }

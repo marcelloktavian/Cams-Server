@@ -78,7 +78,7 @@ include("../../include/koneksi.php");
 	$totalfaktur=0;
 	$totalqtyreturn=0; 
 	$totalpenalty=0; 
-     	
+	$totalpengembalian=0;
     if($_GET['id_trans']==''){
 	//add data return
 	for ($i=1; $i<$row; $i++)
@@ -92,10 +92,11 @@ include("../../include/koneksi.php");
 		$Harga = str_replace(",","", $_POST['Harga'.$i]);
 		$HargaNett = str_replace(",","", $_POST['NettPrice'.$i]);
 		$Size = $_POST['Size'.$i];
-		$Subtotal= str_replace(",","", $_POST['SUBTOTAL'.$i]);
+		$Subtotal= round(str_replace(",","", $_POST['SUBTOTAL'.$i]));
 		$Pinalty= str_replace(",","", $_POST['Pinalty'.$i]);
 		$totalqtyreturn += str_replace(",","", $_POST['Return'.$i]);
 		$totalpenalty += $Pinalty * $totalqtyreturn;
+		$totalpengembalian += round($subtotal);
 		//---akhir tarik parameter detail---
 		//diinput hanya yang ada returnnya
 		if($Return==''){
@@ -128,7 +129,7 @@ include("../../include/koneksi.php");
 	//total faktur itu faktur - disc_faktur
 	$totalfaktur = $faktur-$disc_faktur;
 	$sql_master="";
-	$sql_master="insert into olnsoreturn(id_trans,id_oln,ref_kode,tgl_trans,id_dropshipper,nama,telp,alamat,id_address,id_expedition,exp_code,exp_fee,exp_note,total,faktur,totalqty,discount,tunai,transfer,discount_faktur,penalty,note,user)values('".$id_pkb."','".$id_oln."','".$ref_kode."','".$tgl."','".$id_dropshipper."','".$nama."','".$telp."','".$alamat."','".$id_address."','".$id_expedition."','".$exp_code."','".$exp_fee."','".$exp_note."','".$totalfaktur."','".$faktur."','".$totalqtyreturn."','".$disc_dp."','".$tunai."','".$transfer."','".$disc_faktur."','".$totalpenalty."','".$keterangan."','".$id_user."')";
+	$sql_master="insert into olnsoreturn(id_trans,id_oln,ref_kode,tgl_trans,id_dropshipper,nama,telp,alamat,id_address,id_expedition,exp_code,exp_fee,exp_note,total,faktur,totalqty,discount,tunai,transfer,discount_faktur,penalty,note,user)values('".$id_pkb."','".$id_oln."','".$ref_kode."','".$tgl."','".$id_dropshipper."','".$nama."','".$telp."','".$alamat."','".$id_address."','".$id_expedition."','".$exp_code."','".$exp_fee."','".$exp_note."','".$totalfaktur."','".$totalfaktur."','".$totalqtyreturn."','".$disc_dp."','".$tunai."','".$transfer."','".$disc_faktur."','".$totalpenalty."','".$keterangan."','".$id_user."')";
 	// var_dump($sql_master);die;
 	mysql_query($sql_master) or die (mysql_error());
 	//---akhir simpan master----------------------

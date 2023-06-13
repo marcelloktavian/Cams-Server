@@ -567,10 +567,10 @@ function hitungtotal(){
 		}
 
 		//alert("subtotal ="+subtotal.toString())
-		totalreturn+= parseInt(subtotal);
-		totalqty+= parseInt(qty);
-		totalqtyreturn+= parseInt(qtyreturn);
-		totalpenalty+= parseInt(penalty)*parseInt(qtyreturn);
+		totalreturn+= Math.round(parseFloat(subtotal));
+		totalqty+= parseFloat(qty);
+		totalqtyreturn+= parseFloat(qtyreturn);
+		totalpenalty+= Math.round(parseFloat(penalty)*parseFloat(qtyreturn));
 		
 	 }
 		//else{}
@@ -638,12 +638,12 @@ function hitungjml(a)
 	  alert("Retur="+qtyreturn.toString()+", tidak boleh lebih besar dari qty ="+qty.toString());	
 	  
 	  qtyreturn=qty;
-	  var subtotalreturn=qtyreturn * (nett_price-pinalty);
+	  var subtotalreturn= Math.round(parseFloat(qtyreturn) * (parseFloat(nett_price)-parseFloat(pinalty)));
 	  document.getElementById("Return"+a+"").value = qty;	
  	}
 	else
 	{
-	  var subtotalreturn=qtyreturn * (nett_price-pinalty);
+	  var subtotalreturn= qtyreturn * Math.round(parseFloat(qtyreturn) * (parseFloat(nett_price)-parseFloat(pinalty)));
 	}
 	
 	//alert("qtyreturn ="+qtyreturn.toString()+",harga="+harga.toString()+",disc="+disc.toString()+" sutotalreturn="+subtotalreturn.toString());	
