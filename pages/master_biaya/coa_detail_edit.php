@@ -406,6 +406,7 @@ function cetak(){
 			addNewRow1();
 			document.getElementById('Id'+<?=$i;?>+'').value = "<?=$rs1['id'];?>";
 			document.getElementById('Nomor'+<?=$i;?>+'').value = "<?=$rs1['noakun'];?>";
+			document.getElementById('Nomor<?=$i;?>').readOnly = true;
 			document.getElementById('Nama'+<?=$i;?>+'').value = "<?=$rs1['nama'];?>";
 		<?php 
 			$i++;
