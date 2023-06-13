@@ -407,6 +407,7 @@ function cetak(){
 			document.getElementById('Id'+<?=$i;?>+'').value = "<?=$rs1['id'];?>";
 			document.getElementById('Nomor'+<?=$i;?>+'').value = "<?=$rs1['noakun'];?>";
 			document.getElementById('Nomor<?=$i;?>').readOnly = true;
+			document.getElementById('Nomor<?=$i;?>').style.backgroundColor = "#f2f2f2";
 			document.getElementById('Nama'+<?=$i;?>+'').value = "<?=$rs1['nama'];?>";
 		<?php 
 			$i++;
