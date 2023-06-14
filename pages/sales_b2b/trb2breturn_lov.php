@@ -314,7 +314,7 @@ function intToIDR($val) {
           }
         }
       }
-      window.close();
+      // window.close();
     }
   }
 
