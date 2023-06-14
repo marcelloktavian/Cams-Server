@@ -295,43 +295,39 @@ function intToIDR($val) {
 
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
-      for(var i = <?= $get_baris ?>; i< <?= $baris ?>; i++){
-        console.log(<?= $get_baris ?>);
-        console.log(<?= $baris ?>);
+      let n = <?= $get_baris ?>;
+      for(var i = 0; i< <?= $baris ?>; i++){
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
-        console.log('masuk');
-          if(window.opener.document.getElementById('idb2b'+(i)) != null || window.opener.document.getElementById('idb2b'+(i)) != undefined ){
-        console.log($('#id_trans'+i).val());
-
-            window.opener.document.getElementById('idb2b'+(i)).value = $('#id_trans'+i).val();
-            window.opener.document.getElementById('iddetb2b'+(i)).value = $('#b2bdo_id'+i).val();
-            window.opener.document.getElementById('idproduk'+(i)).value = $('#idbrg'+i).val();
-            window.opener.document.getElementById('namaproduk'+(i)).value = $('#namabrg'+i).val();
-            window.opener.document.getElementById('size'+(i)).value = $('#size'+i).val();
-            window.opener.document.getElementById('harga'+(i)).value = $('#price'+i).val();
+          if(window.opener.document.getElementById('idb2b'+(n)) != null || window.opener.document.getElementById('idb2b'+(n)) != undefined ){
+            window.opener.document.getElementById('idb2b'+(n)).value = $('#id_trans'+i).val();
+            window.opener.document.getElementById('iddetb2b'+(n)).value = $('#b2bdo_id'+i).val();
+            window.opener.document.getElementById('idproduk'+(n)).value = $('#idbrg'+i).val();
+            window.opener.document.getElementById('namaproduk'+(n)).value = $('#namabrg'+i).val();
+            window.opener.document.getElementById('size'+(n)).value = $('#size'+i).val();
+            window.opener.document.getElementById('harga'+(n)).value = $('#price'+i).val();
             for(let j = 31; j<47; j++){
-              window.opener.document.getElementById('idItem'+i).value = $('#id'+j).val();
-              window.opener.document.getElementById('id-'+(i)+'-'+j).value = $('#qty'+j).val();
+              window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
+              window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
+            }
+          } else {
+            window.opener.document.getElementById('idb2b'+(n)).value = $('#id_trans'+i).val();
+            window.opener.document.getElementById('iddetb2b'+(n)).value = $('#b2bdo_id'+i).val();
+            window.opener.document.getElementById('idproduk'+(n)).value = $('#idbrg'+i).val();
+            window.opener.document.getElementById('namaproduk'+(n)).value = $('#namabrg'+i).val();
+            window.opener.document.getElementById('size'+(n)).value = $('#size'+i).val();
+            window.opener.document.getElementById('harga'+(n)).value = $('#price'+i).val();
+            for(let j = 31; j<47; j++){
+              window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
+              window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
             }
           }
-          if(window.opener.document.getElementById('idb2b'+(i+1)) == undefined){
-        console.log('masuk2');
-
+          if(window.opener.document.getElementById('idb2b'+(n+1)) == undefined){
             window.opener.addNewRow1();
-            indow.opener.document.getElementById('idb2b'+(i)).value = $('#id_trans'+i).val();
-            window.opener.document.getElementById('iddetb2b'+(i)).value = $('#b2bdo_id'+i).val();
-            window.opener.document.getElementById('idproduk'+(i)).value = $('#idbrg'+i).val();
-            window.opener.document.getElementById('namaproduk'+(i)).value = $('#namabrg'+i).val();
-            window.opener.document.getElementById('size'+(i)).value = $('#size'+i).val();
-            window.opener.document.getElementById('harga'+(i)).value = $('#price'+i).val();
-            for(let j = 31; j<47; j++){
-              window.opener.document.getElementById('idItem'+i).value = $('#id'+j).val();
-              window.opener.document.getElementById('id-'+(i)+'-'+j).value = $('#qty'+j).val();
-            }
           }
+          n++;
         }
       }
-      // window.close();
+      window.close();
     }
   }
 
