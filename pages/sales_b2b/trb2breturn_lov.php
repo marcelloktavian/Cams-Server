@@ -67,6 +67,10 @@ function intToIDR($val) {
     td{
       white-space: nowrap;
     }
+
+    .red-text {
+        color: red;
+    }
 	</style>
 </head>
 
@@ -307,6 +311,9 @@ function intToIDR($val) {
             window.opener.document.getElementById('harga'+(n)).value = $('#price'+i).val();
             for(let j = 31; j<47; j++){
               window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
+              if($('#qty'+j).val() > 0){
+                window.opener.document.getElementById('id-' + n + '-' + j).classList.add('red-text');
+              }
               window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
               window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty'+j).val();
             }
@@ -319,6 +326,9 @@ function intToIDR($val) {
             window.opener.document.getElementById('harga'+(n)).value = $('#price'+i).val();
             for(let j = 31; j<47; j++){
               window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
+              if($('#qty'+j).val() > 0){
+                window.opener.document.getElementById('id-' + n + '-' + j).classList.add('red-text');
+              }
               window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
               window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty'+j).val();
             }

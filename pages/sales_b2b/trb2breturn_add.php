@@ -199,12 +199,8 @@ function generateQty(index, n){
 
   let qtyAfter = document.createElement("input");
   qtyAfter.type = "text"; qtyAfter.name = "qty-"+index+"-"+n; qtyAfter.id = "qty-"+index+"-"+n; qtyAfter.size=4; qtyAfter.classList.add('text-center'); qtyAfter.value = 0;
-
-  if(parseInt(qtyAfter.value) > 0){
-    qtyBefore.classList.add('red');
-  }
   
-  qtyAfter.addEventListener("input", (event)=>{
+  qtyAfter.addEventListener("keyup", (event)=>{
     if(qtyAfter.value > qtyBefore.value){
       qtyAfter.value = qtyBefore.value;
     };
@@ -227,6 +223,10 @@ function generateQty(index, n){
     if(parseInt(qtyAfter.value) == 0){
       qtyAfter.value = 0;
       qtyBefore.classList.remove('red');
+    }
+
+    if(parseInt(qtyAfter.value) > 0){
+      qtyBefore.classList.add('red');
     }
   });
 
