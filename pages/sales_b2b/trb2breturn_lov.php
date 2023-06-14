@@ -315,7 +315,19 @@ function intToIDR($val) {
             }
           }
           if(window.opener.document.getElementById('idb2b'+(i+1)) == undefined){
+        console.log('masuk2');
+
             window.opener.addNewRow1();
+            indow.opener.document.getElementById('idb2b'+(i)).value = $('#id_trans'+i).val();
+            window.opener.document.getElementById('iddetb2b'+(i)).value = $('#b2bdo_id'+i).val();
+            window.opener.document.getElementById('idproduk'+(i)).value = $('#idbrg'+i).val();
+            window.opener.document.getElementById('namaproduk'+(i)).value = $('#namabrg'+i).val();
+            window.opener.document.getElementById('size'+(i)).value = $('#size'+i).val();
+            window.opener.document.getElementById('harga'+(i)).value = $('#price'+i).val();
+            for(let j = 31; j<47; j++){
+              window.opener.document.getElementById('idItem'+i).value = $('#id'+j).val();
+              window.opener.document.getElementById('id-'+(i)+'-'+j).value = $('#qty'+j).val();
+            }
           }
         }
       }
