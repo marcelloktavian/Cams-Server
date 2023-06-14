@@ -296,9 +296,13 @@ function intToIDR($val) {
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
       for(var i = <?= $get_baris ?>; i< <?= $baris ?>; i++){
+        console.log($get_baris);
+        console.log($baris);
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
+        console.log('masuk');
           if(window.opener.document.getElementById('idb2b'+(i)) != null || window.opener.document.getElementById('idb2b'+(i)) != undefined ){
-            console.log($('#id_trans'+i).val());
+        console.log($('#id_trans'+i).val());
+
             window.opener.document.getElementById('idb2b'+(i)).value = $('#id_trans'+i).val();
             window.opener.document.getElementById('iddetb2b'+(i)).value = $('#b2bdo_id'+i).val();
             window.opener.document.getElementById('idproduk'+(i)).value = $('#idbrg'+i).val();
