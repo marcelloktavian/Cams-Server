@@ -204,7 +204,7 @@ function generateQty(index, n){
     qtyBefore.classList.add('red');
   }
   
-  qtyAfter.addEventListener("keyup", (event)=>{
+  qtyAfter.addEventListener("input", (event)=>{
     if(qtyAfter.value > qtyBefore.value){
       qtyAfter.value = qtyBefore.value;
     };
