@@ -308,6 +308,7 @@ function intToIDR($val) {
             for(let j = 31; j<47; j++){
               window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
               window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty'+j).val();
             }
           } else {
             window.opener.document.getElementById('idb2b'+(n)).value = $('#id_trans'+i).val();
@@ -319,6 +320,7 @@ function intToIDR($val) {
             for(let j = 31; j<47; j++){
               window.opener.document.getElementById('idItem'+n).value = $('#id'+j).val();
               window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty'+j).val();
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty'+j).val();
             }
           }
           if(window.opener.document.getElementById('idb2b'+(n+1)) == undefined){
