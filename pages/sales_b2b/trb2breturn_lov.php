@@ -322,7 +322,6 @@ function intToIDR($val) {
               window.opener.document.getElementById('id-'+(i)+'-'+j).value = $('#qty'+j).val();
             }
           }
-          }
         }
       }
       // window.close();
