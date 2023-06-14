@@ -298,6 +298,7 @@ function intToIDR($val) {
       for(var i = <?= $get_baris ?>; i< <?= $baris ?>; i++){
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
           if(window.opener.document.getElementById('idb2b'+(i)) != null || window.opener.document.getElementById('idb2b'+(i)) != undefined ){
+            console.log($('#id_trans'+i).val());
             window.opener.document.getElementById('idb2b'+(i)).value = $('#id_trans'+i).val();
             window.opener.document.getElementById('iddetb2b'+(i)).value = $('#b2bdo_id'+i).val();
             window.opener.document.getElementById('idproduk'+(i)).value = $('#idbrg'+i).val();
