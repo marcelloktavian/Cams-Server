@@ -296,8 +296,8 @@ function intToIDR($val) {
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
       for(var i = <?= $get_baris ?>; i< <?= $baris ?>; i++){
-        console.log($get_baris);
-        console.log($baris);
+        console.log(<?= $get_baris ?>);
+        console.log(<?= $baris ?>);
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
         console.log('masuk');
           if(window.opener.document.getElementById('idb2b'+(i)) != null || window.opener.document.getElementById('idb2b'+(i)) != undefined ){
