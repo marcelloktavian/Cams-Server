@@ -246,13 +246,13 @@ function generateTotal(index){
 }
 
 function generateDelete(index){
-    var idx = document.createElement("input");
-    idx.type = "button"; idx.name = "del1"+index+""; idx.id = "del1"+index+""; idx.size = "10"; idx.value = "X"; idx.onclick = "delRow1("+index+")"; return idx;
-  }
+  var idx = document.createElement("input");
+  idx.type = "button"; idx.name = "del1"+index+""; idx.id = "del1"+index+""; idx.size = "10"; idx.value = "X"; idx.onclick = "delRow1("+index+")"; return idx;
+}
 
 function delRow1(index){
-    var element = document.getElementById("t1"+index); element.remove();
-  }
+  var element = document.getElementById("t1"+index); element.remove();
+}
 
 let baris1 = 1;
 

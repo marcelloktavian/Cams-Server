@@ -100,7 +100,7 @@ function intToIDR($val) {
 
 <table width="100%">
     <tr>
-      <td class="fontjudul">DATA DETAIL INVOICE</td>
+      <td class="fontjudul">DATA DETAIL B2B</td>
     </tr>
   </table>
 
