@@ -29,6 +29,14 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
 				$where .= " AND p.state='1' AND (p.totalqty <> 0) AND (p.piutang > 0) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
 			}else if($filter == 'DONE'){
 				$where .= " AND p.state='1' AND (p.totalqty <> 0) AND (p.piutang > 0) AND (p.totalqty = p.totalkirim) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+			}else if($filter == 'DONE'){
+				$where .= " AND p.state='1' AND (p.totalqty <> 0) AND (p.piutang > 0) AND (p.totalqty = p.totalkirim) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+			}else if($filter == 'SDC'){
+				$where .= " AND k.id=2 AND (p.totalqty <> 0) AND (p.piutang > 0) AND (p.totalqty = p.totalkirim) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+			}else if($filter == 'SOL'){
+				$where .= " AND k.id=1 AND (p.totalqty <> 0) AND (p.piutang > 0) AND (p.totalqty = p.totalkirim) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+			}else if($filter == 'SDL'){
+				$where .= " AND k.id=3 AND (p.totalqty <> 0) AND (p.piutang > 0) AND (p.totalqty = p.totalkirim) AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
 			}else{
 				$where .= " AND DATE(p.tgl_trans) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') AND ((j.nama like '%$filter%') or (s.nama like '%$filter%'))";
 			}
@@ -139,7 +147,7 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
 				<input value="" type="text" class="required datepicker"  id="enddate_b2barc" name="enddate_b2barc">
 				</td>
 				<td> Filter
-				 <input value="" type="text" id="filterb2barc" name="filterb2barc">(Customer,Salesman,PENDING,COFIRM,DONE)
+				 <input value="" type="text" id="filterb2barc" name="filterb2barc">(Customer,Salesman,PENDING,COFIRM,DONE,Category)
 				</td>
 				</tr>
 				</table>

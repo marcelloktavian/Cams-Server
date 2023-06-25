@@ -28,7 +28,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $where = " WHERE ret.deleted=0 ";
 
   if($startdate != null && $startdate != ""){
-    $where .= " AND tgl_return BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+    $where .= " AND tgl_return BETWEEN '$startdate' AND '$enddate' ";
   }
 
   if($filter != null && $filter != ""){
@@ -44,7 +44,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     }
   }
 
-  $sql = "SELECT *, date_format(tgl_return, '%d-%m-%Y') AS tanggal_return FROM b2breturn ret ";
+  $sql = "SELECT ret.*, cat.nama AS kategori FROM b2breturn ret LEFT JOIN mst_b2bcategory_sale cat ON ret.id_kategori=cat.id ".$where;
 
   $q = $db->query($sql);
   $count = $q->rowCount();
@@ -63,16 +63,17 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $post = $allow_post ? ($line['post'] == '0' ? '<a href="javascript:void(0);">Post</a>': '<a href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
-    $edit = $allow_delete ? '<a href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
-    $delete = $allow_delete ? '<a href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
+    $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=post&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=unpost&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
+    $edit = $allow_edit ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2breturn_edit.php?id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
+    $delete = $allow_delete ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=delete&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
       $line['id'],
       $line['b2breturn_num'],
-      $line['tanggal_return'],
+      $line['tgl_return'],
       number_format($line['total']),
+      $line['kategori'],
       $line['keterangan'],
       $post,
       $edit,
@@ -85,6 +86,50 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $responce = [];
   }
   echo json_encode($responce);
+  exit;
+} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
+  $delete_b2bretun  = $db->prepare("UPDATE `b2breturn` SET `deleted` = 1 WHERE id='".$_GET['id']."'");
+
+  $delete_b2bretun->execute();
+  $affected_rows = $delete_b2bretun->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
+  exit;
+}
+else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
+  $delete_b2bretun  = $db->prepare("UPDATE `b2breturn` SET `post` = 1 WHERE id='".$_GET['id']."'");
+
+  $delete_b2bretun->execute();
+  $affected_rows = $delete_b2bretun->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
+  exit;
+}
+else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
+  $delete_b2bretun  = $db->prepare("UPDATE `b2breturn` SET `post` = 0 WHERE id='".$_GET['id']."'");
+
+  $delete_b2bretun->execute();
+  $affected_rows = $delete_b2bretun->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
   exit;
 }
 ?>
@@ -114,7 +159,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       <label for="" class="ui-helper-reset label-control">&nbsp;</label>
       <div class="ui-corner-all form-control">
         <button onclick="gridReloadB2BReturn()" class="btn" type="button">Cari</button>
-        <button onclick="printInRangeB2BReturn()" class="btn" type="button">Print</button>
+        <!-- <button onclick="printInRangeB2BReturn()" class="btn" type="button">Print</button> -->
       </div>
     </form>
   </div>
@@ -123,9 +168,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 <div class="btn_box">
   <?php
   if($allow_add){?>
-    <a href="javascript: void(0)">
-      <button class="btn btn-success" onclick="javascript:window.open('<?= BASE_URL?>pages/sales_b2b/trb2breturn_add.php')">Tambah</button>
-    </a>
+    <button class="btn btn-success" onclick="javascript:window.open('<?= BASE_URL?>pages/sales_b2b/trb2breturn_add.php')">Tambah Return</button>
   <?php } ?>
 </div>
 
@@ -144,7 +187,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $( "#startdate_b2breturn" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
 	$( "#enddate_b2breturn" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
 
-  function gridReloadAP(){
+  function gridReloadB2BReturn(){
     var startdate   = ($("#startdate_b2breturn").val()).split("-");
 		var enddate     = ($("#enddate_b2breturn").val()).split("-");
 
@@ -163,12 +206,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_b2breturn').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['ID','Nomor B2B Return', 'Tanggal Return', 'Total Return', 'Keterangan', 'Post', 'Edit', 'Delete'],
+      colNames      : ['ID','Nomor B2B Return','Tanggal Return', 'Total Return', 'Type', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
         {name: 'id_b2breturn', index: 'id_b2breturn', align: 'right', width: 10, searchoptions: {sopt: ['cn']}},
-        {name: 'b2breturn_num', index: 'b2breturn_num', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
+        {name: 'b2breturn_num', index: 'b2breturn_num', align: 'center', width: 50, searchoptions:{sopt: ['cn']}},
         {name:'tanggal_b2breturn', index: 'tanggal_b2breturn', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name: 'total_b2breturn', index: 'total_b2breturn', align: 'left', width: 40, searchoptions:{sopt: ['cn']}},
+        {name: 'type_b2breturn', index: 'type_b2breturn', align: 'center', width: 10, searchoptions:{sopt: ['cn']}},
         {name: 'keterangan_b2breturn', index: 'keterangan_b2breturn', align: 'center', width: 80, searchoptions:{sopt: ['cn']}},
         {name: 'post', index: 'post', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'edit', index: 'edit', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},

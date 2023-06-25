@@ -71,6 +71,21 @@
   <script type="text/javascript" src="../../assets/js/jquery.autocomplete.js"></script>
 </head>
 
+<?php
+include "../../include/koneksi.php";
+
+$sql_mst    = "SELECT a.*, b.nama AS customer, a.id AS id_mst, c.nama AS kategori FROM `b2breturn` a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id=b.id LEFT JOIN mst_b2bcategory_sale c ON a.id_kategori=c.id WHERE a.id='".$_GET['id']."' AND a.deleted=0";
+
+$sql        = mysql_query($sql_mst) or die (mysql_error());
+$result     = mysql_fetch_array($sql);
+  $id_mst         = $result['id_mst'];
+  $b2breturn_num  = $result['b2breturn_num'];
+  $b2breturn_cust = $result['b2bcust_id'].' : '.$result['customer'];
+  $b2breturn_type = $result['id_kategori'];
+  $tgl_return     = $result['tgl_return'];
+  $keterangan     = $result['keterangan'];
+?>
+
 <body>
   <form id="b2breturn_add" name="b2breturn_add" action="" method="post">
     <table width="100%">
@@ -81,29 +96,31 @@
       </tr>
     </table>
 
+    <input type="hidden" id="id_b2breturn" name="id_b2breturn" value="<?= $id_mst ?>">
+
     <hr />
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Nomor B2B Return</td>
-        <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" readonly/></td>
+        <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" value="<?= $b2breturn_num ?>" readonly/></td>
         <td class="fonttext">Type</td>
         <td><select type="text" class="inputForm" id="type_b2breturn" name="type_b2breturn">
-          <option value="1">SOL - Product Sol Sepatu</option>
-          <option value="2">SDC - Contract Manufacturing Camou</option>
-          <option value="3">SDL - Contract Manufacturing Non Camou</option>
+          <option value="1" <?= $b2breturn_type=='1' ? 'selected' : 'hidden' ?>>SOL - Product Sol Sepatu</option>
+          <option value="2" <?= $b2breturn_type=='2' ? 'selected' : 'hidden' ?>>SDC - Contract Manufacturing Camou</option>
+          <option value="3" <?= $b2breturn_type=='3' ? 'selected' : 'hidden' ?>>SDL - Contract Manufacturing Non Camou</option>
         </select></td>
       </tr>
       <tr>
         <td class="fonttext">Customer</td>
-        <td><input type="text" id="customer_b2breturn" name="customer_b2breturn" class="inputForm"></td>
+        <td><input type="text" id="customer_b2breturn" name="customer_b2breturn" class="inputForm" value="<?= $b2breturn_cust ?>" readonly></td>
         <td class="fonttext no-margin">Tanggal Return</td>
-        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn"></td>
+        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn" value="<?= $tgl_return ?>" readonly></td>
       </tr>
       <tr height="1">
         <td colspan="100%"><hr /></td>
       </tr>
     </table>
-    
+
     <p class="fonttext">*(keterangan warna) abu abu : qty b2b | putih   : qty return</p>
 
     <table width="100%" id="b2breturn_detail">
@@ -230,7 +247,7 @@ function cetak(){
     alert("Maaf, ada kesalahan pengisian form : \n"+pesan); return false;
   } else {
     let answer = confirm('Mau simpan data dan cetak datanya ?');
-    $('#b2breturn_add').attr('action',"trb2breturn_save.php?row="+baris1).submit();
+    $('#b2breturn_add').attr('action',"trb2breturn_update.php?row="+baris1).submit();
   }
 }
 
@@ -252,17 +269,17 @@ function generateIdB2BDO(index){
 
 function generateIdMasterB2BDO(index){
   let idx = document.createElement("input");
-  idx.type = "hidden"; idx.name = "idmstb2b"+index+""; idx.id = "idmstb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; return idx;
+  idx.type = "hidden"; idx.name = "idmstb2b"+index+""; idx.id = "idmstb2b"+index+""; idx.readOnly="readonly"; return idx;
 }
 
 function generateIdDetailB2BDO(index){
   let idx = document.createElement("input");
-  idx.type = "hidden"; idx.name = "iddetb2b"+index+""; idx.id = "iddetb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; return idx;
+  idx.type = "hidden"; idx.name = "iddetb2b"+index+""; idx.id = "iddetb2b"+index+""; idx.readOnly="readonly"; return idx;
 }
 
 function generateIdProduk(index){
   let idx = document.createElement("input");
-  idx.type = "hidden"; idx.name = "idproduk"+index+""; idx.id = "idproduk"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ;return idx;
+  idx.type = "hidden"; idx.name = "idproduk"+index+""; idx.id = "idproduk"+index+""; idx.readOnly="readonly"; return idx;
 }
 
 function generateNamaProduk(index){
@@ -288,7 +305,7 @@ function generateQty(index, n){
   let qtyAfter = document.createElement("input");
   qtyAfter.type = "text"; qtyAfter.name = "qty-"+index+"-"+n; qtyAfter.id = "qty-"+index+"-"+n; qtyAfter.size=4; qtyAfter.classList.add('text-center'); qtyAfter.value = 0;
 
-  qtyAfter.addEventListener("change", (event)=>{
+  qtyAfter.addEventListener("input", (event)=>{
     if(qtyAfter.value == ""){
       qtyAfter.value = 0;
       qtyBefore.classList.remove('red');
@@ -388,4 +405,81 @@ addNewRow1();
   $(document).ready(()=>{
     $('#customer_b2breturn').autocomplete("trb2breturn_cust_list.php", {width: 400});
   });
+
+<?php 
+
+$sql_detail     = "SELECT *, a.id AS id_b2breturn_det FROM b2breturn_detail a LEFT JOIN b2bunreturned_qty b ON a.`id_b2bdo_det`=b.`b2bdo_id` WHERE a.id_parent='".$_GET['id']."' AND a.deleted=0 ";
+
+$sql_detail     = mysql_query($sql_detail);
+
+$i = 1;
+while($rs=mysql_fetch_array($sql_detail)){
+  ?>
+  addNewRow1();
+
+  $('#id_b2breturn_det<?= $i ?>').val('<?= $rs['id_b2breturn_det'] ?>');
+  $('#idb2b<?= $i ?>').val('<?= $rs['b2bdo_num'] ?>');
+  $('#idmstb2b'+'<?= $i ?>').val('<?= $rs['id_trans_do'] ?>');
+  $('#iddetb2b'+'<?= $i ?>').val('<?= $rs['id_b2bdo_det'] ?>');
+  $('#idproduk'+'<?= $i ?>').val('<?= $rs['id_product'] ?>');
+  $('#namaproduk'+'<?= $i ?>').val('<?= $rs['namabrg'] ?>');
+
+  $('#idItem-<?=$i?>-31').val('<?=$rs['id31']?>');
+  $('#id-<?=$i?>-31').val('<?=$rs['unret31'] + $rs['qty31']?>');
+  $('#qty-<?=$i?>-31').val('<?=$rs['qty31']?>');
+  $('#idItem-<?=$i?>-32').val('<?=$rs['id32']?>');
+  $('#id-<?=$i?>-32').val('<?=$rs['unret32'] + $rs['qty32']?>');
+  $('#qty-<?=$i?>-32').val('<?=$rs['qty32']?>');
+  $('#idItem-<?=$i?>-33').val('<?=$rs['id33']?>');
+  $('#id-<?=$i?>-33').val('<?=$rs['unret33'] + $rs['qty33']?>');
+  $('#qty-<?=$i?>-33').val('<?=$rs['qty33']?>');
+  $('#idItem-<?=$i?>-34').val('<?=$rs['id34']?>');
+  $('#id-<?=$i?>-34').val('<?=$rs['unret34'] + $rs['qty34']?>');
+  $('#qty-<?=$i?>-34').val('<?=$rs['qty34']?>');
+  $('#idItem-<?=$i?>-35').val('<?=$rs['id35']?>');
+  $('#id-<?=$i?>-35').val('<?=$rs['unret35'] + $rs['qty35']?>');
+  $('#qty-<?=$i?>-35').val('<?=$rs['qty35']?>');
+  $('#idItem-<?=$i?>-36').val('<?=$rs['id36']?>');
+  $('#id-<?=$i?>-36').val('<?=$rs['unret36'] + $rs['qty36']?>');
+  $('#qty-<?=$i?>-36').val('<?=$rs['qty36']?>');
+  $('#idItem-<?=$i?>-37').val('<?=$rs['id37']?>');
+  $('#id-<?=$i?>-37').val('<?=$rs['unret37'] + $rs['qty37']?>');
+  $('#qty-<?=$i?>-37').val('<?=$rs['qty37']?>');
+  $('#idItem-<?=$i?>-38').val('<?=$rs['id38']?>');
+  $('#id-<?=$i?>-38').val('<?=$rs['unret38'] + $rs['qty38']?>');
+  $('#qty-<?=$i?>-38').val('<?=$rs['qty38']?>');
+  $('#idItem-<?=$i?>-39').val('<?=$rs['id39']?>');
+  $('#id-<?=$i?>-39').val('<?=$rs['unret39'] + $rs['qty39']?>');
+  $('#qty-<?=$i?>-39').val('<?=$rs['qty39']?>');
+  $('#idItem-<?=$i?>-40').val('<?=$rs['id40']?>');
+  $('#id-<?=$i?>-40').val('<?=$rs['unret40'] + $rs['qty40']?>');
+  $('#qty-<?=$i?>-40').val('<?=$rs['qty40']?>');
+  $('#idItem-<?=$i?>-41').val('<?=$rs['id41']?>');
+  $('#id-<?=$i?>-41').val('<?=$rs['unret41'] + $rs['qty41']?>');
+  $('#qty-<?=$i?>-41').val('<?=$rs['qty41']?>');
+  $('#idItem-<?=$i?>-42').val('<?=$rs['id42']?>');
+  $('#id-<?=$i?>-42').val('<?=$rs['unret42'] + $rs['qty42']?>');
+  $('#qty-<?=$i?>-42').val('<?=$rs['qty42']?>');
+  $('#idItem-<?=$i?>-43').val('<?=$rs['id43']?>');
+  $('#id-<?=$i?>-43').val('<?=$rs['unret43'] + $rs['qty43']?>');
+  $('#qty-<?=$i?>-43').val('<?=$rs['qty43']?>');
+  $('#idItem-<?=$i?>-44').val('<?=$rs['id44']?>');
+  $('#id-<?=$i?>-44').val('<?=$rs['unret44'] + $rs['qty44']?>');
+  $('#qty-<?=$i?>-44').val('<?=$rs['qty44']?>');
+  $('#idItem-<?=$i?>-45').val('<?=$rs['id45']?>');
+  $('#id-<?=$i?>-45').val('<?=$rs['unret45'] + $rs['qty45']?>');
+  $('#qty-<?=$i?>-45').val('<?=$rs['qty45']?>');
+  $('#idItem-<?=$i?>-46').val('<?=$rs['id46']?>');
+  $('#id-<?=$i?>-46').val('<?=$rs['unret46'] + $rs['qty46']?>');
+  $('#qty-<?=$i?>-46').val('<?=$rs['qty46']?>');
+
+  $('#harga'+'<?= $i ?>').val('<?= $rs['harga_satuan'] ?>');
+  $('#total'+'<?= $i ?>').val('<?= $rs['subtotal'] ?>');
+
+  subtotalCount('<?= $i ?>');
+  <?php
+  $i ++;
+}
+
+?>
 </script>
