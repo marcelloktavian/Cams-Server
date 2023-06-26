@@ -32,7 +32,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   }
 
   if($filter != null && $filter != ""){
-    $where .= " AND b2breturn_num LIKE '".$filter."' ";
+    $where .= " AND (b2breturn_num LIKE '%".$filter."%' OR cust.nama LIKE '%".$filter."%') ";
   }
 
   if($status != null && $status != ""){
@@ -44,7 +44,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     }
   }
 
-  $sql = "SELECT ret.*, cat.nama AS kategori FROM b2breturn ret LEFT JOIN mst_b2bcategory_sale cat ON ret.id_kategori=cat.id ".$where;
+  $sql = "SELECT ret.*, cat.nama AS kategori, cust.nama as customer FROM b2breturn ret LEFT JOIN mst_b2bcustomer cust ON cust.id=ret.b2bcust_id LEFT JOIN mst_b2bcategory_sale cat ON ret.id_kategori=cat.id ".$where;
 
   $q = $db->query($sql);
   $count = $q->rowCount();
@@ -69,11 +69,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
-      $line['id'],
+      // $line['id'],
       $line['b2breturn_num'],
+      $line['customer'],
       $line['tgl_return'],
-      number_format($line['total']),
       $line['kategori'],
+      number_format($line['total']),
       $line['keterangan'],
       $post,
       $edit,
@@ -152,7 +153,7 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
               <option value="unposted">Belum Dipost</option>
               <option value="all" selected>Semua</option>
             </select></td>
-            <td> Filter <input type="text" id="filtervalue_b2breturn" name="filtervalue_b2breturn" />(Nomor Return B2B)</td>
+            <td> Filter <input type="text" id="filtervalue_b2breturn" name="filtervalue_b2breturn" />(Nomor Return B2B, Customer)</td>
           </tr>
         </table>
       </div>
@@ -206,13 +207,14 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
     $('#table_b2breturn').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['ID','Nomor B2B Return','Tanggal Return', 'Total Return', 'Type', 'Keterangan', 'Post', 'Edit', 'Delete'],
+      colNames      : ['Nomor B2B Return','Customer','Tanggal Return', 'Type', 'Total Return', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
-        {name: 'id_b2breturn', index: 'id_b2breturn', align: 'right', width: 10, searchoptions: {sopt: ['cn']}},
-        {name: 'b2breturn_num', index: 'b2breturn_num', align: 'center', width: 50, searchoptions:{sopt: ['cn']}},
+        // {name: 'id_b2breturn', index: 'id_b2breturn', align: 'right', width: 1, searchoptions: {sopt: ['cn']}},
+        {name: 'b2breturn_num', index: 'b2breturn_num', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
+        {name: 'customer', index: 'customer', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name:'tanggal_b2breturn', index: 'tanggal_b2breturn', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
-        {name: 'total_b2breturn', index: 'total_b2breturn', align: 'left', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'type_b2breturn', index: 'type_b2breturn', align: 'center', width: 10, searchoptions:{sopt: ['cn']}},
+        {name: 'total_b2breturn', index: 'total_b2breturn', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'keterangan_b2breturn', index: 'keterangan_b2breturn', align: 'center', width: 80, searchoptions:{sopt: ['cn']}},
         {name: 'post', index: 'post', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'edit', index: 'edit', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
