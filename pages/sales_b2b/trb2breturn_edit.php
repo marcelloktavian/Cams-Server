@@ -336,7 +336,7 @@ function generateQty(index, n){
 
 function generateHarga(index){
   let idx = document.createElement("input");
-  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
+  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
 }
 
 function generateTotal(index){
