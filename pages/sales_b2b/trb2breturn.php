@@ -302,7 +302,7 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
           $responce->rows[$i]['id']   = $line['id_parent'];
           $responce->rows[$i]['cell'] = array(
               $i+1,
-              $line['id_product'],
+              $line['b2bdo_num'],
               $line['namabrg'],
               $sizenew,
               // number_format($line['qty31'],0),
@@ -436,8 +436,8 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json_sub'; ?>',
       subGridModel: [
               { 
-                name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
-                width : [40,40,300,300,50,50,50,50],
+                name : ['No','B2BDO Num','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+                width : [40,100,300,300,50,50,50,50],
                 align : ['right','center','left','left','right','right','right'],
               } 
             ],

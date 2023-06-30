@@ -239,13 +239,13 @@ function intToIDR($val) {
           var formattedTotal = formatNumber(totalValue);
           window.opener.document.getElementById('totalb2bDisplay' + n).value = formattedTotal;
 
-          window.opener.document.getElementById('totalb2bpending'+(n)).value = 0;
-          window.opener.document.getElementById('totalb2bpendingDisplay'+(n)).value = 0;
+          window.opener.document.getElementById('totalb2bproses'+(n)).value = 0;
+          window.opener.document.getElementById('totalb2bprosesDisplay'+(n)).value = 0;
 
-          window.opener.document.getElementById('totalb2bsisa'+(n)).value = $('#total'+i).val();
+          window.opener.document.getElementById('totalb2bpending'+(n)).value = $('#total'+i).val();
           var totalValue = $('#total' + i).val();
           var formattedTotal = formatNumber(totalValue);
-          window.opener.document.getElementById('totalb2bsisaDisplay' + n).value = formattedTotal;
+          window.opener.document.getElementById('totalb2bpendingDisplay' + n).value = formattedTotal;
 
           // window.opener.document.getElementById('keteranganb2b'+(n)).value = $('#keterangan'+i).val();
           if(window.opener.document.getElementById('idarb2b'+(n+1)) == undefined){
@@ -254,6 +254,7 @@ function intToIDR($val) {
           n++;
         }
       }
+      window.opener.returnTotalCount();
       window.close();
     }
   }

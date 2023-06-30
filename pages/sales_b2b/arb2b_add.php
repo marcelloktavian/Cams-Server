@@ -72,8 +72,8 @@
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD AR B2B</td>
-        <td class="fontjudul">TOTAL <input type="text" class="" name="total_ap" id="total_ap" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_ap_value" id="total_ap_value" readonly></td>
-        <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
+        <td class="fontjudul">TOTAL <input type="text" class="" name="total_arb2b" id="total_arb2b" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_arb2b_value" id="total_arb2b_value" readonly></td>
+        <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_arb2b_pending" id="total_arb2b_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_arb2b_pending_value" id="total_arb2b_pending_value" readonly /></td>
       </tr>
     </table>
 
@@ -104,8 +104,8 @@
           <td width="15%" class="fonttext">Customer</td>
           <td width="15%" class="fonttext">Tanggal DO / RET</td>
           <td width="15%" class="fonttext">Total DO / RET</td>
+          <td width="15%" class="fonttext">Total DO / RET Terproses</td>
           <td width="15%" class="fonttext">Total DO / RET Pending</td>
-          <td width="15%" class="fonttext">Total DO / RET Sisa</td>
           <td width="5%" class="fonttext">Hapus</td>
         </tr>
       </thead>
@@ -135,6 +135,10 @@
 </body>
 
 <script>
+  function intToIDR(val){
+    return(val.toLocaleString("id-ID", {style:"currency", currency:"IDR"}));
+  }
+
   $(document).ready(function(){
     $('#customer').autocomplete("trb2breturn_cust_list.php", {width: 400});
 
@@ -180,6 +184,27 @@
     }
   }
 
+  function returnTotalCount(){
+    let total = 0;
+    let totalpending = 0;
+
+    for(let i = 1 ; i<=baris1; i++){
+      if(document.getElementById('kodeGet'+i) != undefined && (document.getElementById('numb2b'+i) != undefined && document.getElementById('numb2b'+i) != "")){
+        if(parseInt(document.getElementById("totalb2b"+i).value) > 0){
+          total += parseInt(document.getElementById("totalb2b"+i).value);
+          totalpending += parseInt(document.getElementById("totalb2bpending"+i).value);
+        }
+      }
+    }
+
+    document.getElementById('total_arb2b').value = intToIDR(total);
+    document.getElementById('total_arb2b_value').value = total;
+
+    document.getElementById('total_arb2b_pending').value = intToIDR(totalpending);
+    document.getElementById('total_arb2b_pending_value').value = totalpending;
+  }
+
+
   // ADD ROW GENERATE ----------
 
   function generateAddDetail(index){
@@ -224,22 +249,22 @@
 
   function generatePending(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "totalb2bpendingDisplay"+index+""; idx.id = "totalb2bpendingDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+    idx.type = "text"; idx.name = "totalb2bprosesDisplay"+index+""; idx.id = "totalb2bprosesDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
   }
 
   function generatePendingHidden(index){
     let idx = document.createElement("input");
-    idx.type = "hidden"; idx.name = "totalb2bpending"+index+""; idx.id = "totalb2bpending"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+    idx.type = "hidden"; idx.name = "totalb2bproses"+index+""; idx.id = "totalb2bproses"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
   }
 
   function generateSisa(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "totalb2bsisaDisplay"+index+""; idx.id = "totalb2bsisaDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+    idx.type = "text"; idx.name = "totalb2bpendingDisplay"+index+""; idx.id = "totalb2bpendingDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
   }
 
   function generateSisaHidden(index){
     let idx = document.createElement("input");
-    idx.type = "hidden"; idx.name = "totalb2bsisa"+index+""; idx.id = "totalb2bsisa"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+    idx.type = "hidden"; idx.name = "totalb2bpending"+index+""; idx.id = "totalb2bpending"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
   }
 
   function generateKeterangan(index){
