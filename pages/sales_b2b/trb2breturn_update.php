@@ -16,7 +16,7 @@ $b2breturn_total    = $_POST['total_b2breturn_value'];
 $catatan            = $_POST['keterangan'];
 $id_user            = $_SESSION['user']['username'];
 
-$sql_master         = "UPDATE b2breturn SET qty='$b2breturn_totalqty', total='$b2breturn_total', keterangan='$catatan', user='$id_user' WHERE id='$b2breturn_id' ";
+$sql_master         = "UPDATE b2breturn SET qty='$b2breturn_totalqty', total='$b2breturn_total', keterangan='$catatan',tgl_return='".$b2breturn_date."', user='$id_user' WHERE id='$b2breturn_id' ";
 
 $query              = mysql_query($sql_master);
 

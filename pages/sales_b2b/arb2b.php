@@ -100,7 +100,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       <label for="" class="ui-helper-reset label-control">&nbsp;</label>
       <div class="ui-corner-all form-control">
         <button onclick="gridReloadB2BAr()" class="btn" type="button">Cari</button>
-        <button onclick="printInRangeB2BAr()" class="btn" type="button">Print</button>
+        <!-- <button onclick="printInRangeB2BAr()" class="btn" type="button">Print</button> -->
       </div>
     </form>
   </div>

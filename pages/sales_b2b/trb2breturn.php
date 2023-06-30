@@ -74,6 +74,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $line['customer'],
       $line['tgl_return'],
       $line['kategori'],
+      number_format($line['qty']),
       number_format($line['total']),
       $line['keterangan'],
       $post,
@@ -131,6 +132,203 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
     $r['stat'] = 0; $r['message'] = 'Failed';
   }
   echo json_encode($r);
+  exit;
+}elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
+	
+  $id = $_GET['id'];
+  //$id = $line['id_trans'];
+  $where = "WHERE pd.id_parent = '".$id."' ";
+      $q = $db->query("SELECT pd.* FROM `b2breturn_detail` pd ".$where);
+  
+  $count = $q->rowCount();
+  
+  $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
+  
+      $i=0;
+      $responce = '';
+      $sizenew='';
+  $count=1;
+  $barangnya='';
+      foreach($data1 as $line){
+              if ($barangnya != $line['id_product']) {
+      $count=1;
+    }
+      if ($line['qty31'] != '0') {
+        if ($count == 1) {
+          $sizenew = '31'.'('.$line['qty31'].')';
+        }else{					
+          $sizenew = $sizenew.', 31('.$line['qty31'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty32'] != '0') {
+        if ($count == 1) {
+          $sizenew = '32'.'('.$line['qty32'].')';
+        }else{
+          $sizenew = $sizenew.', 32('.$line['qty32'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty33'] != '0') {
+        if ($count == 1) {
+          $sizenew = '33'.'('.$line['qty33'].')';
+        }else{
+          $sizenew = $sizenew.', 33('.$line['qty33'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty34'] != '0') {
+        if ($count == 1) {
+          $sizenew = '34'.'('.$line['qty34'].')';
+        }else{
+          $sizenew = $sizenew.', 34('.$line['qty34'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty35'] != '0') {
+        if ($count == 1) {
+          $sizenew = '35'.'('.$line['qty35'].')';
+        }else{
+          $sizenew = $sizenew.', 35('.$line['qty35'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty36'] != '0') {
+        if ($count == 1) {
+          $sizenew = '36'.'('.$line['qty36'].')';
+        }else{
+          $sizenew = $sizenew.', 36('.$line['qty36'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty37'] != '0') {
+        if ($count == 1) {
+          $sizenew = '37'.'('.$line['qty37'].')';
+        }else{
+          $sizenew = $sizenew.', 37('.$line['qty37'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty38'] != '0') {
+        if ($count == 1) {
+          $sizenew = '38'.'('.$line['qty38'].')';
+        }else{
+          $sizenew = $sizenew.', 38('.$line['qty38'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty39'] != '0') {
+        if ($count == 1) {
+          $sizenew = '39'.'('.$line['qty39'].')';
+        }else{
+          $sizenew = $sizenew.', 39('.$line['qty39'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty40'] != '0') {
+        if ($count == 1) {
+          $sizenew = '40'.'('.$line['qty40'].')';
+        }else{
+          $sizenew = $sizenew.', 40('.$line['qty40'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty41'] != '0') {
+        if ($count == 1) {
+          $sizenew = '41'.'('.$line['qty41'].')';
+        }else{
+          $sizenew = $sizenew.', 41('.$line['qty41'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty42'] != '0') {
+        if ($count == 1) {
+          $sizenew = '42'.'('.$line['qty42'].')';
+        }else{
+          $sizenew = $sizenew.', 42('.$line['qty42'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty43'] != '0') {
+        if ($count == 1) {
+          $sizenew = '43'.'('.$line['qty43'].')';
+        }else{
+          $sizenew = $sizenew.', 43('.$line['qty43'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty44'] != '0') {
+        if ($count == 1) {
+          $sizenew = '44'.'('.$line['qty44'].')';
+        }else{
+          $sizenew = $sizenew.', 44('.$line['qty44'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty45'] != '0') {
+        if ($count == 1) {
+          $sizenew = '45'.'('.$line['qty45'].')';
+        }else{
+          $sizenew = $sizenew.', 45('.$line['qty45'].')';
+        }
+        $count++;
+      }
+
+      if ($line['qty46'] != '0') {
+        if ($count == 1) {
+          $sizenew = '46'.'('.$line['qty46'].')';
+        }else{
+          $sizenew = $sizenew.', 46('.$line['qty46'].')';
+        }
+        $count++;
+      }
+
+      $totalqty = $line['qty31'] + $line['qty32'] + $line['qty33'] + $line['qty34'] + $line['qty35'] + $line['qty36'] + $line['qty37'] + $line['qty38'] + $line['qty39'] + $line['qty40'] + $line['qty41'] + $line['qty42'] + $line['qty43'] + $line['qty44'] + $line['qty45'] + $line['qty46'];
+
+          $responce->rows[$i]['id']   = $line['id_parent'];
+          $responce->rows[$i]['cell'] = array(
+              $i+1,
+              $line['id_product'],
+              $line['namabrg'],
+              $sizenew,
+              // number_format($line['qty31'],0),
+              // number_format($line['qty32'],0),
+              // number_format($line['qty33'],0),
+              // number_format($line['qty34'],0),
+              // number_format($line['qty35'],0),
+              // number_format($line['qty36'],0),
+              // number_format($line['qty37'],0),
+              // number_format($line['qty38'],0),
+              // number_format($line['qty39'],0),
+              // number_format($line['qty40'],0),
+              // number_format($line['qty41'],0),
+              // number_format($line['qty42'],0),
+              // number_format($line['qty43'],0),
+              // number_format($line['qty44'],0),
+              // number_format($line['qty45'],0),
+              // number_format($line['qty46'],0),
+               number_format($line['harga_satuan'],0),
+               number_format($totalqty,0),                
+               number_format(($line['harga_satuan']*$totalqty),0),                
+          );
+          $barangnya = $line['id_product'];
+          $i++;
+      }
+      echo json_encode($responce);
   exit;
 }
 ?>
@@ -207,13 +405,14 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
     $('#table_b2breturn').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['Nomor B2B Return','Customer','Tanggal Return', 'Type', 'Total Return', 'Keterangan', 'Post', 'Edit', 'Delete'],
+      colNames      : ['Nomor B2B Return','Customer','Tanggal Return', 'Type', 'Qty Return', 'Total Return', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
         // {name: 'id_b2breturn', index: 'id_b2breturn', align: 'right', width: 1, searchoptions: {sopt: ['cn']}},
         {name: 'b2breturn_num', index: 'b2breturn_num', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name: 'customer', index: 'customer', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name:'tanggal_b2breturn', index: 'tanggal_b2breturn', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name: 'type_b2breturn', index: 'type_b2breturn', align: 'center', width: 10, searchoptions:{sopt: ['cn']}},
+        {name: 'qty_b2breturn', index: 'qty_b2breturn', align: 'right', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'total_b2breturn', index: 'total_b2breturn', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'keterangan_b2breturn', index: 'keterangan_b2breturn', align: 'center', width: 80, searchoptions:{sopt: ['cn']}},
         {name: 'post', index: 'post', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
@@ -233,6 +432,15 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       ondblClickRow : function(rowid){
         alert(rowid);
       },
+      subGrid : true,
+      subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json_sub'; ?>',
+      subGridModel: [
+              { 
+                name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+                width : [40,40,300,300,50,50,50,50],
+                align : ['right','center','left','left','right','right','right'],
+              } 
+            ],
     });
     $('#table_b2breturn').jqGrid('navGrid', '#pager_table_b2breturn', {edit:false, add:false, del:false, search:false});
   });

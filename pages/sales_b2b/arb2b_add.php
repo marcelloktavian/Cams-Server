@@ -72,6 +72,8 @@
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD AR B2B</td>
+        <td class="fontjudul">TOTAL <input type="text" class="" name="total_ap" id="total_ap" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_ap_value" id="total_ap_value" readonly></td>
+        <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_pending" id="total_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_pending_value" id="total_pending_value" readonly /></td>
       </tr>
     </table>
 
@@ -80,8 +82,14 @@
       <tr>
         <td class="fonttext">Nomor AR B2B</td>
         <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" readonly /></td>
+        <td class="fonttext">Customer</td>
+        <td><input type="text" class="inputForm" name="customer" id="customer" /></td>
+      </tr>
+      <tr>
         <td class="fonttext no-margin">Tanggal AR</td>
         <td><input type="date" class="inputForm" name="tanggal_b2bar" /></td>
+        <td class="fonttext">Akun Kredit</td>
+        <td><input type="text" class="inputForm" name="akun" id="akun" /></td>
       </tr>
       <tr heigth="1">
         <td colspan="100%"><hr /></td>
@@ -93,9 +101,11 @@
         <tr>
           <td width="1%" class="fonttext"></td>
           <td width="15%" class="fonttext">ID B2B DO / RET</td>
+          <td width="15%" class="fonttext">Customer</td>
           <td width="15%" class="fonttext">Tanggal DO / RET</td>
           <td width="15%" class="fonttext">Total DO / RET</td>
-          <td class="fonttext">Keterangan</td>
+          <td width="15%" class="fonttext">Total DO / RET Pending</td>
+          <td width="15%" class="fonttext">Total DO / RET Sisa</td>
           <td width="5%" class="fonttext">Hapus</td>
         </tr>
       </thead>
@@ -125,11 +135,49 @@
 </body>
 
 <script>
+  $(document).ready(function(){
+    $('#customer').autocomplete("trb2breturn_cust_list.php", {width: 400});
+
+    $("#akun").autocomplete("lookup_akun.php?", {
+      width: 178
+    });
+
+    $("#akun").autocomplete("COALovParent.php?", {
+      width: 178
+    });
+
+    $("#akun").result(function (event, data, formatted) {
+      var nama = document.getElementById("akun").value;
+      for (var i = 0; i < nama.length; i++) {
+        var id = nama.split(';');
+        if (id[1] == "") continue;
+        var id_pd = id[1];
+      }
+
+      $.ajax({
+        url: 'COALoVdet.php?id=' + id_pd,
+        dataType: 'json',
+        data: "nama=" + formatted,
+        success: function (data) {
+          var id = data.id;
+          var noakun = data.noakun;
+          var nama = data.nama;
+          $("#akun").val(id+":"+noakun+" | "+nama);
+        }
+      });
+    });
+  });
+
   function popDetail(idx){
-    var width   = screen.width;
-    var height  = screen.height;
-    var params  = 'width='+width+', height='+height+',scrollbars=yes';
-    window.open('arb2b_lov.php?baris='+idx,'',params);
+    if(document.getElementById("customer").value == ''){
+      alert('Customer harus diisi terlebih dahulu');
+    }else{
+      var custid = document.getElementById("customer").value.split(':');
+      var width   = screen.width;
+      var height  = screen.height;
+      var params  = 'width='+width+', height='+height+',scrollbars=yes';
+      window.open('arb2b_lov.php?baris='+idx+'&cust='+custid[0],'',params);
+    }
   }
 
   // ADD ROW GENERATE ----------
@@ -151,22 +199,52 @@
 
   function generateNumB2B(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "numb2b"+index+""; idx.id = "numb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size=40; idx.classList.add("text-center"); return idx;
+    idx.type = "text"; idx.name = "numb2b"+index+""; idx.id = "numb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size=20; idx.classList.add("text-left"); return idx;
+  }
+
+  function generateCustomer(index){
+    let idx = document.createElement("input");
+    idx.type = "text"; idx.name = "customer"+index+""; idx.id = "customer"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-left"); idx.size=30; return idx;
   }
 
   function generateTanggal(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "tanggalb2b"+index+""; idx.id = "tanggalb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-center"); idx.size=40; return idx;
+    idx.type = "text"; idx.name = "tanggalb2b"+index+""; idx.id = "tanggalb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-left"); idx.size=20; return idx;
   }
 
   function generateTotal(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "totalb2b"+index+""; idx.id = "totalb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ;  idx.size=40; return idx;
+    idx.type = "text"; idx.name = "totalb2bDisplay"+index+""; idx.id = "totalb2bDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+  }
+
+  function generateTotalHidden(index){
+    let idx = document.createElement("input");
+    idx.type = "hidden"; idx.name = "totalb2b"+index+""; idx.id = "totalb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+  }
+
+  function generatePending(index){
+    let idx = document.createElement("input");
+    idx.type = "text"; idx.name = "totalb2bpendingDisplay"+index+""; idx.id = "totalb2bpendingDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+  }
+
+  function generatePendingHidden(index){
+    let idx = document.createElement("input");
+    idx.type = "hidden"; idx.name = "totalb2bpending"+index+""; idx.id = "totalb2bpending"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+  }
+
+  function generateSisa(index){
+    let idx = document.createElement("input");
+    idx.type = "text"; idx.name = "totalb2bsisaDisplay"+index+""; idx.id = "totalb2bsisaDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
+  }
+
+  function generateSisaHidden(index){
+    let idx = document.createElement("input");
+    idx.type = "hidden"; idx.name = "totalb2bsisa"+index+""; idx.id = "totalb2bsisa"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add("text-right"); idx.size=20; return idx;
   }
 
   function generateKeterangan(index){
     let idx = document.createElement("input");
-    idx.type = "text"; idx.name = "keteranganb2b"+index+""; idx.id = "keteranganb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size=160; return idx;
+    idx.type = "text"; idx.name = "keteranganb2b"+index+""; idx.id = "keteranganb2b"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size=50; return idx;
   }
 
   function generateDelete(index){
@@ -191,15 +269,22 @@
     var td3 = document.createElement("td");
     var td4 = document.createElement("td");
     var td5 = document.createElement("td");
+    var td6 = document.createElement("td");
+    var td7 = document.createElement("td");
 
     td0.appendChild(generateAddDetail(baris1));
     td1.appendChild(generateIDB2B(baris1));
     td1.appendChild(generateTypeB2B(baris1));
     td1.appendChild(generateNumB2B(baris1));
-    td2.appendChild(generateTanggal(baris1));
-    td3.appendChild(generateTotal(baris1));
-    td4.appendChild(generateKeterangan(baris1));
-    td5.appendChild(generateDelete(baris1));
+    td2.appendChild(generateCustomer(baris1));
+    td3.appendChild(generateTanggal(baris1));
+    td4.appendChild(generateTotal(baris1));
+    td4.appendChild(generateTotalHidden(baris1));
+    td5.appendChild(generatePending(baris1));
+    td5.appendChild(generatePendingHidden(baris1));
+    td6.appendChild(generateSisa(baris1));
+    td6.appendChild(generateSisaHidden(baris1));
+    td7.appendChild(generateDelete(baris1));
 
     row.appendChild(td0);
     row.appendChild(td1);
@@ -207,6 +292,8 @@
     row.appendChild(td3);
     row.appendChild(td4);
     row.appendChild(td5);
+    row.appendChild(td6);
+    row.appendChild(td7);
 
     document.getElementById('kodeGet'+baris1+'').setAttribute('onclick', 'popDetail('+baris1+')');
     document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); 

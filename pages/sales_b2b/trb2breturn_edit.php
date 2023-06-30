@@ -61,7 +61,7 @@
 </style>
 
 <head>
-  <title>ADD B2B Return</title>
+  <title>Edit B2B Return</title>
 
   <link rel="stylesheet" type="text/css" href="../../assets/css/styles.css" />
   <link rel="stylesheet" type="text/css" href="../../assets/css/jquery.autocomplete.css" />
@@ -90,7 +90,7 @@ $result     = mysql_fetch_array($sql);
   <form id="b2breturn_add" name="b2breturn_add" action="" method="post">
     <table width="100%">
       <tr>
-        <td class="fontjudul">ADD B2B Return</td>
+        <td class="fontjudul">Edit B2B Return</td>
         <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_b2breturn" id="total_qty_b2breturn"  style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
         <td class="fontjudul">TOTAL RETURN<input type="text" class="" name="total_b2breturn" id="total_b2breturn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_b2breturn_value" id="total_b2breturn_value" readonly></td>
       </tr>
@@ -105,16 +105,16 @@ $result     = mysql_fetch_array($sql);
         <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" value="<?= $b2breturn_num ?>" readonly/></td>
         <td class="fonttext">Type</td>
         <td><select type="text" class="inputForm" id="type_b2breturn" name="type_b2breturn">
-          <option value="1" <?= $b2breturn_type=='1' ? 'selected' : 'hidden' ?>>SOL - Product Sol Sepatu</option>
-          <option value="2" <?= $b2breturn_type=='2' ? 'selected' : 'hidden' ?>>SDC - Contract Manufacturing Camou</option>
-          <option value="3" <?= $b2breturn_type=='3' ? 'selected' : 'hidden' ?>>SDL - Contract Manufacturing Non Camou</option>
+          <option value="1" <?= $b2breturn_type=='1' ? 'selected' : '' ?>>SOL - Product Sol Sepatu</option>
+          <option value="2" <?= $b2breturn_type=='2' ? 'selected' : '' ?>>SDC - Contract Manufacturing Camou</option>
+          <option value="3" <?= $b2breturn_type=='3' ? 'selected' : '' ?>>SDL - Contract Manufacturing Non Camou</option>
         </select></td>
       </tr>
       <tr>
         <td class="fonttext">Customer</td>
         <td><input type="text" id="customer_b2breturn" name="customer_b2breturn" class="inputForm" value="<?= $b2breturn_cust ?>" readonly></td>
         <td class="fonttext no-margin">Tanggal Return</td>
-        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn" value="<?= $tgl_return ?>" readonly></td>
+        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn" value="<?= $tgl_return ?>"></td>
       </tr>
       <tr height="1">
         <td colspan="100%"><hr /></td>
@@ -138,6 +138,7 @@ $result     = mysql_fetch_array($sql);
               }
             ?>
           </td>
+          <td width="10%" class="fonttext">Qty Return</td>
           <td width="15%" class="fonttext">Harga</td>
           <td width="15%" class="fonttext">Subtotal</td>
           <td width="5%" class="fonttext">Hapus</td>
@@ -207,6 +208,8 @@ function subtotalCount(idx){
   for(let i = 31; i<47; i++){
     subtotal = subtotal + parseInt(document.getElementById("qty-"+idx+"-"+i).value);
   }
+  document.getElementById("totalqty"+idx).value = subtotal;
+  document.getElementById("totalDisplay"+idx).value = (subtotal*document.getElementById("harga"+idx).value).toLocaleString();
   document.getElementById("total"+idx).value = subtotal*document.getElementById("harga"+idx).value;
 
   qtyTotalCount(); returnTotalCount();
@@ -220,6 +223,19 @@ function popDetail(idx){
   var height  = screen.height;
   var params  = 'width='+width+', height='+height+',scrollbars=yes';
   window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&baris='+idx,'',params);
+}
+
+function hitungsubtotal(idx){
+  if(document.getElementById('totalqty'+idx).value == ''){
+    var qty = 0;
+  }else{
+    var qty = document.getElementById('totalqty'+idx).value;
+  }
+  var harga = document.getElementById('harga'+idx).value;
+  var subtotal = parseInt(qty) * parseInt(harga);
+  document.getElementById('total'+idx).value = subtotal;
+  document.getElementById("totalDisplay"+idx).value = (subtotal).toLocaleString();
+  subtotalCount(idx);
 }
 
 // save function --------------------
@@ -336,12 +352,22 @@ function generateQty(index, n){
 
 function generateHarga(index){
   let idx = document.createElement("input");
-  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
+  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
+}
+
+function generateTotalQty(index){
+  let idx = document.createElement("input");
+  idx.type = "text"; idx.name = "totalqty"+index+""; idx.id = "totalqty"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.size="6"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
 }
 
 function generateTotal(index){
   let idx = document.createElement("input");
-  idx.type = "text"; idx.name = "total"+index+""; idx.id = "total"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; return idx;
+  idx.type = "text"; idx.name = "totalDisplay"+index+""; idx.id = "totalDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc";  idx.size="6"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
+}
+
+function generateTotalHidden(index){
+  let idx = document.createElement("input");
+  idx.type = "hidden"; idx.name = "total"+index+""; idx.id = "total"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="6"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
 }
 
 function generateDelete(index){
@@ -367,6 +393,7 @@ function addNewRow1(){
   var td4 = document.createElement("td");
   var td5 = document.createElement("td");
   var td6 = document.createElement("td");
+  var td7 = document.createElement("td");
 
   var container = generateContainer();
 
@@ -381,9 +408,11 @@ function addNewRow1(){
     container.appendChild(generateQty(baris1, i));
   }
   td3.appendChild(container);
-  td4.appendChild(generateHarga(baris1));
-  td5.appendChild(generateTotal(baris1));
-  td6.appendChild(generateDelete(baris1));
+  td4.appendChild(generateTotalQty(baris1));
+  td5.appendChild(generateHarga(baris1));
+  td6.appendChild(generateTotal(baris1));
+  td6.appendChild(generateTotalHidden(baris1));
+  td7.appendChild(generateDelete(baris1));
 
   row.appendChild(td0);
   row.appendChild(td1);
@@ -392,8 +421,10 @@ function addNewRow1(){
   row.appendChild(td4);
   row.appendChild(td5);
   row.appendChild(td6);
+  row.appendChild(td7);
 
   document.getElementById('kodeGet'+baris1+'').setAttribute('onclick', 'popDetail('+baris1+')');
+  document.getElementById('harga'+baris1+'').setAttribute('onkeyup', 'hitungsubtotal('+baris1+')');
   document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); 
 
   baris1 ++;
@@ -414,6 +445,7 @@ $sql_detail     = mysql_query($sql_detail);
 
 $i = 1;
 while($rs=mysql_fetch_array($sql_detail)){
+  $totalqty = $rs['qty31'] + $rs['qty32'] + $rs['qty33'] + $rs['qty34'] + $rs['qty35'] + $rs['qty36'] + $rs['qty37'] + $rs['qty38'] + $rs['qty39'] + $rs['qty40'] + $rs['qty41'] + $rs['qty42'] + $rs['qty42'] + $rs['qty43'] + $rs['qty44'] + $rs['qty46'] + $rs['qty46'];
   ?>
   addNewRow1();
 
@@ -426,53 +458,102 @@ while($rs=mysql_fetch_array($sql_detail)){
 
   $('#idItem-<?=$i?>-31').val('<?=$rs['id31']?>');
   $('#id-<?=$i?>-31').val('<?=$rs['unret31'] + $rs['qty31']?>');
+  if(<?=$rs['unret31'] + $rs['qty31']?> > 0){
+    document.getElementById('id-<?=$i?>-31').style.color = red;
+  }
   $('#qty-<?=$i?>-31').val('<?=$rs['qty31']?>');
   $('#idItem-<?=$i?>-32').val('<?=$rs['id32']?>');
   $('#id-<?=$i?>-32').val('<?=$rs['unret32'] + $rs['qty32']?>');
+  if(<?=$rs['unret32'] + $rs['qty32']?> > 0){
+    document.getElementById('id-<?=$i?>-32').style.color = red;
+  }
   $('#qty-<?=$i?>-32').val('<?=$rs['qty32']?>');
   $('#idItem-<?=$i?>-33').val('<?=$rs['id33']?>');
   $('#id-<?=$i?>-33').val('<?=$rs['unret33'] + $rs['qty33']?>');
+  if (<?=$rs['unret33'] + $rs['qty33']?> > 0) {
+    document.getElementById('id-<?=$i?>-33').style.color = 'red';
+  }
   $('#qty-<?=$i?>-33').val('<?=$rs['qty33']?>');
   $('#idItem-<?=$i?>-34').val('<?=$rs['id34']?>');
   $('#id-<?=$i?>-34').val('<?=$rs['unret34'] + $rs['qty34']?>');
+  if (<?=$rs['unret34'] + $rs['qty34']?> > 0) {
+    document.getElementById('id-<?=$i?>-34').style.color = 'red';
+  }
   $('#qty-<?=$i?>-34').val('<?=$rs['qty34']?>');
   $('#idItem-<?=$i?>-35').val('<?=$rs['id35']?>');
   $('#id-<?=$i?>-35').val('<?=$rs['unret35'] + $rs['qty35']?>');
+  if (<?=$rs['unret35'] + $rs['qty35']?> > 0) {
+    document.getElementById('id-<?=$i?>-35').style.color = 'red';
+  }
   $('#qty-<?=$i?>-35').val('<?=$rs['qty35']?>');
   $('#idItem-<?=$i?>-36').val('<?=$rs['id36']?>');
   $('#id-<?=$i?>-36').val('<?=$rs['unret36'] + $rs['qty36']?>');
+  if (<?=$rs['unret36'] + $rs['qty36']?> > 0) {
+    document.getElementById('id-<?=$i?>-36').style.color = 'red';
+  }
   $('#qty-<?=$i?>-36').val('<?=$rs['qty36']?>');
   $('#idItem-<?=$i?>-37').val('<?=$rs['id37']?>');
   $('#id-<?=$i?>-37').val('<?=$rs['unret37'] + $rs['qty37']?>');
+  if (<?=$rs['unret37'] + $rs['qty37']?> > 0) {
+    document.getElementById('id-<?=$i?>-37').style.color = 'red';
+  }
   $('#qty-<?=$i?>-37').val('<?=$rs['qty37']?>');
   $('#idItem-<?=$i?>-38').val('<?=$rs['id38']?>');
   $('#id-<?=$i?>-38').val('<?=$rs['unret38'] + $rs['qty38']?>');
+  if (<?=$rs['unret38'] + $rs['qty38']?> > 0) {
+    document.getElementById('id-<?=$i?>-38').style.color = 'red';
+  }
   $('#qty-<?=$i?>-38').val('<?=$rs['qty38']?>');
   $('#idItem-<?=$i?>-39').val('<?=$rs['id39']?>');
   $('#id-<?=$i?>-39').val('<?=$rs['unret39'] + $rs['qty39']?>');
+  if (<?=$rs['unret39'] + $rs['qty39']?> > 0) {
+    document.getElementById('id-<?=$i?>-39').style.color = 'red';
+  }
   $('#qty-<?=$i?>-39').val('<?=$rs['qty39']?>');
   $('#idItem-<?=$i?>-40').val('<?=$rs['id40']?>');
   $('#id-<?=$i?>-40').val('<?=$rs['unret40'] + $rs['qty40']?>');
+  if (<?=$rs['unret40'] + $rs['qty40']?> > 0) {
+    document.getElementById('id-<?=$i?>-40').style.color = 'red';
+  }
   $('#qty-<?=$i?>-40').val('<?=$rs['qty40']?>');
   $('#idItem-<?=$i?>-41').val('<?=$rs['id41']?>');
   $('#id-<?=$i?>-41').val('<?=$rs['unret41'] + $rs['qty41']?>');
+  if (<?=$rs['unret41'] + $rs['qty41']?> > 0) {
+    document.getElementById('id-<?=$i?>-41').style.color = 'red';
+  }
   $('#qty-<?=$i?>-41').val('<?=$rs['qty41']?>');
   $('#idItem-<?=$i?>-42').val('<?=$rs['id42']?>');
   $('#id-<?=$i?>-42').val('<?=$rs['unret42'] + $rs['qty42']?>');
+  if (<?=$rs['unret42'] + $rs['qty42']?> > 0) {
+    document.getElementById('id-<?=$i?>-42').style.color = 'red';
+  }
   $('#qty-<?=$i?>-42').val('<?=$rs['qty42']?>');
   $('#idItem-<?=$i?>-43').val('<?=$rs['id43']?>');
   $('#id-<?=$i?>-43').val('<?=$rs['unret43'] + $rs['qty43']?>');
+  if (<?=$rs['unret43'] + $rs['qty43']?> > 0) {
+    document.getElementById('id-<?=$i?>-43').style.color = 'red';
+  }
   $('#qty-<?=$i?>-43').val('<?=$rs['qty43']?>');
   $('#idItem-<?=$i?>-44').val('<?=$rs['id44']?>');
   $('#id-<?=$i?>-44').val('<?=$rs['unret44'] + $rs['qty44']?>');
+  if (<?=$rs['unret44'] + $rs['qty44']?> > 0) {
+    document.getElementById('id-<?=$i?>-44').style.color = 'red';
+  }
   $('#qty-<?=$i?>-44').val('<?=$rs['qty44']?>');
   $('#idItem-<?=$i?>-45').val('<?=$rs['id45']?>');
   $('#id-<?=$i?>-45').val('<?=$rs['unret45'] + $rs['qty45']?>');
+  if (<?=$rs['unret45'] + $rs['qty45']?> > 0) {
+    document.getElementById('id-<?=$i?>-45').style.color = 'red';
+  }
   $('#qty-<?=$i?>-45').val('<?=$rs['qty45']?>');
   $('#idItem-<?=$i?>-46').val('<?=$rs['id46']?>');
   $('#id-<?=$i?>-46').val('<?=$rs['unret46'] + $rs['qty46']?>');
+  if (<?=$rs['unret46'] + $rs['qty46']?> > 0) {
+    document.getElementById('id-<?=$i?>-46').style.color = 'red';
+  }
   $('#qty-<?=$i?>-46').val('<?=$rs['qty46']?>');
 
+  $('#totalqty'+'<?= $i ?>').val('<?= $totalqty ?>');
   $('#harga'+'<?= $i ?>').val('<?= $rs['harga_satuan'] ?>');
   $('#total'+'<?= $i ?>').val('<?= $rs['subtotal'] ?>');
 

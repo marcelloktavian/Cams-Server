@@ -121,6 +121,7 @@
               }
             ?>
           </td>
+          <td width="10%" class="fonttext">Qty Return</td>
           <td width="15%" class="fonttext">Harga</td>
           <td width="15%" class="fonttext">Subtotal</td>
           <td width="5%" class="fonttext">Hapus</td>
@@ -190,6 +191,8 @@ function subtotalCount(idx){
   for(let i = 31; i<47; i++){
     subtotal = subtotal + parseInt(document.getElementById("qty-"+idx+"-"+i).value);
   }
+  document.getElementById("totalqty"+idx).value = subtotal;
+  document.getElementById("totalDisplay"+idx).value = (subtotal*document.getElementById("harga"+idx).value).toLocaleString();
   document.getElementById("total"+idx).value = subtotal*document.getElementById("harga"+idx).value;
 
   qtyTotalCount(); returnTotalCount();
@@ -199,10 +202,27 @@ const customer = document.getElementById('customer_b2breturn');
 const type = document.getElementById('type_b2breturn');
 
 function popDetail(idx){
-  var width   = screen.width;
-  var height  = screen.height;
-  var params  = 'width='+width+', height='+height+',scrollbars=yes';
-  window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&baris='+idx,'',params);
+  if(customer.value == ''){
+    alert('Customer harus diisi terlebih dahulu');
+  }else{
+    var width   = screen.width;
+    var height  = screen.height;
+    var params  = 'width='+width+', height='+height+',scrollbars=yes';
+    window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&baris='+idx,'',params);
+  }
+}
+
+function hitungsubtotal(idx){
+  if(document.getElementById('totalqty'+idx).value == ''){
+    var qty = 0;
+  }else{
+    var qty = document.getElementById('totalqty'+idx).value;
+  }
+  var harga = document.getElementById('harga'+idx).value;
+  var subtotal = parseInt(qty) * parseInt(harga);
+  document.getElementById('total'+idx).value = subtotal;
+  document.getElementById("totalDisplay"+idx).value = (subtotal).toLocaleString();
+  subtotalCount(idx);
 }
 
 // save function --------------------
@@ -319,12 +339,23 @@ function generateQty(index, n){
 
 function generateHarga(index){
   let idx = document.createElement("input");
-  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
+  idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); 
+   return idx;
+}
+
+function generateTotalQty(index){
+  let idx = document.createElement("input");
+  idx.type = "text"; idx.name = "totalqty"+index+""; idx.id = "totalqty"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.size="6"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
 }
 
 function generateTotal(index){
   let idx = document.createElement("input");
-  idx.type = "text"; idx.name = "total"+index+""; idx.id = "total"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; return idx;
+  idx.type = "text"; idx.name = "totalDisplay"+index+""; idx.id = "totalDisplay"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc";  idx.size="6"; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
+}
+
+function generateTotalHidden(index){
+  let idx = document.createElement("input");
+  idx.type = "hidden"; idx.name = "total"+index+""; idx.id = "total"+index+""; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; idx.size="6"; idx.classList.add("input") ; idx.classList.add('text-right'); return idx;
 }
 
 function generateDelete(index){
@@ -350,6 +381,7 @@ function addNewRow1(){
   var td4 = document.createElement("td");
   var td5 = document.createElement("td");
   var td6 = document.createElement("td");
+  var td7 = document.createElement("td");
 
   var container = generateContainer();
 
@@ -364,9 +396,11 @@ function addNewRow1(){
     container.appendChild(generateQty(baris1, i));
   }
   td3.appendChild(container);
-  td4.appendChild(generateHarga(baris1));
-  td5.appendChild(generateTotal(baris1));
-  td6.appendChild(generateDelete(baris1));
+  td4.appendChild(generateTotalQty(baris1));
+  td5.appendChild(generateHarga(baris1));
+  td6.appendChild(generateTotal(baris1));
+  td6.appendChild(generateTotalHidden(baris1));
+  td7.appendChild(generateDelete(baris1));
 
   row.appendChild(td0);
   row.appendChild(td1);
@@ -375,8 +409,10 @@ function addNewRow1(){
   row.appendChild(td4);
   row.appendChild(td5);
   row.appendChild(td6);
+  row.appendChild(td7);
 
   document.getElementById('kodeGet'+baris1+'').setAttribute('onclick', 'popDetail('+baris1+')');
+  document.getElementById('harga'+baris1+'').setAttribute('onkeyup', 'hitungsubtotal('+baris1+')');
   document.getElementById('del1'+baris1+'').setAttribute('onclick', 'delRow1('+baris1+')'); 
 
   baris1 ++;

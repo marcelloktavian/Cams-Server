@@ -67,6 +67,10 @@ function intToIDR($val) {
     td{
       white-space: nowrap;
     }
+
+    .right{
+      text-align: right;
+    }
 	</style>
 </head>
 
@@ -141,7 +145,10 @@ function intToIDR($val) {
           <td>ID B2B DO</td>
           <td>Nama Produk</td>
           <td>Detail</td>
+          <td>Total Qty</td>
+          <td>Sisa Qty Return</td>
           <td>Harga</td>
+          <td>Subtotal</td>
         </tr>
       </thead>
       <tbody>
@@ -154,8 +161,10 @@ function intToIDR($val) {
           $baris  = $get_baris;
 
           while($det_b2bdo = mysql_fetch_array($sql_detail_b2bdo)){
+            $totalqty = $det_b2bdo['unret31'] + $det_b2bdo['unret32'] + $det_b2bdo['unret33'] + $det_b2bdo['unret34'] + $det_b2bdo['unret35'] + $det_b2bdo['unret36'] + $det_b2bdo['unret37'] + $det_b2bdo['unret38'] + $det_b2bdo['unret39'] + $det_b2bdo['unret40'] + $det_b2bdo['unret41'] + $det_b2bdo['unret42'] + $det_b2bdo['unret43'] + $det_b2bdo['unret44'] + $det_b2bdo['unret45'] + $det_b2bdo['unret46'];
+            if($totalqty>0){
             ?>
-
+            
             <tr>
               <td class="table-light"><input type="checkbox" id="chkid<?= $baris ?>" name="chkid<?= $baris ?>" size="5" onclick=""></td>
 
@@ -253,10 +262,17 @@ function intToIDR($val) {
                   </div>
                 </div>
               </td>
-              <td class="table-light"><?= intToIDR($det_b2bdo['harga_satuan']) ?><input type="hidden" id="price<?= $baris ?>" name="price<?= $baris ?>" value="<?= $det_b2bdo['harga_satuan'] ?>"></td>
+              <td class="table-light right"><?= $det_b2bdo['jumlah_kirim'] ?><input type="hidden" id="totalqty<?= $baris ?>" name="totalqty<?= $baris ?>" value="<?= $det_b2bdo['jumlah_kirim'] ?>"></td>
+
+              <td class="table-light right"><?= $totalqty ?><input type="hidden" id="totalreturn<?= $baris ?>" name="totalreturn<?= $baris ?>" value="<?= $totalqty ?>"></td>
+
+              <td class="table-light right"><?= intToIDR($det_b2bdo['harga_satuan']) ?><input type="hidden" id="price<?= $baris ?>" name="price<?= $baris ?>" value="<?= $det_b2bdo['harga_satuan'] ?>"></td>
+              
+              <td class="table-light right"><?= intToIDR($totalqty*$det_b2bdo['harga_satuan']) ?><input type="hidden" id="total<?= $baris ?>" name="total<?= $baris ?>" value="<?= $totalqty*$det_b2bdo['harga_satuan'] ?>"></td>
             </tr>
 
             <?php 
+            }
             $baris ++;
           }
         ?>
@@ -309,6 +325,7 @@ function intToIDR($val) {
     if(window.confirm("Apakah anda yakin ?")){
       let n = <?= $get_baris ?>;
       for(var i = 0; i< <?= $baris ?>; i++){
+        var totqty = 0;
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
           window.opener.document.getElementById('idb2b'+(n)).value = $('#id_trans'+i).val();
           window.opener.document.getElementById('id_b2breturn_det'+(n)).value = "";
@@ -323,7 +340,13 @@ function intToIDR($val) {
               window.opener.document.getElementById('id-'+(n)+'-'+j).classList.add('red');
             }
             window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
+            window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
+            if($('#qty-'+i+'-'+j).val() > 0){
+              window.opener.document.getElementById('id-'+(n)+'-'+j).style.color = "red";
+            }
             window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
+            totqty += parseInt($('#qty-'+i+'-'+j).val());
+            window.opener.document.getElementById('totalqty'+n).value=totqty;
           }
           window.opener.subtotalCount(n);
           if(window.opener.document.getElementById('idb2b'+(n+1)) == undefined){

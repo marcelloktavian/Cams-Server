@@ -69,6 +69,10 @@ function intToIDR($val) {
     td{
       white-space: nowrap;
     }
+    
+    .right{
+      text-align: right;  
+    }
 	</style>
 </head>
 
@@ -122,21 +126,26 @@ function intToIDR($val) {
 
   <input type="hidden" id="hideurutan" name="hideurutan">
 
-  <table width="100%" cellspacing="0" cellpadding="0" id="list_detail_b2bdo" name="list_detail_b2bdo" class="table table-bordered">
+  <table width="100%" cellspacing="0" cellpadding="0" id="list_detail_b2bar" name="list_detail_b2bar" class="table table-bordered">
     <thead>
       <tr style="color: black;">
         <td><input type="checkbox" id="select_all" name="select_all"></td>
-        <td>ID</td>
+        <td>Type</td>
         <td>ID B2B DO / RETURN</td>
+        <td>Customer</td>
         <td>Tanggal DO / RETURN</td>
+        <td>Total Qty DO / RETURN</td>
         <td>Total DO / RETURN</td>
         <td>Keterangan</td>
       </tr>
     </thead>
     <tbody>
       <?php 
+        $cust = $_GET['cust'];
 
-        $sql_detail_b2bar = "SELECT `id`, `id_trans`, 'B2B DO' AS parent, `totalfaktur` AS `total`, `tgl_trans`, DATE_FORMAT(tgl_trans, '%d-%m-%Y') AS tanggal_b2bar, `note` AS `keterangan` FROM b2bdo WHERE tgl_trans BETWEEN '".$kode1."' AND '".$kode2."' AND deleted = 0 UNION SELECT `id`, `b2breturn_num`, 'B2B RETURN' AS parent, `total`, `tgl_return`, DATE_FORMAT(tgl_return, '%d-%m-%Y') AS tanggal_b2bar, `keterangan` FROM b2breturn WHERE deleted = 0";
+        $sql_detail_b2bar = "SELECT b2bdo.`id`, b2bdo.`id_trans`, 'B2B DO' AS parent, b2bdo.`totalfaktur` AS `total`, b2bdo.totalkirim as totalqty, b2bdo.`tgl_trans`, DATE_FORMAT(b2bdo.tgl_trans, '%d-%m-%Y') AS tanggal_b2bar, b2bdo.`note` AS `keterangan`, mst_b2bcustomer.nama as customer FROM b2bdo LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2bdo.id_customer WHERE b2bdo.tgl_trans BETWEEN '".$kode1."' AND '".$kode2."' AND b2bdo.deleted = 0 AND b2bdo.id_customer='$cust'
+        UNION 
+        SELECT b2breturn.`id`, b2breturn.`b2breturn_num`, 'B2B RETURN' AS parent, b2breturn.`total`, b2breturn.qty as totalqty, b2breturn.`tgl_return`, DATE_FORMAT(b2breturn.tgl_return, '%d-%m-%Y') AS tanggal_b2bar, b2breturn.`keterangan`, mst_b2bcustomer.nama as customer FROM b2breturn LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2breturn.b2bcust_id WHERE b2breturn.deleted = 0 AND b2breturn.b2bcust_id='$cust'";
 
         $sql_detail_b2bar = mysql_query($sql_detail_b2bar);
         $baris  = $get_baris;
@@ -151,9 +160,13 @@ function intToIDR($val) {
 
             <td class="table-light"><?= $det_b2bar['id_trans'] ?><input type="hidden" id="id_trans<?= $baris ?>" name="id_trans<?= $baris ?>" value="<?= $det_b2bar['id_trans'] ?>"></td>
 
+            <td class="table-light"><?= $det_b2bar['customer'] ?><input type="hidden" id="customer<?= $baris ?>" name="customer<?= $baris ?>" value="<?= $det_b2bar['customer'] ?>"></td>
+
             <td class="table-light"><?= $det_b2bar['tanggal_b2bar'] ?><input type="hidden" id="tanggal_b2b<?= $baris ?>" name="tanggal_b2b<?= $baris ?>" value="<?= $det_b2bar['tanggal_b2bar'] ?>"></td>
 
-            <td class="table-light"><?= intToIDR($det_b2bar['total']) ?><input type="hidden" id="total<?= $baris ?>" name="total<?= $baris ?>" value="-<?= $det_b2bar['total'] ?>"></td>
+            <td class="table-light right"><?= number_format($det_b2bar['totalqty']) ?><input type="hidden" id="totalqty<?= $baris ?>" name="totalqty<?= $baris ?>" value="<?= $det_b2bar['totalqty'] ?>" /></td>
+            
+            <td class="table-light right"><?= ($det_b2bar['parent'] == 'B2B DO') ? intToIDR($det_b2bar['total']) : intToIDR('-'.$det_b2bar['total']); ?><input type="hidden" id="total<?= $baris ?>" name="total<?= $baris ?>" value="<?= ($det_b2bar['parent'] == 'B2B DO') ? $det_b2bar['total'] : '-'.$det_b2bar['total']; ?>"></td>
 
             <td class="table-light"><?= $det_b2bar['keterangan'] ?><input type="hidden" id="keterangan<?= $baris ?>" name="keterangan<?= $baris ?>" value="<?= $det_b2bar['keterangan'] ?>" /></td>
           </tr>
@@ -207,23 +220,34 @@ function intToIDR($val) {
     $('#hideurutan').val(urutan.toString());
   }
 
+  function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
       let n = <?= $get_baris ?>;
       for(var i = 0; i< <?= $baris ?>; i++){
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
           window.opener.document.getElementById('idarb2b'+(n)).value = $('#b2b_id'+i).val();
-          console.log('wadwa');
           window.opener.document.getElementById('numb2b'+(n)).value = $('#id_trans'+i).val();
-          console.log('wadwa');
           window.opener.document.getElementById('typearb2b'+(n)).value = $('#b2b_parent'+i).val();
-          console.log('wadwa');
+          window.opener.document.getElementById('customer'+(n)).value = $('#customer'+i).val();
           window.opener.document.getElementById('tanggalb2b'+(n)).value = $('#tanggal_b2b'+i).val();
-          console.log('wadwa');
           window.opener.document.getElementById('totalb2b'+(n)).value = $('#total'+i).val();
-          console.log('wadwa');
-          window.opener.document.getElementById('keteranganb2b'+(n)).value = $('#keterangan'+i).val();
-          console.log('wadwa');
+          var totalValue = $('#total' + i).val();
+          var formattedTotal = formatNumber(totalValue);
+          window.opener.document.getElementById('totalb2bDisplay' + n).value = formattedTotal;
+
+          window.opener.document.getElementById('totalb2bpending'+(n)).value = 0;
+          window.opener.document.getElementById('totalb2bpendingDisplay'+(n)).value = 0;
+
+          window.opener.document.getElementById('totalb2bsisa'+(n)).value = $('#total'+i).val();
+          var totalValue = $('#total' + i).val();
+          var formattedTotal = formatNumber(totalValue);
+          window.opener.document.getElementById('totalb2bsisaDisplay' + n).value = formattedTotal;
+
+          // window.opener.document.getElementById('keteranganb2b'+(n)).value = $('#keterangan'+i).val();
           if(window.opener.document.getElementById('idarb2b'+(n+1)) == undefined){
             window.opener.addNewRow1();
           }
