@@ -140,6 +140,8 @@
   }
 
   $(document).ready(function(){
+    returnTotalCount();
+    
     $('#customer').autocomplete("trb2breturn_cust_list.php", {width: 400});
 
     $("#akun").autocomplete("lookup_akun.php?", {
