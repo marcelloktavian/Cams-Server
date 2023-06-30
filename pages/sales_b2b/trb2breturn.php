@@ -147,9 +147,10 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       $i=0;
       $responce = '';
       $barangnya='';
-      $count=1;
       foreach($data1 as $line){
         $sizenew='';
+        $count=1;
+        
         if ($barangnya != $line['id_product']) {
           $count=1;
         }
