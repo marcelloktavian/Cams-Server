@@ -36,7 +36,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, PreSALESCredit, $group_acess);
 		);
 		
 		$value = $_REQUEST["searchString"];
-		$where = sprintf(" where TRUE AND (p.state=0) %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
+		$where = sprintf(" where TRUE AND (p.state=0) AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 	 	}			
 				
 		$sql = "SELECT p.total as grandtotal,sum(p.deposit) as deposit,p.oln_order_id,p.oln_customer,p.oln_tgl,p.oln_penerima,p.oln_address,sum(p.jumlah_beli) as qty, sum(p.subtotal) as total,p.oln_note,p.oln_expnote FROM `olnpreso_cr` p ".$where. " GROUP by p.oln_order_id";
@@ -240,16 +240,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, PreSALESCredit, $group_acess);
             datatype: "json",
             colNames:['orderID','Dropshipper','Date','Receiver','Address','Qty','Total','Deposit','Note','Exp.Code','Posting','Cancel'],
             colModel:[
-                {name:'oln_order_id',index:'oln_order_id', width:10, search:true, stype:'text', searchoptions:{sopt:['cn']}},
-                {name:'dropshipper',index:'dropshipper', width:35, search:true, stype:'text', searchoptions:{sopt:['cn']}},
-                {name:'oln_tgl',index:'oln_tgl', width:20, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},
-                {name:'oln_penerima',index:'oln_penerima', align:'left', width:30, searchoptions: {sopt:['cn']}},
-                {name:'oln_address',index:'oln_address', align:'left', width:100, searchoptions: {sopt:['cn']}},
-                {name:'qty',index:'qty', align:'right', width:8, searchoptions: {sopt:['cn']}},
-				{name:'grandtotal',index:'grandtotal', align:'right', width:15, searchoptions: {sopt:['cn']}},
-				{name:'deposit',index:'deposit', align:'right', width:15, searchoptions: {sopt:['cn']}},
-				{name:'oln_note',index:'oln_note', align:'left', width:35, searchoptions: {sopt:['cn']}},
-                {name:'oln_expnote',index:'oln_expnote', align:'right', width:35, searchoptions: {sopt:['cn']}},
+                {name:'oln_order_id',index:'p.oln_order_id', width:10, search:true, stype:'text', searchoptions:{sopt:['cn']}},
+                {name:'dropshipper',index:'p.oln_customer', width:35, search:true, stype:'text', searchoptions:{sopt:['cn']}},
+                {name:'oln_tgl',index:'p.oln_tgl', width:20, searchoptions: {sopt:['cn']},formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, align:'center'},
+                {name:'oln_penerima',index:'p.oln_penerima', align:'left', width:30, searchoptions: {sopt:['cn']}},
+                {name:'oln_address',index:'p.oln_address', align:'left', width:100, searchoptions: {sopt:['cn']}},
+                {name:'qty',index:'sum(p.jumlah_beli)', align:'right', width:8, searchoptions: {sopt:['cn']}},
+				{name:'grandtotal',index:'sum(p.subtotal)', align:'right', width:15, searchoptions: {sopt:['cn']}},
+				{name:'deposit',index:'sum(p.deposit)', align:'right', width:15, searchoptions: {sopt:['cn']}},
+				{name:'oln_note',index:'p.oln_note', align:'left', width:35, searchoptions: {sopt:['cn']}},
+                {name:'oln_expnote',index:'p.oln_expnote', align:'right', width:35, searchoptions: {sopt:['cn']}},
                 {name:'edit',index:'edit', align:'center', width:15, sortable: false, search: false},
                 {name:'delete',index:'delete', align:'center', width:15, sortable: false, search: false},
             ],
