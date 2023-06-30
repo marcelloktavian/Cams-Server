@@ -146,158 +146,159 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
   
       $i=0;
       $responce = '';
-      $sizenew='';
-  $count=1;
-  $barangnya='';
-      foreach($data1 as $line){
-              if ($barangnya != $line['id_product']) {
+      $barangnya='';
       $count=1;
-    }
-      if ($line['qty31'] != '0') {
-        if ($count == 1) {
-          $sizenew = '31'.'('.$line['qty31'].')';
-        }else{					
-          $sizenew = $sizenew.', 31('.$line['qty31'].')';
+      foreach($data1 as $line){
+        $sizenew='';
+        if ($barangnya != $line['id_product']) {
+          $count=1;
         }
-        $count++;
-      }
 
-      if ($line['qty32'] != '0') {
-        if ($count == 1) {
-          $sizenew = '32'.'('.$line['qty32'].')';
-        }else{
-          $sizenew = $sizenew.', 32('.$line['qty32'].')';
+        if ($line['qty31'] != '0') {
+          if ($count == 1) {
+            $sizenew = '31'.'('.$line['qty31'].')';
+          }else{					
+            $sizenew = $sizenew.', 31('.$line['qty31'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty33'] != '0') {
-        if ($count == 1) {
-          $sizenew = '33'.'('.$line['qty33'].')';
-        }else{
-          $sizenew = $sizenew.', 33('.$line['qty33'].')';
+        if ($line['qty32'] != '0') {
+          if ($count == 1) {
+            $sizenew = '32'.'('.$line['qty32'].')';
+          }else{
+            $sizenew = $sizenew.', 32('.$line['qty32'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty34'] != '0') {
-        if ($count == 1) {
-          $sizenew = '34'.'('.$line['qty34'].')';
-        }else{
-          $sizenew = $sizenew.', 34('.$line['qty34'].')';
+        if ($line['qty33'] != '0') {
+          if ($count == 1) {
+            $sizenew = '33'.'('.$line['qty33'].')';
+          }else{
+            $sizenew = $sizenew.', 33('.$line['qty33'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty35'] != '0') {
-        if ($count == 1) {
-          $sizenew = '35'.'('.$line['qty35'].')';
-        }else{
-          $sizenew = $sizenew.', 35('.$line['qty35'].')';
+        if ($line['qty34'] != '0') {
+          if ($count == 1) {
+            $sizenew = '34'.'('.$line['qty34'].')';
+          }else{
+            $sizenew = $sizenew.', 34('.$line['qty34'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty36'] != '0') {
-        if ($count == 1) {
-          $sizenew = '36'.'('.$line['qty36'].')';
-        }else{
-          $sizenew = $sizenew.', 36('.$line['qty36'].')';
+        if ($line['qty35'] != '0') {
+          if ($count == 1) {
+            $sizenew = '35'.'('.$line['qty35'].')';
+          }else{
+            $sizenew = $sizenew.', 35('.$line['qty35'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty37'] != '0') {
-        if ($count == 1) {
-          $sizenew = '37'.'('.$line['qty37'].')';
-        }else{
-          $sizenew = $sizenew.', 37('.$line['qty37'].')';
+        if ($line['qty36'] != '0') {
+          if ($count == 1) {
+            $sizenew = '36'.'('.$line['qty36'].')';
+          }else{
+            $sizenew = $sizenew.', 36('.$line['qty36'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty38'] != '0') {
-        if ($count == 1) {
-          $sizenew = '38'.'('.$line['qty38'].')';
-        }else{
-          $sizenew = $sizenew.', 38('.$line['qty38'].')';
+        if ($line['qty37'] != '0') {
+          if ($count == 1) {
+            $sizenew = '37'.'('.$line['qty37'].')';
+          }else{
+            $sizenew = $sizenew.', 37('.$line['qty37'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty39'] != '0') {
-        if ($count == 1) {
-          $sizenew = '39'.'('.$line['qty39'].')';
-        }else{
-          $sizenew = $sizenew.', 39('.$line['qty39'].')';
+        if ($line['qty38'] != '0') {
+          if ($count == 1) {
+            $sizenew = '38'.'('.$line['qty38'].')';
+          }else{
+            $sizenew = $sizenew.', 38('.$line['qty38'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty40'] != '0') {
-        if ($count == 1) {
-          $sizenew = '40'.'('.$line['qty40'].')';
-        }else{
-          $sizenew = $sizenew.', 40('.$line['qty40'].')';
+        if ($line['qty39'] != '0') {
+          if ($count == 1) {
+            $sizenew = '39'.'('.$line['qty39'].')';
+          }else{
+            $sizenew = $sizenew.', 39('.$line['qty39'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty41'] != '0') {
-        if ($count == 1) {
-          $sizenew = '41'.'('.$line['qty41'].')';
-        }else{
-          $sizenew = $sizenew.', 41('.$line['qty41'].')';
+        if ($line['qty40'] != '0') {
+          if ($count == 1) {
+            $sizenew = '40'.'('.$line['qty40'].')';
+          }else{
+            $sizenew = $sizenew.', 40('.$line['qty40'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty42'] != '0') {
-        if ($count == 1) {
-          $sizenew = '42'.'('.$line['qty42'].')';
-        }else{
-          $sizenew = $sizenew.', 42('.$line['qty42'].')';
+        if ($line['qty41'] != '0') {
+          if ($count == 1) {
+            $sizenew = '41'.'('.$line['qty41'].')';
+          }else{
+            $sizenew = $sizenew.', 41('.$line['qty41'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty43'] != '0') {
-        if ($count == 1) {
-          $sizenew = '43'.'('.$line['qty43'].')';
-        }else{
-          $sizenew = $sizenew.', 43('.$line['qty43'].')';
+        if ($line['qty42'] != '0') {
+          if ($count == 1) {
+            $sizenew = '42'.'('.$line['qty42'].')';
+          }else{
+            $sizenew = $sizenew.', 42('.$line['qty42'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty44'] != '0') {
-        if ($count == 1) {
-          $sizenew = '44'.'('.$line['qty44'].')';
-        }else{
-          $sizenew = $sizenew.', 44('.$line['qty44'].')';
+        if ($line['qty43'] != '0') {
+          if ($count == 1) {
+            $sizenew = '43'.'('.$line['qty43'].')';
+          }else{
+            $sizenew = $sizenew.', 43('.$line['qty43'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty45'] != '0') {
-        if ($count == 1) {
-          $sizenew = '45'.'('.$line['qty45'].')';
-        }else{
-          $sizenew = $sizenew.', 45('.$line['qty45'].')';
+        if ($line['qty44'] != '0') {
+          if ($count == 1) {
+            $sizenew = '44'.'('.$line['qty44'].')';
+          }else{
+            $sizenew = $sizenew.', 44('.$line['qty44'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      if ($line['qty46'] != '0') {
-        if ($count == 1) {
-          $sizenew = '46'.'('.$line['qty46'].')';
-        }else{
-          $sizenew = $sizenew.', 46('.$line['qty46'].')';
+        if ($line['qty45'] != '0') {
+          if ($count == 1) {
+            $sizenew = '45'.'('.$line['qty45'].')';
+          }else{
+            $sizenew = $sizenew.', 45('.$line['qty45'].')';
+          }
+          $count++;
         }
-        $count++;
-      }
 
-      $totalqty = $line['qty31'] + $line['qty32'] + $line['qty33'] + $line['qty34'] + $line['qty35'] + $line['qty36'] + $line['qty37'] + $line['qty38'] + $line['qty39'] + $line['qty40'] + $line['qty41'] + $line['qty42'] + $line['qty43'] + $line['qty44'] + $line['qty45'] + $line['qty46'];
+        if ($line['qty46'] != '0') {
+          if ($count == 1) {
+            $sizenew = '46'.'('.$line['qty46'].')';
+          }else{
+            $sizenew = $sizenew.', 46('.$line['qty46'].')';
+          }
+          $count++;
+        }
+
+        $totalqty = $line['qty31'] + $line['qty32'] + $line['qty33'] + $line['qty34'] + $line['qty35'] + $line['qty36'] + $line['qty37'] + $line['qty38'] + $line['qty39'] + $line['qty40'] + $line['qty41'] + $line['qty42'] + $line['qty43'] + $line['qty44'] + $line['qty45'] + $line['qty46'];
 
           $responce->rows[$i]['id']   = $line['id_parent'];
           $responce->rows[$i]['cell'] = array(
