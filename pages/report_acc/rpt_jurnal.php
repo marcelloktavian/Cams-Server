@@ -185,8 +185,8 @@ $data = mysql_fetch_array($result);
             echo "<td class='detail3 text center'></td>";
             echo "<td class='detail3 text'>(".$data2['no_akun'].") ".$data2['nama_akun']."</td>";
             echo "<td class='detail3 text'></td>";
-            echo "<td class='detail3 text right'>".str_replace( ',', '', number_format($data2['debet'],0))."</td>";
-            echo "<td class='detail2 text right'>".str_replace( ',', '', number_format($data2['kredit'],0))."</td>";
+            echo "<td class='detail3 text right'>".str_replace( ',', '', number_format($data2['debet'],2))."</td>";
+            echo "<td class='detail2 text right'>".str_replace( ',', '', number_format($data2['kredit'],2))."</td>";
             echo "</tr>";
         }else{
             echo "<tr>";
@@ -194,10 +194,9 @@ $data = mysql_fetch_array($result);
             echo "<td class='detail text center'>".$data2['no_jurnal']."</td>";
             echo "<td class='detail text'>(".$data2['no_akun'].") ".$data2['nama_akun']."</td>";
             echo "<td class='detail text'>".$data2['keterangan']."</td>";
-            echo "<td class='detail text right'>".str_replace( ',', '', number_format($data2['debet'],0))."</td>";
-            echo "<td class='detail4 text right'>".str_replace( ',', '', number_format($data2['kredit'],0))."</td>";
+            echo "<td class='detail text right'>".str_replace( ',', '', number_format($data2['debet'],2))."</td>";
+            echo "<td class='detail4 text right'>".str_replace( ',', '', number_format($data2['kredit'],2))."</td>";
             echo "</tr>";
-            
         }
 
         $no++;
@@ -208,8 +207,8 @@ $data = mysql_fetch_array($result);
     ?>
     <tr>
         <td class="footer text" align="right" colspan="4"><b>TOTAL</b></td>
-        <td class="footer2 text" align="right"><?= str_replace( ',', '', number_format($totaldebet,0)) ?></td>
-        <td class="footer3 text" align="right"><?= str_replace( ',', '', number_format($totalkredit,0)) ?></td>
+        <td class="footer2 text" align="right"><?= str_replace( ',', '', number_format($totaldebet,2)) ?></td>
+        <td class="footer3 text" align="right"><?= str_replace( ',', '', number_format($totalkredit,2)) ?></td>
     </tr>
 
 </tbody></table><table>

@@ -291,20 +291,20 @@ if($_GET['action']=='excel'){
         <td class='detail text'><?=$data2['noakun']?></td>
         <td class='detail text'><?=$data2['nama']?></td>
         <td class='detail text'>SALDO AWAL</td>
-        <td class='detail text right' align='right'><?=number_format($saldodebet,0,',','.')?></td>
-        <td class='detail text right' align='right'><?=number_format($saldokredit,0,',','.')?></td>
+        <td class='detail text right' align='right'><?=number_format($saldodebet,2,',','.')?></td>
+        <td class='detail text right' align='right'><?=number_format($saldokredit,2,',','.')?></td>
         <?php
         if(($saldodebet-$saldokredit) < 0){
             ?>
-                <td class='detail text right' align='right'><?=number_format(0,0,',','.')?></td>
-                <td class='detail4 text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
+                <td class='detail text right' align='right'><?=number_format(0,2,',','.')?></td>
+                <td class='detail4 text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),2,',','.')?></td>
             <?php
             $db = 0;
             $cr = abs($saldodebet-$saldokredit);
         }else{
             ?>
-                <td class='detail text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),0,',','.')?></td>
-                <td class='detail4 text right' align='right'><?=number_format(0,0,',','.')?></td>
+                <td class='detail text right' align='right'><?=number_format(abs($saldodebet-$saldokredit),2,',','.')?></td>
+                <td class='detail4 text right' align='right'><?=number_format(0,2,',','.')?></td>
             <?php
             $db = abs($saldodebet-$saldokredit);
             $cr = 0;
@@ -345,8 +345,8 @@ if($_GET['action']=='excel'){
             <td class='detail text'><?=$data3['no_akun']?></td>
             <td class='detail text'><?=$data3['nama_akun']?></td>
             <td class='detail text'><?=$data3['keterangan']?></td>
-            <td class='detail text right' align='right'><?=number_format($data3['debet'],0,',','.')?></td>
-            <td class='detail text right' align='right'><?=number_format($data3['kredit'],0,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($data3['debet'],2,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($data3['kredit'],2,',','.')?></td>
             <?php
             if((($totaldebet - $totalkredit)+($saldo))>0){
                 $totaldebet = (($totaldebet - $totalkredit)+($saldo));
@@ -356,8 +356,8 @@ if($_GET['action']=='excel'){
                 $totaldebet = 0;
             }
             ?>
-            <td class='detail text right' align='right'><?=number_format($totaldebet,0,',','.')?></td>
-            <td class='detail4 text right' align='right'><?=number_format($totalkredit,0,',','.')?></td>
+            <td class='detail text right' align='right'><?=number_format($totaldebet,2,',','.')?></td>
+            <td class='detail4 text right' align='right'><?=number_format($totalkredit,2,',','.')?></td>
         </tr>
         <?php
         $debet += $data3['debet'];
@@ -369,18 +369,18 @@ if($_GET['action']=='excel'){
     ?>
     <tr>
         <td class="footer text" align="right" colspan="5"><b>TOTAL</b></td>
-        <td class="footer2 text" align="right"><?= number_format($debet,0,',','.') ?></td>
-        <td class="footer2 text" align="right"><?= number_format($kredit,0,',','.') ?></td>
+        <td class="footer2 text" align="right"><?= number_format($debet,2,',','.') ?></td>
+        <td class="footer2 text" align="right"><?= number_format($kredit,2,',','.') ?></td>
         <?php
         if(($debet-$kredit) < 0){
             ?>
-                <td class="footer2 text" align="right"><?= number_format(0,0,',','.') ?></td>
-                <td class="footer3 text" align="right"><?= number_format(abs($debet-$kredit),0,',','.') ?></td>
+                <td class="footer2 text" align="right"><?= number_format(0,2,',','.') ?></td>
+                <td class="footer3 text" align="right"><?= number_format(abs($debet-$kredit),2,',','.') ?></td>
             <?php
         }else{
             ?>
-                <td class="footer2 text" align="right"><?= number_format(abs($debet-$kredit),0,',','.') ?></td>
-                <td class="footer3 text" align="right"><?= number_format(0,0,',','.') ?></td>
+                <td class="footer2 text" align="right"><?= number_format(abs($debet-$kredit),2,',','.') ?></td>
+                <td class="footer3 text" align="right"><?= number_format(0,2,',','.') ?></td>
             <?php
         }
         ?>
