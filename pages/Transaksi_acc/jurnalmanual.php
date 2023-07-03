@@ -100,8 +100,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 					$line['id'],
 					$line['no_jurnal'],
 					$line['tgl'],               
-					number_format($line['total_debet'],0),                
-					number_format($line['total_kredit'],0),                
+					number_format($line['total_debet'],2),                
+					number_format($line['total_kredit'],2),                
 					$line['keterangan'],                
 					$edit,
 					$delete,
@@ -207,8 +207,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
                 $i+1,
                 $line['no_akun'],
                 $line['nama_akun'],
-				number_format($line['debet'],0),
-				number_format($line['kredit'],0),
+				number_format($line['debet'],2),
+				number_format($line['kredit'],2),
                 $line['keterangan'],
 			);
             $i++;
@@ -250,7 +250,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 						<option value="MANUAL">MANUAL</option>
 						<option value="OLN">OLN</option>
 						<option value="B2B">B2B</option>
-						<option value="RETUR">RETUR</option>
+						<option value="RETUR">RETUR OLN</option>
+						<option value="RETURB2B">RETUR B2B</option>
 						<option value="AP">AP</option>
 						<option value="AR">AR</option>
 					</select>
