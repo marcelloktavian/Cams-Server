@@ -205,33 +205,33 @@ error_reporting(0);
 	  if ($kode!=$rs2['id_trans'])
 	  {
 	    //hanya dihitung di parentnya saja
-		$grand_total += ceil($total);
+		$grand_total += round($total);
 	
 		echo"<td class='style_detail_left'><div align='center'>".$rs2['id_oln']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['id_web']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['dropshipper']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['namabrg']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
-		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format(ceil(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']))."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($rs2['total']-$rs2['disc_faktur'])."</div></td>";
+		echo"<td class='style_detail'><div align='center'>".number_format($rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(round($nett_price*$rs2['jumlah_return']))."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format((($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']))."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(($rs2['total']-$rs2['disc_faktur']))."</div></td>";
 		echo"<td class='style_detail'><div align='right'>".number_format($rs2['ongkir'])."</div></td>";
 		
 		$kode=$rs2['id_trans'];
 	  }
       else if($kode=$rs2['id_trans'])
 	  {
-			$grand_total += ceil($nett_price*$rs2['jumlah_return'])-ceil(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']);
+			$grand_total += round($nett_price*$rs2['jumlah_return'])-(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']);
 
 		echo"<td class='style_detail_left'><div align='center'></div></td>";
 		echo"<td class='style_detail'><div align='center'></div></td>";
 		echo"<td class='style_detail'><div align='center'></div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['namabrg']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
-		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_return']."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format($nett_price*$rs2['jumlah_return'])."</div></td>";
-		echo"<td class='style_detail'><div align='right'>".number_format(($disc*$rs2['jumlah_return'])+$rs2['disc_faktur'])."</div></td>";
+		echo"<td class='style_detail'><div align='center'>".number_format($rs2['jumlah_return'])."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format(round($nett_price*$rs2['jumlah_return']))."</div></td>";
+		echo"<td class='style_detail'><div align='right'>".number_format((($disc*$rs2['jumlah_return'])+$rs2['disc_faktur']))."</div></td>";
 		echo"<td class='style_detail'><div align='right'></div></td>";
 	    echo"<td class='style_detail'><div align='right'></div></td>";
 	  }
@@ -241,7 +241,7 @@ error_reporting(0);
 	$grand_ongkir+=$rs2['ongkir'];
 	$grand_disc+=$disc*$rs2['jumlah_return']+$rs2['disc_faktur'];		
 	$grand_qty+=$rs2['jumlah_return'];
-	$grand_subtotal+=ceil($nett_price*$rs2['jumlah_return']);
+	$grand_subtotal+=round($nett_price*$rs2['jumlah_return']);
 	//totaldpp bruto didapat dari grand faktur(grand_subtotal)/1.11
 	$totaldppbt =($grand_subtotal/1.11);
 	$totalppnbt= ($totaldppbt*0.11);
@@ -252,7 +252,7 @@ error_reporting(0);
   ?>
        <tr>
             <td colspan="5" class="style_title_left"><div align="right">Total:</div></td>
-            <td class="style_title"><div align="center"><?=$grand_qty;?></div></td>
+            <td class="style_title"><div align="center"><?=number_format($grand_qty);?></div></td>
             <td colspan="1" class="style_title"><div align="right"><?=number_format($grand_subtotal);?></div></td>
             <td class="style_title"><div align="right"><?=number_format($grand_disc);?></div></td>
             <td class="style_title"><div align="right"><?=number_format($grand_total);?></div></td>
