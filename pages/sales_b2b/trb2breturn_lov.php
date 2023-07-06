@@ -84,8 +84,8 @@ function intToIDR($val) {
       $kode1 = $_COOKIE['tglstart']; $kode2 = $_COOKIE['tglend'];
     }
 
-    if(isset($_GET['baris'])){
-      $get_baris = $_GET['baris'];
+    if(isset($_GET['curr'])){
+      $get_baris = $_GET['curr'];
     }
     else{
       $get_baris = 1;
@@ -158,7 +158,7 @@ function intToIDR($val) {
           $sql_detail_b2bdo = "SELECT a.id, d.* , e.*, (d.qty31 - COALESCE(e.totqty31, 0)) AS unret31, (d.qty32 - COALESCE(e.totqty32, 0)) AS unret32, (d.qty33 - COALESCE(e.totqty33, 0)) AS unret33, (d.qty34 - COALESCE(e.totqty34, 0)) AS unret34, (d.qty35 - COALESCE(e.totqty35, 0)) AS unret35, (d.qty36 - COALESCE(e.totqty36, 0)) AS unret36, (d.qty37 - COALESCE(e.totqty37, 0)) AS unret37, (d.qty38 - COALESCE(e.totqty38, 0)) AS unret38, (d.qty39 - COALESCE(e.totqty39, 0)) AS unret39, (d.qty40 - COALESCE(e.totqty40, 0)) AS unret40, (d.qty41 - COALESCE(e.totqty41, 0)) AS unret41, (d.qty42 - COALESCE(e.totqty42, 0)) AS unret42, (d.qty43 - COALESCE(e.totqty43, 0)) AS unret43, (d.qty44 - COALESCE(e.totqty44, 0)) AS unret44, (d.qty45 - COALESCE(e.totqty45, 0)) AS unret45, (d.qty46 - COALESCE(e.totqty46, 0)) AS unret46 FROM b2bdo a LEFT JOIN b2bso b ON a.id_transb2bso=b.id_trans LEFT JOIN mst_b2bcategory_sale c ON c.`id`=b.`id_kategori` LEFT JOIN b2bdo_detail d ON a.id_trans=d.id_trans LEFT JOIN b2breturn_qty e ON d.b2bdo_id=e.id_b2breturn_qty WHERE a.tgl_trans BETWEEN '".$kode1."' AND '".$kode2."' AND a.id_trans LIKE '%".$filter."%' AND b.id_customer = '".$customer."' AND c.id= '".$type."' ";
 
           $sql_detail_b2bdo = mysql_query($sql_detail_b2bdo);
-          $baris  = $get_baris;
+          $baris  = 0;
 
           while($det_b2bdo = mysql_fetch_array($sql_detail_b2bdo)){
             $totalqty = $det_b2bdo['unret31'] + $det_b2bdo['unret32'] + $det_b2bdo['unret33'] + $det_b2bdo['unret34'] + $det_b2bdo['unret35'] + $det_b2bdo['unret36'] + $det_b2bdo['unret37'] + $det_b2bdo['unret38'] + $det_b2bdo['unret39'] + $det_b2bdo['unret40'] + $det_b2bdo['unret41'] + $det_b2bdo['unret42'] + $det_b2bdo['unret43'] + $det_b2bdo['unret44'] + $det_b2bdo['unret45'] + $det_b2bdo['unret46'];
@@ -334,6 +334,7 @@ function intToIDR($val) {
           window.opener.document.getElementById('idproduk'+(n)).value = $('#idbrg'+i).val();
           window.opener.document.getElementById('namaproduk'+(n)).value = $('#namabrg'+i).val();
           window.opener.document.getElementById('harga'+(n)).value = $('#price'+i).val();
+          window.opener.document.getElementById('hargaHidden'+(n)).value = $('#price'+i).val();
           for(let j = 31; j<47; j++){
             window.opener.document.getElementById('idItem-'+(n)+'-'+j).value = $('#id-'+i+'-'+j).val();
             if($('#qty'+j).val() > 0){
@@ -344,9 +345,9 @@ function intToIDR($val) {
             if($('#qty-'+i+'-'+j).val() > 0){
               window.opener.document.getElementById('id-'+(n)+'-'+j).style.color = "red";
             }
-            window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
-            totqty += parseInt($('#qty-'+i+'-'+j).val());
-            window.opener.document.getElementById('totalqty'+n).value=totqty;
+            // window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
+            // totqty += parseInt($('#qty-'+i+'-'+j).val());
+            // window.opener.document.getElementById('totalqty'+n).value=totqty;
           }
           window.opener.subtotalCount(n);
           if(window.opener.document.getElementById('idb2b'+(n+1)) == undefined){

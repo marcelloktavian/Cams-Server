@@ -76,34 +76,34 @@
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD B2B Return</td>
-        <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_b2breturn" id="total_qty_b2breturn"  style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /></td>
-        <td class="fontjudul">TOTAL RETURN<input type="text" class="" name="total_b2breturn" id="total_b2breturn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_b2breturn_value" id="total_b2breturn_value" readonly></td>
+        <td class="fontjudul">TOTAL QTY <input type="text" class="" name="total_qty_b2breturn" id="total_qty_b2breturn"  style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly />
+        <td class="fontjudul">TOTAL RETURN <input type="text" class="" name="total_b2breturn" id="total_b2breturn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_b2breturn_value" id="total_b2breturn_value" readonly>
+      </td>
       </tr>
     </table>
 
     <hr />
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
-        <td class="fonttext">Nomor B2B Return</td>
-        <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" readonly/></td>
+        <td class="fonttext no-margin">Tanggal Return</td>
+        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn"></td>
+      </tr>
+      <tr>
+        <td class="fonttext">Customer</td>
+        <td><input type="text" id="customer_b2breturn" name="customer_b2breturn" class="inputForm"></td>
+      </tr>
+      <tr>
+        <!-- <td class="fonttext">Nomor B2B Return</td> -->
         <td class="fonttext">Type</td>
-        <td><select type="text" class="inputForm" id="type_b2breturn" name="type_b2breturn">
+        <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" readonly hidden/>
+          <select type="text" class="inputForm" id="type_b2breturn" name="type_b2breturn">
           <option value="1">SOL - Product Sol Sepatu</option>
           <option value="2">SDC - Contract Manufacturing Camou</option>
           <option value="3">SDL - Contract Manufacturing Non Camou</option>
         </select></td>
       </tr>
-      <tr>
-        <td class="fonttext">Customer</td>
-        <td><input type="text" id="customer_b2breturn" name="customer_b2breturn" class="inputForm"></td>
-        <td class="fonttext no-margin">Tanggal Return</td>
-        <td><input type="date" class="inputForm" name="tanggal_b2breturn" id="tanggal_b2breturn"></td>
-      </tr>
-      <tr height="1">
-        <td colspan="100%"><hr /></td>
-      </tr>
     </table>
-    
+    <hr>
     <p class="fonttext">*(keterangan warna) abu abu : qty b2b | putih   : qty return</p>
 
     <table width="100%" id="b2breturn_detail">
@@ -208,7 +208,7 @@ function popDetail(idx){
     var width   = screen.width;
     var height  = screen.height;
     var params  = 'width='+width+', height='+height+',scrollbars=yes';
-    window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&baris='+idx,'',params);
+    window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&curr='+idx,'',params);
   }
 }
 
@@ -219,6 +219,10 @@ function hitungsubtotal(idx){
     var qty = document.getElementById('totalqty'+idx).value;
   }
   var harga = document.getElementById('harga'+idx).value;
+  var hargaMax = document.getElementById('hargaHidden'+idx).value;
+  if(parseInt(harga) > parseInt(hargaMax)){
+    document.getElementById('harga'+idx).value = hargaMax;
+  }
   var subtotal = parseInt(qty) * parseInt(harga);
   document.getElementById('total'+idx).value = subtotal;
   document.getElementById("totalDisplay"+idx).value = (subtotal).toLocaleString();
@@ -232,6 +236,7 @@ function cetak(){
   const type = document.getElementById('type_b2breturn').value;
   const customer = document.getElementById('customer_b2breturn').value;
   const tanggal = document.getElementById('tanggal_b2breturn').value;
+  const qty = document.getElementById('total_qty_b2breturn').value;
 
   if(type == ""){
     pesan = "Tipe Return tidak boleh kosong !";
@@ -242,7 +247,10 @@ function cetak(){
   else if(tanggal == ""){
     pesan = "Tanggal return tidak boleh kosong !";
   }
-  else if(baris1 == 1){
+  // else if(baris1 == 2){
+  //   pesan = "Barang return tidak boleh kosong !";
+  // }
+  else if(qty == 0){
     pesan = "Barang return tidak boleh kosong !";
   }
 
@@ -250,7 +258,10 @@ function cetak(){
     alert("Maaf, ada kesalahan pengisian form : \n"+pesan); return false;
   } else {
     let answer = confirm('Mau simpan data dan cetak datanya ?');
-    $('#b2breturn_add').attr('action',"trb2breturn_save.php?row="+baris1).submit();
+    if (answer)
+		{	
+      $('#b2breturn_add').attr('action',"trb2breturn_save.php?row="+baris1).submit();
+		}   
   }
 }
 
@@ -340,6 +351,15 @@ function generateQty(index, n){
 function generateHarga(index){
   let idx = document.createElement("input");
   idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); 
+  idx.oninput = function() {
+    this.value = this.value.replace(/\D/g, '');
+  };
+   return idx;
+}
+
+function generateHargaHidden(index){
+  let idx = document.createElement("input");
+  idx.type = "hidden"; idx.name = "hargaHidden"+index+""; idx.id = "hargaHidden"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right');
    return idx;
 }
 
@@ -365,6 +385,7 @@ function generateDelete(index){
 
 function delRow1(index){
   var element = document.getElementById("t1"+index); element.remove();
+  qtyTotalCount(); returnTotalCount();
 }
 
 let baris1 = 1;
@@ -398,6 +419,7 @@ function addNewRow1(){
   td3.appendChild(container);
   td4.appendChild(generateTotalQty(baris1));
   td5.appendChild(generateHarga(baris1));
+  td5.appendChild(generateHargaHidden(baris1));
   td6.appendChild(generateTotal(baris1));
   td6.appendChild(generateTotalHidden(baris1));
   td7.appendChild(generateDelete(baris1));
@@ -422,6 +444,33 @@ function addNewRow1(){
 addNewRow1();
 
   $(document).ready(()=>{
+    qtyTotalCount(); returnTotalCount();
+
     $('#customer_b2breturn').autocomplete("trb2breturn_cust_list.php", {width: 400});
+
+    $('#customer_b2breturn').result((event, data, formatted)=>{
+
+      for(var i = 0; i<=baris1; i++){
+        var element = $('#t1'+i);
+        if(element != null){
+          element.remove();
+        }
+      }
+
+      baris1 = 1;
+      addNewRow1(); returnTotalCount(); qtyTotalCount();
+    });
+
+    $('#type_b2breturn').change((event)=>{
+      for(var i = 0; i<=baris1; i++){
+        var element = $('#t1'+i);
+        if(element != null){
+          element.remove();
+        }
+      }
+
+      baris1 = 1;
+      addNewRow1(); returnTotalCount(); qtyTotalCount();
+    });
   });
 </script>

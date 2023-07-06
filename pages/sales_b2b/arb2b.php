@@ -17,7 +17,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $startdate = isset($_GET['startdate_arb2b'])?$_GET['startdate_arb2b']:date('Y-m-d');
   $enddate = isset($_GET['enddate_arb2b'])?$_GET['enddate_arb2b']:date('Y-m-d'); 
-  $filter=$_GET['filter'];
+  $filter=$_GET['filter_arb2b'];
 
   $page = isset($_GET['page'])?$_GET['page']:1;
   $limit = isset($_GET['rows'])?$_GET['rows']:10;
@@ -27,14 +27,14 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $where = " WHERE mst.deleted=0 ";
 
   if($startdate != null && $startdate != ""){
-    $where .= " AND tgl_arb2b BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+    $where .= " AND tgl_ar BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
   }
 
   if($filter != null && $filter != ""){
-    $where .= " AND tgl_arb2b LIKE '".$filter."' ";
+    $where .= " AND tgl_ar LIKE '".$filter."' ";
   }
 
-  $sql = "SELECT *, date_format(tgl_arb2b, '%d-%m-%Y') AS tanggal_arb2b FROM b2bar mst ";
+  $sql = "SELECT *, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar FROM b2bar mst ";
 
   $q = $db->query($sql);
   $count = $q->rowCount();
@@ -53,18 +53,16 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $post = $allow_post ? ($line['post'] == '0' ? '<a href="javascript:void(0);">Post</a>': '<a href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
     $edit = $allow_delete ? '<a href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $delete = $allow_delete ? '<a href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
       $line['id'],
-      $line['b2breturn_num'],
-      $line['tanggal_return'],
+      $line['ar_num'],
+      $line['tgl_ar'],
       number_format($line['total']),
       $line['keterangan'],
-      $post,
       $edit,
       $delete
     );
@@ -130,7 +128,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $( "#startdate_arb2b" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
 	$( "#enddate_arb2b" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
 
-  function gridReloadAP(){
+  function gridReloadB2BAr(){
     var startdate   = ($("#startdate_arb2b").val()).split("-");
 		var enddate     = ($("#enddate_arb2b").val()).split("-");
 
@@ -139,13 +137,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
 		var filter      = $("#filtervalue_b2bar").val();
 
-		var v_url       = '<?php echo BASE_URL?>pages/sales_b2b/trb2bar.php?action=json&startdate_arb2b='+startdate+'&enddate_arb2b='+enddate+'&filter='+filter;
-		jQuery("#table_b2ar").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
+		var v_url       = '<?php echo BASE_URL?>pages/sales_b2b/arb2b.php?action=json&startdate_arb2b='+startdate+'&enddate_arb2b='+enddate+'&filter_arb2b='+filter;
+		jQuery("#table_b2bar").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
   }
 
   $(document).ready(()=>{
     $('#table_b2bar').jqGrid({
-      url           : '<?= BASE_URL.'pages/sales_b2b/trb2bar.php?action=json';?>',
+      url           : '<?= BASE_URL.'pages/sales_b2b/arb2b.php?action=json';?>',
       datatype      : 'json',
       colNames      : ['ID','Nomor AR B2B', 'Tanggal AR', 'Total AR', 'Keterangan', 'Edit', 'Delete'],
       colModel      : [

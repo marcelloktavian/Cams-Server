@@ -358,6 +358,123 @@
 	// define("GroupAkses", 114);
 	// define("statusToko", 115);
 
+	// define("laporanperiodeolnb2b", 2);
+
+	// define("Supplier", 4);
+	// define("Taxes", 5);
+	// define("KategoriBiaya", 6);
+	// define("JenisBiaya", 7);
+	// define("mst_COA", 8);
+	// define("SettingAkun", 9);
+
+	// define("JurnalManual", 11);		
+	// define("BiayaOperasional", 12);		
+	// define("ImportMutation", 13);	
+	// define("CRTertunda", 14);	
+	// define("PaymentCheck", 15);	
+	// define("ReturnConfirmed", 16);
+	// define("archivepo", 17);	
+	// define("aplist", 18);	
+	// define("TutupBuku", 19);	
+
+	// define("TaxesRpt", 21);	
+	// define("cashReceipt", 22);
+	// define("jurnal", 23);
+	// define("bukubesar", 24);
+	// define("arsipjurnal", 25);
+	// define("arsipbukubesar", 26);
+	
+	// define("departemen", 28);
+	// define("jabatan", 29);
+	// define("pendapatan", 30);
+	// define("potongan", 31);
+	// define("karyawan", 32);
+
+	// define("penggajian", 34);
+	// define("transpendapatan", 35);
+	// define("transpotongan", 36);
+
+	// define("Address", 38);
+	// define("Category", 39);
+	// define("Colour", 40);
+	// define("Keranjang", 41);
+	// define("Dropshipper", 42);
+	// define("ExpeditionCategory", 43);
+	// define("Expedition", 44);
+	// define("Products", 45);
+	// define("ProductsComposition", 46);
+
+	// define("ImportCAMOU", 48);
+	// define("PreSALES", 49);
+	// define("ImportCredit", 50);
+	// define("PreSALESCredit", 51);
+
+	// define("DropshipperDeposit", 53);
+	// define("DepositTransaction", 54);
+	// define("OnlineSales", 55);
+	// define("OnlineCredit",56);
+	// define("PendingOrder", 57);
+	// define("CancelOrder", 58);
+	// define("OnlineDelivery",59);
+	// define("OnlineBackDate",60);
+	// define("ArchiveOrder", 61);
+	// define("OnlineReturn", 62);
+	// define("UnpaidOnline", 63);
+	
+	// define("OnlineSummary", 65);
+	// define("SummaryCash", 66);
+	// define("SummaryCredit", 67);
+	// define("DropshipperStatistik", 68);
+	// define("SalesOnlineDropshipper",69);
+	// define("Bill", 70);
+	// define("rptexpedition", 71);
+	// define("PrintOrder", 72);
+	// define("ProductSold", 73);
+	// define("Omset", 74);
+	// define("TroubleOrder", 75);
+	
+	// define("ImportCustomerProduct", 77);
+
+	// define("CompositionProducts", 79);
+	// define("B2BProducts", 80);
+	// define("B2BProductsGroup", 81);
+	// define("B2BCustomer", 82);
+	// define("B2BExpedition",83);
+	// define("B2BSalesman", 84);
+
+	// define("AddSalesB2B", 86);
+	// define("SalesB2B", 87);
+	// define("ConfirmedSales", 88);
+	// define("DeliveryOrderB2B", 89);
+	// define("ArchiveOrderB2B", 90);
+	// define("trb2breturn", 91);
+	// define("arb2b", 92);
+
+	// define("SummaryDeliveryB2B", 94);
+	// define("stb2bdo", 95);
+	// define("b2bsorpt", 96);
+	// define("b2bcomp", 97);
+
+	// define("pemohonpo", 99);
+	// define("supplier", 100);
+	// define("produkpo", 101);
+
+	// define("po", 103);
+	// define("poapproval", 104);
+
+	// define("MUTASIMASUK", 106);
+	// define("MUTASIKELUAR", 107);
+	// define("INVENTORY", 108);
+
+	// define("MUTASIMASUK_COMP", 110);
+	// define("MUTASIKELUAR_COMP", 111);
+	// define("INVENTORY_COMP", 112);
+
+	// define("DataUser", 114);
+	// define("UserGroup", 115);
+	// define("GroupAkses", 116);
+	// define("statusToko", 117);
+
 	define("laporanperiodeolnb2b", 2);
 
 	define("Supplier", 4);
@@ -454,26 +571,28 @@
 	define("stb2bdo", 95);
 	define("b2bsorpt", 96);
 	define("b2bcomp", 97);
+	define("b2bretur", 98);
+	define("b2bcompretur", 99);
 
-	define("pemohonpo", 99);
-	define("supplier", 100);
-	define("produkpo", 101);
+	define("pemohonpo", 101);
+	define("supplier", 102);
+	define("produkpo", 10);
 
-	define("po", 103);
-	define("poapproval", 104);
+	define("po", 105);
+	define("poapproval", 106);
 
-	define("MUTASIMASUK", 106);
-	define("MUTASIKELUAR", 107);
-	define("INVENTORY", 108);
+	define("MUTASIMASUK", 108);
+	define("MUTASIKELUAR", 109);
+	define("INVENTORY", 110);
 
-	define("MUTASIMASUK_COMP", 110);
-	define("MUTASIKELUAR_COMP", 111);
-	define("INVENTORY_COMP", 112);
+	define("MUTASIMASUK_COMP", 112);
+	define("MUTASIKELUAR_COMP", 113);
+	define("INVENTORY_COMP", 114);
 
-	define("DataUser", 114);
-	define("UserGroup", 115);
-	define("GroupAkses", 116);
-	define("statusToko", 117);
+	define("DataUser", 116);
+	define("UserGroup", 117);
+	define("GroupAkses", 118);
+	define("statusToko", 119);
 
 	define("VIEW_POLICY", "VIEW;");
 	define("ADD_POLICY", "ADD;");

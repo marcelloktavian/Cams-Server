@@ -86,8 +86,8 @@ function intToIDR($val) {
       $kode1 = $_COOKIE['tglstart']; $kode2 = $_COOKIE['tglend'];
     }
 
-    if(isset($_COOKIE['baris'])){
-      $get_baris = $_COOKIE['baris'];
+    if(isset($_GET['curr'])){
+      $get_baris = $_GET['curr'];
     }
     else{
       $get_baris = 1;
@@ -148,31 +148,31 @@ function intToIDR($val) {
         SELECT b2breturn.`id`, b2breturn.`b2breturn_num`, 'B2B RETURN' AS parent, b2breturn.`total`, b2breturn.qty as totalqty, b2breturn.`tgl_return`, DATE_FORMAT(b2breturn.tgl_return, '%d-%m-%Y') AS tanggal_b2bar, b2breturn.`keterangan`, mst_b2bcustomer.nama as customer FROM b2breturn LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2breturn.b2bcust_id WHERE b2breturn.deleted = 0 AND b2breturn.b2bcust_id='$cust'";
 
         $sql_detail_b2bar = mysql_query($sql_detail_b2bar);
-        $baris  = $get_baris;
+        $iterator = 0;
 
         while($det_b2bar = mysql_fetch_array($sql_detail_b2bar)){
           ?>
 
           <tr>
-            <td class="table-light"><input type="checkbox" id="chkid<?= $baris ?>" name="chkid<?= $baris ?>" size="5" onclick=""></td>
+            <td class="table-light"><input type="checkbox" id="chkid<?= $iterator ?>" name="chkid<?= $iterator ?>" size="5" onclick=""></td>
 
-            <td class="table-light"><?= $det_b2bar['parent'] ?><input type="hidden" id="b2b_id<?= $baris ?>" name="b2b_id<?= $baris ?>" value="<?= $det_b2bar['id'] ?>"><input type="hidden" id="b2b_parent<?= $baris ?>" name="b2b_parent<?= $baris ?>" value="<?= $det_b2bar['parent'] ?>"></td>
+            <td class="table-light"><?= $det_b2bar['parent'] ?><input type="hidden" id="b2b_id<?= $iterator ?>" name="b2b_id<?= $iterator ?>" value="<?= $det_b2bar['id'] ?>"><input type="hidden" id="b2b_parent<?= $iterator ?>" name="b2b_parent<?= $iterator ?>" value="<?= $det_b2bar['parent'] ?>"></td>
 
-            <td class="table-light"><?= $det_b2bar['id_trans'] ?><input type="hidden" id="id_trans<?= $baris ?>" name="id_trans<?= $baris ?>" value="<?= $det_b2bar['id_trans'] ?>"></td>
+            <td class="table-light"><?= $det_b2bar['id_trans'] ?><input type="hidden" id="id_trans<?= $iterator ?>" name="id_trans<?= $iterator ?>" value="<?= $det_b2bar['id_trans'] ?>"></td>
 
-            <td class="table-light"><?= $det_b2bar['customer'] ?><input type="hidden" id="customer<?= $baris ?>" name="customer<?= $baris ?>" value="<?= $det_b2bar['customer'] ?>"></td>
+            <td class="table-light"><?= $det_b2bar['customer'] ?><input type="hidden" id="customer<?= $iterator ?>" name="customer<?= $iterator ?>" value="<?= $det_b2bar['customer'] ?>"></td>
 
-            <td class="table-light"><?= $det_b2bar['tanggal_b2bar'] ?><input type="hidden" id="tanggal_b2b<?= $baris ?>" name="tanggal_b2b<?= $baris ?>" value="<?= $det_b2bar['tanggal_b2bar'] ?>"></td>
+            <td class="table-light"><?= $det_b2bar['tanggal_b2bar'] ?><input type="hidden" id="tanggal_b2b<?= $iterator ?>" name="tanggal_b2b<?= $iterator ?>" value="<?= $det_b2bar['tanggal_b2bar'] ?>"></td>
 
-            <td class="table-light right"><?= number_format($det_b2bar['totalqty']) ?><input type="hidden" id="totalqty<?= $baris ?>" name="totalqty<?= $baris ?>" value="<?= $det_b2bar['totalqty'] ?>" /></td>
+            <td class="table-light right"><?= number_format($det_b2bar['totalqty']) ?><input type="hidden" id="totalqty<?= $iterator ?>" name="totalqty<?= $bariterators ?>" value="<?= $det_b2bar['totalqty'] ?>" /></td>
             
-            <td class="table-light right"><?= ($det_b2bar['parent'] == 'B2B DO') ? intToIDR($det_b2bar['total']) : intToIDR('-'.$det_b2bar['total']); ?><input type="hidden" id="total<?= $baris ?>" name="total<?= $baris ?>" value="<?= ($det_b2bar['parent'] == 'B2B DO') ? $det_b2bar['total'] : '-'.$det_b2bar['total']; ?>"></td>
+            <td class="table-light right"><?= ($det_b2bar['parent'] == 'B2B DO') ? intToIDR($det_b2bar['total']) : intToIDR('-'.$det_b2bar['total']); ?><input type="hidden" id="total<?= $iterator ?>" name="total<?= $iterator ?>" value="<?= ($det_b2bar['parent'] == 'B2B DO') ? $det_b2bar['total'] : '-'.$det_b2bar['total']; ?>"></td>
 
-            <td class="table-light"><?= $det_b2bar['keterangan'] ?><input type="hidden" id="keterangan<?= $baris ?>" name="keterangan<?= $baris ?>" value="<?= $det_b2bar['keterangan'] ?>" /></td>
+            <td class="table-light"><?= $det_b2bar['keterangan'] ?><input type="hidden" id="keterangan<?= $iterator ?>" name="keterangan<?= $iterator ?>" value="<?= $det_b2bar['keterangan'] ?>" /></td>
           </tr>
 
           <?php
-          $baris ++;
+          $iterator ++;
         }
       ?>
     </tbody>
@@ -227,7 +227,7 @@ function intToIDR($val) {
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
       let n = <?= $get_baris ?>;
-      for(var i = 0; i< <?= $baris ?>; i++){
+      for(var i = 0; i< <?= $iterator ?>; i++){
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
           window.opener.document.getElementById('idarb2b'+(n)).value = $('#b2b_id'+i).val();
           window.opener.document.getElementById('numb2b'+(n)).value = $('#id_trans'+i).val();

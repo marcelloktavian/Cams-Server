@@ -68,7 +68,7 @@
 </head>
 
 <body>
-  <form id="b2bar_add" name="b2bar_add" action="" method="">
+  <form id="b2bar_add" name="b2bar_add" action="" method="post">
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD AR B2B</td>
@@ -80,16 +80,20 @@
     <hr />
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
-        <td class="fonttext">Nomor AR B2B</td>
-        <td><input type="text" class="inputForm" placeholder="(dibuat otomatis oleh sistem)" readonly /></td>
-        <td class="fonttext">Customer</td>
-        <td><input type="text" class="inputForm" name="customer" id="customer" /></td>
+        <td class="fonttext no-margin">Tanggal AR</td>
+        <td><input type="date" class="inputForm" id="tanggal_arb2b" name="tanggal_arb2b" /></td>
       </tr>
       <tr>
-        <td class="fonttext no-margin">Tanggal AR</td>
-        <td><input type="date" class="inputForm" name="tanggal_b2bar" /></td>
+        <td class="fonttext">Customer</td>
+        <td><input type="text" class="inputForm" name="customer_arb2b" id="customer_arb2b" /></td>
+      </tr>
+      <tr>
+        <td class="fonttext">Akun Debet</td>
+        <td><input type="text" class="inputForm" name="akun_debet_arb2b" id="akun_debet_arb2b"/></td>
+      </tr>
+      <tr>
         <td class="fonttext">Akun Kredit</td>
-        <td><input type="text" class="inputForm" name="akun" id="akun" /></td>
+        <td><input type="text" class="inputForm" name="akun_kredit_arb2b" id="akun_kredit_arb2b" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
       <tr heigth="1">
         <td colspan="100%"><hr /></td>
@@ -135,9 +139,48 @@
 </body>
 
 <script>
+  // General Function
   function intToIDR(val){
     return(val.toLocaleString("id-ID", {style:"currency", currency:"IDR"}));
   }
+
+  function cetak(){
+  let pesan = "";
+
+  const tanggal = document.getElementById('tanggal_arb2b').value;
+  const customer = document.getElementById('customer_arb2b').value;
+  const akunDebet = document.getElementById('akun_debet_arb2b').value;
+  const akunKredit = document.getElementById('akun_kredit_arb2b').value;
+
+  let counter = 0;
+  for(let i = 1; i<baris1; i++){
+    if(document.getElementById('idarb2b'+i) == undefined || document.getElementById('idarb2b'+i) == null || document.getElementById('idarb2b'+i).value == ""){
+      } else {
+      counter ++;
+    }
+  }
+
+  if(tanggal == ""){
+    pesan = "Tanggal AR B2B tidak boleh kosong";
+  } else if(customer == ""){
+    pesan = "Customer AR B2B tidak boleh kosong";
+  } else if(akunDebet == ""){
+    pesan = "Akun Debet AR B2B tidak boleh kosong";
+  } else if(akunKredit == ""){
+    pesan = "Akun Kredit AR B2B tidak boleh kosong";
+  } else if(counter == 0){
+    pesan = "Detail AR B2B tidak boleh kosong";
+  }
+
+  if(pesan != ""){
+    alert("Maaf, ada kesalahan pengisian form : \n"+pesan); return false;
+  } else {
+    let answer = confirm('Mau simpan data dan cetak datanya ?');
+    if(answer){
+      $('#b2bar_add').attr('action',"arb2b_save.php?row="+baris1).submit();
+    }
+  }
+}
 
   $(document).ready(function(){
     returnTotalCount();
@@ -175,14 +218,14 @@
   });
 
   function popDetail(idx){
-    if(document.getElementById("customer").value == ''){
+    if(document.getElementById("customer_arb2b").value == ''){
       alert('Customer harus diisi terlebih dahulu');
     }else{
-      var custid = document.getElementById("customer").value.split(':');
+      var custid = document.getElementById("customer_arb2b").value.split(':');
       var width   = screen.width;
       var height  = screen.height;
       var params  = 'width='+width+', height='+height+',scrollbars=yes';
-      window.open('arb2b_lov.php?baris='+idx+'&cust='+custid[0],'',params);
+      window.open('arb2b_lov.php?curr='+idx+'&cust='+custid[0],'',params);
     }
   }
 
@@ -192,7 +235,7 @@
 
     for(let i = 1 ; i<=baris1; i++){
       if(document.getElementById('kodeGet'+i) != undefined && (document.getElementById('numb2b'+i) != undefined && document.getElementById('numb2b'+i) != "")){
-        if(parseInt(document.getElementById("totalb2b"+i).value) > 0){
+        if(!isNaN(parseInt(document.getElementById("totalb2b"+i).value))){
           total += parseInt(document.getElementById("totalb2b"+i).value);
           totalpending += parseInt(document.getElementById("totalb2bpending"+i).value);
         }
@@ -281,6 +324,7 @@
 
   function delRow1(index){
     var element = document.getElementById("t1"+index); element.remove();
+    returnTotalCount();
   }
 
   let baris1 = 1;
@@ -328,5 +372,39 @@
     baris1 ++;
   }
 
-  addNewRow1();
+  returnTotalCount(); addNewRow1();
+
+  $(document).ready(()=>{
+    $('#customer_arb2b').autocomplete("arb2b_cust_list.php", {width: 400});
+
+    $('#customer_arb2b').result((event, data, formatted)=>{
+
+      let sup   = ($('#customer_arb2b').val()).split(':');
+      sup_q     = sup[0];
+
+      $.ajax({
+        url       : 'arb2b_get_akun.php?action=akunkredit&id='+sup_q,
+        dataType  : 'json',
+        data      : 'nama='+formatted,
+        success   : function(data){
+          let id_akun = data.id_akun;
+          let nama_akun = data.nama_akun;
+          let nomor_akun = data.nomor_akun;
+          $('#akun_kredit_arb2b').val(id_akun+':'+nomor_akun+' - '+nama_akun);
+        }
+      });
+
+      for(var i = 0; i<=baris1; i++){
+        var element = $('#t1'+i);
+        if(element != null){
+          element.remove();
+        }
+      }
+
+      baris1 = 1;
+      addNewRow1();
+    });
+
+    $('#akun_debet_arb2b').autocomplete("arb2b_akun_list.php", {width: 400});
+  });
 </script>
