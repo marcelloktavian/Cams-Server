@@ -287,7 +287,7 @@ error_reporting(0);
 	$where .=" AND e.id_expeditioncat=$id_exp ";
 	}
     
-	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id_ship as id_kirim FROM olnsodetail dt
+	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id_ship as id_kirim,m.exp_code FROM olnsodetail dt
     INNER JOIN olnso m ON dt.id_trans = m.id_trans
     LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
     LEFT JOIN olnso_id i ON m.id_trans = i.id_trans 
@@ -335,7 +335,11 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_beli']."</div></td>";
 		echo"<td class='style_detail'><div align='left'>".$rs2['pembeli']."</div></td>";
-		echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."</div></td>";
+		if($rs2['exp_code'] == ''){
+			echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."</div></td>";
+		}else{
+			echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."<br>(".$rs2['exp_code'].")</div></td>";
+		}
 		$kode=$rs2['id_trans'];
         $expedition=$rs2['expedition'];	  
 	  }
