@@ -151,7 +151,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
                             $sqlkmrn = "SELECT SUM(total) AS total FROM `biayaoperasional` WHERE MONTH(tanggal)='".date("m",strtotime('-1 months'))."' AND YEAR(tanggal)='".date("Y",strtotime('-1 months'))."'";
                             $rowkmrn=mysql_fetch_array(mysql_query($sqlkmrn));
                         ?>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-xl-12 col-md-12">
                                 <div class="card ">
                                     <div class="card-body">
@@ -162,7 +162,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
                                 </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                     </div>
             <?php
