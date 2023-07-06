@@ -65,7 +65,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   foreach($data1 as $line){
     $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/sales_b2b/trb2breturn_post.php?action=post&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=unpost&id='.$line['id'].'&num='.$line['b2breturn_num'].'\',\'table_b2breturn\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
     $edit = $allow_edit ? ($line['post'] == '0' ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2breturn_edit.php?id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Data yang sudah dipost tidak dapat diedit\')" href="javascript:;">Edit</a>' ) : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
-    $delete = $allow_delete ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=delete&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
+    $delete = $allow_edit ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=delete&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Data yang sudah dipost tidak dapat dihapus\')" href="javascript:;">Delete</a>' ) : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
@@ -143,7 +143,7 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
 	
   $id = $_GET['id'];
   //$id = $line['id_trans'];
-  $where = "WHERE pd.id_parent = '".$id."' ";
+  $where = "WHERE pd.id_parent = '".$id."' AND deleted=0";
       $q = $db->query("SELECT pd.* FROM `b2breturn_detail` pd ".$where);
   
   $count = $q->rowCount();
