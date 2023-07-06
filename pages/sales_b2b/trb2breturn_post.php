@@ -6,7 +6,7 @@
     <form id="b2breturn_post_form" method="post" action="pages/sales_b2b/trb2breturn.php?action=post_process" class="ui-helper-clearfix">
       <input type="hidden" id="id_b2breturn" name="id_b2breturn" value="<?= $_GET['id'] ?>" />
       <input type="hidden" id="post_value" name="post_value" value="1" />
-      <label for="date_aplist" class="ui-helper-reset label-control">Tanggal Pembayaran</label>
+      <label for="date_aplist" class="ui-helper-reset label-control">Tanggal Posting</label>
       <div class="ui-corner-all form-control">
         <input value="" type="text" class="required datepicker" id="date_b2breturn_post" name="date_b2breturn_post" readonly>
       </div>
