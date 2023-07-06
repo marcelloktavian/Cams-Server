@@ -340,7 +340,7 @@ font-family:Tahoma;
     ?>
        <tr>
             <td colspan="4" class="style_title_left"><div align="right">Total:</div></td>
-            <td class="style_title"><div align="center"><?=$grand_qty;?></div></td>
+            <td class="style_title"><div align="right"><?=$grand_qty;?></div></td>
             <td colspan="2" class="style_title"><div align="right"><?=number_format($grand_total);?></div></td>
         </tr>
 	
