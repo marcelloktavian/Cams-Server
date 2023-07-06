@@ -230,7 +230,7 @@ font-family:Tahoma;
 			if ($rs3['subtotal']>0) {
 				$nomer++;
 				echo"<td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
-				echo"<td class='style_detail'><div align='left'>".$rs2['id'].' '.$rs2['nama']."</div></td>";
+				echo"<td class='style_detail'><div align='left'>".$rs2['nama']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s31']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s32']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s33']."</div></td>";
