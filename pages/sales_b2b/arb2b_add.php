@@ -78,7 +78,7 @@
     </table>
 
     <hr />
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext no-margin">Tanggal AR</td>
         <td><input type="date" class="inputForm" id="tanggal_arb2b" name="tanggal_arb2b" /></td>
