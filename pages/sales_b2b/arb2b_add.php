@@ -95,10 +95,8 @@
         <td class="fonttext">Akun Kredit</td>
         <td><input type="text" class="inputForm" name="akun_kredit_arb2b" id="akun_kredit_arb2b" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
-      <tr heigth="1">
-        <td colspan="100%"><hr /></td>
-      </tr>
     </table>
+    <hr>
 
     <table width="100%" id="b2bar_detail">
       <thead>
