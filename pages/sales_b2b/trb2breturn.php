@@ -479,7 +479,6 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       datatype      : 'json',
       colNames      : ['Nomor B2B Return','Customer','Tanggal Return', 'Type', 'Qty Return', 'Total Return', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
-        // {name: 'id_b2breturn', index: 'id_b2breturn', align: 'right', width: 1, searchoptions: {sopt: ['cn']}},
         {name: 'b2breturn_num', index: 'b2breturn_num', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name: 'customer', index: 'customer', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name:'tanggal_b2breturn', index: 'tanggal_b2breturn', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
@@ -507,12 +506,12 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       subGrid : true,
       subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json_sub'; ?>',
       subGridModel: [
-              { 
-                name : ['No','B2BDO Num','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
-                width : [40,100,300,300,50,50,50,50],
-                align : ['right','center','left','left','right','right','right'],
-              } 
-            ],
+          { 
+            name : ['No','B2BDO Num','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+            width : [40,100,300,300,50,50,50,50],
+            align : ['right','center','left','left','right','right','right'],
+          } 
+        ],
     });
     $('#table_b2breturn').jqGrid('navGrid', '#pager_table_b2breturn', {edit:false, add:false, del:false, search:false});
   });

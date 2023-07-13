@@ -90,9 +90,13 @@ for($i=1; $i<$row; $i++){
     $id46         = $_POST['id-'.$i."-46"];
     $qty46        = $_POST['qty-'.$i."-46"];
 
-    $sql_detail = "INSERT INTO b2breturn_detail (`id_parent`, `b2bdo_num`, `id_trans_do`, `id_b2bdo_det`, `id_product`, `namabrg`, `id31`, `qty31`, `id32`, `qty32`, `id33`, `qty33`, `id34`, `qty34`, `id35`, `qty35`, `id36`, `qty36`, `id37`, `qty37`, `id38`, `qty38`, `id39`, `qty39`, `id40`, `qty40`, `id41`, `qty41`, `id42`, `qty42`, `id43`, `qty43`, `id44`, `qty44`, `id45`, `qty45`, `id46`, `qty46`, harga_satuan, harga_satuan_real, subtotal) VALUES ('".$id_b2breturn[0]."', '".$num_trans_do."', '".$id_master_do."', '".$id_detail_do."', '".$id_produk."' ,'".$nama_produk."', '".$id31."', '".$qty31."', '".$id32."', '".$qty32."', '".$id33."', '".$qty33."', '".$id34."', '".$qty34."', '".$id35."', '".$qty35."', '".$id36."', '".$qty36."', '".$id37."', '".$qty37."', '".$id38."', '".$qty38."', '".$id39."', '".$qty39."', '".$id40."', '".$qty40."', '".$id41."', '".$qty41."', '".$id42."', '".$qty42."', '".$id43."', '".$qty43."', '".$id44."', '".$qty44."', '".$id45."', '".$qty45."', '".$id46."', '".$qty46."', '".$harga_satuan."', '".$harga_satuan_real."', '".$subtotal."')";
+    if($subtotal > 0){
+      $sql_detail = "INSERT INTO b2breturn_detail (`id_parent`, `b2bdo_num`, `id_trans_do`, `id_b2bdo_det`, `id_product`, `namabrg`, `id31`, `qty31`, `id32`, `qty32`, `id33`, `qty33`, `id34`, `qty34`, `id35`, `qty35`, `id36`, `qty36`, `id37`, `qty37`, `id38`, `qty38`, `id39`, `qty39`, `id40`, `qty40`, `id41`, `qty41`, `id42`, `qty42`, `id43`, `qty43`, `id44`, `qty44`, `id45`, `qty45`, `id46`, `qty46`, harga_satuan, harga_satuan_real, subtotal) VALUES ('".$id_b2breturn[0]."', '".$num_trans_do."', '".$id_master_do."', '".$id_detail_do."', '".$id_produk."' ,'".$nama_produk."', '".$id31."', '".$qty31."', '".$id32."', '".$qty32."', '".$id33."', '".$qty33."', '".$id34."', '".$qty34."', '".$id35."', '".$qty35."', '".$id36."', '".$qty36."', '".$id37."', '".$qty37."', '".$id38."', '".$qty38."', '".$id39."', '".$qty39."', '".$id40."', '".$qty40."', '".$id41."', '".$qty41."', '".$id42."', '".$qty42."', '".$id43."', '".$qty43."', '".$id44."', '".$qty44."', '".$id45."', '".$qty45."', '".$id46."', '".$qty46."', '".$harga_satuan."', '".$harga_satuan_real."', '".$subtotal."')";
 
-    $query      = mysql_query($sql_detail);
+      $query      = mysql_query($sql_detail);
+    } else {
+      // * Untuk detail yang memiliki jumlah barang nol maka tidak akan disave pada database
+    }
   }
 }
 

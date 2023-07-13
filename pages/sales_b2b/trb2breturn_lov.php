@@ -344,6 +344,10 @@ function intToIDR($val) {
             window.opener.document.getElementById('id-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
             if($('#qty-'+i+'-'+j).val() > 0){
               window.opener.document.getElementById('id-'+(n)+'-'+j).style.color = "red";
+            }else{
+              window.opener.document.getElementById('id-'+(n)+'-'+j).style.backgroundColor = "gray";
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).style.backgroundColor = "#D3D3D3";
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).readOnly = true;
             }
             // window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
             // totqty += parseInt($('#qty-'+i+'-'+j).val());

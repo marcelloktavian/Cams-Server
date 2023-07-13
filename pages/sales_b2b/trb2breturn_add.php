@@ -229,6 +229,10 @@ function hitungsubtotal(idx){
   subtotalCount(idx);
 }
 
+function tutup(){
+  window.close();
+}
+
 // save function --------------------
 function cetak(){
   let pesan = "";
@@ -353,14 +357,12 @@ function generateHarga(index){
   idx.type = "text"; idx.name = "harga"+index+""; idx.id = "harga"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); 
   idx.oninput = function() {
     this.value = this.value.replace(/\D/g, '');
-  };
-   return idx;
+  }; return idx;
 }
 
 function generateHargaHidden(index){
   let idx = document.createElement("input");
-  idx.type = "hidden"; idx.name = "hargaHidden"+index+""; idx.id = "hargaHidden"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right');
-   return idx;
+  idx.type = "hidden"; idx.name = "hargaHidden"+index+""; idx.id = "hargaHidden"+index+""; idx.style.border="#4f4f4f dotted 1px"; idx.classList.add("input") ; idx.size="6"; idx.classList.add('text-right'); return idx;
 }
 
 function generateTotalQty(index){

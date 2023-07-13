@@ -57,7 +57,7 @@
 </style>
 
 <head>
-  <title>ADD AR B2B</title>
+  <title>EDIT AR B2B</title>
 
   <link rel="stylesheet" type="text/css" href="../../assets/css/styles.css" />
   <link rel="stylesheet" type="text/css" href="../../assets/css/jquery.autocomplete.css" />
@@ -67,11 +67,25 @@
   <script type="text/javascript" src="../../assets/js/jquery.autocomplete.js"></script>
 </head>
 
+<?php
+include "../../include/koneksi.php";
+
+$sql_mst    = "SELECT a.*, b.id AS id_customer, b.nama AS nama_customer, COALESCE(c.nama, d.nama) AS nama_akun_kredit, COALESCE(e.nama, f.nama) AS nama_akun_debet FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id = b.id LEFT JOIN det_coa c ON a.id_akun_kredit = c.id AND a.no_akun_kredit = c.noakun LEFT JOIN mst_coa d ON a.id_akun_kredit = d.id AND a.no_akun_kredit = d.noakun LEFT JOIN det_coa e ON a.id_akun_debet = e.id AND a.no_akun_debet = e.noakun LEFT JOIN mst_coa f ON a.id_akun_debet = f.id AND a.no_akun_debet = f.noakun LEFT JOIN det_coa g ON g.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0))";
+
+$sql        = mysql_query($sql_mst) or die (mysql_error());
+$result     = mysql_fetch_array($sql);
+  $tanggal_arb2b    = $result['tgl_ar'];
+  $customer_arb2b   = $result['id_customer'].":".$result['nama_customer'];
+  $akun_debet_arb2b = $result['id_akun_debet'].":".$result['no_akun_debet']." - ".$result['nama_akun_debet'];
+  $akun_kredit_arb2b = $result['id_akun_kredit'].":".$result['no_akun_kredit']." - ".$result['nama_akun_kredit'];
+?>
+
 <body>
   <form id="b2bar_add" name="b2bar_add" action="" method="post">
+    <input type="hidden" id="id_arb2b_mst" name="id_arb2b_mst" value="<?= $result['id'] ?>" />
     <table width="100%">
       <tr>
-        <td class="fontjudul">ADD AR B2B</td>
+        <td class="fontjudul">EDIT AR B2B</td>
         <td class="fontjudul">TOTAL <input type="text" class="" name="total_arb2b" id="total_arb2b" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_arb2b_value" id="total_arb2b_value" readonly></td>
         <td class="fontjudul">TOTAL PENDING <input tpye="text" class="" name="total_arb2b_pending" id="total_arb2b_pending" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" readonly /><input type="hidden" name="total_arb2b_pending_value" id="total_arb2b_pending_value" readonly /></td>
       </tr>
@@ -81,19 +95,19 @@
     <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext no-margin">Tanggal AR</td>
-        <td><input type="date" class="inputForm" id="tanggal_arb2b" name="tanggal_arb2b" /></td>
+        <td><input type="date" class="inputForm" id="tanggal_arb2b" name="tanggal_arb2b" value="<?= $tanggal_arb2b ?>" /></td>
       </tr>
       <tr>
         <td class="fonttext">Customer</td>
-        <td><input type="text" class="inputForm" name="customer_arb2b" id="customer_arb2b" /></td>
+        <td><input type="text" class="inputForm" name="customer_arb2b" id="customer_arb2b" value="<?= $customer_arb2b ?>" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
       <tr>
         <td class="fonttext">Akun Debet</td>
-        <td><input type="text" class="inputForm" name="akun_debet_arb2b" id="akun_debet_arb2b"/></td>
+        <td><input type="text" class="inputForm" name="akun_debet_arb2b" id="akun_debet_arb2b" value="<?= $akun_debet_arb2b ?>" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
       <tr>
         <td class="fonttext">Akun Kredit</td>
-        <td><input type="text" class="inputForm" name="akun_kredit_arb2b" id="akun_kredit_arb2b" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
+        <td><input type="text" class="inputForm" name="akun_kredit_arb2b" id="akun_kredit_arb2b" readonly style="background-color: #dcdcdc; border: 1px solid black;" value="<?= $akun_kredit_arb2b ?>" /></td>
       </tr>
     </table>
     <hr>
@@ -179,44 +193,13 @@
   } else {
     let answer = confirm('Mau simpan data dan cetak datanya ?');
     if(answer){
-      $('#b2bar_add').attr('action',"arb2b_save.php?row="+baris1).submit();
+      $('#b2bar_add').attr('action',"arb2b_update.php?row="+baris1).submit();
     }
   }
 }
 
   $(document).ready(function(){
     returnTotalCount();
-    
-    $('#customer').autocomplete("trb2breturn_cust_list.php", {width: 400});
-
-    $("#akun").autocomplete("lookup_akun.php?", {
-      width: 178
-    });
-
-    $("#akun").autocomplete("COALovParent.php?", {
-      width: 178
-    });
-
-    $("#akun").result(function (event, data, formatted) {
-      var nama = document.getElementById("akun").value;
-      for (var i = 0; i < nama.length; i++) {
-        var id = nama.split(';');
-        if (id[1] == "") continue;
-        var id_pd = id[1];
-      }
-
-      $.ajax({
-        url: 'COALoVdet.php?id=' + id_pd,
-        dataType: 'json',
-        data: "nama=" + formatted,
-        success: function (data) {
-          var id = data.id;
-          var noakun = data.noakun;
-          var nama = data.nama;
-          $("#akun").val(id+":"+noakun+" | "+nama);
-        }
-      });
-    });
   });
 
   function popDetail(idx){
@@ -409,4 +392,60 @@
 
     $('#akun_debet_arb2b').autocomplete("arb2b_akun_list.php", {width: 400});
   });
+
+<?php 
+
+$sql_do         = "SELECT a.id_b2b, a.id_parent, b.id_trans, a.parent, 'B2B DO' AS typeb2b, c.nama, date_format(b.tgl_trans, '%d/%m/%Y') AS tgl_trans, b.totalfaktur, b.note FROM b2bar_detail a LEFT JOIN b2bdo b ON a.id_b2b=b.id LEFT JOIN mst_b2bcustomer c ON b.id_customer=c.id  WHERE a.parent = 'DO' AND a.id_parent='".$_GET['id']."' AND a.deleted=0";
+
+$sql_ret        = "SELECT a.id_b2b, a.id_parent, b.b2breturn_num, a.parent, 'B2B RETURN' AS typeb2b, c.nama, date_format(b.tgl_return, '%d/%m/%Y') AS tgl_return , b.total, b.keterangan FROM b2bar_detail a LEFT JOIN b2breturn b ON a.id_b2b=b.id LEFT JOIN mst_b2bcustomer c ON b.b2bcust_id=c.id WHERE a.parent = 'RETUR' AND a.id_parent='".$_GET['id']."' AND a.deleted=0";
+
+$sql_do        = mysql_query($sql_do);
+$sql_ret       = mysql_query($sql_ret);
+
+$i = 1;
+while($rs=mysql_fetch_array($sql_do)){
+  ?>
+  
+  $('#idarb2b<?= $i ?>').val('<?= $rs['id_b2b'] ?>');
+  $('#typearb2b<?= $i ?>').val('<?= $rs['typeb2b'] ?>');
+  $('#numb2b<?= $i ?>').val('<?= $rs['id_trans'] ?>');
+  $('#customer<?= $i ?>').val('<?= $rs['nama'] ?>');
+  $('#tanggalb2b<?= $i ?>').val('<?= $rs['tgl_trans'] ?>');
+  $('#totalb2bDisplay<?= $i ?>').val('<?= $rs['totalfaktur'] ?>');
+  $('#totalb2b<?= $i ?>').val('<?= $rs['totalfaktur'] ?>');
+  $('#totalb2bprosesDisplay<?= $i ?>').val('0');
+  $('#totalb2bproses<?= $i ?>').val('0');
+  $('#totalb2bpendingDisplay<?= $i ?>').val('<?= $rs['totalfaktur'] ?>');
+  $('#totalb2bpending<?= $i ?>').val('<?= $rs['totalfaktur'] ?>');
+  $('#keteranganb2b<?= $i ?>').val('<?= $rs['note'] ?>');
+
+  addNewRow1();
+
+  <?php
+  $i ++;
+}
+
+while($rs=mysql_fetch_array($sql_ret)){
+  ?>
+
+  $('#idarb2b<?= $i ?>').val('<?= $rs['id_b2b'] ?>');
+  $('#typearb2b<?= $i ?>').val('<?= $rs['typeb2b'] ?>');
+  $('#numb2b<?= $i ?>').val('<?= $rs['b2breturn_num'] ?>');
+  $('#customer<?= $i ?>').val('<?= $rs['nama'] ?>');
+  $('#tanggalb2b<?= $i ?>').val('<?= $rs['tgl_return'] ?>');
+  $('#totalb2bDisplay<?= $i ?>').val('-<?= $rs['total'] ?>');
+  $('#totalb2b<?= $i ?>').val('-<?= $rs['total'] ?>');
+  $('#totalb2bprosesDisplay<?= $i ?>').val('0');
+  $('#totalb2bproses<?= $i ?>').val('0');
+  $('#totalb2bpendingDisplay<?= $i ?>').val('-<?= $rs['total'] ?>');
+  $('#totalb2bpending<?= $i ?>').val('-<?= $rs['total'] ?>');
+  $('#keteranganb2b<?= $i ?>').val('<?= $rs['keterangan'] ?>');
+
+  addNewRow1();
+
+  <?php
+  $i ++;
+}
+
+?> 
 </script>

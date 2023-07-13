@@ -27,7 +27,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $where = " WHERE mst.deleted=0 ";
 
   if($startdate != null && $startdate != ""){
-    $where .= " AND tgl_ar BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+    $where .= " AND tgl_ar BETWEEN '$startdate' AND '$enddate' ";
   }
 
   if($filter != null && $filter != ""){
@@ -36,7 +36,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $sql = "SELECT *, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar FROM b2bar mst ";
 
-  $q = $db->query($sql);
+  $q = $db->query($sql.$where);
   $count = $q->rowCount();
 
   $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
@@ -44,7 +44,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $start = $limit*$page - $limit;
   if($start <0) $start = 0;
 
-  $q = $db->query($sql."
+  $q = $db->query($sql.$where."
     ORDER BY `".$sidx."` ".$sord."
     LIMIT ".$start.", ".$limit
   );
@@ -53,7 +53,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $edit = $allow_delete ? '<a href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
+    $edit = $allow_edit? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/arb2b_edit.php?id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $delete = $allow_delete ? '<a href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
     $responce['rows'][$i]['id']     = $line['id'];
@@ -72,6 +72,51 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   if(!isset($responce)){
     $responce = [];
   }
+  echo json_encode($responce);
+  exit;
+} else if (isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
+  $id = $_GET['id'];
+
+  $sql_do = "SELECT a.id_parent, b.id_trans, a.parent, c.nama, date_format(b.tgl_trans, '%d/%m/%Y') AS tgl_trans, b.totalfaktur FROM b2bar_detail a LEFT JOIN b2bdo b ON a.id_b2b=b.id LEFT JOIN mst_b2bcustomer c ON b.id_customer=c.id  WHERE a.parent = 'DO' AND a.id_parent='$id' AND a.deleted=0";
+
+  $q1 = $db->query($sql_do);
+
+  $sql_ret = "SELECT a.id_parent, b.b2breturn_num, a.parent, c.nama, date_format(b.tgl_return, '%d/%m/%Y') AS tgl_return , b.total FROM b2bar_detail a LEFT JOIN b2breturn b ON a.id_b2b=b.id LEFT JOIN mst_b2bcustomer c ON b.b2bcust_id=c.id WHERE a.parent = 'RETUR' AND a.id_parent='$id' AND a.deleted=0";
+
+  $q2 = $db->query($sql_ret);
+
+  $data1 = $q1->fetchAll(PDO::FETCH_ASSOC);
+  $data2 = $q2->fetchAll(PDO::FETCH_ASSOC);
+
+  $i=0;
+  $responce = '';
+
+  foreach($data1 as $line){
+    $responce->rows[$i]['id']   = $line['id_parent'];
+    $responce->rows[$i]['cell'] = array(
+      $i+1,
+      $line['id_trans'],
+      $line['parent'],
+      $line['nama'],
+      $line['tgl_trans'],
+      number_format($line['totalfaktur'],0)
+    );
+    $i++;
+  }
+
+  foreach($data2 as $line){
+    $responce->rows[$i]['id']   = $line['id_parent'];
+    $responce->rows[$i]['cell'] = array(
+      $i+1,
+      $line['b2breturn_num'],
+      $line['parent'],
+      $line['nama'],
+      $line['tgl_return'],
+      number_format($line['total'],0)
+    );
+    $i++;
+  }
+
   echo json_encode($responce);
   exit;
 }
@@ -117,7 +162,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 <div id="pager_table_b2bar"></div>
 
 <script>
-    $('#startdate_arb2b').datepicker({
+  $('#startdate_arb2b').datepicker({
     dateFormat: "dd-mm-yy"
   });
 
@@ -168,6 +213,15 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       ondblClickRow : function(rowid){
         alert(rowid);
       },
+      subGrid : true,
+      subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/arb2b.php?action=json_sub'; ?>',
+      subGridModel: [
+          { 
+            name : ['No','ID B2B','DO/RET','Customer','Tanggal','Total'], 
+            width : [40,200,50,200,100,100],
+            align : ['right','left','left','left','center','right'],
+          } 
+        ],
     });
     $('#table_b2bar').jqGrid('navGrid', '#pager_table_b2bar', {edit:false, add:false, del:false, search:false});
   });
