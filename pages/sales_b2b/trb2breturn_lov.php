@@ -349,7 +349,7 @@ function intToIDR($val) {
               window.opener.document.getElementById('qty-'+(n)+'-'+j).style.backgroundColor = "#D3D3D3";
               window.opener.document.getElementById('qty-'+(n)+'-'+j).readOnly = true;
             }
-            // window.opener.document.getElementById('qty-'+(n)+'-'+j).value = $('#qty-'+i+'-'+j).val();
+            window.opener.document.getElementById('qty-'+(n)+'-'+j).value = 0;
             // totqty += parseInt($('#qty-'+i+'-'+j).val());
             // window.opener.document.getElementById('totalqty'+n).value=totqty;
           }
