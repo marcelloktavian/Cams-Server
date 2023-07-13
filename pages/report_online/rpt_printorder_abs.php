@@ -148,6 +148,7 @@ font-family:Tahoma;
 	border-bottom: 1px dashed black;
 	border-right: 1px solid black;
 	padding: 3px;
+	max-width:50px; 
 }
 .style_detail_left {	color: #000000;
 	font-size: 8pt;	
@@ -207,7 +208,7 @@ error_reporting(0);
 ?>
 
 
-<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)">
+<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)" style="margin-left:10px">
   <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
     <tr>
       <td height="123" valign="top"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
