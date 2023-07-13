@@ -85,7 +85,7 @@ font-family:Tahoma;
   text-overflow: ellipsis;
 }
 .cut-off th:nth-child(3) {
-  width: 20%;
+  width: 15%;
 }
 .cut-off td:nth-child(3) {
   overflow: hidden;
@@ -117,7 +117,7 @@ font-family:Tahoma;
   text-overflow: ellipsis;
 }
 .cut-off th:nth-child(7) {
-  width: 20%;
+  width: 15%;
 }
 .cut-off td:nth-child(7) {
   overflow: hidden;
@@ -133,7 +133,7 @@ font-family:Tahoma;
   text-overflow: ellipsis;
 }
 .cut-off th:nth-child(9) {
-  width: 10%;
+  width: 15%;
 }
 .cut-off td:nth-child(9) {
   overflow: hidden;
