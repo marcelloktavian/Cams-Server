@@ -85,7 +85,7 @@ font-family:Tahoma;
   text-overflow: ellipsis;
 }
 .cut-off th:nth-child(3) {
-  width: 30%;
+  width: 20%;
 }
 .cut-off td:nth-child(3) {
   overflow: hidden;
@@ -132,6 +132,14 @@ font-family:Tahoma;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.cut-off th:nth-child(9) {
+  width: 10%;
+}
+.cut-off td:nth-child(9) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 
 .style_detail {	color: #000000;
@@ -140,7 +148,6 @@ font-family:Tahoma;
 	border-bottom: 1px dashed black;
 	border-right: 1px solid black;
 	padding: 3px;
-	max-width:50px; 
 }
 .style_detail_left {	color: #000000;
 	font-size: 8pt;	
@@ -167,6 +174,7 @@ error_reporting(0);
     $id_end=$_GET['id_end'];
 	$id_pelanggan=$_GET['id'];
 	$id_exp=$_GET['id_exp'];
+	$resi=$_GET['resi'];
 	$filter_title="";
 	/*
 	if(($id_start != null) and ($id_end != null))
@@ -254,17 +262,18 @@ error_reporting(0);
   <table class="cut-off "width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
   
         <tr>
-            <td colspan="8" class="style9"><hr /></td>
+            <td colspan="9" class="style9"><hr /></td>
           </tr>
       <tr>
       <th width="5%" class="style_title_left"><div align="center">ID.ship</div></td>
       <th width="5%" class="style_title"><div align="center">ID.oln</div></td>
-      <th width="20%" class="style_title"><div align="left">Dropshipper</div></td>
-      <th width="30%" class="style_title"><div align="left">Item</div></td>
+      <th width="15%" class="style_title"><div align="left">Dropshipper</div></td>
+      <th width="10%" class="style_title"><div align="left">Item</div></td>
       <th width="5%" class="style_title"><div align="center">UK</div></td>
       <th width="5%" class="style_title"><div align="center">Qty</div></td>
-      <th width="20%" class="style_title"><div align="center">Penerima</div></td>
+      <th width="15%" class="style_title"><div align="center">Penerima</div></td>
  	  <th width="10%" class="style_title"><div align="center">Pengiriman</div></td>
+ 	  <th width="10%" class="style_title"><div align="center">No Resi</div></td>
       
     </tr>
     <?
@@ -287,7 +296,7 @@ error_reporting(0);
 	$where .=" AND e.id_expeditioncat=$id_exp ";
 	}
     
-	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id_ship as id_kirim FROM olnsodetail dt
+	$sql_detail = "SELECT dt.id_trans,SUBSTRING(dt.id_trans,8,5) AS alias_id,m.tgl_trans, m.ref_kode AS id_web,d.nama AS dropshipper,dt.namabrg,dt.jumlah_beli,dt.size,m.nama AS pembeli,e.nama AS expedition,m.state,i.id_ship as id_kirim, m.exp_code FROM olnsodetail dt
     INNER JOIN olnso m ON dt.id_trans = m.id_trans
     LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
     LEFT JOIN olnso_id i ON m.id_trans = i.id_trans 
@@ -319,7 +328,12 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_beli']."</div></td>";
 		echo"<td class='style_detail'><div align='left'>".$rs2['pembeli']."</div></td>";
-		echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."</div></td>";
+		if($rs2['exp_code'] == '' || $resi == 'false'){
+			echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."</div></td>";
+		}else{
+			echo"<td class='style_detail'><div align='left'>".$rs2['expedition']."<br>(".$rs2['exp_code'].")</div></td>";
+		}
+		echo"<td class='style_detail'><div align='left'>".$rs2['exp_code']."</div></td>";
 		$kode=$rs2['id_trans'];
 	  }
       else if($kode=$rs2['id_trans'])
@@ -331,6 +345,7 @@ error_reporting(0);
 		echo"<td class='style_detail'><div align='center'>".$rs2['size']."</div></td>";
 		echo"<td class='style_detail'><div align='center'>".$rs2['jumlah_beli']."</div></td>";
 		echo"<td class='style_detail'><div align='left'></div></td>";
+		echo"<td class='style_detail'><div align='left'></div></td>";		
 		echo"<td class='style_detail'><div align='left'></div></td>";		
 	  }
 	echo"</tr>";  
