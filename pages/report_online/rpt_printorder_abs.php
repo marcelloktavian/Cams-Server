@@ -208,7 +208,7 @@ error_reporting(0);
 ?>
 
 
-<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)" style="margin-left:5px">
+<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)" style="margin-left:4px">
   <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
     <tr>
       <td height="123" valign="top"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
