@@ -457,7 +457,7 @@ function addNewRow1(){
 
 }
 
-// addNewRow1();
+addNewRow1();
 
   $(document).ready(()=>{
     $('#customer_b2breturn').autocomplete("trb2breturn_cust_list.php", {width: 400});
