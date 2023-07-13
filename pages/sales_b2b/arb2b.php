@@ -54,7 +54,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $i = 0;
   foreach($data1 as $line){
     $edit = $allow_edit? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/arb2b_edit.php?id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
-    $delete = $allow_delete ? '<a href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
+    $delete = $allow_delete ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=delete&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
@@ -118,6 +118,20 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   }
 
   echo json_encode($responce);
+  exit;
+} else if (isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
+  $delete_b2bretun  = $db->prepare("UPDATE `b2bar` SET `deleted` = 1 WHERE id='".$_GET['id']."'");
+
+  $delete_b2bretun->execute();
+  $affected_rows = $delete_b2bretun->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
   exit;
 }
 
