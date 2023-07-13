@@ -70,7 +70,7 @@
 <?php
 include "../../include/koneksi.php";
 
-$sql_mst    = "SELECT a.*, b.id AS id_customer, b.nama AS nama_customer, COALESCE(c.nama, d.nama) AS nama_akun_kredit, COALESCE(e.nama, f.nama) AS nama_akun_debet FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id = b.id LEFT JOIN det_coa c ON a.id_akun_kredit = c.id AND a.no_akun_kredit = c.noakun LEFT JOIN mst_coa d ON a.id_akun_kredit = d.id AND a.no_akun_kredit = d.noakun LEFT JOIN det_coa e ON a.id_akun_debet = e.id AND a.no_akun_debet = e.noakun LEFT JOIN mst_coa f ON a.id_akun_debet = f.id AND a.no_akun_debet = f.noakun LEFT JOIN det_coa g ON g.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0))";
+$sql_mst    = "SELECT a.*, b.id AS id_customer, b.nama AS nama_customer, COALESCE(c.nama, d.nama) AS nama_akun_kredit, COALESCE(e.nama, f.nama) AS nama_akun_debet FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id = b.id LEFT JOIN det_coa c ON a.id_akun_kredit = c.id AND a.no_akun_kredit = c.noakun LEFT JOIN mst_coa d ON a.id_akun_kredit = d.id AND a.no_akun_kredit = d.noakun LEFT JOIN det_coa e ON a.id_akun_debet = e.id AND a.no_akun_debet = e.noakun LEFT JOIN mst_coa f ON a.id_akun_debet = f.id AND a.no_akun_debet = f.noakun LEFT JOIN det_coa g ON g.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'";
 
 $sql        = mysql_query($sql_mst) or die (mysql_error());
 $result     = mysql_fetch_array($sql);
@@ -130,7 +130,7 @@ $result     = mysql_fetch_array($sql);
     <table>
       <tr>
         <td colspan="100%" class="fonttext">Keterangan</td>
-        <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" style="height: 80px; width: 640px;"></textarea></td>
+        <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" value="<?= $result['keterangan'] ?>" style="height: 80px; width: 640px;"><?= $result['keterangan'] ?></textarea></td>
       </tr>
     </table>
   </form>

@@ -147,7 +147,7 @@ $result     = mysql_fetch_array($sql);
     <table>
       <tr>
         <td colspan="100%" class="fonttext">Keterangan</td>
-        <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" style="height: 80px; width: 640px;" /></textarea></td>
+        <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" value="<?= $keterangan ?>" style="height: 80px; width: 640px;" /><?= $keterangan ?></textarea></td>
       </tr>
     </table>
   </form>
