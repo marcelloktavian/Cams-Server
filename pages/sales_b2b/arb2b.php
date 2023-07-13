@@ -15,16 +15,16 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $sidx  = $_GET['sidx'];
   $sord  = $_GET['sord'];
 
-  $startdate = isset($_GET['startdate_arb2b'])?$_GET['startdate_arb2b']:date('Y-m-d');
-  $enddate = isset($_GET['enddate_arb2b'])?$_GET['enddate_arb2b']:date('Y-m-d'); 
-  $filter=$_GET['filter_arb2b'];
+  $startdate  = isset($_GET['startdate_arb2b'])?$_GET['startdate_arb2b']:date('Y-m-d');
+  $enddate    = isset($_GET['enddate_arb2b'])?$_GET['enddate_arb2b']:date('Y-m-d'); 
+  $filter     = $_GET['filter_arb2b'];
 
-  $page = isset($_GET['page'])?$_GET['page']:1;
-  $limit = isset($_GET['rows'])?$_GET['rows']:10;
-  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'tgl_arb2b';
-  $sord = isset($_GET['sord'])?$_GET['sord']:''; 
+  $page       = isset($_GET['page'])?$_GET['page']:1;
+  $limit      = isset($_GET['rows'])?$_GET['rows']:10;
+  $sidx       = isset($_GET['sidx'])?$_GET['sidx']:'tgl_arb2b';
+  $sord       = isset($_GET['sord'])?$_GET['sord']:''; 
 
-  $where = " WHERE mst.deleted=0 ";
+  $where      = " WHERE mst.deleted=0 ";
 
   if($startdate != null && $startdate != ""){
     $where .= " AND tgl_ar BETWEEN '$startdate' AND '$enddate' ";
