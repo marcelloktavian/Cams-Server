@@ -643,7 +643,7 @@ function hitungjml(a)
  	}
 	else
 	{
-	  var subtotalreturn= qtyreturn * Math.round(parseFloat(qtyreturn) * (parseFloat(nett_price)-parseFloat(pinalty)));
+	  var subtotalreturn= Math.round(parseFloat(qtyreturn) * (parseFloat(nett_price)-parseFloat(pinalty)));
 	}
 	
 	//alert("qtyreturn ="+qtyreturn.toString()+",harga="+harga.toString()+",disc="+disc.toString()+" sutotalreturn="+subtotalreturn.toString());	
