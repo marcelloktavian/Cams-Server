@@ -88,10 +88,6 @@
         <td><input type="text" class="inputForm" name="customer_arb2b" id="customer_arb2b" /></td>
       </tr>
       <tr>
-        <td class="fonttext">Akun Debet</td>
-        <td><input type="text" class="inputForm" name="akun_debet_arb2b" id="akun_debet_arb2b"/></td>
-      </tr>
-      <tr>
         <td class="fonttext">Akun Kredit</td>
         <td><input type="text" class="inputForm" name="akun_kredit_arb2b" id="akun_kredit_arb2b" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
@@ -151,7 +147,6 @@
 
   const tanggal = document.getElementById('tanggal_arb2b').value;
   const customer = document.getElementById('customer_arb2b').value;
-  const akunDebet = document.getElementById('akun_debet_arb2b').value;
   const akunKredit = document.getElementById('akun_kredit_arb2b').value;
 
   let counter = 0;
@@ -166,8 +161,6 @@
     pesan = "Tanggal AR B2B tidak boleh kosong";
   } else if(customer == ""){
     pesan = "Customer AR B2B tidak boleh kosong";
-  } else if(akunDebet == ""){
-    pesan = "Akun Debet AR B2B tidak boleh kosong";
   } else if(akunKredit == ""){
     pesan = "Akun Kredit AR B2B tidak boleh kosong";
   } else if(counter == 0){
@@ -406,7 +399,5 @@
       baris1 = 1;
       addNewRow1();
     });
-
-    $('#akun_debet_arb2b').autocomplete("arb2b_akun_list.php", {width: 400});
   });
 </script>

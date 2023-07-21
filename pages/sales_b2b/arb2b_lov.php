@@ -102,6 +102,7 @@ function intToIDR($val) {
 
     setcookie("tglstart", "", time() - 3600);
     setcookie("tglend", "", time() - 3600);
+    setcookie("filter", "", time() - 3600);
   ?>
 
   <table width="100%">
@@ -116,7 +117,7 @@ function intToIDR($val) {
     <tr>
       <td>Tanggal B2B DO / RETURN</td>
       <td><input type="date" id="tglb2barstart" name="tglb2barstart" value="<?= str_replace("/","-",$kode1) ?>"> s/d <input type="date" id="tglb2barend" name="tglb2barend" value="<?= str_replace("/","-",$kode2) ?>"></td>
-      <td>Nomor B2B DO</td>
+      <td>Nomor B2B DO / RETURN</td>
       <td><input type="text" id="filterb2barlov" name="filterb2barlov" value="<?= $filter == "" ? "" : $filter ?>" /></td>
       <td><button id="btncari" name="btncari" onclick="cari()">Cari</button></td>
     </tr>
@@ -143,9 +144,9 @@ function intToIDR($val) {
       <?php 
         $cust = $_GET['cust'];
 
-        $sql_detail_b2bar = "SELECT b2bdo.`id`, b2bdo.`id_trans`, 'B2B DO' AS parent, b2bdo.`totalfaktur` AS `total`, b2bdo.totalkirim as totalqty, b2bdo.`tgl_trans`, DATE_FORMAT(b2bdo.tgl_trans, '%d-%m-%Y') AS tanggal_b2bar, b2bdo.`note` AS `keterangan`, mst_b2bcustomer.nama as customer FROM b2bdo LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2bdo.id_customer WHERE b2bdo.tgl_trans BETWEEN '".$kode1."' AND '".$kode2."' AND b2bdo.deleted = 0 AND b2bdo.id_customer='$cust' AND b2bdo.id NOT IN (SELECT id_b2b FROM b2bar_detail a LEFT JOIN b2bar b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0)
+        $sql_detail_b2bar = "SELECT b2bdo.`id`, b2bdo.`id_trans`, 'B2B DO' AS parent, b2bdo.`totalfaktur` AS `total`, b2bdo.totalkirim as totalqty, b2bdo.`tgl_trans`, DATE_FORMAT(b2bdo.tgl_trans, '%d-%m-%Y') AS tanggal_b2bar, b2bdo.`note` AS `keterangan`, mst_b2bcustomer.nama as customer FROM b2bdo LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2bdo.id_customer WHERE b2bdo.tgl_trans BETWEEN '".$kode1."' AND '".$kode2."' AND b2bdo.deleted = 0 AND b2bdo.id_customer='$cust' AND b2bdo.id_trans LIKE '%".$filter."%' AND b2bdo.id NOT IN (SELECT id_b2b FROM b2bar_detail a LEFT JOIN b2bar b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0)
         UNION 
-        SELECT b2breturn.`id`, b2breturn.`b2breturn_num`, 'B2B RETURN' AS parent, b2breturn.`total`, b2breturn.qty as totalqty, b2breturn.`tgl_return`, DATE_FORMAT(b2breturn.tgl_return, '%d-%m-%Y') AS tanggal_b2bar, b2breturn.`keterangan`, mst_b2bcustomer.nama as customer FROM b2breturn LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2breturn.b2bcust_id WHERE b2breturn.deleted = 0 AND b2breturn.b2bcust_id='$cust' AND b2breturn.id NOT IN (SELECT id_b2b FROM b2bar_detail a LEFT JOIN b2bar b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0)";
+        SELECT b2breturn.`id`, b2breturn.`b2breturn_num`, 'B2B RETURN' AS parent, b2breturn.`total`, b2breturn.qty as totalqty, b2breturn.`tgl_return`, DATE_FORMAT(b2breturn.tgl_return, '%d-%m-%Y') AS tanggal_b2bar, b2breturn.`keterangan`, mst_b2bcustomer.nama as customer FROM b2breturn LEFT JOIN mst_b2bcustomer ON mst_b2bcustomer.id=b2breturn.b2bcust_id WHERE b2breturn.deleted = 0 AND b2breturn.b2bcust_id='$cust' AND b2breturn.`b2breturn_num` LIKE '%".$filter."%' AND b2breturn.id NOT IN (SELECT id_b2b FROM b2bar_detail a LEFT JOIN b2bar b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0)";
 
         $sql_detail_b2bar = mysql_query($sql_detail_b2bar);
         $iterator = 0;

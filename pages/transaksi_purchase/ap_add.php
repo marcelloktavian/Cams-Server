@@ -191,7 +191,7 @@
     var width   = screen.width;
     var height  = screen.height;
     var params  = 'width='+width+', height='+height+',scrollbars=yes';
-    window.open('list_invoicedetail.php?sup='+sup_q+'&baris='+idx,'',params);
+    window.open('list_invoicedetail.php?sup='+sup_q+'&curr='+idx,'',params);
   }
 
   function cetak(){

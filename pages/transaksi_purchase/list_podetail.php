@@ -50,8 +50,8 @@ require_once "../../include/config.php";
       $kode1 = $_COOKIE['tglstart']; $kode2 = $_COOKIE['tglend'];
     }
 
-    if(isset($_COOKIE['baris'])){
-      $get_baris = $_COOKIE['baris'];
+    if(isset($_GET['curr'])){
+      $get_baris = $_GET['curr'];
     }
     else{
       $get_baris = 1;
@@ -116,7 +116,7 @@ require_once "../../include/config.php";
         $sql_detail_po  = "SELECT a.*,date_format(b.tgl_po,'%d-%m-%Y') as tgl_po_formatted,b.dokumen,b.tgl_po,b.nama_supplier,b.persen_ppn FROM `det_po` a LEFT JOIN `mst_po` b ON a.id_po=b.id WHERE a.deleted=0 AND b.deleted=0 AND b.tgl_po BETWEEN '".$kode1."' AND '".$kode2."' AND b.`id_supplier`='".$supplier_filter."'AND a.`qty` > a.`qty_terbayar` AND b.approval=1 ";
 
         $get_detail_po  = mysql_query($sql_detail_po);        
-        $baris = $get_baris;
+        $baris = 1;
 
         while($det_po = mysql_fetch_array($get_detail_po)){
           ?>
@@ -195,41 +195,43 @@ require_once "../../include/config.php";
 
   function pakai(){
     if (window.confirm("Apakah anda yakin ?")){
-      for (var i = <?= $_GET['baris'] ?>; i< <?= $baris ?>; i++){
+      let n = <?= $get_baris ?>;
+      for (var i = 0; i< <?= $baris ?>; i++){
         if ($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
-          if(window.opener.document.getElementById('id'+(window.opener.baris1-1)).value == ""){
-            window.opener.document.getElementById('id'+(window.opener.baris1-1)).value = $('#id'+i).val();
-            window.opener.document.getElementById('persen_ppn'+(window.opener.baris1-1)).value = $('#persen_po'+i).val();
-            window.opener.document.getElementById('id_po'+(window.opener.baris1-1)).value = $('#id_po'+i).val();
-            window.opener.document.getElementById('nomor_dokumen'+(window.opener.baris1-1)).value = $('#dokumen_po'+i).val();
-            window.opener.document.getElementById('id_produk'+(window.opener.baris1-1)).value = $('#id_produk'+i).val();
-            window.opener.document.getElementById('produk_jasa'+(window.opener.baris1-1)).value = $('#barang_jasa'+i).val();
-            window.opener.document.getElementById('qty_remaining'+(window.opener.baris1-1)).value = $('#qty'+i).val();
-            window.opener.document.getElementById('qty_payment'+(window.opener.baris1-1)).value = $('#qty_terbayar'+i).val();
-            window.opener.document.getElementById('satuan'+(window.opener.baris1-1)).value = $('#satuan'+i).val();
-            window.opener.document.getElementById('dpp_unit'+(window.opener.baris1-1)).value = $('#dpp_unit'+i).val();
-            window.opener.document.getElementById('idAkun'+(window.opener.baris1-1)).value = $('#id_akun'+i).val();
-            window.opener.document.getElementById('nomorAkun'+(window.opener.baris1-1)).value = $('#nomor_akun'+i).val();
-            window.opener.document.getElementById('namaAkun'+(window.opener.baris1-1)).value = $('#nama_akun'+i).val();
+          if(window.opener.document.getElementById('id'+(n)).value == ""){
+            window.opener.document.getElementById('id'+(n)).value = $('#id'+i).val();
+            window.opener.document.getElementById('persen_ppn'+(n)).value = $('#persen_po'+i).val();
+            window.opener.document.getElementById('id_po'+(n)).value = $('#id_po'+i).val();
+            window.opener.document.getElementById('nomor_dokumen'+(n)).value = $('#dokumen_po'+i).val();
+            window.opener.document.getElementById('id_produk'+(n)).value = $('#id_produk'+i).val();
+            window.opener.document.getElementById('produk_jasa'+(n)).value = $('#barang_jasa'+i).val();
+            window.opener.document.getElementById('qty_remaining'+(n)).value = $('#qty'+i).val();
+            window.opener.document.getElementById('qty_payment'+(n)).value = $('#qty_terbayar'+i).val();
+            window.opener.document.getElementById('satuan'+(n)).value = $('#satuan'+i).val();
+            window.opener.document.getElementById('dpp_unit'+(n)).value = $('#dpp_unit'+i).val();
+            window.opener.document.getElementById('idAkun'+(n)).value = $('#id_akun'+i).val();
+            window.opener.document.getElementById('nomorAkun'+(n)).value = $('#nomor_akun'+i).val();
+            window.opener.document.getElementById('namaAkun'+(n)).value = $('#nama_akun'+i).val();
             window.opener.addNewRow1();
           }
           else{
             window.opener.addNewRow1();
-            window.opener.document.getElementById('id'+(window.opener.baris1-1)).value = $('#id'+i).val();
-            window.opener.document.getElementById('persen_ppn'+(window.opener.baris1-1)).value = $('#persen_po'+i).val();
-            window.opener.document.getElementById('id_po'+(window.opener.baris1-1)).value = $('#id_po'+i).val();
-            window.opener.document.getElementById('nomor_dokumen'+(window.opener.baris1-1)).value = $('#dokumen_po'+i).val();
-            window.opener.document.getElementById('id_produk'+(window.opener.baris1-1)).value = $('#id_produk'+i).val();
-            window.opener.document.getElementById('produk_jasa'+(window.opener.baris1-1)).value = $('#barang_jasa'+i).val();
-            window.opener.document.getElementById('qty_remaining'+(window.opener.baris1-1)).value = $('#qty'+i).val();
-            window.opener.document.getElementById('qty_payment'+(window.opener.baris1-1)).value = $('#qty_terbayar'+i).val();
-            window.opener.document.getElementById('satuan'+(window.opener.baris1-1)).value = $('#satuan'+i).val();
-            window.opener.document.getElementById('dpp_unit'+(window.opener.baris1-1)).value = $('#dpp_unit'+i).val();
-            window.opener.document.getElementById('idAkun'+(window.opener.baris1-1)).value = $('#id_akun'+i).val();
-            window.opener.document.getElementById('nomorAkun'+(window.opener.baris1-1)).value = $('#nomor_akun'+i).val();
-            window.opener.document.getElementById('namaAkun'+(window.opener.baris1-1)).value = $('#nama_akun'+i).val();
+            window.opener.document.getElementById('id'+(n)).value = $('#id'+i).val();
+            window.opener.document.getElementById('persen_ppn'+(n)).value = $('#persen_po'+i).val();
+            window.opener.document.getElementById('id_po'+(n)).value = $('#id_po'+i).val();
+            window.opener.document.getElementById('nomor_dokumen'+(n)).value = $('#dokumen_po'+i).val();
+            window.opener.document.getElementById('id_produk'+(n)).value = $('#id_produk'+i).val();
+            window.opener.document.getElementById('produk_jasa'+(n)).value = $('#barang_jasa'+i).val();
+            window.opener.document.getElementById('qty_remaining'+(n)).value = $('#qty'+i).val();
+            window.opener.document.getElementById('qty_payment'+(n)).value = $('#qty_terbayar'+i).val();
+            window.opener.document.getElementById('satuan'+(n)).value = $('#satuan'+i).val();
+            window.opener.document.getElementById('dpp_unit'+(n)).value = $('#dpp_unit'+i).val();
+            window.opener.document.getElementById('idAkun'+(n)).value = $('#id_akun'+i).val();
+            window.opener.document.getElementById('nomorAkun'+(n)).value = $('#nomor_akun'+i).val();
+            window.opener.document.getElementById('namaAkun'+(n)).value = $('#nama_akun'+i).val();
             window.opener.addNewRow1();
           }
+          n++;
         }
       }
       window.close();

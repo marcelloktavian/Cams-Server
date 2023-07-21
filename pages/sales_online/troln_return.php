@@ -42,17 +42,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 	    }
 		
 		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition FROM `olnsoreturn` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) ".$where;
-        $q = $db->query($sql);
-		$count = $q->rowCount();
-        //var_dump($sql);
-        $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
-        if ($page > $total_pages) $page=$total_pages;
-        $start = $limit*$page - $limit;
-        if($start <0) $start = 0;
+			$q = $db->query($sql);
+			$count = $q->rowCount();
+			//var_dump($sql);
+			$count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
+			if ($page > $total_pages) $page=$total_pages;
+			$start = $limit*$page - $limit;
+			if($start <0) $start = 0;
 
-        $q = $db->query($sql."
-							 ORDER BY `".$sidx."` ".$sord."
-							 LIMIT ".$start.", ".$limit);
+			$q = $db->query($sql."
+				ORDER BY `".$sidx."` ".$sord."
+				LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
 		$statusToko = '';

@@ -54,8 +54,8 @@ function intToIDR($val) {
       $kode1 = $_COOKIE['tglstart']; $kode2 = $_COOKIE['tglend'];
     }
 
-    if(isset($_COOKIE['baris'])){
-      $get_baris = $_COOKIE['baris'];
+    if(isset($_GET['curr'])){
+      $get_baris = $_GET['curr'];
     }
     else{
       $get_baris = 1;
@@ -117,7 +117,7 @@ function intToIDR($val) {
         $sql_detail_inv  = "SELECT a.*,date_format(a.tanggal_invoice, '%d-%m-%Y') AS tanggal_invoice_formatted,date_format(a.tanggal_jatuh_tempo, '%d-%m-%Y') AS tanggal_jatuh_tempo_formatted FROM `mst_invoice` a WHERE a.deleted=0 AND a.tanggal_invoice BETWEEN '".$kode1."' AND '".$kode2."' AND a.`id_supplier`='".$supplier_filter."' AND a.`total` > a.`total_payment` AND `post_ap`=1";
 
         $get_detail_inv = mysql_query($sql_detail_inv);
-        $baris  = $get_baris;
+        $baris  = 1;
 
         while($det_ap = mysql_fetch_array($get_detail_inv)){
           ?>
@@ -183,17 +183,18 @@ function intToIDR($val) {
 
   function pakai(){
     if(window.confirm("Apakah anda yakin ?")){
-      for(var i = <?= $_GET['baris'] ?>; i< <?= $baris ?>; i++){
+      let n = <?= $get_baris ?>;
+      for(var i = 1; i< <?= $baris ?>; i++){
         if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
-          if(window.opener.document.getElementById('id_invoice'+(window.opener.baris1-1)).value == ""){ 
-            window.opener.document.getElementById('id_invoice'+(window.opener.baris1-1)).value = $('#id'+i).val();
-            window.opener.document.getElementById('nomor_invoice'+(window.opener.baris1-1)).value = $('#nomor_invoice'+i).val();
-            window.opener.document.getElementById('tanggal_invoice'+(window.opener.baris1-1)).value = $('#tanggal_invoice'+i).val();
-            window.opener.document.getElementById('tanggal_jatuh_tempo'+(window.opener.baris1-1)).value = $('#tanggal_jatuh_tempo'+i).val();
-            window.opener.document.getElementById('qty'+(window.opener.baris1-1)).value = $('#qty'+i).val();
-            window.opener.document.getElementById('total_inv'+(window.opener.baris1-1)).value = $('#total_remaining'+i).val();
-            window.opener.document.getElementById('total_terbayar_inv'+(window.opener.baris1-1)).value = $('#total_payment'+i).val();
-            window.opener.document.getElementById('total_sisa_inv'+(window.opener.baris1-1)).value = $('#total_remaining'+i).val();
+          if(window.opener.document.getElementById('id_invoice'+(n)).value == ""){ 
+            window.opener.document.getElementById('id_invoice'+(n)).value = $('#id'+i).val();
+            window.opener.document.getElementById('nomor_invoice'+(n)).value = $('#nomor_invoice'+i).val();
+            window.opener.document.getElementById('tanggal_invoice'+(n)).value = $('#tanggal_invoice'+i).val();
+            window.opener.document.getElementById('tanggal_jatuh_tempo'+(n)).value = $('#tanggal_jatuh_tempo'+i).val();
+            window.opener.document.getElementById('qty'+(n)).value = $('#qty'+i).val();
+            window.opener.document.getElementById('total_inv'+(n)).value = $('#total_remaining'+i).val();
+            window.opener.document.getElementById('total_terbayar_inv'+(n)).value = $('#total_payment'+i).val();
+            window.opener.document.getElementById('total_sisa_inv'+(n)).value = $('#total_remaining'+i).val();
             window.opener.addNewRow1();
           }
         }

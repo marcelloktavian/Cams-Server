@@ -487,9 +487,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if(<?=$rs['unret31'] + $rs['qty31']?> > 0){
     document.getElementById('id-<?=$i?>-31').style.color = red;
   }else{
-    document.getElementById('id-<?=$i?>-31').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-31').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-31').readOnly = true;
     document.getElementById('qty-<?=$i?>-31').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-31').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-31').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-31').val('<?=$rs['qty31']?>');
   $('#idItem-<?=$i?>-32').val('<?=$rs['id32']?>');
@@ -497,9 +499,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if(<?=$rs['unret32'] + $rs['qty32']?> > 0){
     document.getElementById('id-<?=$i?>-32').style.color = red;
   }else{
-    document.getElementById('id-<?=$i?>-32').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-32').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-32').readOnly = true;
     document.getElementById('qty-<?=$i?>-32').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-32').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-32').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-32').val('<?=$rs['qty32']?>');
   $('#idItem-<?=$i?>-33').val('<?=$rs['id33']?>');
@@ -507,9 +511,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret33'] + $rs['qty33']?> > 0) {
     document.getElementById('id-<?=$i?>-33').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-33').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-33').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-33').readOnly = true;
     document.getElementById('qty-<?=$i?>-33').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-33').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-33').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-33').val('<?=$rs['qty33']?>');
   $('#idItem-<?=$i?>-34').val('<?=$rs['id34']?>');
@@ -517,9 +523,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret34'] + $rs['qty34']?> > 0) {
     document.getElementById('id-<?=$i?>-34').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-34').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-34').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-34').readOnly = true;
     document.getElementById('qty-<?=$i?>-34').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-34').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-34').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-34').val('<?=$rs['qty34']?>');
   $('#idItem-<?=$i?>-35').val('<?=$rs['id35']?>');
@@ -527,9 +535,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret35'] + $rs['qty35']?> > 0) {
     document.getElementById('id-<?=$i?>-35').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-35').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-35').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-35').readOnly = true;
     document.getElementById('qty-<?=$i?>-35').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-35').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-35').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-35').val('<?=$rs['qty35']?>');
   $('#idItem-<?=$i?>-36').val('<?=$rs['id36']?>');
@@ -537,9 +547,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret36'] + $rs['qty36']?> > 0) {
     document.getElementById('id-<?=$i?>-36').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-36').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-36').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-36').readOnly = true;
     document.getElementById('qty-<?=$i?>-36').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-36').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-36').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-36').val('<?=$rs['qty36']?>');
   $('#idItem-<?=$i?>-37').val('<?=$rs['id37']?>');
@@ -547,9 +559,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret37'] + $rs['qty37']?> > 0) {
     document.getElementById('id-<?=$i?>-37').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-37').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-37').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-37').readOnly = true;
     document.getElementById('qty-<?=$i?>-37').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-37').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-37').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-37').val('<?=$rs['qty37']?>');
   $('#idItem-<?=$i?>-38').val('<?=$rs['id38']?>');
@@ -557,9 +571,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret38'] + $rs['qty38']?> > 0) {
     document.getElementById('id-<?=$i?>-38').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-38').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-38').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-38').readOnly = true;
     document.getElementById('qty-<?=$i?>-38').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-38').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-38').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-38').val('<?=$rs['qty38']?>');
   $('#idItem-<?=$i?>-39').val('<?=$rs['id39']?>');
@@ -567,9 +583,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret39'] + $rs['qty39']?> > 0) {
     document.getElementById('id-<?=$i?>-39').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-39').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-39').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-39').readOnly = true;
     document.getElementById('qty-<?=$i?>-39').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-39').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-39').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-39').val('<?=$rs['qty39']?>');
   $('#idItem-<?=$i?>-40').val('<?=$rs['id40']?>');
@@ -577,9 +595,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret40'] + $rs['qty40']?> > 0) {
     document.getElementById('id-<?=$i?>-40').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-40').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-40').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-40').readOnly = true;
     document.getElementById('qty-<?=$i?>-40').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-40').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-40').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-40').val('<?=$rs['qty40']?>');
   $('#idItem-<?=$i?>-41').val('<?=$rs['id41']?>');
@@ -587,9 +607,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret41'] + $rs['qty41']?> > 0) {
     document.getElementById('id-<?=$i?>-41').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-41').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-41').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-41').readOnly = true;
     document.getElementById('qty-<?=$i?>-41').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-41').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-41').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-41').val('<?=$rs['qty41']?>');
   $('#idItem-<?=$i?>-42').val('<?=$rs['id42']?>');
@@ -597,9 +619,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret42'] + $rs['qty42']?> > 0) {
     document.getElementById('id-<?=$i?>-42').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-42').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-42').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-42').readOnly = true;
     document.getElementById('qty-<?=$i?>-42').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-42').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-42').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-42').val('<?=$rs['qty42']?>');
   $('#idItem-<?=$i?>-43').val('<?=$rs['id43']?>');
@@ -607,9 +631,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret43'] + $rs['qty43']?> > 0) {
     document.getElementById('id-<?=$i?>-43').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-43').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-43').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-43').readOnly = true;
     document.getElementById('qty-<?=$i?>-43').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-43').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-43').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-43').val('<?=$rs['qty43']?>');
   $('#idItem-<?=$i?>-44').val('<?=$rs['id44']?>');
@@ -617,9 +643,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret44'] + $rs['qty44']?> > 0) {
     document.getElementById('id-<?=$i?>-44').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-44').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-44').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-44').readOnly = true;
     document.getElementById('qty-<?=$i?>-44').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-44').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-44').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-44').val('<?=$rs['qty44']?>');
   $('#idItem-<?=$i?>-45').val('<?=$rs['id45']?>');
@@ -627,9 +655,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret45'] + $rs['qty45']?> > 0) {
     document.getElementById('id-<?=$i?>-45').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-45').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-45').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-45').readOnly = true;
     document.getElementById('qty-<?=$i?>-45').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-45').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-45').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-45').val('<?=$rs['qty45']?>');
   $('#idItem-<?=$i?>-46').val('<?=$rs['id46']?>');
@@ -637,9 +667,11 @@ while($rs=mysql_fetch_array($sql_detail)){
   if (<?=$rs['unret46'] + $rs['qty46']?> > 0) {
     document.getElementById('id-<?=$i?>-46').style.color = 'red';
   }else{
-    document.getElementById('id-<?=$i?>-46').style.backgroundColor = 'gray';
+    document.getElementById('id-<?=$i?>-46').style.backgroundColor = '#b3b3b3';
     document.getElementById('qty-<?=$i?>-46').readOnly = true;
     document.getElementById('qty-<?=$i?>-46').style.backgroundColor = '#D3D3D3';
+    document.getElementById('qty-<?=$i?>-46').style.border = '1px solid #4f4f4f';
+    document.getElementById('qty-<?=$i?>-46').tabIndex = '-1';
   }
   $('#qty-<?=$i?>-46').val('<?=$rs['qty46']?>');
 

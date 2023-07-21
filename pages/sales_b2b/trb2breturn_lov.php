@@ -91,7 +91,7 @@ function intToIDR($val) {
       $get_baris = 1;
     }
 
-    if(isset($_COOKIE['filter']) && isset($_COOKIE['filter']) != null){
+    if(isset($_COOKIE['filter']) && isset($_COOKIE['filter']) != ''){
       $filter = $_COOKIE['filter'];
     }
     else{
@@ -114,6 +114,7 @@ function intToIDR($val) {
 
     setcookie("tglstart", "", time() - 3600);
     setcookie("tglend", "", time() - 3600);
+    setcookie("filter", "", time() - 3600);
   ?>
 
 <table width="100%">
@@ -345,9 +346,11 @@ function intToIDR($val) {
             if($('#qty-'+i+'-'+j).val() > 0){
               window.opener.document.getElementById('id-'+(n)+'-'+j).style.color = "red";
             }else{
-              window.opener.document.getElementById('id-'+(n)+'-'+j).style.backgroundColor = "gray";
-              window.opener.document.getElementById('qty-'+(n)+'-'+j).style.backgroundColor = "#D3D3D3";
+              window.opener.document.getElementById('id-'+(n)+'-'+j).style.backgroundColor = '#b3b3b3';
               window.opener.document.getElementById('qty-'+(n)+'-'+j).readOnly = true;
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).style.backgroundColor = '#D3D3D3';
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).style.border = '1px solid #4f4f4f';
+              window.opener.document.getElementById('qty-'+(n)+'-'+j).tabIndex = '-1';
             }
             window.opener.document.getElementById('qty-'+(n)+'-'+j).value = 0;
             // totqty += parseInt($('#qty-'+i+'-'+j).val());

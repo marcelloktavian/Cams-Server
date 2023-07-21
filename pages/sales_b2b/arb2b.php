@@ -55,6 +55,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   foreach($data1 as $line){
     $edit = $allow_edit? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/arb2b_edit.php?id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $delete = $allow_delete ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=delete&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
+    $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=post&postval=1&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Post</a>' : '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=post&postval=0&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Post</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Unpost</a>');
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
@@ -63,6 +64,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $line['tgl_ar'],
       number_format($line['total']),
       $line['keterangan'],
+      $post,
       $edit,
       $delete
     );
@@ -121,6 +123,20 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   exit;
 } else if (isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
   $delete_b2bretun  = $db->prepare("UPDATE `b2bar` SET `deleted` = 1 WHERE id='".$_GET['id']."'");
+
+  $delete_b2bretun->execute();
+  $affected_rows = $delete_b2bretun->rowCount();
+
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Succes';
+  }
+  else{
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
+  exit;
+} else if (isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
+  $delete_b2bretun  = $db->prepare("UPDATE `b2bar` SET `post` = '".$_GET['postval']."' WHERE id='".$_GET['id']."'");
 
   $delete_b2bretun->execute();
   $affected_rows = $delete_b2bretun->rowCount();
@@ -204,13 +220,14 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_b2bar').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/arb2b.php?action=json';?>',
       datatype      : 'json',
-      colNames      : ['ID','Nomor AR B2B', 'Tanggal AR', 'Total AR', 'Keterangan', 'Edit', 'Delete'],
+      colNames      : ['ID','Nomor AR B2B', 'Tanggal AR', 'Total AR', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
         {name: 'id_b2bar', index: 'id_b2bar', align: 'right', width: 10, searchoptions: {sopt: ['cn']}},
         {name: 'b2brar_num', index: 'b2brar_num', align: 'left', width: 50, searchoptions:{sopt: ['cn']}},
         {name:'tanggal_b2bar', index: 'tanggal_b2bar', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
         {name: 'total_b2bar', index: 'total_b2bar', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'keterangan_b2bar', index: 'keterangan_b2bar', align: 'left', width: 80, searchoptions:{sopt: ['cn']}},
+        {name: 'post', index: 'post', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'edit', index: 'edit', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'delete', index: 'delete', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],

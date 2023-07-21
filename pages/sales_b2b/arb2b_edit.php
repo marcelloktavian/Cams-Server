@@ -70,13 +70,12 @@
 <?php
 include "../../include/koneksi.php";
 
-$sql_mst    = "SELECT a.*, b.id AS id_customer, b.nama AS nama_customer, COALESCE(c.nama, d.nama) AS nama_akun_kredit, COALESCE(e.nama, f.nama) AS nama_akun_debet FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id = b.id LEFT JOIN det_coa c ON a.id_akun_kredit = c.id AND a.no_akun_kredit = c.noakun LEFT JOIN mst_coa d ON a.id_akun_kredit = d.id AND a.no_akun_kredit = d.noakun LEFT JOIN det_coa e ON a.id_akun_debet = e.id AND a.no_akun_debet = e.noakun LEFT JOIN mst_coa f ON a.id_akun_debet = f.id AND a.no_akun_debet = f.noakun LEFT JOIN det_coa g ON g.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'";
+$sql_mst    = "SELECT a.*, b.id AS id_customer, b.nama AS nama_customer, COALESCE(c.nama, d.nama) AS nama_akun_kredit FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.b2bcust_id = b.id LEFT JOIN det_coa c ON a.id_akun_kredit = c.id AND a.no_akun_kredit = c.noakun LEFT JOIN mst_coa d ON a.id_akun_kredit = d.id AND a.no_akun_kredit = d.noakun LEFT JOIN det_coa g ON g.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'";
 
 $sql        = mysql_query($sql_mst) or die (mysql_error());
 $result     = mysql_fetch_array($sql);
   $tanggal_arb2b    = $result['tgl_ar'];
   $customer_arb2b   = $result['id_customer'].":".$result['nama_customer'];
-  $akun_debet_arb2b = $result['id_akun_debet'].":".$result['no_akun_debet']." - ".$result['nama_akun_debet'];
   $akun_kredit_arb2b = $result['id_akun_kredit'].":".$result['no_akun_kredit']." - ".$result['nama_akun_kredit'];
 ?>
 
@@ -100,10 +99,6 @@ $result     = mysql_fetch_array($sql);
       <tr>
         <td class="fonttext">Customer</td>
         <td><input type="text" class="inputForm" name="customer_arb2b" id="customer_arb2b" value="<?= $customer_arb2b ?>" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
-      </tr>
-      <tr>
-        <td class="fonttext">Akun Debet</td>
-        <td><input type="text" class="inputForm" name="akun_debet_arb2b" id="akun_debet_arb2b" value="<?= $akun_debet_arb2b ?>" readonly style="background-color: #dcdcdc; border: 1px solid black;" /></td>
       </tr>
       <tr>
         <td class="fonttext">Akun Kredit</td>
@@ -165,7 +160,6 @@ $result     = mysql_fetch_array($sql);
 
   const tanggal = document.getElementById('tanggal_arb2b').value;
   const customer = document.getElementById('customer_arb2b').value;
-  const akunDebet = document.getElementById('akun_debet_arb2b').value;
   const akunKredit = document.getElementById('akun_kredit_arb2b').value;
 
   let counter = 0;
@@ -180,8 +174,6 @@ $result     = mysql_fetch_array($sql);
     pesan = "Tanggal AR B2B tidak boleh kosong";
   } else if(customer == ""){
     pesan = "Customer AR B2B tidak boleh kosong";
-  } else if(akunDebet == ""){
-    pesan = "Akun Debet AR B2B tidak boleh kosong";
   } else if(akunKredit == ""){
     pesan = "Akun Kredit AR B2B tidak boleh kosong";
   } else if(counter == 0){
@@ -389,8 +381,6 @@ $result     = mysql_fetch_array($sql);
       baris1 = 1;
       addNewRow1();
     });
-
-    $('#akun_debet_arb2b').autocomplete("arb2b_akun_list.php", {width: 400});
   });
 
 <?php 
