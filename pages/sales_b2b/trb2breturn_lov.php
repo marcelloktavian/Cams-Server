@@ -182,84 +182,84 @@ function intToIDR($val) {
                     <p><bold>QTY</bold></p>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="31">
-                    <input type="hidden" name="id-<?= $baris ?>-31" id="id-<?= $baris ?>-31" value="<?= $det_b2bdo['id31'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-31" id="qty-<?= $baris ?>-31" size="3" value="<?= $det_b2bdo['unret31'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="31" <?= $det_b2bdo['unret31'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-31" id="id-<?= $baris ?>-31" value="<?= $det_b2bdo['id31'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-31" id="qty-<?= $baris ?>-31" size="3" value="<?= $det_b2bdo['unret31'] ?>" <?= $det_b2bdo['unret31'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="32">
-                    <input type="hidden" name="id-<?= $baris ?>-32" id="id-<?= $baris ?>-32" value="<?= $det_b2bdo['id32'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-32" id="qty-<?= $baris ?>-32" size="3" value="<?= $det_b2bdo['unret32'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="32" <?= $det_b2bdo['unret32'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-32" id="id-<?= $baris ?>-32" value="<?= $det_b2bdo['id32'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-32" id="qty-<?= $baris ?>-32" size="3" value="<?= $det_b2bdo['unret32'] ?>" <?= $det_b2bdo['unret32'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="33">
-                    <input type="hidden" name="id-<?= $baris ?>-33" id="id-<?= $baris ?>-33" value="<?= $det_b2bdo['id33'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-33" id="qty-<?= $baris ?>-33" size="3" value="<?= $det_b2bdo['unret33'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="33" <?= $det_b2bdo['unret33'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-33" id="id-<?= $baris ?>-33" value="<?= $det_b2bdo['id33'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-33" id="qty-<?= $baris ?>-33" size="3" value="<?= $det_b2bdo['unret33'] ?>" <?= $det_b2bdo['unret33'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="34">
-                    <input type="hidden" name="id-<?= $baris ?>-34" id="id-<?= $baris ?>-34" value="<?= $det_b2bdo['id34'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-34" id="qty-<?= $baris ?>-34" size="3" value="<?= $det_b2bdo['unret34'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="34" <?= $det_b2bdo['unret34'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-34" id="id-<?= $baris ?>-34" value="<?= $det_b2bdo['id34'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-34" id="qty-<?= $baris ?>-34" size="3" value="<?= $det_b2bdo['unret34'] ?>" <?= $det_b2bdo['unret34'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="35">
-                    <input type="hidden" name="id-<?= $baris ?>-35" id="id-<?= $baris ?>-35" value="<?= $det_b2bdo['id35'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-35" id="qty-<?= $baris ?>-35" size="3" value="<?= $det_b2bdo['unret35'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="35" <?= $det_b2bdo['unret35'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-35" id="id-<?= $baris ?>-35" value="<?= $det_b2bdo['id35'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-35" id="qty-<?= $baris ?>-35" size="3" value="<?= $det_b2bdo['unret35'] ?>" <?= $det_b2bdo['unret35'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="36">
-                    <input type="hidden" name="id-<?= $baris ?>-36" id="id-<?= $baris ?>-36" value="<?= $det_b2bdo['id36'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-36" id="qty-<?= $baris ?>-36" size="3" value="<?= $det_b2bdo['unret36'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="36" <?= $det_b2bdo['unret36'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-36" id="id-<?= $baris ?>-36" value="<?= $det_b2bdo['id36'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-36" id="qty-<?= $baris ?>-36" size="3" value="<?= $det_b2bdo['unret36'] ?>" <?= $det_b2bdo['unret36'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?> >
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="37">
-                    <input type="hidden" name="id-<?= $baris ?>-37" id="id-<?= $baris ?>-37" value="<?= $det_b2bdo['id37'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-37" id="qty-<?= $baris ?>-37" size="3" value="<?= $det_b2bdo['unret37'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="37" <?= $det_b2bdo['unret37'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-37" id="id-<?= $baris ?>-37" value="<?= $det_b2bdo['id37'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-37" id="qty-<?= $baris ?>-37" size="3" value="<?= $det_b2bdo['unret37'] ?>" <?= $det_b2bdo['unret37'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="38">
-                    <input type="hidden" name="id-<?= $baris ?>-38" id="id-<?= $baris ?>-38" value="<?= $det_b2bdo['id38'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-38" id="qty-<?= $baris ?>-38" size="3" value="<?= $det_b2bdo['unret38'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="38" <?= $det_b2bdo['unret38'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-38" id="id-<?= $baris ?>-38" value="<?= $det_b2bdo['id38'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-38" id="qty-<?= $baris ?>-38" size="3" value="<?= $det_b2bdo['unret38'] ?>" <?= $det_b2bdo['unret38'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="39">
-                    <input type="hidden" name="id-<?= $baris ?>-39" id="id-<?= $baris ?>-39" value="<?= $det_b2bdo['id39'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-39" id="qty-<?= $baris ?>-39" size="3" value="<?= $det_b2bdo['unret39'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="39" <?= $det_b2bdo['unret39'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-39" id="id-<?= $baris ?>-39" value="<?= $det_b2bdo['id39'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-39" id="qty-<?= $baris ?>-39" size="3" value="<?= $det_b2bdo['unret39'] ?>" <?= $det_b2bdo['unret39'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="40">
-                    <input type="hidden" name="id-<?= $baris ?>-40" id="id-<?= $baris ?>-40" value="<?= $det_b2bdo['id40'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-40" id="qty-<?= $baris ?>-40" size="3" value="<?= $det_b2bdo['unret40'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="40" <?= $det_b2bdo['unret40'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-40" id="id-<?= $baris ?>-40" value="<?= $det_b2bdo['id40'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-40" id="qty-<?= $baris ?>-40" size="3" value="<?= $det_b2bdo['unret40'] ?>" <?= $det_b2bdo['unret40'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="41">
-                    <input type="hidden" name="id-<?= $baris ?>-41" id="id-<?= $baris ?>-41" value="<?= $det_b2bdo['id41'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-41" id="qty-<?= $baris ?>-41" size="3" value="<?= $det_b2bdo['unret41'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="41" <?= $det_b2bdo['unret41'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-41" id="id-<?= $baris ?>-41" value="<?= $det_b2bdo['id41'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-41" id="qty-<?= $baris ?>-41" size="3" value="<?= $det_b2bdo['unret41'] ?>" <?= $det_b2bdo['unret41'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="42">
-                    <input type="hidden" name="id-<?= $baris ?>-42" id="id-<?= $baris ?>-42" value="<?= $det_b2bdo['id42'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-42" id="qty-<?= $baris ?>-42" size="3" value="<?= $det_b2bdo['unret42'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="42" <?= $det_b2bdo['unret42'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-42" id="id-<?= $baris ?>-42" value="<?= $det_b2bdo['id42'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-42" id="qty-<?= $baris ?>-42" size="3" value="<?= $det_b2bdo['unret42'] ?>" <?= $det_b2bdo['unret42'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="43">
-                    <input type="hidden" name="id-<?= $baris ?>-43" id="id-<?= $baris ?>-43" value="<?= $det_b2bdo['id43'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-43" id="qty-<?= $baris ?>-43" size="3" value="<?= $det_b2bdo['unret43'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="43" <?= $det_b2bdo['unret43'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-43" id="id-<?= $baris ?>-43" value="<?= $det_b2bdo['id43'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-43" id="qty-<?= $baris ?>-43" size="3" value="<?= $det_b2bdo['unret43'] ?>" <?= $det_b2bdo['unret43'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="44">
-                    <input type="hidden" name="id-<?= $baris ?>-44" id="id-<?= $baris ?>-44" value="<?= $det_b2bdo['id44'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-44" id="qty-<?= $baris ?>-44" size="3" value="<?= $det_b2bdo['unret44'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="44" <?= $det_b2bdo['unret44'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-44" id="id-<?= $baris ?>-44" value="<?= $det_b2bdo['id44'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-44" id="qty-<?= $baris ?>-44" size="3" value="<?= $det_b2bdo['unret44'] ?>" <?= $det_b2bdo['unret44'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?> >
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="35">
-                    <input type="hidden" name="id-<?= $baris ?>-45" id="id-<?= $baris ?>-45" value="<?= $det_b2bdo['id45'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-45" id="qty-<?= $baris ?>-45" size="3" value="<?= $det_b2bdo['unret45'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="35" <?= $det_b2bdo['unret45'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-45" id="id-<?= $baris ?>-45" value="<?= $det_b2bdo['id45'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-45" id="qty-<?= $baris ?>-45" size="3" value="<?= $det_b2bdo['unret45'] ?>" <?= $det_b2bdo['unret45'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                   <div class="containerQty">
-                    <input type="text" readonly size="3" class="text-center" value="46">
-                    <input type="hidden" name="id-<?= $baris ?>-46" id="id-<?= $baris ?>-46" value="<?= $det_b2bdo['id46'] ?>" readonly size="3">
-                    <input type="text" readonly class="text-center" name="qty-<?= $baris ?>-46" id="qty-<?= $baris ?>-46" size="3" value="<?= $det_b2bdo['unret46'] ?>" >
+                    <input type="text" readonly size="3" class="text-center" value="46" <?= $det_b2bdo['unret46'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
+                    <input type="hidden" class="value-nol text-center" name="id-<?= $baris ?>-46" id="id-<?= $baris ?>-46" value="<?= $det_b2bdo['id46'] ?>" readonly size="3">
+                    <input type="text" readonly class="value-nol text-center" name="qty-<?= $baris ?>-46" id="qty-<?= $baris ?>-46" size="3" value="<?= $det_b2bdo['unret46'] ?>" <?= $det_b2bdo['unret46'] == 0 ? 'style="background-color:#d0d0d0 !important;"' : '' ?>>
                   </div>
                 </div>
               </td>
@@ -366,6 +366,15 @@ function intToIDR($val) {
       window.close();
     }
   }
+
+  const valueNol = document.querySelectorAll(".value-nol");
+
+  valueNol.forEach((row)=>{
+    row.addEventListener('change',(event)=>{
+      console.log('aas');
+      row.setAttribute.style = "background-color: 'light-grey';";
+    });
+  });
 
   $(document).ready(function(){
     var table = $('#list_detail_b2bdo').DataTable({
