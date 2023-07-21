@@ -83,6 +83,9 @@
     $month_filter = ltrim(date("m"),0);
   }
 
+  $startDate = date("Y-m-01", strtotime(date('Y')."-".$month_filter."-01"));
+  $endDate = date("Y-m-t", strtotime(date('Y')."-".$month_filter."-31"));
+
   $sqlb2b = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = YEAR(CURDATE()) GROUP BY MONTH(tgl_trans)";
 
   $sqlb2b = mysql_query($sqlb2b);
@@ -91,12 +94,29 @@
 
   $sqlolnso = mysql_query($sqlolnso);
 
-  $sqlb2b_month = "SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '".$month_filter."' AND YEAR(tgl_trans) = YEAR(CURDATE()) GROUP BY DAY(tgl_trans)";
+  $sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum_totalfaktur
+  FROM (
+      SELECT LAST_DAY('".$endDate."') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
+      FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+      CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+      CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+  ) a 
+  LEFT JOIN (SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '".$month_filter."' AND YEAR(tgl_trans) = YEAR(CURDATE()) GROUP BY DAY(tgl_trans)) AS b
+  ON DAY(a.Date) = b.day
+  WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
+
+  $sqlolnso_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalolnso,0) AS sum_totalolnso
+  FROM (
+      SELECT LAST_DAY('".$endDate."') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
+      FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+      CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+      CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+  ) a 
+  LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = YEAR(CURDATE()) GROUP BY DAY(lastmodified)) AS b
+  ON DAY(a.Date) = b.day
+  WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
 
   $sqlb2b_month = mysql_query($sqlb2b_month);
-
-  $sqlolnso_month = "SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = YEAR(CURDATE()) GROUP BY DAY(lastmodified)";
-
   $sqlolnso_month = mysql_query($sqlolnso_month);
 
 ?>
@@ -211,8 +231,8 @@
   });
 
   const labels_month = [<?php
-  $startDate = date("Y-m-01", strtotime("2023-".$month_filter."-01"));
-  $endDate = date("Y-m-t", strtotime("2023-".$month_filter."-01"));
+  $startDate = date("Y-m-01", strtotime(date('Y')."-".$month_filter."-01"));
+  $endDate = date("Y-m-t", strtotime(date('Y')."-".$month_filter."-01"));
   $currentDate = strtotime($startDate); 
   $lastDate = strtotime($endDate);
 
