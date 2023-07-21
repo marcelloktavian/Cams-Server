@@ -75,7 +75,6 @@
 
 <?php
   require "include/koneksi.php"; 
-  if($_SESSION['user']['group_id'] == '1'){
 
   if(isset($_GET['month_filter'])){
     $month_filter = $_GET['month_filter'];
@@ -114,6 +113,7 @@
       <?php
         echo"Hi ".$_SESSION['user']['username'];
         echo"<br/> Selamat datang di CAMOU System !<br><br>";
+          if($_SESSION['user']['group_id'] == '1'){
       ?>
       <div class="row">
         <div class="ui-widget ui-form" style="margin-bottom:5px;">
@@ -165,6 +165,7 @@
           </div>
         </div>
       </div>
+      <?php } ?>
     </div>
   </div>
 </div>
@@ -254,5 +255,3 @@
 
   document.getElementById('month_filter').value = '<?= ltrim($month_filter,0) ?>';
 </script>
-
-<?php } ?>
