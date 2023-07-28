@@ -224,7 +224,7 @@ function popDetail(idx){
   var width   = screen.width;
   var height  = screen.height;
   var params  = 'width='+width+', height='+height+',scrollbars=yes';
-  window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&curr='+idx,'',params);
+  window.open('trb2breturn_lov.php?cust='+(customer.value).split(' : ')[0]+'&type='+type.value+'&curr='+idx+'&baris='+baris1,'',params);
 }
 
 function hitungsubtotal(idx){

@@ -63,7 +63,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/sales_b2b/trb2breturn_post.php?action=post&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=unpost&id='.$line['id'].'&num='.$line['b2breturn_num'].'\',\'table_b2breturn\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
+    $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=post&id='.$line['id'].'&num='.$line['b2breturn_num'].'\',\'table_b2breturn\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=unpost&id='.$line['id'].'&num='.$line['b2breturn_num'].'\',\'table_b2breturn\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Post</a>': '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Unpost</a>');
     $edit = $allow_edit ? ($line['post'] == '0' ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2breturn_edit.php?id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Data yang sudah dipost tidak dapat diedit\')" href="javascript:;">Edit</a>' ) : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $delete = $allow_edit ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/trb2breturn.php?action=delete&id='.$line['id'].'\',\'table_b2breturn\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Data yang sudah dipost tidak dapat dihapus\')" href="javascript:;">Delete</a>' ) : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
 
@@ -105,16 +105,72 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   exit;
 }
 else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
-  $delete_b2bretun  = $db->prepare("UPDATE `b2breturn` SET `post` = 1 WHERE id='".$_GET['id']."'");
+  $post_b2breturn = $db->prepare("UPDATE b2breturn SET post=1 WHERE id='".$_GET['id']."'");
 
-  $delete_b2bretun->execute();
-  $affected_rows = $delete_b2bretun->rowCount();
+  $post_b2breturn ->execute();
 
-  if($affected_rows > 0){
-    $r['stat'] = 1; $r['message'] = 'Succes';
+  $id_user = $_SESSION['user']['username'];
+
+  $masterNo = '';
+  $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor FROM jurnal ORDER BY id DESC LIMIT 1");
+
+  if(mysql_num_rows($query) == '1'){
+  }else{
+    $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001') as nomor ");
   }
-  else{
-    $r['stat'] = 0; $r['message'] = 'Failed';
+
+  $q = mysql_fetch_array($query);
+  $masterNo=$q['nomor'];
+
+  $master_b2breturn = mysql_fetch_array(mysql_query("SELECT a.*, b.nama AS type_b2breturn, c.nama AS customer_b2breturn FROM b2breturn a LEFT JOIN mst_b2bcategory_sale b ON a.`id_kategori`=b.`id` LEFT JOIN mst_b2bcustomer c ON a.`b2bcust_id`=c.`id` WHERE a.`id`='".$_GET['id']."' LIMIT 1"));
+
+  $jurnal_master = $db->prepare("INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',CURDATE(),'Retur B2B - ".$master_b2breturn['type_b2breturn']." - ".$master_b2breturn['customer_b2breturn']." - ".$master_b2breturn['b2breturn_num']."','".$master_b2breturn['total']."','".$master_b2breturn['total']."','0','$id_user',NOW(),'RETURB2B')");
+
+  $jurnal_master->execute();
+
+  $parent_id=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$masterNo' LIMIT 1"));
+  $idparent=$parent_id['id'];
+
+  $akun_get=mysql_fetch_array( mysql_query("SELECT c.id, c.`noakun`, c.nama FROM b2breturn a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.`id` LEFT JOIN det_coa c ON c.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'"));
+  $idakun=$akun_get['id'];
+  $noakun=$akun_get['noakun'];
+  $namaakun=$akun_get['nama'];
+
+  $penjualan = ceil($master_b2breturn['total']/1.11);
+  $ppn = round($master_b2breturn['total']/1.11*0.11);
+  $total = $master_b2breturn['total'];
+
+  if($penjualan+$ppn > $total){
+    $ppn = floor($master_b2breturn['total']/1.11*0.11);
+    if($penjualan+$ppn > $total){
+      $penjualan = floor($master_b2breturn['total']/1.11);
+    }
+  } else if($penjualan+$ppn < $total){
+    $ppn = ceil($master_b2breturn['total']/1.11*0.11);
+  }
+
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','RETURB2B','".$penjualan."','0','','0', '$id_user',NOW())";
+  mysql_query($sql_detail) or die (mysql_error());
+
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','39','09.01.00000','PPN','RETURB2B','".$ppn."','0','','0', '$id_user',NOW())";
+  mysql_query($sql_detail) or die (mysql_error());
+
+  $akun_get=mysql_fetch_array( mysql_query("SELECT c.id, c.`noakun`, c.nama FROM b2breturn a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.`id` LEFT JOIN det_coa c ON c.noakun = CONCAT('01.05.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'"));
+  $idakun_kredit=$akun_get['id'];
+  $noakun_kredit=$akun_get['noakun'];
+  $namaakun_kredit=$akun_get['nama'];
+
+  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','RETURB2B','0','".$master_b2breturn['total']."','','0', '$id_user',NOW())");
+  $stmt->execute();
+
+  $affected_rows = $stmt->rowCount();
+  if($affected_rows > 0) {
+    $r['stat'] = 1;
+    $r['message'] = 'Success';
+  }
+  else {
+    $r['stat'] = 0;
+    $r['message'] = 'Failed';
   }
   echo json_encode($r);
   exit;
@@ -322,83 +378,6 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
     }
     echo json_encode($responce);
   exit;
-} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post_process'){ 
-
-  if($_POST['post_value'] == '0'){
-    
-  } else {
-    $post_b2breturn = $db->prepare("UPDATE b2breturn SET post=1 WHERE id='".$_POST['id_b2breturn']."'");
-
-    $post_b2breturn ->execute();
-
-    $id_user = $_SESSION['user']['username'];
-
-    $masterNo = '';
-    $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor FROM jurnal ORDER BY id DESC LIMIT 1");
-
-    if(mysql_num_rows($query) == '1'){
-    }else{
-      $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001') as nomor ");
-    }
-
-    $q = mysql_fetch_array($query);
-    $masterNo=$q['nomor'];
-
-    $master_b2breturn = mysql_fetch_array(mysql_query("SELECT a.*, b.nama AS type_b2breturn, c.nama AS customer_b2breturn FROM b2breturn a LEFT JOIN mst_b2bcategory_sale b ON a.`id_kategori`=b.`id` LEFT JOIN mst_b2bcustomer c ON a.`b2bcust_id`=c.`id` WHERE a.`id`='".$_POST['id_b2breturn']."' LIMIT 1"));
-
-    $date_day = explode('/', $_POST['date_b2breturn_post'])[0];
-    $date_month = explode('/', $_POST['date_b2breturn_post'])[1];
-    $date_year = explode('/', $_POST['date_b2breturn_post'])[2];
-
-    $date_formatted = $date_year.'-'.$date_month.'-'.$date_day;
-
-    $tanggal_jurnal = date_format(date_create($date_formatted) ,"Y-m-d");
-
-    $jurnal_master = $db->prepare("INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo','".$tanggal_jurnal."','Retur B2B - ".$master_b2breturn['type_b2breturn']." - ".$master_b2breturn['customer_b2breturn']." - ".$master_b2breturn['b2breturn_num']."','".$master_b2breturn['total']."','".$master_b2breturn['total']."','0','$id_user',NOW(),'RETURB2B')");
-
-    $jurnal_master->execute();
-
-    $parent_id=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$masterNo' LIMIT 1"));
-    $idparent=$parent_id['id'];
-
-    $akun_get=mysql_fetch_array( mysql_query("SELECT c.id, c.`noakun`, c.nama FROM b2breturn a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.`id` LEFT JOIN det_coa c ON c.noakun = CONCAT('04.03.', LPAD(b.id, 5, 0)) WHERE a.id='".$_POST['id_b2breturn']."'"));
-    $idakun=$akun_get['id'];
-    $noakun=$akun_get['noakun'];
-    $namaakun=$akun_get['nama'];
-
-    $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','RETURB2B','".ceil($master_b2breturn['total']/1.11)."','0','','0', '$id_user',NOW())";
-    mysql_query($sql_detail) or die (mysql_error());
-
-    $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','39','09.01.00000','PPN','RETURB2B','".round($master_b2breturn['total']/1.11*0.11)."','0','','0', '$id_user',NOW())";
-    mysql_query($sql_detail) or die (mysql_error());
-
-    $nomor_akun_kredit = explode(':', $_POST['akun_kredit_b2breturn_post'])[0];
-
-    $akun_kredit_get=mysql_fetch_array(mysql_query("SELECT id, noakun, nama FROM `mst_coa` WHERE `noakun`='".$nomor_akun_kredit."' LIMIT 1"));
-
-    if(mysql_fetch_array(mysql_query("SELECT id, noakun, nama FROM `mst_coa` WHERE `noakun`='".$nomor_akun_kredit."' LIMIT 1")) === false){
-      $akun_kredit_get=mysql_fetch_array(mysql_query("SELECT id, noakun, nama FROM `det_coa` WHERE `noakun`='".$nomor_akun_kredit."' LIMIT 1"));
-    }
-
-    $idakun_kredit=$akun_kredit_get['id'];
-    $noakun_kredit=$akun_kredit_get['noakun'];
-    $namaakun_kredit=$akun_kredit_get['nama'];
-
-    $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','RETURB2B','0','".$master_b2breturn['total']."','','0', '$id_user',NOW())");
-    $stmt->execute();
-
-    $affected_rows = $stmt->rowCount();
-    if($affected_rows > 0) {
-      $r['stat'] = 1;
-      $r['message'] = 'Success';
-    }
-    else {
-      $r['stat'] = 0;
-      $r['message'] = 'Failed';
-    }
-    echo json_encode($r);
-    exit;
-  }
 }
 ?>
 

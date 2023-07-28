@@ -220,7 +220,7 @@
       var width   = screen.width;
       var height  = screen.height;
       var params  = 'width='+width+', height='+height+',scrollbars=yes';
-      window.open('arb2b_lov.php?curr='+idx+'&cust='+custid[0],'',params);
+      window.open('arb2b_lov.php?curr='+idx+'&cust='+custid[0]+'&baris='+baris1,'',params);
     }
   }
 

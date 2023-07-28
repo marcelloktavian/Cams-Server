@@ -71,6 +71,10 @@ function intToIDR($val) {
     .right{
       text-align: right;
     }
+
+    .loadedData{
+      display: none;
+    }
 	</style>
 </head>
 
@@ -82,6 +86,13 @@ function intToIDR($val) {
     }
     else{
       $kode1 = $_COOKIE['tglstart']; $kode2 = $_COOKIE['tglend'];
+    }
+
+    if(isset($_GET['baris'])){
+      $total_baris = $_GET['baris'];
+    }
+    else{
+      $total_baris = 0;
     }
 
     if(isset($_GET['curr'])){
@@ -116,6 +127,28 @@ function intToIDR($val) {
     setcookie("tglend", "", time() - 3600);
     setcookie("filter", "", time() - 3600);
   ?>
+
+<script>
+  const loadedData = new Set();
+
+  function loadData(line, total){
+    try {
+      const element = window.opener.document.getElementById('iddetb2b' + line).value;
+      if (element) {
+        loadedData.add(element);
+      }
+    }catch (error) {
+      console.log(`Error occurred while trying to get element 'iddetb2b${line}': ${error.message}`);
+    }
+
+    if(line <= total){
+      loadData(line + 1, total);
+    }
+  }
+
+  let totalBaris = <?= $total_baris ?>;
+  loadData(0, totalBaris);
+</script>
 
 <table width="100%">
     <tr>
@@ -166,7 +199,7 @@ function intToIDR($val) {
             if($totalqty>0){
             ?>
             
-            <tr>
+            <tr class="checkList" id="<?= $det_b2bdo['b2bdo_id'] ?>">
               <td class="table-light"><input type="checkbox" id="chkid<?= $baris ?>" name="chkid<?= $baris ?>" size="5" onclick=""></td>
 
               <td class="table-light"><?= $det_b2bdo['b2bdo_id'] ?><input type="hidden" id="b2bdo_id<?= $baris ?>" name="b2bdo_id<?= $baris ?>" value="<?= $det_b2bdo['b2bdo_id'] ?>"><input id="b2bdo_master<?= $baris ?>" name="b2bdo_master<?= $baris ?>" type="hidden" value="<?= $det_b2bdo['id'] ?>" /></td>
@@ -293,6 +326,16 @@ function intToIDR($val) {
 </body>
 
 <script>
+  const checkList = document.querySelectorAll('.checkList');
+
+  checkList.forEach((row)=>{
+    console.log(row.id);
+    if(loadedData.has(row.id)){
+      console.log(row.id);
+      row.classList.add('loadedData');
+    }
+  });
+
   var urutan        = [];
 
   function cari(){
@@ -366,15 +409,6 @@ function intToIDR($val) {
       window.close();
     }
   }
-
-  const valueNol = document.querySelectorAll(".value-nol");
-
-  valueNol.forEach((row)=>{
-    row.addEventListener('change',(event)=>{
-      console.log('aas');
-      row.setAttribute.style = "background-color: 'light-grey';";
-    });
-  });
 
   $(document).ready(function(){
     var table = $('#list_detail_b2bdo').DataTable({
