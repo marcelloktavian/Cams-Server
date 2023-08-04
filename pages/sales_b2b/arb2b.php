@@ -34,6 +34,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $where .= " AND tgl_ar LIKE '".$filter."' ";
   }
 
+  $sql = "SELECT *, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar FROM b2bar mst ";
   $sql = "SELECT mst.*, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar, cust.nama as customer FROM b2bar mst LEFT JOIN mst_b2bcustomer cust ON cust.id=mst.b2bcust_id ";
 
   $q = $db->query($sql.$where);
@@ -53,15 +54,17 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
+    $edit = $allow_edit? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/arb2b_edit.php?id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Edit</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $edit = $allow_edit ? ( $line['post'] == '1' ? '<a onclick="javascript:custom_alert(\'Data yang sudah di post tidak dapat di delete\')" href="javascript:;">Edit</a>' : '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/arb2b_edit.php?id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Edit</a>') : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Edit</a>';
     $delete = $allow_delete ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=delete&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Delete</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Delete</a>';
+    $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=post&postval=1&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Post</a>' : '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=post&postval=0&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Unpost</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Post</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Unpost</a>');
     $post = $allow_post ? ($line['post'] == '0' ? '<a onclick="javascript:link_ajax(\''.BASE_URL.'pages/sales_b2b/arb2b.php?action=post&postval=1&id='.$line['id'].'\',\'table_b2bar\')" href="javascript:void(0);">Post</a>' : '<a onclick="javascript:custom_alert(\'Data sudah diproses pada jurnal, tidak dapat di ubah kenbali.\')" href="javascript:;">Posted</a>') : ($line['post'] == '0' ? '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Post</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:;">Posted</a>');
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
       $line['id'],
       $line['ar_num'],
-      $line['customer '],
+      $line['customer'],
       $line['tgl_ar'],
       number_format($line['total']),
       $line['keterangan'],
@@ -221,6 +224,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_b2bar').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/arb2b.php?action=json';?>',
       datatype      : 'json',
+      colNames      : ['ID','Nomor AR B2B', 'Tanggal AR', 'Total AR', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colNames      : ['ID','Nomor AR B2B', 'Customer', 'Tanggal AR', 'Total AR', 'Keterangan', 'Post', 'Edit', 'Delete'],
       colModel      : [
         {name: 'id_b2bar', index: 'id_b2bar', align: 'right', width: 10, searchoptions: {sopt: ['cn']}},
