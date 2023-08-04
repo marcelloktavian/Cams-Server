@@ -84,13 +84,28 @@ font-family:Tahoma;
 .td_fit{
   width: fit-content;
 }
+.transInput{
+  font-size: 9pt;
+  font-weight: bold;
+  font-family: Tahoma;
+  border: 0;
+}
+.transInput:focus{
+  outline:none;
+}
+.flex-row{
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 1em;
+}
 @page {
         size: A4;
         margin: 15px;
     }
 </style>
 <?php
-error_reporting(0);
   include("../../include/koneksi.php");
   $tglstart=$_GET['start'];
   $st = explode("/", $tglstart);
@@ -153,12 +168,10 @@ $query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, S
             
           </tr>
           <tr>
-            <td width="100%" class="style9b" colspan="7">Periode :
-            <?php echo"".$tglstart;?> - <?php echo"".$tglend;?>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            Total B2B : <?php echo"".number_format($totalb2b);?> (<?php echo number_format((($totalb2b/$totalsemua)*100),2) ?>%) 
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            Total OLN : <?php echo"".number_format($totaloln);?> (<?php echo number_format((($totaloln/$totalsemua)*100),2) ?>%)</td>   
+            <td width="100%" class="style9b flex-row" colspan="7" style="white-space: no-wrap;">Periode :
+              <p class="transInput">Periode - <?php echo"".$tglstart;?> - <?php echo"".$tglend;?></p>
+              <p class="transInput" id="total_b2b"></p>
+              <p class="transInput" id="total_oln"></p></td>   
       </tr>
                 
   </table>  
@@ -199,11 +212,11 @@ $query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, S
     
         $sql_detail = "
 
-        (SELECT a.nama, a.totalqty, a.jumlah, a.faktur, a.ongkir, a.discount_faktur, a.total, b.total_retur AS retur, a.total-COALESCE(b.total_retur, 0) AS total_akhir FROM (SELECT dr.nama, so.id_dropshipper, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir, SUM(so.discount_faktur) AS discount_faktur, SUM(so.total) AS total FROM olnso so LEFT JOIN mst_dropshipper dr ON dr.id = so.id_dropshipper WHERE so.deleted = 0 AND so.state = '1' AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY so.id_dropshipper) AS a LEFT JOIN (SELECT SUM(faktur) AS total_retur, id_dropshipper FROM olnsoreturn WHERE deleted = 0 AND state = '1' AND DATE(lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY id_dropshipper) AS b ON a.id_dropshipper = b.id_dropshipper)
+        (SELECT a.nama, a.totalqty, a.jumlah, a.faktur, a.ongkir, a.discount_faktur, a.total, b.total_retur AS retur, a.total-COALESCE(b.total_retur, 0) AS total_akhir, 'OLN' AS tipe FROM (SELECT dr.nama, so.id_dropshipper, SUM(so.totalqty) AS totalqty, COUNT(so.id_trans) AS jumlah, SUM(so.faktur) AS faktur, SUM(so.exp_fee) AS ongkir, SUM(so.discount_faktur) AS discount_faktur, SUM(so.total) AS total FROM olnso so LEFT JOIN mst_dropshipper dr ON dr.id = so.id_dropshipper WHERE so.deleted = 0 AND so.state = '1' AND DATE(so.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY so.id_dropshipper) AS a LEFT JOIN (SELECT SUM(faktur) AS total_retur, id_dropshipper FROM olnsoreturn WHERE deleted = 0 AND state = '1' AND DATE(lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY id_dropshipper) AS b ON a.id_dropshipper = b.id_dropshipper)
         
         UNION
         
-        (SELECT a.nama, a.totalqty, a.jumlah, a.faktur, a.ongkir, a.discount_faktur, a.total, b.total_retur AS retur, a.total-COALESCE(b.total_retur, 0) AS total_akhir FROM (SELECT cus.nama, b.id_customer, SUM(b.totalkirim) AS totalqty, COUNT(b.id_trans) AS jumlah, SUM(b.faktur) AS faktur, SUM(b.exp_fee) AS ongkir, SUM(b.discount_faktur) AS discount_faktur, SUM(b.totalfaktur) AS total FROM b2bdo b LEFT JOIN mst_b2bcustomer cus ON b.id_customer = cus.id WHERE b.deleted = 0 AND DATE(b.tgl_trans) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY b.id_customer) AS a LEFT JOIN (SELECT SUM(total) AS total_retur, b2bcust_id AS id_dropshipper FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE(lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY b2bcust_id) AS b ON a.id_customer = b.id_dropshipper)";
+        (SELECT a.nama, a.totalqty, a.jumlah, a.faktur, a.ongkir, a.discount_faktur, a.total, b.total_retur AS retur, a.total-COALESCE(b.total_retur, 0) AS total_akhir, 'B2B' AS tipe FROM (SELECT cus.nama, b.id_customer, SUM(b.totalkirim) AS totalqty, COUNT(b.id_trans) AS jumlah, SUM(b.faktur) AS faktur, SUM(b.exp_fee) AS ongkir, SUM(b.discount_faktur) AS discount_faktur, SUM(b.totalfaktur) AS total FROM b2bdo b LEFT JOIN mst_b2bcustomer cus ON b.id_customer = cus.id WHERE b.deleted = 0 AND DATE(b.tgl_trans) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY b.id_customer) AS a LEFT JOIN (SELECT SUM(total) AS total_retur, b2bcust_id AS id_dropshipper FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE(lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') GROUP BY b2bcust_id) AS b ON a.id_customer = b.id_dropshipper)";
   if($type == 1){
         $order = "ORDER BY nama ASC";
   }else{
@@ -219,7 +232,12 @@ $query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, S
   $grand_order=0;
   $grand_ongkir=0;
   $grand_total=0;
+  $total_retur=0;
   $biaya=0;
+
+  $total_b2b = 0;
+  $total_oln = 0;
+  $total_akhir = 0;
   while($rs2=mysql_fetch_array($sq2))
   { 
     $nomer++;
@@ -253,11 +271,17 @@ $query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, S
         <div align="center"><?=number_format($persen,2);?>%</div>
       </td>
     </tr>  <?
-  $grand_qty+=$rs2['totalqty'];
-  $grand_order+=$rs2['jumlah'];
-  $grand_total+=$rs2['total'] - $rs2['ongkir'];
-    $nett_faktur=$grand_faktur-$grand_disc; 
-    $dpp=($nett_faktur/1.11); 
+    $grand_qty+=$rs2['totalqty'];
+    $grand_order+=$rs2['jumlah'];
+    $grand_total+=$rs2['total'] - $rs2['ongkir'];
+    $total_retur += $rs2['retur'];
+    $total_akhir += $rs2['total_akhir'];
+
+    if($rs2['tipe']=='OLN'){
+      $total_oln+= $rs2['total_akhir'];
+    } else{
+      $total_b2b+= $rs2['total_akhir'];
+    }
   }
   
   ?>
@@ -267,17 +291,14 @@ $query_oln =  "SELECT (SUM(total)-SUM(ongkir)) AS total FROM ((SELECT dr.nama, S
             <td class="style_footer"><div align="center"><?=number_format($grand_qty);?></div></td>
             <td class="style_footer"><div align="center"><?=number_format($grand_order);?></div></td>
             <td class="style_footer"><div align="right"><?=number_format($grand_total);?></div></td>
-            <td class="style_footer"><div align="right"></td>
-            <td class="style_footer"><div align="right"></td>
+            <td class="style_footer"><div align="right"><?=number_format($total_retur);?></td>
+            <td class="style_footer"><div align="right"><?=number_format($total_akhir);?></td>
             <td class="style_footer"><div align="right"></td>
        </tr>
      
      
   
   </table>
-   
-  
-   
   
   <div align="center"></div>
 </form>
@@ -295,6 +316,12 @@ function timestamp() {
         },
     });
 }
+
+const totalb2b = document.getElementById('total_b2b');
+const totaloln = document.getElementById('total_oln');
+
+totalb2b.innerHTML = "Total B2B : <?= number_format($total_b2b) ?> <?= '('.number_format((($total_b2b/$total_akhir)*100),2).'%)' ?>";
+totaloln.innerHTML = "Total OLN : <?= number_format($total_oln) ?> <?= '('.number_format((($total_oln/$total_akhir)*100),2).'%)' ?>";
 
 window.print();
 </script>

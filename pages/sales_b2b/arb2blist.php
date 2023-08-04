@@ -29,11 +29,11 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   SUM(total_pembayaran) AS total_pembayaran, 
   SUM(total_piutang) AS total_piutang
   FROM (
-  SELECT a.b2bcust_id AS id_customer, a.no_akun_kredit AS no_akun_kredit, c.nama AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp, a.id_akun_kredit, 0 AS total_pembayaran, a.total AS total_piutang, 'AR' AS `data` FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.id LEFT JOIN det_coa c ON a.`id_akun_kredit`=c.id WHERE a.`lastmodified` > '2023-07-01' AND a.deleted=0 AND a.post=1 AND b.nama LIKE '%".$filter."%'
+  SELECT a.b2bcust_id AS id_customer, a.no_akun_kredit AS no_akun_kredit, c.nama AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp, a.id_akun_kredit, 0 AS total_pembayaran, a.total AS total_piutang, 'AR' AS `data` FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.id LEFT JOIN det_coa c ON a.`id_akun_kredit`=c.id WHERE a.`lastmodified` > '2023-07-31' AND a.deleted=0 AND a.post=1 AND b.nama LIKE '%".$filter."%'
 
   UNION
 
-  SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-01' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
+  SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-31' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
   ) AS subquery
   GROUP BY id_customer ";
 

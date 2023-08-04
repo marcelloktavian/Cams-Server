@@ -149,6 +149,8 @@
   const customer = document.getElementById('customer_arb2b').value;
   const akunKredit = document.getElementById('akun_kredit_arb2b').value;
 
+  const total_arb2b = document.getElementById('total_arb2b').value;
+
   let counter = 0;
   for(let i = 1; i<baris1; i++){
     if(document.getElementById('idarb2b'+i) == undefined || document.getElementById('idarb2b'+i) == null || document.getElementById('idarb2b'+i).value == ""){
@@ -165,6 +167,8 @@
     pesan = "Akun Kredit AR B2B tidak boleh kosong";
   } else if(counter == 0){
     pesan = "Detail AR B2B tidak boleh kosong";
+  } else if(parseInt(total_arb2b) < 0){
+    pesan = "Total ARB2B tidak bisa negatif";
   }
 
   if(pesan != ""){

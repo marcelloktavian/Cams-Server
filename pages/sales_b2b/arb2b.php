@@ -61,7 +61,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $responce['rows'][$i]['cell']   = array(
       $line['id'],
       $line['ar_num'],
-      $line['customer'],
+      $line['customer '],
       $line['tgl_ar'],
       number_format($line['total']),
       $line['keterangan'],

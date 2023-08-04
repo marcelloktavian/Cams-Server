@@ -91,20 +91,39 @@ $allow_delete = is_show_menu(DELETE_POLICY, PendingOrder, $group_acess);
 		exit;
 	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'posting') {
-		//update olnso agar jadi 1 krn siap kirim,tapi statenya dikasih string='1' krn tipe datanya enum dan tgl_transnya diupdate jadi sekarang
-		$stmt = $db->prepare("Update olnso set state='1',tgl_trans=now() WHERE id_trans=?");
-		$stmt->execute(array($_GET['id']));
-		//var_dump($stmt);
+        $id = $_GET['id'];
 		
-		$affected_rows = $stmt->rowCount();
-		if($affected_rows > 0) {
-			$r['stat'] = 1;
-			$r['message'] = 'Success';
-		}
-		else {
-			$r['stat'] = 0;
-			$r['message'] = 'Failed';
-		}
+		$where = "WHERE id_trans = '".$id."' ";
+        $q = $db->query("SELECT unpost FROM `olnso` ".$where);
+		//var_dump($q); die;
+		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
+		
+        $i=0;
+        $responce = 0;
+        foreach($data1 as $line){
+            $responce = $line['unpost'];
+        }
+        
+        if($responce == 0){
+            //update olnso agar jadi 1 krn siap kirim,tapi statenya dikasih string='1' krn tipe datanya enum dan tgl_transnya diupdate jadi sekarang
+            $stmt = $db->prepare("Update olnso set state='1',tgl_trans=now() WHERE id_trans=?");
+            $stmt->execute(array($_GET['id']));
+            //var_dump($stmt);
+
+            $affected_rows = $stmt->rowCount();
+            if($affected_rows > 0) {
+                $r['stat'] = 1;
+                $r['message'] = 'Success';
+            }
+            else {
+                $r['stat'] = 0;
+                $r['message'] = 'Failed';
+            }
+        }else{
+            $r['stat'] = 0;
+            $r['message'] = 'OLN Sudah diunpost';
+        }
+		
 		echo json_encode($r);
 		exit;
 	}
