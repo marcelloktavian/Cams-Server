@@ -78,7 +78,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $row_sisa = 0;
     }
 
-    if($row_sisa > 0){
+    if(true){
       $nomor_akun = (isset($line['x_no_akun']) && $line['x_no_akun'] != null ? $line['x_no_akun'] : $line['y_no_akun']);
 
       $no_telp = (isset($line['y_telp']) && $line['y_telp'] != null ? $line['y_telp'] : $line['x_telp']);
