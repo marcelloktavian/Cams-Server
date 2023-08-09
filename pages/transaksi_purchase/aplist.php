@@ -49,23 +49,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $q = $db->query($sql_aplist);
 
-  $count = $q->rowCount();
-  $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
-
-  if ($page > $total_pages) $page=$total_pages;
-
-  $start = $limit*$page - $limit;
-  if($start<0) $start = 0;
-  $q = $db->query($sql_aplist." 
-    LIMIT ".$start.", ".$limit
-  );
-
   $data1 = $q->fetchAll(PDO::FETCH_ASSOC);
-
-  $responce['page']     = $page;
-  $responce['total']    = $total_pages;
-  $responce['records']  = $count;
-
   $total_jto = 0; $total_belum_jto = 0; $grand_total_ap = 0; $total_remaining = 0; $total_payment = 0;
 
   $i = 0;
@@ -78,7 +62,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $row_sisa = 0;
     }
 
-    if(true){
+    if($row_sisa > 0){
       $nomor_akun = (isset($line['x_no_akun']) && $line['x_no_akun'] != null ? $line['x_no_akun'] : $line['y_no_akun']);
 
       $no_telp = (isset($line['y_telp']) && $line['y_telp'] != null ? $line['y_telp'] : $line['x_telp']);
@@ -288,14 +272,16 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
         {name: 'grand_total_ap', index: 'grand_total_ap', align: 'right', width: 30, searchoptions: {sopt: ['cn']}},
         {name: 'aplist_pay', index: 'aplist_pay', align: 'center', width: 20, searchoptions: {sopt: ['cn']}},
       ],
-      rowNum        : 20,
-      rowList       : [10, 20, 30],
       pager         : '#pager_table_aplist',
       autowidth     : true,
       height        : '460',
       viewrecords   : true,
       rownumbers    : true,
       caption       : "Account Payable List",
+      pgbuttons : false,
+      viewrecords : false,
+      pgtext : "",
+      pginput : false,
       ondblClickRow : function(rowid){
         alert(rowid);
       },
