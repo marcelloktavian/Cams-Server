@@ -83,14 +83,21 @@
     $month_filter = ltrim(date("m"),0);
   }
 
-  $startDate = date("Y-m-01", strtotime(date('Y')."-".$month_filter."-01"));
-  $endDate = date("Y-m-t", strtotime(date('Y')."-".$month_filter."-31"));
+  if(isset($_GET['year_filter'])){
+    $year_filter = $_GET['year_filter'];
+  }
+  else{
+    $year_filter = date('Y');
+  }
 
-  $sqlb2b = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = YEAR(CURDATE()) GROUP BY MONTH(tgl_trans)";
+  $startDate = date("Y-m-01", strtotime($year_filter."-".$month_filter."-01"));
+  $endDate = date("Y-m-t", strtotime($year_filter."-".$month_filter."-31"));
+
+  $sqlb2b = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = '".$year_filter."' GROUP BY MONTH(tgl_trans)";
 
   $sqlb2b = mysql_query($sqlb2b);
 
-  $sqlolnso = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = YEAR(CURDATE()) GROUP BY MONTH(lastmodified)";
+  $sqlolnso = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = '".$year_filter."' GROUP BY MONTH(lastmodified)";
 
   $sqlolnso = mysql_query($sqlolnso);
 
@@ -101,7 +108,7 @@
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
   ) a 
-  LEFT JOIN (SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '".$month_filter."' AND YEAR(tgl_trans) = YEAR(CURDATE()) GROUP BY DAY(tgl_trans)) AS b
+  LEFT JOIN (SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '".$month_filter."' AND YEAR(tgl_trans) = '".$year_filter."' GROUP BY DAY(tgl_trans)) AS b
   ON DAY(a.Date) = b.day
   WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
 
@@ -112,7 +119,7 @@
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
   ) a 
-  LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = YEAR(CURDATE()) GROUP BY DAY(lastmodified)) AS b
+  LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = '".$year_filter."' GROUP BY DAY(lastmodified)) AS b
   ON DAY(a.Date) = b.day
   WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
 
@@ -156,6 +163,11 @@
                       <option value="10">Oktober</option>
                       <option value="11">November</option>
                       <option value="12">Desember</option>
+                    </select></td>
+                    <td><select type="text" class="required" id="year_filter" name="year_filter">
+                      <?php for($i = date('Y'); $i > 2021; $i -= 1){ ?>
+                        <option value='<?= $i ?>'><?= $i ?></option>
+                      <?php } ?>
                     </select></td>
                     <td><div class="ui-corner-all">
                       <button onclick="gridReloadTabs()" class="btn" type="button">Cari</button>
@@ -269,9 +281,11 @@
 
   function gridReloadTabs(){
     const month_filter = document.getElementById('month_filter').value;
+    const year_filter = document.getElementById('year_filter').value;
 
-    location.href = "<?php echo BASE_URL?>?month_filter="+month_filter+"";
+    location.href = "<?php echo BASE_URL?>?month_filter="+month_filter+"&year_filter="+year_filter;
   }
 
   document.getElementById('month_filter').value = '<?= ltrim($month_filter,0) ?>';
+  document.getElementById('year_filter').value = '<?= $year_filter ?>';
 </script>
