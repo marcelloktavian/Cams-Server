@@ -151,6 +151,16 @@ function terbilang($nilai) {
     return $hasil;
 }
 
+$sql_customer = "";
+if($_GET['tipe']=='B2B'){
+    $sql_customer = "SELECT nama, no_telp FROM mst_b2bcustomer WHERE id='".$cust."'";
+} else {
+    $sql_customer = "SELECT nama, hp AS no_telp FROM mst_dropshipper WHERE id='".$cust."'";
+}
+
+$sq_customer = mysql_query($sql_customer);
+$rs_customer = mysql_fetch_array($sq_customer);
+
 ?>
 <head>
   <title>OUTSTANDING RECEIVABLE DETAIL REPORT</title>
@@ -159,7 +169,7 @@ function terbilang($nilai) {
     <tr>
         <td colspan=8 class="judul" align='center'>
             <b>OUTSTANDING RECEIVABLE REPORT<br>
-            NAMA CUSTOMER
+            <?= strToUpper($rs_customer['nama']) ?>
             <br><br>
         </td>
     </tr>
@@ -186,10 +196,8 @@ function terbilang($nilai) {
     $payment = 0;
     $remaining = 0; 
 
-    $sql = "SELECT * FROM ";
-    $sq = mysql_query($sql);
+    $sql = "SELECT * FROM jurnal WHERE keterangan LIKE CONCAT('Piutang %".$tipe."% %".$rs_customer['nama']."%') OR keterangan LIKE CONCAT('Penjualan %".$tipe."% %".$rs_customer['nama']."%') AND deleted=0 AND tgl BETWEEN '".$awal."' AND '".$akhir."'";
 
-    $sql = "SELECT * FROM jurnal WHERE keterangan LIKE CONCAT('Piutang ','".$tipe."',' %') AND deleted=0 AND tgl BETWEEN '".$awal."' AND '".$akhir."'";
     $sq = mysql_query($sql);
     $no = 1;
     while($rs=mysql_fetch_array($sq)){ 

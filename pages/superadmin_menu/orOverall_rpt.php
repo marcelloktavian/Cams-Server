@@ -24,7 +24,7 @@
         text-align : right;
     }
 
-     .center{
+    .center{
         text-align: center;
     }
 
@@ -44,8 +44,21 @@
         font-size: 11pt;
         font-family: "Times New Roman";
         padding: 4px;
-
     }
+
+    tr:not(:nth-last-child(2)) .child-row{
+        border-bottom: 1px dashed lightgrey;
+    }
+
+    .child-row{
+        border-left: 1px dotted lightgrey;
+        border-right: 1px dotted lightgrey;
+    }
+
+    table{
+        border-collapse: collapse;
+    }
+
     @page {
         size: 8.5in 5.5in;
         size: landscape;
@@ -143,11 +156,17 @@ $year = $_GET['start'];
         <td class="header text" width='2%' align='left'>
             <b>No.
         </td>
-        <td class="header text" width='25%' align='left'>
+        <td class="header text" width='17%' align='left'>
             <b>Customer
         </td>
         <td class="header text" width='5%' align='right'>
-            <b>Saldo Piutang
+            <b>Total + Saldo
+        </td>
+        <td class="header text" width='5%' align='right'>
+            <b>Total
+        </td>
+        <td class="header text" width='5%' align='right'>
+            <b>Saldo
         </td>
         <?php
         $arrbulan = array("January","February","March","April","May","June","July","August","September","October","November","December");
@@ -167,12 +186,6 @@ $year = $_GET['start'];
                 $j++;
             }
         ?>
-        <td class="header text" width='5%' align='right'>
-            <b>Total
-        </td>
-        <td class="header text" width='5%' align='right'>
-            <b>Total + Saldo Piutang
-        </td>
     </tr>
     <?php
     $sql = "SELECT 
@@ -182,8 +195,9 @@ $year = $_GET['start'];
         keterangan_piutang,
         REPLACE(SUBSTR(no_akun_piutang, 7),0, '') AS id_customer,
         SUBSTR(nama_akun_piutang, 15) AS nama_customer, 
-        total_piutang,
-        COALESCE(total_piutang-total_pembayaran,0) AS pelunasan,
+        COALESCE(total_piutang,0) AS total_piutang,
+        COALESCE(total_pembayaran,0) AS total_pembayaran,
+        COALESCE((COALESCE(saldo_piutang, 0)+COALESCE(total_piutang,0))-COALESCE(total_pembayaran,0),0) AS pelunasan,
         COALESCE(saldo_pembayaran, 0) AS saldo_pembayaran,
         COALESCE(saldo_piutang, 0) AS saldo_piutang,
         (januari_piutang) AS januari,
@@ -204,7 +218,7 @@ $year = $_GET['start'];
             a.no_akun AS no_akun_piutang, 
             a.nama_akun AS nama_akun_piutang, 
             b.keterangan AS keterangan_piutang,
-            SUM(a.debet) AS total_piutang,
+            SUM(CASE WHEN YEAR(a.lastmodified) >= '$year' THEN a.debet ELSE 0 END) AS total_piutang,
             SUM(CASE WHEN YEAR(a.lastmodified) < '$year' THEN a.debet ELSE 0 END) AS saldo_piutang,
             SUM(CASE WHEN MONTH(a.lastmodified) = 1 AND YEAR(a.lastmodified) >= '$year' THEN a.debet ELSE 0 END) AS januari_piutang,
             SUM(CASE WHEN MONTH(a.lastmodified) = 2 AND YEAR(a.lastmodified) >= '$year' THEN a.debet ELSE 0 END) AS februari_piutang,
@@ -255,7 +269,7 @@ $year = $_GET['start'];
     $no = 1;
     $total_saldopiutang = 0;
     $total_januari = 0;
-    $total_febuari = 0;
+    $total_februari = 0;
     $total_maret = 0;
     $total_april = 0;
     $total_mei = 0;
@@ -265,101 +279,251 @@ $year = $_GET['start'];
     $total_september = 0;
     $total_oktober = 0;
     $total_november = 0;
-    $total_desember = 0;
+    $total_december = 0;
     $total_total = 0;
     $sq = mysql_query($sql);
     while($rs=mysql_fetch_array($sq))
     { 
-        ?>
-        <tr>
-            <td class="text" align="center">
-                <?=number_format($no,0,',','.')?>
-            </td>
-            <td class="text" align='left'>
-                <?=$rs['nama_customer']?>
-            </td>
-             <td class="text" align='right'>
-                <?=number_format($rs['saldo_piutang'],0,",",".")?>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('01','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['januari'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('02','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['februari'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('03','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['maret'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('04','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['april'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('05','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['mei'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('06','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['juni'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('07','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['juli'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('08','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['agustus'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('09','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['september'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('10','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['oktober'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('11','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['november'],0,",",".")?>
-                </div>
-            </td>
-            <td class="text" align='right'>
-                <div style='cursor:pointer;' onclick="opendetail('12','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['december'],0,",",".")?>
-                </div>
-            </td>
-            <?php
-                $total = $rs['januari'] + $rs['februari'] + $rs['maret'] + $rs['april'] + $rs['mei'] + $rs['juni'] + $rs['juli'] + $rs['agustus'] + $rs['september'] + $rs['oktober'] + $rs['november'] + $rs['december'];
+        if($rs['pelunasan'] != 0){
+            $total_pembayaran = $rs['total_pembayaran'];
             ?>
-            <td class="text" align='right'>
-                <?=number_format($total,0,",",".")?>
-            </td>
-            <td class="text" align='right'>
-                <?=number_format(($total+$rs['saldo_piutang']),0,",",".")?>
-            </td>
-        </tr>
-        <?php
-         $total_saldopiutang += $rs['saldo_piutang'];
-         $total_januari += $rs['januari'];
-         $total_febuari += $rs['februari'];
-         $total_maret += $rs['maret'];
-         $total_april += $rs['april'];
-         $total_mei += $rs['mei'];
-         $total_juni += $rs['juni'];
-         $total_juli += $rs['juli'];
-         $total_agustus += $rs['agustus'];
-         $total_september += $rs['september'];
-         $total_oktober += $rs['oktober'];
-         $total_november += $rs['november'];
-         $total_desember += $rs['december'];
-         $total_total += $total;
-        $no++;
+            <tr>
+                <td class="text child-row" align="center">
+                    <?=number_format($no,0,',','.')?>
+                </td>
+                <td class="text child-row" align='left'>
+                    <?=$rs['nama_customer']?>
+                </td>
+                <td class="text child-row" align='right' <?= $rs['pelunasan'] == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <?=number_format($rs['pelunasan'],0,",",".")?>
+                </td>
+                <td class="text child-row" align='right' <?= $rs['pelunasan']-$rs['saldo_piutang'] == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <?=number_format($rs['pelunasan']-$rs['saldo_piutang'],0,",",".")?>
+                </td>
+                <td class="text child-row" align='right' <?= $rs['saldo_piutang'] == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <?=number_format($rs['saldo_piutang'],0,",",".")?>
+                </td>
+                <?php
+                    $print = $rs['januari'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_januari += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('01','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['februari'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_februari += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('02','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['maret'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_maret += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('03','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['april'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_april += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('04','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['mei'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_mei += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('05','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['juni'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_juni += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('06','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['juli'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_juli += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('07','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['agustus'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_agustus += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('08','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['september'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_september += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('09','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['oktober'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_oktober += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('10','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['november'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_november += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('11','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+                <?php
+                    $print = $rs['december'];
+                    if($total_pembayaran == 0){
+                        $print = $print;
+                    } else if($print-$total_pembayaran <= 0){
+                        $total_pembayaran -=$print;
+                        $print = 0;
+                    } else {
+                        $print -= $total_pembayaran;
+                        $total_pembayaran = 0;
+                    }
+                    $total_december += $print;
+                ?>
+                <td class="text child-row" align='right' <?= $print == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <div style='cursor:pointer;' onclick="opendetail('12','<?=$year?>','<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($print,0,",",".")?>
+                    </div>
+                </td>
+            </tr>
+            <?php
+            $total_saldopiutang += $rs['saldo_piutang'];
+            $total_total += $rs['total_piutang'];
+            $no++;
+        }
     }
     ?>
-    <tr>
+    <tf>
         <td class="footer text" width='2%' align="right" colspan=2>
             <b>Subtotal</b>
+        </td>
+        <td class="footer text" width='5%' align='right'>
+            <b><?=number_format($total_total,0,",",".")?>
+        </td>
+        <td class="footer text" width='5%' align='right'>
+            <b><?=number_format(($total_total-$total_saldopiutang),0,",",".")?>
         </td>
         <td class="footer text" width='5%' align='right'>
             <b><?=number_format($total_saldopiutang,0,",",".")?>
@@ -368,7 +532,7 @@ $year = $_GET['start'];
             <b><?=number_format($total_januari,0,",",".")?>
         </td>
         <td class="footer text" width='5%' align='right'>
-            <b><?=number_format($total_febuari,0,",",".")?>
+            <b><?=number_format($total_februari,0,",",".")?>
         </td>
         <td class="footer text" width='5%' align='right'>
             <b><?=number_format($total_maret,0,",",".")?>
@@ -398,15 +562,9 @@ $year = $_GET['start'];
             <b><?=number_format($total_november,0,",",".")?>
         </td>
         <td class="footer text" width='5%' align='right'>
-            <b><?=number_format($total_desember,0,",",".")?>
+            <b><?=number_format($total_december,0,",",".")?>
         </td>
-        <td class="footer text" width='5%' align='right'>
-            <b><?=number_format($total_total,0,",",".")?>
-        </td>
-        <td class="footer text" width='5%' align='right'>
-            <b><?=number_format(($total_total+$total_saldopiutang),0,",",".")?>
-        </td>
-    </tr>
+    </tf>
 <table>
 <script>
     function opendetail(bulan, tahun, cust, tipe){
