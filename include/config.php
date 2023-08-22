@@ -1079,6 +1079,130 @@
 	// define("GroupAkses", 122);
 	// define("statusToko", 123);
 
+	// define("laporanperiodeolnb2b", 2);
+	// define("oroverall", 3);
+
+	// define("Supplier", 5);
+	// define("Taxes", 6);
+	// define("KategoriBiaya", 7);
+	// define("JenisBiaya", 8);
+	// define("mst_COA", 9);
+	// define("SettingAkun", 10);
+
+	// define("JurnalManual", 12);		
+	// define("BiayaOperasional", 13);		
+	// define("ImportMutation", 14);	
+	// define("CRTertunda", 15);	
+	// define("PaymentCheck", 16);	
+	// define("ReturnConfirmed", 17);
+	// define("aplist", 18);	
+	// define("arb2blist", 19);
+	// define("TutupBuku", 20);	
+
+	// define("TaxesRpt", 22);	
+	// define("cashReceipt", 23);
+	// define("jurnal", 24);
+	// define("bukubesar", 25);
+	// define("arsipjurnal", 26);
+	// define("arsipbukubesar", 27);
+	// define("arsipaplist", 28);
+	// define("arsipapolnlist", 29);
+	// define("arsipb2blist", 30);
+	
+	// define("departemen", 32);
+	// define("jabatan", 33);
+	// define("pendapatan", 34);
+	// define("potongan", 35);
+	// define("karyawan", 36);
+
+	// define("penggajian", 38);
+	// define("transpendapatan", 39);
+	// define("transpotongan", 40);
+
+	// define("Address", 42);
+	// define("Category", 43);
+	// define("Colour", 44);
+	// define("Keranjang", 45);
+	// define("Dropshipper", 46);
+	// define("ExpeditionCategory", 47);
+	// define("Expedition", 48);
+	// define("Products", 49);
+	// define("ProductsComposition", 50);
+
+	// define("ImportCAMOU", 52);
+	// define("PreSALES", 53);
+	// define("ImportCredit", 54);
+	// define("PreSALESCredit", 55);
+
+	// define("DropshipperDeposit", 57);
+	// define("DepositTransaction", 58);
+	// define("OnlineSales", 59);
+	// define("OnlineCredit", 60);
+	// define("PendingOrder", 61);
+	// define("CancelOrder", 62);
+	// define("OnlineReturn", 63);
+	// define("UnpaidOnline", 64);
+	
+	// define("OnlineSummary", 66);
+	// define("SummaryCash", 67);
+	// define("SummaryCredit", 68);
+	// define("DropshipperStatistik", 69);
+	// define("SalesOnlineDropshipper", 70);
+	// define("Bill", 71);
+	// define("rptexpedition", 72);
+	// define("PrintOrder", 73);
+	// define("ProductSold", 74);
+	// define("Omset", 75);
+	// define("TroubleOrder", 76);
+	// define("OnlineDelivery",77);
+	// define("OnlineBackDate",78);
+	// define("ArchiveOrder", 79);
+	
+	// define("ImportCustomerProduct", 81);
+
+	// define("CompositionProducts", 83);
+	// define("B2BProducts", 84);
+	// define("B2BProductsGroup", 85);
+	// define("B2BCustomer", 86);
+	// define("B2BExpedition",87);
+	// define("B2BSalesman", 88);
+
+	// define("AddSalesB2B", 90);
+	// define("SalesB2B", 91);
+	// define("ConfirmedSales", 92);
+	// define("DeliveryOrderB2B", 93);
+	// define("ArchiveOrderB2B", 94);
+	// define("trb2breturn", 95);
+	// define("arb2b", 96);
+
+	// define("SummaryDeliveryB2B", 98);
+	// define("stb2bdo", 99);
+	// define("b2bsorpt", 100);
+	// define("b2bcomp", 101);
+	// define("b2bretur", 102);
+	// define("b2bcompretur", 103);
+
+	// define("pemohonpo", 105);
+	// define("supplier", 106);
+	// define("produkpo", 107);
+
+	// define("po", 109);
+	// define("poapproval", 110);
+	// define("archivepo", 111);
+
+	// define("MUTASIMASUK", 113);
+	// define("MUTASIKELUAR", 114);
+	// define("INVENTORY", 115);
+
+	// define("MUTASIMASUK_COMP", 117);
+	// define("MUTASIKELUAR_COMP", 118);
+	// define("INVENTORY_COMP", 119);
+
+	// define("DataUser", 121);
+	// define("UserGroup", 122);
+	// define("GroupAkses", 123);
+	// define("statusToko", 124);
+
 	define("laporanperiodeolnb2b", 2);
 	define("oroverall", 3);
 
@@ -1094,8 +1218,8 @@
 	define("ImportMutation", 14);	
 	define("CRTertunda", 15);	
 	define("PaymentCheck", 16);	
-	define("ReturnConfirmed", 17);
-	define("aplist", 18);	
+	define("aplist", 17);	
+	define("ReturnConfirmed", 18);
 	define("arb2blist", 19);
 	define("TutupBuku", 20);	
 
@@ -1138,25 +1262,25 @@
 	define("DepositTransaction", 58);
 	define("OnlineSales", 59);
 	define("OnlineCredit", 60);
-	define("PendingOrder", 61);
-	define("CancelOrder", 62);
-	define("OnlineReturn", 63);
-	define("UnpaidOnline", 64);
+	define("rptexpedition", 61);
+	define("OnlineDelivery",62);
+	define("ArchiveOrder", 63);
+	define("PendingOrder", 64);
+	define("CancelOrder", 65);
+	define("OnlineReturn", 66);
+	define("UnpaidOnline", 67);
 	
-	define("OnlineSummary", 66);
-	define("SummaryCash", 67);
-	define("SummaryCredit", 68);
-	define("DropshipperStatistik", 69);
-	define("SalesOnlineDropshipper", 70);
-	define("Bill", 71);
-	define("rptexpedition", 72);
-	define("PrintOrder", 73);
-	define("ProductSold", 74);
-	define("Omset", 75);
-	define("TroubleOrder", 76);
-	define("OnlineDelivery",77);
-	define("OnlineBackDate",78);
-	define("ArchiveOrder", 79);
+	define("OnlineSummary", 69);
+	define("SummaryCash", 70);
+	define("SummaryCredit", 71);
+	define("DropshipperStatistik", 72);
+	define("SalesOnlineDropshipper", 73);
+	define("Bill", 74);
+	define("PrintOrder", 75);
+	define("ProductSold", 76);
+	define("Omset", 77);
+	define("TroubleOrder", 78);
+	define("OnlineBackDate",79);
 	
 	define("ImportCustomerProduct", 81);
 
