@@ -514,7 +514,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, DeliveryOrderB2B, $group_acess);
                 // number_format($line['qty46'],0),
                  number_format($line['harga_satuan'],0),
                  number_format($line['jumlah_kirim'],0),                
-                 number_format(($line['harga_satuan']*$line['jumlah_kirim']),0),                
+                 (number_format($line['disc'],0).'%'),                
+                 number_format(($line['harga_satuan']*$line['jumlah_kirim'])-(($line['disc']/100)*($line['harga_satuan']*$line['jumlah_kirim'])),0),                
             );
             $barangnya = $line['id_product'];
             $i++;
@@ -686,9 +687,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, DeliveryOrderB2B, $group_acess);
             subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2bdo.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
-			            		width : [40,40,300,300,50,50,50,50],
-			            		align : ['right','center','left','left','right','right','right'],
+			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Disc','Subtotal'], 
+			            		width : [40,40,300,300,50,50,50,50,50],
+			            		align : ['right','center','left','left','right','right','right','right'],
 			            	} 
 			            ],
 						
