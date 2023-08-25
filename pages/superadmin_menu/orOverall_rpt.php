@@ -177,7 +177,7 @@ $year = $_GET['start'];
             for($i=12;$i>0;$i--){
                 ?>
                     <td class="header text" width='5%' align='right'>
-                        <b><?=$arrbulan[$j]?><br>N <?=$total?>
+                        <b><?=$arrbulan[$j]?><br>N <?=$total=='-150'?'0':$total?>
                     </td>
                 <?php
                 if($total > 0){
