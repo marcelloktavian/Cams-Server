@@ -50,6 +50,14 @@
         size: 8.5in 5.5in;
         size: landscape;
     }
+    tr:not(:nth-last-child(2)) .child-row{
+        border-bottom: 1px dashed lightgrey;
+    }
+
+    .child-row{
+        border-left: 1px dotted lightgrey;
+        border-right: 1px dotted lightgrey;
+    }
 </style>
 <?php
 include("../../include/koneksi.php");
@@ -151,6 +159,16 @@ function terbilang($nilai) {
     return $hasil;
 }
 
+$sql_customer = "";
+if($_GET['tipe']=='B2B'){
+    $sql_customer = "SELECT nama, no_telp FROM mst_b2bcustomer WHERE id='".$cust."'";
+} else {
+    $sql_customer = "SELECT nama, hp AS no_telp FROM mst_dropshipper WHERE id='".$cust."'";
+}
+
+$sq_customer = mysql_query($sql_customer);
+$rs_customer = mysql_fetch_array($sq_customer);
+
 ?>
 <head>
   <title>OUTSTANDING RECEIVABLE DETAIL REPORT</title>
@@ -159,7 +177,7 @@ function terbilang($nilai) {
     <tr>
         <td colspan=8 class="judul" align='center'>
             <b>OUTSTANDING RECEIVABLE REPORT<br>
-            NAMA CUSTOMER
+            <?= strToUpper($rs_customer['nama']) ?>
             <br><br>
         </td>
     </tr>
@@ -167,16 +185,16 @@ function terbilang($nilai) {
     <td class="header text" width='3%' align='left'>
             <b>No
         </td>
-        <td class="header text" width='5%' align='left'>
+        <td class="header text" width='7%' align='left'>
             <b>Nomor Jurnal
         </td>
-        <td class="header text" width='5%' align='left'>
+        <td class="header text" width='10%' align='left'>
             <b>Tanggal Jurnal
         </td>
         <td class="header text" width='10%' align='right'>
             <b>Total Piutang</div>
         </td>
-        <td class="header text" width='50%' align='right'>
+        <td class="header text" width='40%' align='center'>
             <b>Keterangan</div>
         </td>
     </tr>
@@ -186,28 +204,26 @@ function terbilang($nilai) {
     $payment = 0;
     $remaining = 0; 
 
-    $sql = "SELECT * FROM ";
-    $sq = mysql_query($sql);
+    $sql = "SELECT * FROM jurnal WHERE keterangan LIKE CONCAT('Piutang %".$tipe."% %".$rs_customer['nama']."%') OR keterangan LIKE CONCAT('Penjualan %".$tipe."% %".$rs_customer['nama']."%') AND deleted=0 AND tgl BETWEEN '".$awal."' AND '".$akhir."'";
 
-    $sql = "SELECT * FROM jurnal WHERE keterangan LIKE CONCAT('Piutang ','".$tipe."',' %') AND deleted=0 AND tgl BETWEEN '".$awal."' AND '".$akhir."'";
     $sq = mysql_query($sql);
     $no = 1;
     while($rs=mysql_fetch_array($sq)){ 
         ?>
         <tr>
-            <td class="text" align="left">
+            <td class="text child-row" align="left">
                 <?=number_format($no,0,',','.')?>
             </td>
-            <td class="text" align="left">
+            <td class="text child-row" align="left">
                 <?=$rs['no_jurnal']?>
             </td>
-            <td class="text" align="left">
-                <?=$rs['tgl']?>
+            <td class="text child-row" align="left">
+                <?=date_format(date_create($rs['tgl']),"d/m/Y")?>
             </td>
-            <td class="text" align="right">
+            <td class="text child-row" align="right">
                 <?=number_format($rs['total_debet'],0,",",".")?>
             </td>
-            <td class="text" align="right">
+            <td class="text child-row" align="center">
                 <?=$rs['keterangan']?>
             </td>
         </tr>
