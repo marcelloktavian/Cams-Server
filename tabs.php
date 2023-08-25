@@ -93,13 +93,15 @@
   $startDate = date("Y-m-01", strtotime($year_filter."-".$month_filter."-01"));
   $endDate = date("Y-m-t", strtotime($year_filter."-".$month_filter."-31"));
 
-  $sqlb2b = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = '".$year_filter."' GROUP BY MONTH(tgl_trans)";
+  $sqlb2b_query = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = '".$year_filter."' GROUP BY MONTH(tgl_trans)";
 
-  $sqlb2b = mysql_query($sqlb2b);
+  $sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = '".$year_filter."' GROUP BY MONTH(lastmodified)";
 
-  $sqlolnso = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = '".$year_filter."' GROUP BY MONTH(lastmodified)";
+  $sqlb2b = mysql_query($sqlb2b_query);
+  $sqlolnso = mysql_query($sqlolnso_query);
 
-  $sqlolnso = mysql_query($sqlolnso);
+  $sqlb2b_total = mysql_query($sqlb2b_query);
+  $sqlolnso_total = mysql_query($sqlolnso_query);
 
   $sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum_totalfaktur
   FROM (
@@ -122,6 +124,9 @@
   LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = '".$year_filter."' GROUP BY DAY(lastmodified)) AS b
   ON DAY(a.Date) = b.day
   WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
+
+  $sqlb2b_total_month = mysql_query($sqlb2b_month);
+  $sqlolnso_total_month = mysql_query($sqlolnso_month);
 
   $sqlb2b_month = mysql_query($sqlb2b_month);
   $sqlolnso_month = mysql_query($sqlolnso_month);
@@ -181,7 +186,7 @@
         <div class="col-xl-12">
           <div class="card">
             <div class="card-body">
-              <p class="text-title">Perincian Penjualan B2B - OLN <?= date("F", strtotime("2023-".$month_filter."-01")); ?></p><hr>
+              <p class="text-title">Perincian Penjualan B2B - OLN <?= date("F", strtotime("2023-".$month_filter."-01")); ?> <?= $year_filter ?></p><hr>
               <canvas id="penjualan-upper" style="width:calc(100% - 40px);height:250px;"></canvas>
             </div>
           </div>
@@ -191,7 +196,7 @@
         <div class="col-xl-12">
           <div class="card ">
             <div class="card-body">
-              <p class="text-title">Perbandingan Penjualan B2B - OLN <?= date("Y") ?></p><hr>
+              <p class="text-title">Perbandingan Penjualan B2B - OLN <?= $year_filter ?></p><hr>
               <canvas id="penjualan-lower" style="width:calc(100% - 40px);height:250px"></canvas>
             </div>
           </div>
@@ -207,19 +212,31 @@
   const ctx = document.getElementById('penjualan-lower');
   const cty = document.getElementById('penjualan-upper');
 
+  <?php 
+  $total_b2b = 0;
+  $this_b2b = 0;
+  $i = 0;
+  while($row_b2b = mysql_fetch_array($sqlb2b_total)) {$total_b2b += $row_b2b['sum_totalfaktur']; if($i = trim($month_filter)){$this_b2b = $row_b2b['sum_totalfaktur'];} $i++;}
+  
+  $total_olnso = 0;
+  $this_olnso = 0;
+  $i = 0;
+  while($row_olnso = mysql_fetch_array($sqlolnso_total)) {$total_olnso += $row_olnso['sum_totalolnso']; if($i = trim($month_filter)){$this_olnso = $row_olnso['sum_totalolnso'];} $i++;}
+  ?>
+
   const labels = ['Janurai', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November' ,'December'];
   const data = {
     labels: labels,
     datasets: [
       {
-        label: 'B2B Sales',
+        label: 'B2B Sales : Rp <?= number_format($total_b2b,0) ?>',
         data: [<?php while($row_b2b = mysql_fetch_array($sqlb2b)) {?><?= $row_b2b['sum_totalfaktur'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgb(75, 192, 192)',
         tension: 0.1
       },{
-        label: 'OLN Sales',
+        label: 'OLN Sales : Rp <?= number_format($total_olnso,0) ?>',
         data: [<?php while($row_olnso = mysql_fetch_array($sqlolnso)) {?><?= $row_olnso['sum_totalolnso'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(192, 75, 75)',
@@ -228,12 +245,29 @@
       }
     ]
   };
+
   const options = {
     scales: {
       y: {
         beginAtZero: true
       }
-    }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const label = context.dataset.label;
+            const value = context.parsed.y;
+            const formattedValue = new Intl.NumberFormat('en-US', {}).format(value);
+            if (label.includes("OLN Sales")) {
+            return `OLN Sales : Rp ${formattedValue}`;
+            } else {
+              return `B2B Sales : Rp ${formattedValue}`;
+            }
+          },
+        },
+      },
+    },
   };
 
   new Chart(ctx, {
@@ -256,14 +290,14 @@
     labels: labels_month,
     datasets: [
       {
-        label: 'B2B Sales',
+        label: 'B2B Sales : Rp <?= number_format($this_b2b,0) ?>',
         data: [<?php while($row_b2b = mysql_fetch_array($sqlb2b_month)) {?><?= $row_b2b['sum_totalfaktur'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgb(75, 192, 192)',
         tension: 0.1
       },{
-        label: 'OLN Sales',
+        label: 'OLN Sales : Rp <?= number_format($this_olnso,0) ?>',
         data: [<?php while($row_olnso = mysql_fetch_array($sqlolnso_month)) {?><?= $row_olnso['sum_totalolnso'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(192, 75, 75)',
