@@ -216,12 +216,12 @@
   $total_b2b = 0;
   $this_b2b = 0;
   $i = 0;
-  while($row_b2b = mysql_fetch_array($sqlb2b_total)) {$total_b2b += $row_b2b['sum_totalfaktur']; if($i == trim($month_filter)){$this_b2b = $row_b2b['sum_totalfaktur'];} $i++;}
-  
+  while($row_b2b = mysql_fetch_array($sqlb2b_total)) {$total_b2b += $row_b2b['sum_totalfaktur']; if(($i+1) == trim($month_filter)){$this_b2b = $row_b2b['sum_totalfaktur'];} $i++;}
+
   $total_olnso = 0;
   $this_olnso = 0;
   $i = 0;
-  while($row_olnso = mysql_fetch_array($sqlolnso_total)) {$total_olnso += $row_olnso['sum_totalolnso']; if($i == trim($month_filter)){$this_olnso = $row_olnso['sum_totalolnso'];} $i++;}
+  while($row_olnso = mysql_fetch_array($sqlolnso_total)) {$total_olnso += $row_olnso['sum_totalolnso']; if(($i+1) == trim($month_filter)){$this_olnso = $row_olnso['sum_totalolnso'];} $i++;}
   ?>
 
   const labels = ['Janurai', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November' ,'December'];
