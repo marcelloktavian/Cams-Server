@@ -168,8 +168,9 @@
                 $line['namabrg'],
                 $line['size'],
                  number_format($line['harga_satuan'],0),
-                 number_format($line['jumlah_kirim'],0),                
-                 number_format(($line['harga_satuan']*$line['jumlah_kirim']),0),                
+								 $line['disc']."%",
+                 number_format($line['jumlah_kirim'],0),
+                 number_format((($line['harga_satuan']-$line['harga_satuan']*$line['disc']/100)*$line['jumlah_kirim']),0),                
             );
             $i++;
         }
@@ -357,9 +358,9 @@
             subGridUrl : '<?php echo BASE_URL.'pages/summary_b2b/trb2bdo_idx.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
-			            		width : [40,40,300,50,50,50,50],
-			            		align : ['right','center','left','center','right','right','right'],
+			            		name : ['No','Kode','Barang','Size','Harga','Diskon','Qty(pcs)','Subtotal'], 
+			            		width : [40,40,300,50,50,20,50,50],
+			            		align : ['right','center','left','center','right','right','right','right'],
 			            	} 
 			            ],
 						
