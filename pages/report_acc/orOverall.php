@@ -48,7 +48,7 @@
 					echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Print</button>';
 				}else{
             	?>
-            	<button onclick="javascript:window_open('<?php echo BASE_URL ?>pages/superadmin_menu/orOverall_rpt.php?action=preview&start='+$('#year_oroverall').val()+'&cust='+$('#customer_list').val())" class="btn" type="button">Print</button>
+            	<button onclick="javascript:window_open('<?php echo BASE_URL ?>pages/report_acc/orOverall_rpt.php?action=preview&start='+$('#year_oroverall').val()+'&cust='+$('#customer_list').val())" class="btn" type="button">Print</button>
             	<?php } ?>
             </div>
        	</form>
