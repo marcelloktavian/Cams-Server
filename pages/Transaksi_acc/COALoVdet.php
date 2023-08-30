@@ -2,7 +2,7 @@
 include("../../include/koneksi.php");
 
 $id = $_GET['id'];
-$sql_cmd ="SELECT *, 'parent' as `status` from mst_coa WHERE noakun = '$id' LIMIT 1";
+$sql_cmd ="SELECT *, 'parent' as `status` from mst_coa WHERE deleted=0 AND noakun = '$id' LIMIT 1";
 $sql = mysql_query($sql_cmd);
 $num = mysql_num_rows($sql);
 
