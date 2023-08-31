@@ -266,6 +266,7 @@ $year = $_GET['start'];
         GROUP BY a.id_akun
         ) AS b ON a.id_akun_piutang = b.id_akun_pembayaran
         ORDER BY pelunasan DESC";
+
     $no = 1;
     $total_saldopiutang = 0;
     $total_januari = 0;
@@ -297,11 +298,11 @@ $year = $_GET['start'];
                 <td class="text child-row" align='right' <?= $rs['pelunasan'] == 0 ? "style='color:lightgrey;'" : "" ?>>
                     <?=number_format($rs['pelunasan'],0,",",".")?>
                 </td>
-                <td class="text child-row" align='right' <?= $rs['pelunasan']-$rs['saldo_piutang'] == 0 ? "style='color:lightgrey;'" : "" ?>>
-                    <?=number_format($rs['pelunasan']-$rs['saldo_piutang'],0,",",".")?>
+                <td class="text child-row" align='right' <?= ($rs['pelunasan']-($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran'])) == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <?=number_format($rs['pelunasan']-($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran']),0,",",".")?>
                 </td>
-                <td class="text child-row" align='right' <?= $rs['saldo_piutang'] == 0 ? "style='color:lightgrey;'" : "" ?>>
-                    <?=number_format($rs['saldo_piutang'],0,",",".")?>
+                <td class="text child-row" align='right' <?= ($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran']) == 0 ? "style='color:lightgrey;'" : "" ?>>
+                    <?=number_format(($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran']),0,",",".")?>
                 </td>
                 <?php
                     $print = $rs['januari'];
