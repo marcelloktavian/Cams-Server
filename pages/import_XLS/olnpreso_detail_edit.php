@@ -802,7 +802,7 @@ function validasipertama()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-			var subtotal = (1.11*document.getElementById("SUBTOTAL"+i+"").value);
+			var subtotal = Math.round(1.11*document.getElementById("SUBTOTAL"+i+"").value);
 			var qty = document.getElementById("Qty"+i+"").value;
 			}
 	        total+= parseInt(subtotal);
@@ -840,7 +840,7 @@ console.log(total);
     // }
 
 	//totalhidden dipake buat validasi saja
-	document.getElementById("totalhidden").value = total;	   
+	document.getElementById("totalhidden").value = total;
 	document.getElementById("total").value = total.toLocaleString('IND', {style: 'currency', currency: 'IDR'});
 	//totalqty
 	document.getElementById("totalqty").value = totalqty;
