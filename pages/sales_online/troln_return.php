@@ -197,7 +197,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
 			}
 		}
 
-		$query2=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun='09.01.00000'");
+		$query2=mysql_query("SELECT id, noakun, nama, 'Parent' AS `status` FROM mst_coa WHERE noakun='09.01.00000'");
 		while($akun2 = mysql_fetch_array($query2)){
 			// ppn
 			$sqlakun2="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun2['id']."','".$akun2['noakun']."','".$akun2['nama']."','".$akun2['status']."','$ppn','0','','0', '$id_user',NOW()) ";

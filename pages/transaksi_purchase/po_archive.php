@@ -15,9 +15,9 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
   $sidx   = $_GET['sidx'];
   $sord   = $_GET['sord'];
 
-  $page = isset($_GET['page'])?$_GET['page']:1; // get the requested page
-  $limit = isset($_GET['rows'])?$_GET['rows']:20; // get how many rows we want to have into the grid
-  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'id'; // get index row - i.e. user click to sort
+  $page = isset($_GET['page'])?$_GET['page']:1;
+  $limit = isset($_GET['rows'])?$_GET['rows']:20;
+  $sidx = isset($_GET['sidx'])?$_GET['sidx']:'id';
   $sord = isset($_GET['sord'])?$_GET['sord']:'';
 
   if(!$sidx) $sidx = 1;
@@ -223,7 +223,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
     $sql_detail = mysql_query("SELECT a.id,a.id_detail,a.id_akun,a.nomor_akun,a.nama_akun,a.subtotal FROM det_invoice a INNER JOIN det_ap b ON b.id_invoice=a.id_invoice AND b.id_ap=".$_GET['id']." AND b.`deleted`=0 AND a.`deleted`=0");
 
-    $q_jurnal_detail = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES ($get_jurnal_id, $id_akun, $no_akun, $nama_akun, 'AP', '0', $total_kredit, '$user_ap', NOW())";
+    $q_jurnal_detail = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES ($get_jurnal_id, $id_akun, $no_akun, $nama_akun, 'Detail', '0', $total_kredit, '$user_ap', NOW())";
 
     $q_jurnal_detail = mysql_query($q_jurnal_detail);
 
@@ -235,14 +235,55 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
 
         $detailNamaAkun = mysql_fetch_array(mysql_query("SELECT nama FROM det_coa WHERE id='".$rs['id_akun']."'"))['nama'];
 
-        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".round($rs['subtotal']-floor($rs['subtotal']/1.11*0.11)).",'0', '$user_ap', NOW())";
+        $status = '';
+        $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '".$rs['nomor_akun']."'";
+        $resultcekstatus = mysql_query($querycekstatus);
+      
+        if ($resultcekstatus) {
+          $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+          $countExists = $rowcekstatus['count_exists'];
+      
+          if ($countExists > 0) {
+            $status = 'Detail';
+          } else {
+            $status = 'Parent';
+          }
+        }
+        
+        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', '$status', ".round($rs['subtotal']-floor($rs['subtotal']/1.11*0.11)).",'0', '$user_ap', NOW())";
 
         $total_ppn += floor($rs['subtotal']/1.11*0.11);
 
         $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
       }
 
-      $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", '39', '09.01.00000', 'PPN', 'AP', ".$total_ppn.",'0', '$user_ap', NOW())";
+      $idppn = '';
+      $status = '';
+      $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '09.01.00000'";
+      $resultcekstatus = mysql_query($querycekstatus);
+
+      if ($resultcekstatus) {
+        $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+        $countExists = $rowcekstatus['count_exists'];
+
+        if ($countExists > 0) {
+          $status = 'Detail';
+          $queryppn = "SELECT id FROM det_coa WHERE noakun = '09.01.00000'";
+          $resultppn = mysql_query($queryppn);
+          while ($rowppn = mysql_fetch_assoc($resultppn)){
+            $idppn = $rowppn['id'];
+          }
+        } else {
+          $status = 'Parent';
+          $queryppn = "SELECT id FROM mst_coa WHERE noakun = '09.01.00000'";
+          $resultppn = mysql_query($queryppn);
+          while ($rowppn = mysql_fetch_assoc($resultppn)){
+            $idppn = $rowppn['id'];
+          }
+        }
+      }
+
+      $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", '$idppn', '09.01.00000', 'PPN', '$status', ".$total_ppn.",'0', '$user_ap', NOW())";
 
       $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
     }
@@ -250,7 +291,23 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'postap'){
       while($rs=mysql_fetch_array($sql_detail)){
         $detailNamaAkun = mysql_fetch_array(mysql_query("SELECT nama FROM det_coa WHERE id='".$rs['id_akun']."'"))['nama'];
 
-        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', 'AP', ".$rs['subtotal'].",'0', '$user_ap', NOW())";
+
+        $status = '';
+        $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '".$rs['nomor_akun']."'";
+        $resultcekstatus = mysql_query($querycekstatus);
+      
+        if ($resultcekstatus) {
+          $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+          $countExists = $rowcekstatus['count_exists'];
+      
+          if ($countExists > 0) {
+            $status = 'Detail';
+          } else {
+            $status = 'Parent';
+          }
+        }
+        
+        $q_jurnal_detail_debet = "INSERT INTO `jurnal_detail` (`id_parent`,`id_akun`,`no_akun`,`nama_akun`,`status`,`debet`,`kredit`,`user`,`lastmodified`) VALUES(".$get_jurnal_id.", ".$rs['id_akun'].", '".$rs['nomor_akun']."', '".$detailNamaAkun."', '$status', ".$rs['subtotal'].",'0', '$user_ap', NOW())";
 
         $q_jurnal_detail_debet = mysql_query($q_jurnal_detail_debet);
       }

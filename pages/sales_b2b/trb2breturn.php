@@ -149,10 +149,51 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
     $ppn = ceil($master_b2breturn['total']/1.11*0.11);
   }
 
-  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','RETURB2B','".$penjualan."','0','','0', '$id_user',NOW())";
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','$status','".$penjualan."','0','','0', '$id_user',NOW())";
   mysql_query($sql_detail) or die (mysql_error());
 
-  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','39','09.01.00000','PPN','RETURB2B','".$ppn."','0','','0', '$id_user',NOW())";
+  $idppn = '';
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '09.01.00000'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+      $queryppn = "SELECT id FROM det_coa WHERE noakun = '09.01.00000'";
+      $resultppn = mysql_query($queryppn);
+      while ($rowppn = mysql_fetch_assoc($resultppn)){
+        $idppn = $rowppn['id'];
+      }
+    } else {
+      $status = 'Parent';
+      $queryppn = "SELECT id FROM mst_coa WHERE noakun = '09.01.00000'";
+      $resultppn = mysql_query($queryppn);
+      while ($rowppn = mysql_fetch_assoc($resultppn)){
+        $idppn = $rowppn['id'];
+      }
+    }
+  }
+
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idppn','09.01.00000','PPN','$status','".$ppn."','0','','0', '$id_user',NOW())";
   mysql_query($sql_detail) or die (mysql_error());
 
   $akun_get=mysql_fetch_array( mysql_query("SELECT c.id, c.`noakun`, c.nama FROM b2breturn a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.`id` LEFT JOIN det_coa c ON c.noakun = CONCAT('01.05.', LPAD(b.id, 5, 0)) WHERE a.id='".$_GET['id']."'"));
@@ -160,7 +201,22 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
   $noakun_kredit=$akun_get['noakun'];
   $namaakun_kredit=$akun_get['nama'];
 
-  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','RETURB2B','0','".$master_b2breturn['total']."','','0', '$id_user',NOW())");
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun_kredit'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+
+  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','$status','0','".$master_b2breturn['total']."','','0', '$id_user',NOW())");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();

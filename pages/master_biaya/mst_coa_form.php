@@ -18,7 +18,7 @@
             
 			<label for="nama" class="ui-helper-reset label-control">Account Number</label>
             <div class="ui-corner-all form-control">
-                <input value="<?php echo isset($row['noakun']) ? $row['noakun'] : ''; ?>" type="text" class="required" id="noakun" name="noakun">	
+                <input value="<?php echo isset($row['noakun']) ? $row['noakun'] : ''; ?>" type="text" class="required" id="noakun" name="noakun" style="background-color:#D3D3D3" readonly>	
             </div>
 			<label for="nama" class="ui-helper-reset label-control">Account Name</label>
             <div class="ui-corner-all form-control">

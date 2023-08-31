@@ -174,7 +174,22 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
   $parent_id=mysql_fetch_array( mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$masterNo' LIMIT 1"));
   $idparent=$parent_id['id'];
 
-  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','AP','".$_POST['payment_aplist']."','0','','0', '$id_user',NOW())";
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','$status','".$_POST['payment_aplist']."','0','','0', '$id_user',NOW())";
   mysql_query($sql_detail) or die (mysql_error());
 
   $nomor_akun_kredit = explode(':', $_POST['akun_kredit_aplist'])[0];
@@ -189,7 +204,22 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
   $noakun_kredit=$akun_kredit_get['noakun'];
   $namaakun_kredit=$akun_kredit_get['nama'];
 
-  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','AP','0','".$_POST['payment_aplist']."','','0', '$id_user',NOW())");
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun_kredit'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+
+  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_kredit','$noakun_kredit','$namaakun_kredit','$status','0','".$_POST['payment_aplist']."','','0', '$id_user',NOW())");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();

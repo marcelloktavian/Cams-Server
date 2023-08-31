@@ -173,7 +173,22 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $parent_id=mysql_fetch_array( mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$masterNo' LIMIT 1"));
   $idparent=$parent_id['id'];
 
-  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','B2B AR','0','".$_POST['payment_arb2blist']."','','0', '$id_user',NOW())";
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+        
+  $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','$status','0','".$_POST['payment_arb2blist']."','','0', '$id_user',NOW())";
   mysql_query($sql_detail) or die (mysql_error());
 
   $nomor_akun_debet= explode(' - ',explode(':', $_POST['akun_debet_arb2blist'])[1])[0];
@@ -188,7 +203,22 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $noakun_debet=$akun_debet_get['noakun'];
   $namaakun_debet=$akun_debet_get['nama'];
 
-  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_debet','$noakun_debet','$namaakun_debet','B2B AR','".$_POST['payment_arb2blist']."','0','','0', '$id_user',NOW())");
+  $status = '';
+  $querycekstatus = "SELECT COUNT(*) AS count_exists FROM det_coa WHERE noakun = '$noakun_debet'";
+  $resultcekstatus = mysql_query($querycekstatus);
+
+  if ($resultcekstatus) {
+    $rowcekstatus = mysql_fetch_assoc($resultcekstatus);
+    $countExists = $rowcekstatus['count_exists'];
+
+    if ($countExists > 0) {
+      $status = 'Detail';
+    } else {
+      $status = 'Parent';
+    }
+  }
+
+  $stmt = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun_debet','$noakun_debet','$namaakun_debet','$status','".$_POST['payment_arb2blist']."','0','','0', '$id_user',NOW())");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();

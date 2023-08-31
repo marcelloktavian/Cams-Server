@@ -169,6 +169,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
             $stmt = $db->prepare("UPDATE account_balance SET noakun=?,nama=?,jenis=?,user=?, lastmodified = NOW() WHERE id=?");
 			$stmt->execute(array($_POST['noakun'],$_POST['nama'],$_POST['jenis'],$_SESSION['user']['username'], $_POST['id']));
 
+            $stmt = $db->prepare("UPDATE jurnal_detail SET nama_akun=?,user=?, lastmodified = NOW() WHERE no_akun=?");
+			$stmt->execute(array($_POST['nama'],$_SESSION['user']['username'], $_POST['noakun']));
+            
 			$stmt = $db->prepare("UPDATE mst_coa SET noakun=?,nama=?,jenis=?,user=?, lastmodified = NOW() WHERE id=?");
 			$stmt->execute(array($_POST['noakun'],$_POST['nama'],$_POST['jenis'],$_SESSION['user']['username'], $_POST['id']));
 			$affected_rows = $stmt->rowCount();

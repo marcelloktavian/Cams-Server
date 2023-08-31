@@ -397,7 +397,7 @@ function cetak(){
 }	
 	
 <?php 
-	$sql_detail="SELECT *  FROM det_coa a WHERE a.id_parent ='".$_GET['ids']."' ORDER BY a.noakun ASC";
+	$sql_detail="SELECT * FROM det_coa a WHERE a.id_parent ='".$_GET['ids']."' ORDER BY a.noakun ASC";
 	//var_dump($sql_detail);die;
 	$sql1 = mysql_query($sql_detail);
 	$i=1;
@@ -407,7 +407,7 @@ function cetak(){
 			document.getElementById('Id'+<?=$i;?>+'').value = "<?=$rs1['id'];?>";
 			document.getElementById('Nomor'+<?=$i;?>+'').value = "<?=$rs1['noakun'];?>";
 			document.getElementById('Nomor<?=$i;?>').readOnly = true;
-			document.getElementById('Nomor<?=$i;?>').style.backgroundColor = "#f2f2f2";
+			document.getElementById('Nomor<?=$i;?>').style.backgroundColor = "#D3D3D3";
 			document.getElementById('Nama'+<?=$i;?>+'').value = "<?=$rs1['nama'];?>";
 		<?php 
 			$i++;

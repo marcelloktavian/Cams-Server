@@ -317,7 +317,7 @@ include("../../include/koneksi.php");
 		mysql_query($sqlakun2) or die (mysql_error());
 	}
 
-	$query3=mysql_query("SELECT id, noakun, nama, 'Detail' AS `status` FROM det_coa WHERE noakun='09.01.00000'");
+	$query3=mysql_query("SELECT id, noakun, nama, 'Parent' AS `status` FROM mst_coa WHERE noakun='09.01.00000' ");
 	while($akun3 = mysql_fetch_array($query3)){
 		// ppn
 		$sqlakun3="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','".$akun3['id']."','".$akun3['noakun']."','".$akun3['nama']."','".$akun3['status']."','0','$ppn','','0', '$id_user',NOW()) ";
