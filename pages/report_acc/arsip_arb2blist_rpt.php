@@ -33,7 +33,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   UNION
 
-  SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-01' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
+  SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('%Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-01' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
   ) AS subquery
   GROUP BY id_customer ";
 
@@ -112,7 +112,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $q = mysql_fetch_array(mysql_query($sql_customer));
   $nama_customer = $q['nama'];
 
-  $sql_sub        = "SELECT *, date_format(tgl, '%d/%m/%Y') AS tgl_jurnal FROM jurnal WHERE keterangan LIKE CONCAT('%Pembayaran Piutang B2B % ','%".$nama_customer."%') AND status = 'B2B AR'";
+  $sql_sub        = "SELECT *, date_format(tgl, '%d/%m/%Y') AS tgl_jurnal FROM jurnal WHERE keterangan LIKE CONCAT('%Pembayaran Piutang B2B % ','%".$nama_customer."%') AND status = 'B2B AR' AND deleted=0";
 
   $query          = $db->query($sql_sub);
   $count          = $query->rowCount();
