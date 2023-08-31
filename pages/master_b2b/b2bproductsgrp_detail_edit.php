@@ -404,11 +404,11 @@ function cetak(){
 			while($rs1=mysql_fetch_array($sql1)){
 		?>
 			addNewRow1();
-			document.getElementById('Id'+<?=$i;?>+'').value = '<?=$rs1['id'];?>';
-			document.getElementById('BARCODE'+<?=$i;?>+'').value = '<?=$rs1['id_product'];?>';
-			document.getElementById('IDP'+<?=$i;?>+'').value = '<?=$rs1['id_product'];?>';
-			document.getElementById('NamaBrg'+<?=$i;?>+'').value = '<?=$rs1['produk'];?>';
-			document.getElementById('Size'+<?=$i;?>+'').value = '<?=$rs1['size'];?>';
+			document.getElementById('Id'+<?=$i;?>+'').value = `<?=$rs1['id'];?>`;
+			document.getElementById('BARCODE'+<?=$i;?>+'').value = `<?=$rs1['id_product'];?>`;
+			document.getElementById('IDP'+<?=$i;?>+'').value = `<?=$rs1['id_product'];?>`;
+			document.getElementById('NamaBrg'+<?=$i;?>+'').value = `<?=$rs1['produk'];?>`;
+			document.getElementById('Size'+<?=$i;?>+'').value = `<?=$rs1['size'];?>`;
 			
 		<?php 
 			$i++;
