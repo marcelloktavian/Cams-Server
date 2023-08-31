@@ -31,7 +31,7 @@
                 <textarea class="" id="nama" name="nama"><?php echo isset($row['nama']) ? $row['nama'] : ''; ?></textarea>	
             </div>
 			
-			<label for="price" class="ui-helper-reset label-control">Price(Harga)</label>
+			<label for="price" class="ui-helper-reset label-control">Price (inc PPN)</label>
             <div class="ui-corner-all form-control">
                 <input value="<?php echo isset($row['harga']) ? $row['harga'] : ''; ?>" type="text" class="required" id="harga" name="harga">
             </div>
