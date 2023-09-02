@@ -296,7 +296,7 @@ $year = $_GET['start'];
                     <?=$rs['nama_customer']?>
                 </td>
                 <td class="text child-row" align='right' <?= $rs['pelunasan'] == 0 ? "style='color:lightgrey;'" : "" ?>>
-                    <?=number_format($rs['pelunasan'],0,",",".")?>
+                    <div style='cursor:pointer;' onclick="openlist(<?= $year ?>,'<?=$rs['id_customer']?>','<?= substr($rs['keterangan_piutang'],10, 4) ?>')"><?=number_format($rs['pelunasan'],0,",",".")?>
                 </td>
                 <td class="text child-row" align='right' <?= ($rs['pelunasan']-($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran'])) == 0 ? "style='color:lightgrey;'" : "" ?>>
                     <?=number_format($rs['pelunasan']-($rs['saldo_piutang']-$rs['saldo_pembayaran'] < 0 ? 0 : $rs['saldo_piutang']-$rs['saldo_pembayaran']),0,",",".")?>
@@ -569,9 +569,12 @@ $year = $_GET['start'];
 <table>
 <script>
     function opendetail(bulan, tahun, cust, tipe){
-        var awal = tahun+"-"+bulan+"-01";
-        var akhir = tahun+"-"+bulan+"-31";
+        let awal = tahun+"-"+bulan+"-01";
+        let akhir = tahun+"-"+bulan+"-31";
         window.open('orOverall_rpt_detail.php?awal='+awal+'&akhir='+akhir+'&cust='+cust+'&tipe='+tipe);
     }
-    //  window.print();
+
+    function openlist(tahun, cust, tipe){
+        window.open('orOverall_rpt_list.php?tahun='+tahun+'&cust='+cust+'&tipe='+tipe);
+    }
 </script>

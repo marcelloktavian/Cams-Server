@@ -62,18 +62,6 @@
 <?php
 include("../../include/koneksi.php");
 
-if(isset($_GET['awal']) && $_GET['awal'] != ''){
-    $awal = $_GET['awal'];
-} else {
-    $awal = date('Y-m-d');
-}
-
-if(isset($_GET['akhir']) && $_GET['akhir'] != ''){
-    $akhir = $_GET['akhir'];
-} else {
-    $akhir = date('Y-m-d');
-}
-
 if(isset($_GET['cust']) && $_GET['cust'] != ''){
     $cust = $_GET['cust'];
 } else {
@@ -86,40 +74,10 @@ if(isset($_GET['tipe']) && $_GET['tipe'] != ''){
     $tipe = "";
 }
 
-function tanggal($tgl){
-    $id = explode('-', $tgl);
-	$month = $id[1];
-	$year = $id[0];
-    
-    $bulan = '';
-    if($month == '1'){
-        $bulan = 'JANUARI';
-    }else if($month == '2'){
-        $bulan = 'FEBRUARI';
-    }else if($month == '3'){
-        $bulan = 'MARET';
-    }else if($month == '4'){
-        $bulan = 'APRIL';
-    }else if($month == '5'){
-        $bulan = 'MAY';
-    }else if($month == '6'){
-        $bulan = 'JUNI';
-    }else if($month == '7'){
-        $bulan = 'JULI';
-    }else if($month == '8'){
-        $bulan = 'AGUSTUS';
-    }else if($month == '9'){
-        $bulan = 'SEPTEMBER';
-    }else if($month == '10'){
-        $bulan = 'OKTOBER';
-    }else if($month == '11'){
-        $bulan = 'NOVEMBER';
-    }else if($month == '12'){
-        $bulan = 'DESEMBER';
-    }
-
-    $tglnya = $bulan.' '.$year;
-	return $tglnya;
+if(isset($_GET['tahun']) && $_GET['tahun'] != ''){
+    $tahun = $_GET['tahun'];
+} else {
+    $tahun = "";
 }
 
 function penyebut($nilai) {
@@ -177,7 +135,7 @@ $rs_customer = mysql_fetch_array($sq_customer);
     <tr>
         <td colspan=8 class="judul" align='center'>
             <b>OUTSTANDING RECEIVABLE REPORT<br>
-            <?= strToUpper($rs_customer['nama']) ?> - PERIODE <?= tanggal($awal); ?>
+            <?= strToUpper($rs_customer['nama']) ?>
             <br><br>
         </td>
     </tr>
@@ -194,17 +152,19 @@ $rs_customer = mysql_fetch_array($sq_customer);
         <td class="header text" width='10%' align='right'>
             <b>Total Piutang</div>
         </td>
+        <td class="header text" width='10%' align='right'>
+            <b>Total Pembayaran</div>
+        </td>
         <td class="header text" width='40%' align='center'>
             <b>Keterangan</div>
         </td>
     </tr>
     <?php
     $no = 1;
-    $total = 0;
-    $payment = 0;
-    $remaining = 0; 
+    $total_debet = 0;
+    $total_kredit = 0;
 
-    $sql = "SELECT * FROM jurnal WHERE (keterangan LIKE CONCAT('Piutang %".$tipe."% %".$rs_customer['nama']."%') OR keterangan LIKE CONCAT('Penjualan %".$tipe."% %".$rs_customer['nama']."%')) AND deleted=0 AND tgl BETWEEN '".$awal."' AND '".$akhir."'";
+    $sql = "SELECT a.*,b.keterangan as `desc`,b.tgl,b.no_jurnal FROM jurnal_detail a LEFT JOIN jurnal b ON a.id_parent=b.id WHERE a.nama_akun LIKE CONCAT('Piutang %".$tipe."% %".$rs_customer['nama']."%') AND b.deleted=0 AND a.deleted=0 AND YEAR(tgl) <= '".$tahun."'";
 
     $sq = mysql_query($sql);
     $no = 1;
@@ -221,23 +181,30 @@ $rs_customer = mysql_fetch_array($sq_customer);
                 <?=date_format(date_create($rs['tgl']),"d/m/Y")?>
             </td>
             <td class="text child-row" align="right">
-                <?=number_format($rs['total_debet'],0,",",".")?>
+                <?=number_format($rs['debet'],0,",",".")?>
+            </td>
+            <td class="text child-row" align="right">
+                <?=number_format($rs['kredit'],0,",",".")?>
             </td>
             <td class="text child-row" align="center">
-                <?=$rs['keterangan']?>
+                <?=$rs['desc']?>
             </td>
         </tr>
     <?php
-        $total += $rs['total_debet'];
+        $total_debet += $rs['debet'];
+        $total_kredit += $rs['kredit'];
         $no ++;
     }
     ?>
     <tr>
         <td class="footer text" align='right' colspan=3>Grand Total Piutang</td>
         <td class="footer text" width='2%' align="right">
-            <b><?=number_format($total,0,",",".")?>
+            <b><?=number_format($total_debet,0,",",".")?></b>
         </td>
-        <td class="footer text">
+        <td class="footer text" width='2%' align="right">
+            <b><?=number_format($total_kredit,0,",",".")?></b>
+        </td>
+        <td class="footer text">Sisa Piutang <b><?=number_format($total_debet-$total_kredit,0,",",".")?></b>
         </td>
     </tr>
 <table>
