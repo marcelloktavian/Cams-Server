@@ -70,11 +70,11 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $id_akun = $line['id_akun_kredit'];
     $no_telp = $line['no_telp'];
 
-    if($row_sisa == -0){
-      $row_sisa = 0;
-    }
+    // if($row_sisa == -0){
+    //   $row_sisa = 0;
+    // }
 
-    if($row_sisa > 0){
+    // if($row_sisa > 0){
       $payAR = $allow_post ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/sales_b2b/arb2blist_pay.php?no_telp='.$no_telp.'&id_akun='.$id_akun.'&sisa_piutang='.$row_sisa.'&id='.$line['id_customer'].'\',\'table_arb2blist\')" href="javascript:void(0);">Pay</a>' : '<a onclick="javascript:custom_alert(\'Not Allowed\')">Pay</a>';
 
       $responce['rows'][$i]['id']       = $line['id_customer'];
@@ -92,7 +92,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $total_arb2blist += $row_piutang;
       $total_remaining += $row_sisa;
       $total_payment += $row_payment;
-    }
+    // }
   }
 
   $responce['userdata']['row_total'] = number_format($total_arb2blist);
