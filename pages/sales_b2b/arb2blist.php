@@ -31,7 +31,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   FROM (
   SELECT a.b2bcust_id AS id_customer, a.no_akun_kredit AS no_akun_kredit, c.nama AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp, a.id_akun_kredit, 0 AS total_pembayaran, a.total AS total_piutang, 'AR' AS `data` FROM b2bar a LEFT JOIN mst_b2bcustomer b ON a.`b2bcust_id`=b.id LEFT JOIN det_coa c ON a.`id_akun_kredit`=c.id WHERE a.`lastmodified` > '2023-07-31' AND a.deleted=0 AND a.post=1 AND b.nama LIKE '%".$filter."%'
 
-  UNION
+  UNION ALL
 
   SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('%Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-31' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
   ) AS subquery
@@ -70,11 +70,11 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $id_akun = $line['id_akun_kredit'];
     $no_telp = $line['no_telp'];
 
-    // if($row_sisa == -0){
-    //   $row_sisa = 0;
-    // }
+    if($row_sisa == -0){
+      $row_sisa = 0;
+    }
 
-    // if($row_sisa > 0){
+    if($row_sisa > 0){
       $payAR = $allow_post ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/sales_b2b/arb2blist_pay.php?no_telp='.$no_telp.'&id_akun='.$id_akun.'&sisa_piutang='.$row_sisa.'&id='.$line['id_customer'].'\',\'table_arb2blist\')" href="javascript:void(0);">Pay</a>' : '<a onclick="javascript:custom_alert(\'Not Allowed\')">Pay</a>';
 
       $responce['rows'][$i]['id']       = $line['id_customer'];
@@ -92,7 +92,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $total_arb2blist += $row_piutang;
       $total_remaining += $row_sisa;
       $total_payment += $row_payment;
-    // }
+    }
   }
 
   $responce['userdata']['row_total'] = number_format($total_arb2blist);
