@@ -802,11 +802,11 @@ function validasipertama()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-			var subtotal = Math.round(1.11*document.getElementById("SUBTOTAL"+i+"").value);
-			var qty = document.getElementById("Qty"+i+"").value;
+				var subtotal = Math.ceil((document.getElementById("SUBTOTAL"+i+"").value)*1.11);
+				var qty = document.getElementById("Qty"+i+"").value;
 			}
-	        total+= parseInt(subtotal);
-	        totalqty+= parseInt(qty);
+	    total+= parseInt(subtotal);
+	    totalqty+= parseInt(qty);
 			total_blmdisc+= parseInt(subtotal);
     
 		}
