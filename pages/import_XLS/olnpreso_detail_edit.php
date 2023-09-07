@@ -802,7 +802,7 @@ function validasipertama()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-				var subtotal = Math.ceil((document.getElementById("SUBTOTAL"+i+"").value)*1.11);
+				var subtotal = parseInt((document.getElementById("SUBTOTAL"+i+"").value))+Math.floor((document.getElementById("SUBTOTAL"+i+"").value)*0.11);
 				var qty = document.getElementById("Qty"+i+"").value;
 			}
 	    total+= parseInt(subtotal);
