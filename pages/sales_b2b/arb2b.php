@@ -35,7 +35,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   }
 
   $sql = "SELECT *, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar FROM b2bar mst ";
-  $sql = "SELECT mst.*, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar, cust.nama as customer FROM b2bar mst LEFT JOIN mst_b2bcustomer cust ON cust.id=mst.b2bcust_id ";
 
   $q = $db->query($sql.$where);
   $count = $q->rowCount();
@@ -44,6 +43,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   if ($page > $total_pages) $page=$total_pages;
   $start = $limit*$page - $limit;
   if($start <0) $start = 0;
+
+  $sql = "SELECT mst.*, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar, cust.nama as customer FROM b2bar mst LEFT JOIN mst_b2bcustomer cust ON cust.id=mst.b2bcust_id ";
 
   $q = $db->query($sql.$where."
     ORDER BY `".$sidx."` ".$sord."
@@ -238,7 +239,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         {name: 'delete', index: 'delete', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],
       rowNum        : 20,
-      rowList       : [10, 20, 30],
+      rowList       : [10,20,30],
       pager         : '#pager_table_b2bar',
       sortname      : 'id',
       autowidth     : true,
