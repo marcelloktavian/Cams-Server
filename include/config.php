@@ -1342,7 +1342,7 @@
 	define("CRTertunda", 14);	
 	define("PaymentCheck", 15);	
 	define("aplist", 16);	
-	define("ReturnConfirmd", 17);
+	define("ReturnConfirmed", 17);
 	define("arb2blist", 18);
 	define("TutupBuku", 19);	
 
