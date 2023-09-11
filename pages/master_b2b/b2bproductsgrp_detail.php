@@ -83,7 +83,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
      <td colspan='4'></td>
      </tr>
      <tr>
-	    <td class='fonttext'>Price (inc PPN)</td>
+	    <td class='fonttext'>Harga Resale DPP</td>
         <td><input type='text' class='inputform' name='price' id='price' placeholder='Harga'  />
 		<td class='fonttext'>Category</td>
         <td><input type='text' class='inputform' name='kategori' id='kategori' placeholder='Autosuggest Category'  />

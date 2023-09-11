@@ -204,7 +204,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProductsGroup, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','Code','Name','Price (inc PPN)','Total Product','Note','Category','Edit','Delete'],
+            colNames:['ID','Code','Name','Harga Resale DPP','Total Product','Note','Category','Edit','Delete'],
             colModel:[
                 {name:'id',index:'id', align:'right',width:30, searchoptions: {sopt:['cn']}},
                 {name:'kode',index:'kode', align:'right', width:30, searchoptions: {sopt:['cn']}},                
