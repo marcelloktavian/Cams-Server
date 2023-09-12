@@ -614,7 +614,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 			subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2bso.php?action=json_sub'; ?>',
 			subGridModel: [
 			{ 
-				name : ['No','Kode','Barang','Size','Harga','Disc','Qty(pcs)','Subtotal'], 
+				name : ['No','Kode','Barang','Size','Harga (inc PPN)','Disc','Qty(pcs)','Subtotal'], 
 				width : [40,40,300,300,50,50,50,50],
 				align : ['right','center','left','left','right','right','right','right'],
 			} 

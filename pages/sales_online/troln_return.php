@@ -404,7 +404,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineReturn, $group_acess);
             subGridUrl : '<?php echo BASE_URL.'pages/sales_online/troln_return.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Harga','Pinalty','Qty(return)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Harga (inc PPN)','Pinalty','Qty(return)','Subtotal'], 
 			            		width : [40,40,300,30,50,50,50],
 			            		align : ['right','center','left','right','right','right','right'],
 			            	} 

@@ -32,16 +32,20 @@
 
     <hr />
 
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Nomor Invoice</td>
         <td><input type="text" class="inputForm" name="nomor_invoice" id="nomor_invoice" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Supplier</td>
         <td><input type="text" class="inputForm" name="supplier" id="supplier" /></td>
       </tr>
       <tr>
         <td class="fonttext">Tanggal Invoice</td>
         <td><input type="date" class="inputForm" name="tanggal_invoice" id="tanggal_invoice" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Tanggal Jatuh Tempo</td>
         <td><input type="date" class="inputForm" name="tanggal_jatuh_tempo" id="tanggal_jatuh_tempo" /></td>
       </tr>

@@ -157,7 +157,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, TroubleOrder, $group_acess);
             subGridUrl : '<?php echo BASE_URL.'pages/report_online/rpt_trouble.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Size','Harga (inc PPN)','Qty(pcs)','Subtotal'], 
 			            		width : [40,60,150,60,50,30,50,50],
 			            		align : ['right','left','left','center','right','right','right',],
 			            	} 

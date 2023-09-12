@@ -199,7 +199,7 @@ $id_pkb = getnewnotrxwait2();
         <tr>
           <td align='center' width='15%' class='fonttext'>Code</td>
           <td align='center' width='25%' class='fonttext'>Products</td>
-          <td align='center' width='10%' class='fonttext'>Price@</td>
+          <td align='center' width='10%' class='fonttext'>Price@ (inc PPN)</td>
           <td align='center' width='5%' class='fonttext'>Qty</td>
           <td align='center' width='5%' class='fonttext'>Size</td>
           <td align='center' width='10%' class='fonttext' hidden>Disc@</td>

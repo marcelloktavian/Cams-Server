@@ -30,18 +30,71 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   if(!$sidx) $sidx=1;
 
   // if(isset($_GET['tgl_jto']) && $_GET['tgl_jto'] != ''){
-    $sql_aplist = "SELECT R1.id_supplier AS x_id_supplier,R1.supplier AS x_supplier, R1.telp AS x_telp, R1.no_akun AS x_no_akun, R1.bank AS x_bank, R1.rekening AS x_rekening, R1.total_hutang_jto AS x_total_hutang, R1.total_payment AS x_total_payment, R2.id_supplier AS y_id_supplier, R2.supplier AS y_supplier, R2.telp AS y_telp, R2.no_akun AS y_no_akun, R2.bank AS y_bank, R2.rekening AS y_rekening, R2.total_hutang_jto AS y_total_hutang, R2.total_payment AS y_total_payment FROM
-
-    (SELECT * FROM (SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (SELECT DISTINCT a.id_invoice FROM det_ap a LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier) AS x LEFT JOIN (SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') LEFT JOIN (SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap) AS z ON x.supplier=z.nama_supplier) AS R1
-    
-    LEFT JOIN (SELECT * FROM (SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (SELECT DISTINCT a.id_invoice FROM det_ap a LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier) AS x LEFT JOIN (SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') LEFT JOIN (SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap) AS z ON x.supplier=z.nama_supplier) AS R2 ON R1.id_supplier=R2.id_supplier
-    
-    UNION
-    
-    SELECT R1.id_supplier AS x_id_supplier,R1.supplier AS x_supplier, R1.telp AS x_telp, R1.no_akun AS x_no_akun, R1.bank AS x_bank, R1.rekening AS x_rekening, R1.total_hutang_jto AS x_total_hutang, R1.total_payment AS x_total_payment, R2.id_supplier AS y_id_supplier, R2.supplier AS y_supplier, R2.telp AS y_telp, R2.no_akun AS y_no_akun, R2.bank AS y_bank, R2.rekening AS y_rekening, R2.total_hutang_jto AS y_total_hutang, R2.total_payment AS y_total_payment FROM
-    (SELECT * FROM (SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (SELECT DISTINCT a.id_invoice FROM det_ap a LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier) AS x LEFT JOIN (SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') LEFT JOIN (SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap) AS z ON x.supplier=z.nama_supplier) AS R1
-    
-    RIGHT JOIN (SELECT * FROM (SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (SELECT DISTINCT a.id_invoice FROM det_ap a LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier) AS x LEFT JOIN (SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') LEFT JOIN (SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap) AS z ON x.supplier=z.nama_supplier) AS R2 ON R1.id_supplier=R2.id_supplier";
+    $sql_aplist = "SELECT * FROM (
+      SELECT R1.id_supplier AS x_id_supplier, R1.supplier AS x_supplier, R1.telp AS x_telp, R1.no_akun AS x_no_akun, R1.bank AS x_bank, R1.rekening AS x_rekening, R1.total_hutang_jto AS x_total_hutang, R1.total_payment AS x_total_payment, R2.id_supplier AS y_id_supplier, R2.supplier AS y_supplier, R2.telp AS y_telp, R2.no_akun AS y_no_akun, R2.bank AS y_bank, R2.rekening AS y_rekening, R2.total_hutang_jto AS y_total_hutang, R2.total_payment AS y_total_payment FROM
+      (
+          SELECT * FROM (
+              SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a
+              LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (
+                  SELECT DISTINCT a.id_invoice FROM det_ap a
+                  LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
+              ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
+          ) AS X 
+          LEFT JOIN (
+              SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
+          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          LEFT JOIN (
+              SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
+          ) AS z ON x.supplier = z.nama_supplier
+      ) AS R1 
+      LEFT JOIN (
+          SELECT * FROM (
+              SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a
+              LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (
+                  SELECT DISTINCT a.id_invoice FROM det_ap a
+                  LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
+              ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
+          ) AS X 
+          LEFT JOIN (
+              SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
+          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          LEFT JOIN (
+              SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
+          ) AS z ON x.supplier = z.nama_supplier
+      ) AS R2 ON R1.id_supplier = R2.id_supplier
+      UNION
+      SELECT R1.id_supplier AS x_id_supplier, R1.supplier AS x_supplier, R1.telp AS x_telp, R1.no_akun AS x_no_akun, R1.bank AS x_bank, R1.rekening AS x_rekening, R1.total_hutang_jto AS x_total_hutang, R1.total_payment AS x_total_payment, R2.id_supplier AS y_id_supplier, R2.supplier AS y_supplier, R2.telp AS y_telp, R2.no_akun AS y_no_akun, R2.bank AS y_bank, R2.rekening AS y_rekening, R2.total_hutang_jto AS y_total_hutang, R2.total_payment AS y_total_payment FROM (
+          SELECT * FROM (
+              SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a
+              LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (
+                  SELECT DISTINCT a.id_invoice FROM det_ap a
+                  LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
+              ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
+          ) AS X 
+          LEFT JOIN (
+              SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
+          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          LEFT JOIN (
+              SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
+          ) AS z ON x.supplier = z.nama_supplier
+      ) AS R1 
+      RIGHT JOIN (
+          SELECT * FROM (
+              SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a
+              LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (
+                  SELECT DISTINCT a.id_invoice FROM det_ap a
+                  LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
+              ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
+          ) AS X 
+          LEFT JOIN (
+              SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
+          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          LEFT JOIN (
+              SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
+          ) AS z ON x.supplier = z.nama_supplier
+      ) AS R2 ON R1.id_supplier = R2.id_supplier
+  ) AS DerivedTableAlias
+  HAVING (COALESCE(x_total_hutang,0)+COALESCE(y_total_hutang,0)) <> COALESCE(x_total_payment,0) ";
   // }
   // else{
   //   $sql_aplist = "SELECT R1.id_supplier AS x_id_supplier, R1.supplier AS x_supplier, R1.telp AS x_telp, R1.no_akun AS x_no_akun, R1.bank AS x_bank, R1.rekening AS x_rekening, R1.total_hutang_jto AS y_total_hutang, R1.total_payment AS y_total_payment FROM (SELECT * FROM (SELECT a.id_supplier, a.supplier, b.telp, b.bank, b.rekening, SUM(a.qty) AS total_qty_jto, SUM(a.total) AS total_hutang_jto FROM mst_invoice a LEFT JOIN mst_supplier b ON a.id_supplier = b.id WHERE a.id IN (SELECT DISTINCT a.id_invoice FROM det_ap a LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE posting = 1 GROUP BY a.id_ap) AND a.supplier LIKE '%%' AND a.deleted = 0 GROUP BY a.id_supplier) AS x LEFT JOIN (SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') LEFT JOIN (SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap) AS z ON x.supplier=z.nama_supplier) AS R1";
@@ -258,6 +311,21 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
       <label for="" class="ui-helper-reset label-control">&nbsp;</label>
       <div class="ui-corner-all form-control">
         <button onclick="gridReloadAPList()" class="btn" type="button">Cari</button>
+        <?php
+          $statusToko = '';
+          $getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
+          $getStat->execute();
+          $stat = $getStat->fetchAll();
+          foreach ($stat as $stats) {
+              $statusToko = $stats['status'];
+          }
+          
+          if ($statusToko == 'Tutup') {
+                    echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Print</button>';
+          }else{
+              ?>
+              <button id="btn-printaplist" type="button" class="btn btn-success">Print Selected</button>
+              <?php } ?>
       </div>
     </form>
   </div>
@@ -267,6 +335,32 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
 <div id="pager_table_aplist"></div>
 
 <script type="text/javascript">
+  $("#btn-printaplist").on('click',function(){
+		var ids = getSelectedRows();
+    var jto = $('#tgl_jto').val();
+		if (ids!=='')
+				window.open('<?php echo BASE_URL?>pages/transaksi_purchase/aplist_print.php?jto='+jto+'&ids='+ids,'_blank');
+	});
+
+  function getSelectedRows() {
+    var grid = $("#table_aplist");
+    var rowKey = grid.getGridParam("selrow");
+
+    if (!rowKey){
+        alert("No rows are selected");
+      return '';
+    }
+    else {
+        var selectedIDs = grid.getGridParam("selarrrow");
+        var result = "";
+        for (var i = 0; i < selectedIDs.length; i++) {
+            result += "'"+selectedIDs[i]+"'" + ",";
+        }
+
+        return result;
+    }                
+  }
+      
   $('#tgl_jto').datepicker({
     dateFormat : "dd-mm-yy"
   });
@@ -309,6 +403,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'pembayaran'){
       rownumbers    : true,
       caption       : "Account Payable List",
       pgbuttons : false,
+      multiselect:true,
       viewrecords : false,
       pgtext : "",
       pginput : false,

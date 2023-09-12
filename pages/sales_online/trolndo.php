@@ -540,7 +540,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
             subGridUrl : '<?php echo BASE_URL.'pages/sales_online/trolndo.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Size','Harga (inc PPN)','Qty(pcs)','Subtotal'], 
 			            		width : [40,40,300,50,50,50,50],
 			            		align : ['right','center','left','center','right','right','right'],
 			            	} 

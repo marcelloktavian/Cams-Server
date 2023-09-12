@@ -343,7 +343,7 @@
             pager: '#pager_table_b2bdo_idx',
             sortname: 'id_trans',
             autowidth: true,
-			multiselect:true,
+			multiselect:false,
             height: '300',
             viewrecords: true,
             rownumbers: true,
@@ -358,7 +358,7 @@
             subGridUrl : '<?php echo BASE_URL.'pages/summary_b2b/trb2bdo_idx.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Diskon','Qty(pcs)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Size','Harga (inc PPN)','Diskon','Qty(pcs)','Subtotal'], 
 			            		width : [40,40,300,50,50,20,50,50],
 			            		align : ['right','center','left','center','right','right','right','right'],
 			            	} 

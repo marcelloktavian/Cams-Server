@@ -31,9 +31,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, ReturnConfirmed, $group_acess);
 		{
 		$where .=" AND DATE(p.lastmodified) BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') AND p.state='1' AND (p.totalqty <> 0) ";
 		}		
-		
-		
-		
+
 		$sql = "SELECT p.*,j.nama as dropshipper,e.nama as expedition FROM `olnsoreturn` p Left Join `mst_dropshipper` j on (p.id_dropshipper=j.id) Left Join `mst_expedition` e on (p.id_expedition=e.id) ".$where;
         $q = $db->query($sql);
 		$count = $q->rowCount();
@@ -370,7 +368,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, ReturnConfirmed, $group_acess);
             subGridUrl : '<?php echo BASE_URL.'pages/sales_online/troln_return.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Harga','Disc','Qty(return)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Harga (inc PPN)','Disc','Qty(return)','Subtotal'], 
 			            		width : [40,40,300,30,50,50,50],
 			            		align : ['right','center','left','right','right','right','right'],
 			            	} 

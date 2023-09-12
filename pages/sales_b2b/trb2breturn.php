@@ -542,7 +542,7 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'unpost'){
       subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2breturn.php?action=json_sub'; ?>',
       subGridModel: [
           { 
-            name : ['No','B2BDO Num','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+            name : ['No','B2BDO Num','Barang','Size','Harga (inc PPN)','Qty(pcs)','Subtotal'], 
             width : [40,100,300,300,50,50,50,50],
             align : ['right','center','left','left','right','right','right'],
           } 

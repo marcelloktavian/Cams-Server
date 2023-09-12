@@ -10,18 +10,14 @@ $allow_edit   = is_show_menu(EDIT_POLICY, arb2b, $group_acess);
 $allow_delete = is_show_menu(DELETE_POLICY, arb2b, $group_acess);
 
 if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
-  $page  = $_GET['page'];
-  $limit = $_GET['rows'];
-  $sidx  = $_GET['sidx'];
-  $sord  = $_GET['sord'];
 
   $startdate  = isset($_GET['startdate_arb2b'])?$_GET['startdate_arb2b']:date('Y-m-d');
   $enddate    = isset($_GET['enddate_arb2b'])?$_GET['enddate_arb2b']:date('Y-m-d'); 
   $filter     = $_GET['filter_arb2b'];
 
   $page       = isset($_GET['page'])?$_GET['page']:1;
-  $limit      = isset($_GET['rows'])?$_GET['rows']:10;
-  $sidx       = isset($_GET['sidx'])?$_GET['sidx']:'tgl_arb2b';
+  $limit      = isset($_GET['rows'])?$_GET['rows']:20;
+  $sidx       = isset($_GET['sidx'])?$_GET['sidx']:'id';
   $sord       = isset($_GET['sord'])?$_GET['sord']:''; 
 
   $where      = " WHERE mst.deleted=0 ";
@@ -40,9 +36,14 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $count = $q->rowCount();
 
   $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
+
   if ($page > $total_pages) $page=$total_pages;
   $start = $limit*$page - $limit;
   if($start <0) $start = 0;
+
+  $responce['page'] = $page;
+  $responce['total'] = $total_pages;
+  $responce['records'] = $count;
 
   $sql = "SELECT mst.*, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar, cust.nama as customer FROM b2bar mst LEFT JOIN mst_b2bcustomer cust ON cust.id=mst.b2bcust_id ";
 
@@ -238,8 +239,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         {name: 'edit', index: 'edit', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'delete', index: 'delete', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],
-      rowNum        : 1000,
-      rowList       : [1000],
+      rowNum        : 20,
+      rowList       : [20, 1000],
       pager         : '#pager_table_b2bar',
       sortname      : 'id',
       autowidth     : true,

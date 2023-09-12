@@ -53,7 +53,7 @@
 
     <table width="100%" cellpadding=0 cellspacing=0>
       <tr>
-        <td class="fonttjudul">EDIT PURCHASE ORDER <span style="font-weight: bold;"><?= $no_dokumen ;?></span></td>
+        <td class="fontjudul">EDIT PURCHASE ORDER <?= $no_dokumen ;?></td>
         <td class="fontjudul">TOTAL QTY<input type="text" class="" name="total_qty" id="total_qty" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_qty ;?>" readonly /></td>
         <td class="fontjudul">TOTAL DPP<input type="text" class="" name="total_dpp_view" id="total_dpp_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" <?= $total_dpp ;?> readonly /><input type="hidden" class="" name="total_dpp" id="total_dpp" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $total_dpp ;?>" readonly /></td>
         <td class="fontjudul">PPN<input type="text" class="" name="ppn_view" id="ppn_view" style="text-align: right; font-size: 30px; background-color: white; width: 11em; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /><input type="hidden" class="" name="ppn" id="ppn" style="text-align: right; font-size: 30px; background-color: white; height: 40px; border: 1px dotted #F30; border-radius: 4px; -moz-border-radius: 4px;" value="<?= $ppn ;?>" readonly /></td>
@@ -64,16 +64,20 @@
 
     <hr />
 
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Pemohon</td>
         <td><input type="text" class="inputForm" name="pemohon" id="pemohon" value="<?= $id_pemohon.':'.$nama_pemohon ;?>" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Supplier</td>
         <td><input type="text" class="inputForm" name="supplier" id="supplier" value="<?= $id_supplier.':'.$nama_supplier ;?>" /></td>
       </tr>
       <tr>
         <td class="fonttext">Tanggal PO</td>
         <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" value="<?= $tgl_po ;?>" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Estimasi Pengiriman</td>
         <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" value="<?= $eta_pengiriman ;?>"/></td>
       </tr>
@@ -168,7 +172,8 @@
     }
 
     $('#ppn').val(Math.floor(parseFloat(totalppn)));
-    $('#ppn_view').val(Math.floor(intToIDR(parseFloat(totalppn))));
+    $('#ppn_view').val(intToIDR(Math.floor(parseFloat(totalppn))));
+
   }
 
   function hitungdpp(){
@@ -310,7 +315,7 @@
 
   function generateProdukJasa(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="70"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="35"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
   }
 
   function generateTanggalQuotation(index){
@@ -320,7 +325,7 @@
 
   function generateQuantity(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=10; return idx;
+    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=5; return idx;
   }
 
   function generateDPPUnit(index){

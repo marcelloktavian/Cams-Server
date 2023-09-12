@@ -13,12 +13,10 @@ if(isset($_GET['arb2blist_customer_filter']) && strtolower($_GET['arb2blist_cust
 }
 
 if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
-  $page  = $_GET['page'];
-  $limit = $_GET['rows'];
-  $sidx  = $_GET['sidx'];
-  $sord  = $_GET['sord'];
-
-  if(!$sidx) $sidx=1;
+  $page       = isset($_GET['page'])?$_GET['page']:1;
+  $limit      = isset($_GET['rows'])?$_GET['rows']:20;
+  $sidx       = isset($_GET['sidx'])?$_GET['sidx']:'id';
+  $sord       = isset($_GET['sord'])?$_GET['sord']:''; 
 
   $sql_b2blist = "SELECT id_customer,
   nama_customer,
@@ -35,7 +33,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   SELECT b.id AS id_customer, NULL AS no_akun_kredit, NULL AS nama_akun_kredit, b.nama AS nama_customer, b.no_telp AS no_telp, NULL AS id_akun_kredit, a.`total_debet` AS total_pembayaran, 0 AS total_piutang, 'PAY' AS `data` FROM jurnal a LEFT JOIN mst_b2bcustomer b ON a.keterangan LIKE CONCAT('%Pembayaran Piutang B2B - %',b.nama,'%') WHERE a.lastmodified > '2023-07-01' AND a.`status` = 'B2B AR' AND a.deleted=0 AND b.nama LIKE '%".$filter."%'
   ) AS subquery
-  GROUP BY id_customer ";
+  GROUP BY id_customer HAVING SUM(total_pembayaran) = SUM(total_piutang) ";
 
   $q = $db->query($sql_b2blist);
 

@@ -54,12 +54,14 @@
 
     <hr />
 
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="fonttext">Tanggal AP</td>
+        <td><input type="date" class="inputForm" name="tanggal_ap" id="tanggal_ap" value="<?= $tanggal_ap ?>" readonly /></td>
+      </tr>
       <tr>
         <td class="fonttext">Supplier</td>
         <td><input type="text" class="inputForm" name="supplier" id="supplier" value="<?= $id_supplier.':'.$nama_supplier ?>" readonly /></td>
-        <td class="fonttext">Tanggal AP</td>
-        <td><input type="date" class="inputForm" name="tanggal_ap" id="tanggal_ap" value="<?= $tanggal_ap ?>" readonly /></td>
       </tr>
       <tr>
         <td class="fonttext">Akun Kredit</td>
@@ -160,7 +162,7 @@
     var width   = screen.width;
     var height  = screen.height;
     var params  = 'width='+width+', height='+height+',scrollbars=yes';
-    window.open('list_invoicedetail.php?sup='+<?= $id_supplier ?>+'&curr='+idx,'',params);
+    window.open('list_invoicedetail.php?sup='+<?= $id_supplier ?>+'&curr='+idx+'&baris='+(baris1-1),'',params);
   }
 
   function cetak(){
@@ -278,7 +280,7 @@
     return(val.toLocaleString("id-ID", {style:"currency", currency:"IDR"}));
   }
 
-  var baris1 = 1;
+  var baris1 = 0;
   // add new row -----------------------------
 
   function addNewRow1(){

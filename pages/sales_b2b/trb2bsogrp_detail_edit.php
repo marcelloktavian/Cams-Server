@@ -234,7 +234,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
     <tr>
 	<td align='center' width='8%' class='fonttext'>Code</td>
 	<td align='center' width='12%' class='fonttext'>Products</td>
-	<td align='center' width='5%' class='fonttext'>Price@</td>
+	<td align='center' width='5%' class='fonttext'>Price@ (inc PPN)</td>
 	<td align='center' width='7%' class='fonttext'>Add Size</td>
 	<td align='center' width='58%' class='fonttext'>Size</td>
 	 <td align='center' width='5%' class='fonttext'>Disc%</td>

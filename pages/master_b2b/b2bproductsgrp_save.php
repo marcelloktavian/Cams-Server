@@ -39,9 +39,15 @@ include("../../include/koneksi.php");
 			//---simpan detail---
 			$query_detail = "INSERT INTO mst_b2bproductsgrp_detail(`id_productsgrp`,`id_product`,`nama`,`qty`,`size`) VALUES ('".$id_pkb."','".$id_p."','".$nama."','".$qty."','".$size."')";
 			//var_dump($query_detail);die;
-			$hasil = mysql_query($query_detail) or die (mysql_error());		
+			$hasil = mysql_query($query_detail) or die (mysql_error());
+
+			$sql_update_harga="UPDATE mst_b2bproducts SET harga='".$harga."' WHERE id='".$id_p."'";
+
+			mysql_query($sql_update_harga) or die (mysql_error());
 			}
 		}
+
+		
 	}
 	else if($_GET['id_trans']!='')
 	{
@@ -69,12 +75,20 @@ include("../../include/koneksi.php");
 			{
 				if($delete=='' && $id_detail==''){
 				$sql_insert="insert into mst_b2bproductsgrp_detail(id_productsgrp,id_product,nama,qty,size) VALUES ('".$id_pkb."','".$id_p."','".$nama."','".$qty."','".$size."')" ;
+
+				$sql_update_harga="UPDATE mst_b2bproducts SET harga='".$harga."' WHERE id='".$id_p."'";
+
+				mysql_query($sql_update_harga) or die (mysql_error());
 				//echo "<script> alert('INSERT delete= $delete,id_detail=$id_detail,id_comp=$id_comp,baris=$i',sql=$sql_insert');</script>";
 	
 				$hasil_insert = mysql_query($sql_insert) or die (mysql_error());
 	            }
 				else if($delete=='' && $id_detail!=''){
 				$sql_update="update mst_b2bproductsgrp_detail set id_productsgrp='".$id_pkb."',id_product= '".$id_p."', size= '".$size."', nama= '".$namabrg."',qty= '".$qty."' where id = '".$id_detail."'";
+
+				$sql_update_harga="UPDATE mst_b2bproducts SET harga='".$harga."' WHERE id='".$id_p."'";
+
+			mysql_query($sql_update_harga) or die (mysql_error());
 				//echo "<script> alert('UPDATE delete= $delete,id_detail=$id_detail,baris=$i');</script>";
 		    	//mysql_query($sql_update);
 				$hasil_update = mysql_query($sql_update) or die (mysql_error());

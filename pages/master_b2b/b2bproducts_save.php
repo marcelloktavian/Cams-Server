@@ -4,20 +4,18 @@ session_start();
 $id_user=$_SESSION['id_user'];
 $user=$_SESSION['user']['username'];
 include("../../include/koneksi.php");    
-    $nama             = addslashes($_POST['nama']);
+  $nama           = addslashes($_POST['nama']);
 	$kode             = $_POST['kode'];
-	$harga		      = $_POST['price'];
 	$size          	  = $_POST['size'];
 	$tipe             = $_POST['tipe'];
 	$id_kategori   	  = $_POST['id_kategori'];
-	//$row=$_POST['jum'];
 	$row=$_GET['row'];
 	//--------akhir tarik parameter utk simpan------------
      	
     if($_GET['id_trans']==''){
 	//--- simpan master -----------------------------
 	$sql_master="";
-	$sql_master="INSERT INTO  mst_b2bproducts(`kode`,`nama`,`harga`,`size`,`type`,`id_category`,`user`,`lastmodified`) VALUES('".$kode."','".$nama."','".$harga."','".$size."','".$tipe."','".$id_kategori."','".$user."',NOW())";
+	$sql_master="INSERT INTO mst_b2bproducts(`kode`,`nama`,`size`,`type`,`id_category`,`user`,`lastmodified`) VALUES('".$kode."','".$nama."','".$size."','".$tipe."','".$id_kategori."','".$user."',NOW())";
 	//var_dump($sql_master);die;
 	mysql_query($sql_master) or die (mysql_error());
 	//---akhir simpan master----------------------
@@ -55,14 +53,11 @@ include("../../include/koneksi.php");
 		$id_comp = $_POST['IDP'.$i];
 		//var_dump($namabrg.'-iduser='.$id_user);die;
 		$Qty = 1;
-		$NettPrice= str_replace(",","", $_POST['NettPrice'.$i]);
-		$Disc= str_replace(",","", $_POST['Disc'.$i]);
-			//echo "<script> alert('PROSES Penyimpanan delete= $delete,id_detail=$id_detail,id_comp=$id_comp,baris=$i');</script>";
 			
 			if($id_comp=='' && $id_detail=='' && $delete==''){
-			//if($id_comp==''){
-			
-			//echo "<script> alert('SKIP PROSES delete= $delete,id_detail=$id_detail,id_comp=$id_comp,baris=$i',sql=$sql_insert');</script>";
+				//if($id_comp==''){
+				
+				//echo "<script> alert('SKIP PROSES delete= $delete,id_detail=$id_detail,id_comp=$id_comp,baris=$i',sql=$sql_insert');</script>";
 				
 			}
 			else
@@ -93,7 +88,7 @@ include("../../include/koneksi.php");
 		}
 		
 		//update master------------------------------
-		$sql_master_up="update mst_b2bproducts set nama='".$nama."',kode='".$kode."',harga='".$harga."',size='".$size."',type='".$tipe."',id_category='".$id_kategori."',user='".$id_user."',lastmodified=now() where id= '".$_GET['id_trans']."'";
+		$sql_master_up="update mst_b2bproducts set nama='".$nama."',kode='".$kode."',size='".$size."',type='".$tipe."',id_category='".$id_kategori."',user='".$user."',lastmodified=now() where id= '".$_GET['id_trans']."'";
 		//var_dump($sql_master_up);die;
 		mysql_query($sql_master_up) or die (mysql_error());
 	

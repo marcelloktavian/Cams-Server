@@ -40,16 +40,20 @@
 
     <hr />
 
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="50%" cellpadding="0" cellspacing="0">
       <tr>
         <td class="fonttext">Pemohon</td>
         <td><input type="text" class="inputForm" name="pemohon" id="pemohon" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Supplier</td>
         <td><input type="text" class="inputForm" name="supplier" id="supplier" /></td>
       </tr>
       <tr>
         <td class="fonttext">Tanggal PO</td>
         <td><input type="date" class="inputForm" name="tanggal_po" id="tanggal_po" /></td>
+      </tr>
+      <tr>
         <td class="fonttext">Estimasi Pengiriman</td>
         <td><input type="date" class="inputForm" name="eta_pengiriman" id="eta_pengiriman" /></td>
       </tr>
@@ -284,7 +288,7 @@
 
   function generateProdukJasa(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="55"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
+    idx.type="text"; idx.name="produk_jasa"+index; idx.id="produk_jasa"+index; idx.size="35"; idx.readOnly="readonly"; idx.style.backgroundColor="#dcdcdc"; idx.style.border="#4f4f4f dotted 1px"; return idx;
   }
 
   function generateTanggalQuotation(index){
@@ -294,7 +298,7 @@
 
   function generateQuantity(index){
     var idx = document.createElement("input");
-    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=15; return idx;
+    idx.type="text"; idx.name="qty"+index; idx.id="qty"+index; idx.value="0"; idx.style.textAlign = "right"; idx.size=5; return idx;
   }
 
   function generateDPPUnit(index){

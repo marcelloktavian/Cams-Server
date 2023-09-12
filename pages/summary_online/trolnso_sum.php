@@ -171,7 +171,7 @@
 		$id = $_GET['id'];
 		
 		$where = "WHERE pd.id_trans = '".$id."' ";
-        $sql_detail= "SELECT pd.*,d.disc as discdp,((pd.harga_satuan-pd.disc)*(1-d.disc)) as nett_price,((pd.harga_satuan-pd.disc)*(1-d.disc)*(pd.jumlah_beli)) as subtotal_nett FROM `olnsodetail` pd inner join olnso p on pd.id_trans=p.id_trans left join mst_dropshipper d on p.id_dropshipper=d.id ".$where;
+        $sql_detail= "SELECT pd.*,d.disc as discdp,((pd.harga_satuan)*(1-d.disc)) as nett_price,(((pd.harga_satuan)*(1-d.disc))*(pd.jumlah_beli)) as subtotal_nett FROM `olnsodetail` pd inner join olnso p on pd.id_trans=p.id_trans left join mst_dropshipper d on p.id_dropshipper=d.id ".$where;
 		//var_dump($sql_detail);die;
 		//$q = $db->query("SELECT pd.* FROM `olnsodetail` pd ".$where);
 		$q = $db->query($sql_detail);
@@ -188,7 +188,6 @@
                 $line['id_product'],
                 $line['namabrg'],
                  number_format($line['harga_satuan'],0),
-                 number_format($line['disc'],0),
                  number_format($line['discdp'],2),
                  number_format($line['nett_price'],0),
                  number_format($line['jumlah_beli'],0),                
@@ -343,7 +342,7 @@
             subGridUrl : '<?php echo BASE_URL.'pages/summary_online/trolnso_sum.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Code','Barang','Price List','Disc Item','Disc Dropship','Nett Price','Qty(pcs)','Subtotal Nett'], 
+			            		name : ['No','Code','Barang','Price List','Disc Dropship','Nett Price','Qty(pcs)','Subtotal Nett'], 
 			            		width : [40,40,300,50,50,50,50,50,50],
 			            		align : ['right','center','left','right','right','right','right','right','right'],
 			            	} 

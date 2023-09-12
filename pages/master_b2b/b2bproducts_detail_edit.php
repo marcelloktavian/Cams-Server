@@ -60,7 +60,6 @@ $().ready(function() {
   $rs = mysql_fetch_array($sql);
   $kode 		= $rs['kode'];
   $nama  		= $rs['nama'];
-  $harga    	= $rs['harga'];
   $size     	= $rs['size'];
   $tipe     	= $rs['type'];
   $kategori 	= $rs['kategori'];
@@ -84,18 +83,15 @@ echo"<form id='form2' name='form2' action='' method='post'>
 <table width='100%' cellspacing='0' cellpadding='0'>
     
      <tr>
-		<td class='fonttext'>Code</td>
+		<td class='fonttext' width='10%'>Code</td>
 		<td><input type='text' class='inputform' name='kode' id='kode' 	placeholder='Code' value='$kode' />
+		</tr>
+		<tr>
 		<td class='fonttext'>Nama Product</td>
 		<td><input type='text' class='inputform' name='nama' id='nama' 	placeholder='Nama Product' value='$nama' /></td>
 		
      </tr>
-	 <tr height='1'>
-     <td colspan='4'></td>
-     </tr>
-     <tr>
-	    <td class='fonttext'>Price</td>
-        <td><input type='text' class='inputform' name='price' id='price' placeholder='Harga' value='$harga' />
+		<tr>
 		<td class='fonttext'>Size</td>
         <td><input type='text' class='inputform' name='size' id='size' placeholder='Size'  value='$size' />
 		</td>                    
@@ -104,15 +100,13 @@ echo"<form id='form2' name='form2' action='' method='post'>
 	    <td class='fonttext'>Type</td>
         <td><input type='text' class='inputform' name='tipe' id='tipe' placeholder='Type'  value='$tipe' />
 		</td>
+		</tr>
+		<tr>
         <td class='fonttext'>Category</td>
         <td><input type='text' class='inputform' name='kategori' id='kategori' placeholder='Autosuggest Category' value='$kategori'  />
 		<input type='hidden' name='id_kategori' id='id_kategori' value='$id_kategori'/>
 		</td>
 				
-	 </tr>
-	 
-	 <tr height='1'>
-     <!-- <td colspan='4'>Detail Composition<hr/></td> -->
 	 </tr>
 </table>
 <hr>
@@ -376,50 +370,33 @@ window.close();
 }
 
 function cetak(){
-    var pesan           = '';
-    var nama_input      = form2.nama.value;
-    var harga   		= form2.price.value;
+	var pesan           = '';
+	var nama_input      = form2.nama.value;
 	var size            = form2.size.value;
-    var tipe            = form2.tipe.value;
-    var id_kategori     = form2.id_kategori.value;
-    
-	//alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
-	    
-	
-    if (nama_input == '') {
-            pesan = 'Nama Produk tidak boleh kosong\n';
-        }
-	if (harga == '') {
-            pesan = 'Harga tidak boleh kosong\n';
-        }
-	if (size == '') {
-            pesan = 'Size tidak boleh kosong\n';
-        }
-	
-	if (tipe == '') {
-            pesan = 'Tipe tidak boleh kosong\n';
-        }
-		
-	if (id_kategori == '') {
-            pesan = 'Category tidak boleh kosong\n';
-        }
-		
-    if (pesan != '') {
-        alert('Maaf, ada kesalahan pengisian Nota : \n'+pesan);
-        return false;
-	}	
-	else
-	{ 
+	var tipe            = form2.tipe.value;
+	var id_kategori     = form2.id_kategori.value;
+
+	if (nama_input == '') {
+		pesan = 'Nama Produk tidak boleh kosong\n';
+	} else if (size == '') {
+		pesan = 'Size tidak boleh kosong\n';
+	} else if  (tipe == '') {
+		pesan = 'Tipe tidak boleh kosong\n';
+	} else if (id_kategori == '') {
+		pesan = 'Category tidak boleh kosong\n';
+	}
+
+	if (pesan != '') {
+		alert('Maaf, ada kesalahan pengisian Nota : \n'+pesan);
+		return false;
+	}	else { 
 		var answer = confirm("Mau Simpan master data produknya????")
-		if (answer)
-		{	
-		hitungrow() ;
-		document.form2.action="b2bproducts_save.php?row="+baris1+"&id_trans=<?=$_GET['ids']?>"
-		document.form2.submit();
+		if (answer){	
+			hitungrow() ;
+			document.form2.action="b2bproducts_save.php?row="+baris1+"&id_trans=<?=$_GET['ids']?>"
+			document.form2.submit();
 		}
-		else
-		{}
-    }	
+  }	
 }	
 
 <?php 

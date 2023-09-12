@@ -73,18 +73,14 @@ echo"<form id='form2' name='form2' action='' method='post'>
 <table width='100%' cellspacing='0' cellpadding='0'>
 
      <tr>
-		<td class='fonttext'>Code</td>
+		<td class='fonttext' width='10%'>Code</td>
 		<td><input type='text' class='inputform' name='kode' id='kode' 	placeholder='Code'  />
+		</tr>
+		<tr>
 		<td class='fonttext'>Nama Product</td>
 		<td><input type='text' class='inputform' name='nama' id='nama' 	placeholder='Nama Product'  /></td>
-		
-     </tr>
-	 <tr height='1'>
-     <td colspan='4'></td>
-     </tr>
+		</tr>
      <tr>
-	    <td class='fonttext'>Price</td>
-        <td><input type='text' class='inputform' name='price' id='price' placeholder='Harga'  />
 		<td class='fonttext'>Size</td>
         <td><input type='text' class='inputform' name='size' id='size' placeholder='Size'  />
 		</td>                    
@@ -93,15 +89,13 @@ echo"<form id='form2' name='form2' action='' method='post'>
 	    <td class='fonttext'>Type</td>
         <td><input type='text' class='inputform' name='tipe' id='tipe' placeholder='Type'  />
 		</td>
+	</tr>
+	<tr>
         <td class='fonttext'>Category</td>
         <td><input type='text' class='inputform' name='kategori' id='kategori' placeholder='Autosuggest Category'  />
 		<input type='hidden' name='id_kategori' id='id_kategori'/>
 		</td>
 				
-	 </tr>
-	 
-	 <tr height='1'>
-     <!-- <td colspan='4'>Detail Composition<hr/></td> -->
 	 </tr>
 </table>
 <hr>
@@ -263,13 +257,10 @@ return idx;
 function generateQty(index) {
 var idx = document.createElement("input");
 idx.type = "text";
-//idx.name = "Harga"+index+"";
-//idx.id = "Harga["+index+"]";
 idx.name = "Qty"+index+"";
 idx.id = "Qty"+index+"";
 idx.size = "10";
 idx.style="text-align:right;";
-//idx.readOnly = "readonly";
 return idx;
 }
 
@@ -288,46 +279,8 @@ function delRow1(id){
 	var el = document.getElementById("t1"+id);
 	baris1-=1;
 	el.parentNode.removeChild(el);
-	//alert("baris terakhir="+baris1.toString())
-    //hitungtotal(baris1-1);
-    hitungtotal();
 	return false;
 }
-
-
-
-function hitungtotal(){
-    
-	var totalqty=0;
-	
-    for (var i=1; i<=baris1;i++){
-	var barcode=document.getElementById("BARCODE"+i+"");
-	 if (barcode != null)
-	 {   
-	    if(document.getElementById("Qty"+i+"").value == "") {
-		var nett_price = 0;}
-		else{
-		var nett_price = document.getElementById("Qty"+i+"").value;
-		}
-	    totalqty+= 1;
-	 }
-		//else{}
-		//return false;
-	}
-	
-    //alert("baris="+baris1.toString());
-	
-	//totalqty
-	//document.getElementById("totalqty").value = totalqty;
-	//total belum disc
-
-}
-
-function hitungjml(a)
-{
-	hitungtotal();	
-}
-
 
 function hitungrow() 
 {
@@ -341,8 +294,7 @@ window.close();
 function cetak(){
     var pesan           = '';
     var nama_input      = form2.nama.value;
-    var harga   		= form2.price.value;
-	var size            = form2.size.value;
+		var size            = form2.size.value;
     var tipe            = form2.tipe.value;
     var id_kategori     = form2.id_kategori.value;
     
@@ -351,9 +303,6 @@ function cetak(){
 	
     if (nama_input == '') {
             pesan = 'Nama Produk tidak boleh kosong\n';
-        }
-	if (harga == '') {
-            pesan = 'Harga tidak boleh kosong\n';
         }
 	if (size == '') {
             pesan = 'Size tidak boleh kosong\n';

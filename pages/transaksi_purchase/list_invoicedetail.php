@@ -42,6 +42,9 @@ function intToIDR($val) {
 		body {
 			background-color:#E4B65E ;
 		} 
+    .loadedData{
+      display: none;
+    }
 	</style>
 </head>
 
@@ -61,6 +64,13 @@ function intToIDR($val) {
       $get_baris = 1;
     }
 
+    if(isset($_GET['baris'])){
+      $total_baris = $_GET['baris'];
+    }
+    else{
+      $total_baris = 0;
+    }
+
     if(isset($_GET['sup']) && isset($_GET['sup']) != null){
       $supplier_filter = $_GET['sup'];
     }
@@ -71,6 +81,29 @@ function intToIDR($val) {
     setcookie("tglstart", "", time() - 3600);
     setcookie("tglend", "", time() - 3600);
   ?>
+
+  <script>
+    const loadedData = new Set();
+
+    function loadData(line, total){
+      console.log(line, total);
+      try {
+        const element = window.opener.document.getElementById('id_invoice' + line).value;
+        if (element) {
+          loadedData.add(element);
+        }
+      }catch (error) {
+        console.log(`Error occurred while trying to get element 'id_invoice${line}': ${error.message}`);
+      }
+
+      if(line < total){
+        loadData(line + 1, total);
+      }
+    }
+
+    let totalBaris = <?= $total_baris ?>;
+    loadData(0, totalBaris);
+  </script>
 
   <table width="100%">
     <tr>
@@ -114,14 +147,14 @@ function intToIDR($val) {
     </thead>
     <tbody>
       <?php
-        $sql_detail_inv  = "SELECT a.*,date_format(a.tanggal_invoice, '%d-%m-%Y') AS tanggal_invoice_formatted,date_format(a.tanggal_jatuh_tempo, '%d-%m-%Y') AS tanggal_jatuh_tempo_formatted FROM `mst_invoice` a WHERE a.deleted=0 AND a.tanggal_invoice BETWEEN '".$kode1."' AND '".$kode2."' AND a.`id_supplier`='".$supplier_filter."' AND a.`total` > a.`total_payment` AND `post_ap`=1";
+        $sql_detail_inv  = "SELECT a.*,a.id AS id_invoice,date_format(a.tanggal_invoice, '%d-%m-%Y') AS tanggal_invoice_formatted,date_format(a.tanggal_jatuh_tempo, '%d-%m-%Y') AS tanggal_jatuh_tempo_formatted FROM `mst_invoice` a WHERE a.deleted=0 AND a.tanggal_invoice BETWEEN '".$kode1."' AND '".$kode2."' AND a.`id_supplier`='".$supplier_filter."' AND a.`total` > a.`total_payment` AND `post_ap`=1";
 
         $get_detail_inv = mysql_query($sql_detail_inv);
         $baris  = 1;
 
         while($det_ap = mysql_fetch_array($get_detail_inv)){
           ?>
-          <tr>
+          <tr class="checkList" name="baris<?= $baris ?>" id="<?= $det_ap['id_invoice'] ?>">
             <td class="table-light"><input type="checkbox" id="chkid<?= $baris ?>" name="chkid<?= $baris ?>" size="5" onclick="simpan('<?= $baris ?>','<?= $det_ap['id'] ?>','<?= $det_ap['qty'] ?>','<?= $det_ap['total_remaining'] ?>')"></td>
 
             <td class="table-light"><?= $det_ap['id'] ?><input type="hidden" name="id<?= $baris ?>" id="id<?= $baris ?>" value="<?= $det_ap['id'] ?>"></td>
@@ -165,6 +198,15 @@ function intToIDR($val) {
 </body>
 
 <script>
+  const checkList = document.querySelectorAll('.checkList');
+
+  checkList.forEach((row)=>{
+    console.log(row.id);
+    if(loadedData.has(row.id)){
+      console.log(row.id);
+      row.classList.add('loadedData');
+    }
+  });
 
   var urutan        = [];
   var total         = 0;
@@ -185,18 +227,17 @@ function intToIDR($val) {
     if(window.confirm("Apakah anda yakin ?")){
       let n = <?= $get_baris ?>;
       for(var i = 1; i< <?= $baris ?>; i++){
-        if($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
-          if(window.opener.document.getElementById('id_invoice'+(n)).value == ""){ 
-            window.opener.document.getElementById('id_invoice'+(n)).value = $('#id'+i).val();
-            window.opener.document.getElementById('nomor_invoice'+(n)).value = $('#nomor_invoice'+i).val();
-            window.opener.document.getElementById('tanggal_invoice'+(n)).value = $('#tanggal_invoice'+i).val();
-            window.opener.document.getElementById('tanggal_jatuh_tempo'+(n)).value = $('#tanggal_jatuh_tempo'+i).val();
-            window.opener.document.getElementById('qty'+(n)).value = $('#qty'+i).val();
-            window.opener.document.getElementById('total_inv'+(n)).value = $('#total_remaining'+i).val();
-            window.opener.document.getElementById('total_terbayar_inv'+(n)).value = $('#total_payment'+i).val();
-            window.opener.document.getElementById('total_sisa_inv'+(n)).value = $('#total_remaining'+i).val();
-            window.opener.addNewRow1();
-          }
+        if( ($('input[type=checkbox][name=chkid'+i+']').is(':checked')) && (!$('tr[name=baris'+i+']').hasClass('loadedData'))){
+          window.opener.document.getElementById('id_invoice'+(n)).value = $('#id'+i).val();
+          window.opener.document.getElementById('nomor_invoice'+(n)).value = $('#nomor_invoice'+i).val();
+          window.opener.document.getElementById('tanggal_invoice'+(n)).value = $('#tanggal_invoice'+i).val();
+          window.opener.document.getElementById('tanggal_jatuh_tempo'+(n)).value = $('#tanggal_jatuh_tempo'+i).val();
+          window.opener.document.getElementById('qty'+(n)).value = $('#qty'+i).val();
+          window.opener.document.getElementById('total_inv'+(n)).value = $('#total_remaining'+i).val();
+          window.opener.document.getElementById('total_terbayar_inv'+(n)).value = $('#total_payment'+i).val();
+          window.opener.document.getElementById('total_sisa_inv'+(n)).value = $('#total_remaining'+i).val();
+          window.opener.addNewRow1();
+          n++;
         }
       }
       window.close();
@@ -204,7 +245,7 @@ function intToIDR($val) {
   }
 
   function simpan(no, id, qty, subtotal){
-    if ($('input[type=checkbox][name=chkid'+no+']').is(':checked')){
+    if (($('input[type=checkbox][name=chkid'+i+']').is(':checked')) && (!$('tr[name=baris'+i+']').hasClass('loadedData'))){
       total = parseFloat(total) + parseFloat(subtotal);
       total_qty = parseFloat(total_qty) + parseFloat(qty);
       urutan.push(id);
@@ -240,39 +281,40 @@ function intToIDR($val) {
       order      : [[3, "DESC"]]
     });
 
-    $('#select_all').on('click', function(){
+    $('#select_all').on('click', function () {
       var rows = table.rows({
         'search': 'applied'
       }).nodes();
 
-      if($(this).is(':checked')){
-        urutan        = [];
-        total         = 0;
-        total_qty     = 0;
+      if ($(this).is(':checked')) {
+        urutan = [];
+        total = 0;
+        total_qty = 0;
 
         $("input[type='checkbox']", rows).prop('checked', true);
 
-        $("#list_detail_ap tbody").each(function(){
-          $(this).children('tr').each(function(){
-            total     = parseFloat(total)+parseFloat($(this).find('#total_remaining').val());
-            total_qty = parseFloat(total_qty)+parseFloat($(this).find('#qty').val());
+        $("#list_detail_ap tbody").each(function () {
+          $(this).children('tr').each(function () {
+            if (!$(this).hasClass('loadedData')) {
+              total = parseFloat(total) + parseFloat($(this).find('#total_remaining').val());
+              total_qty = parseFloat(total_qty) + parseFloat($(this).find('#qty').val());
+            }
           });
         });
-      }
-      else{
+      } else {
         $("input[type='checkbox']", rows).prop('checked', false);
 
-        urutan        = [];
-        total         = 0;
-        total_qty     = 0;
+        urutan = [];
+        total = 0;
+        total_qty = 0;
       }
       $('#hideurutan').val(urutan.toString());
       $('#subtotal_value').val(total);
       $('#total_qty').val(total_qty);
 
-      var locale      = 'IDR';
-      var options     = {style: 'currency', currency: 'IDR', minimumFractionDigits: 2, maximumFractionDigits: 2};
-      var formatter   = new Intl.NumberFormat(locale, options);
+      var locale = 'IDR';
+      var options = { style: 'currency', currency: 'IDR', minimumFractionDigits: 2, maximumFractionDigits: 2 };
+      var formatter = new Intl.NumberFormat(locale, options);
 
       document.getElementById("subtotal_formatted").value = formatter.format(total.toFixed(0));
     });

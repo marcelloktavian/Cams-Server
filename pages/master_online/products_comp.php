@@ -243,7 +243,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, ProductsComposition, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','ID OLN','Name','Price','Size','Type','Limit','Category','Active','Edit'],
+            colNames:['ID','ID OLN','Name','Price (inc PPN)','Size','Type','Limit','Category','Active','Edit'],
             colModel:[
                 {name:'id',index:'id', align:'right',width:30, searchoptions: {sopt:['cn']}},
                 {name:'a.oln_product_id',index:'a.oln_product_id', align:'right', width:30, searchoptions: {sopt:['cn']}},                

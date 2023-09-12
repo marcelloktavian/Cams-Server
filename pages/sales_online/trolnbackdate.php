@@ -436,7 +436,7 @@ $group_acess = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SESSIO
             subGridUrl : '<?php echo BASE_URL.'pages/sales_online/trolnbackdate.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','Kode','Barang','Size','Harga','Qty(pcs)','Subtotal'], 
+			            		name : ['No','Kode','Barang','Size','Harga (inc PPN)','Qty(pcs)','Subtotal'], 
 			            		width : [40,40,300,50,50,50,50],
 			            		align : ['right','center','left','center','right','right','right'],
 			            	} 

@@ -374,34 +374,34 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 			$barangnya = $line['id_product'];
 			$i++;
 		}
-		$responce->rows[$i]['id']   = '';
-			$responce->rows[$i]['cell'] = array(
-				'',
-				'',
-				'',
-				'',
+		// $responce->rows[$i]['id']   = '';
+		// 	$responce->rows[$i]['cell'] = array(
+		// 		'',
+		// 		'',
+		// 		'',
+		// 		'',
 
-				// number_format($line['qty31'],0),
-				// number_format($line['qty32'],0),
-				// number_format($line['qty33'],0),
-				// number_format($line['qty34'],0),
-				// number_format($line['qty35'],0),
-				// number_format($line['qty36'],0),
-				// number_format($line['qty37'],0),
-				// number_format($line['qty38'],0),
-				// number_format($line['qty39'],0),
-				// number_format($line['qty40'],0),
-				// number_format($line['qty41'],0),
-				// number_format($line['qty42'],0),
-				// number_format($line['qty43'],0),
-				// number_format($line['qty44'],0),
-				// number_format($line['qty45'],0),
-				// number_format($line['qty46'],0),
-				'',
-				'',                
-				'<b>'.number_format($totalqty,0).'</b>',                
-				'<b>'.number_format($total,0).'</b>',                
-			);
+		// 		// number_format($line['qty31'],0),
+		// 		// number_format($line['qty32'],0),
+		// 		// number_format($line['qty33'],0),
+		// 		// number_format($line['qty34'],0),
+		// 		// number_format($line['qty35'],0),
+		// 		// number_format($line['qty36'],0),
+		// 		// number_format($line['qty37'],0),
+		// 		// number_format($line['qty38'],0),
+		// 		// number_format($line['qty39'],0),
+		// 		// number_format($line['qty40'],0),
+		// 		// number_format($line['qty41'],0),
+		// 		// number_format($line['qty42'],0),
+		// 		// number_format($line['qty43'],0),
+		// 		// number_format($line['qty44'],0),
+		// 		// number_format($line['qty45'],0),
+		// 		// number_format($line['qty46'],0),
+		// 		'',
+		// 		'',                
+		// 		'<b>'.number_format($totalqty,0).'</b>',                
+		// 		'<b>'.number_format($total,0).'</b>',                
+		// 	);
 		echo json_encode($responce);
 		exit;
 	}
@@ -569,7 +569,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 			subGridUrl : '<?php echo BASE_URL.'pages/summary_b2b/b2bso_reportidx.php?action=json_sub'; ?>',
 			subGridModel: [
 			{ 
-				name : ['No','Kode','Barang','Size','Harga','Disc','Qty(pcs)','Subtotal'], 
+				name : ['No','Kode','Barang','Size','Harga (inc PPN)','Disc','Qty(pcs)','Subtotal'], 
 				width : [40,40,300,300,50,50,50,50],
 				align : ['right','center','left','left','right','right','right','right'],
 			} 

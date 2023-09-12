@@ -93,10 +93,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
                 $line['id'],
 				$line['kode'],
 				$line['nama'],
-                number_format($line['harga']),                
-                $line['size'],                
-                $line['type'],                
-                $line['kategori'],                
+                $line['size'],
+                $line['type'],
+                $line['kategori'],
 				$edit,
 				$delete,
             );
@@ -218,7 +217,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
     
     if ($statusToko == 'Tutup') {
     	echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Tambah Product</button>';
-        echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Tambah</button>';
+        // echo '<button type="button" onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" class="btn">Tambah</button>';
     }else{
 	if($allow_add) {
 		?>
@@ -226,7 +225,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
    onclick="window.open('pages/master_b2b/b2bproducts_detail.php');">
    <button class="btn btn-success">Tambah Product</button></a>
 		<?php
-		echo '<button type="button" onclick="javascript:popup_form(\''.BASE_URL.'pages/master_b2b/b2bproducts.php?action=add\',\'table_b2bproducts\')" class="btn">Tambah</button>';
+		// echo '<button type="button" onclick="javascript:popup_form(\''.BASE_URL.'pages/master_b2b/b2bproducts.php?action=add\',\'table_b2bproducts\')" class="btn">Tambah</button>';
 	}}
 	
 ?>
@@ -246,17 +245,16 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','Code','Name','Price','Size','Type','Category','Edit','Delete'],
+            colNames:['ID','Code','Name','Size','Type','Category','Edit','Delete'],
             colModel:[
                 {name:'a.id',index:'a.id', align:'right',width:30, searchoptions: {sopt:['cn']}},
-                {name:'kode',index:'kode', align:'right', width:30, searchoptions: {sopt:['cn']}},                
-                {name:'a.nama',index:'a.nama', width:300, searchoptions: {sopt:['cn']}},                
-                {name:'harga',index:'harga', align:'center', width:70, searchoptions: {sopt:['cn']}},                
-                {name:'size',index:'size', align:'center', width:30, searchoptions: {sopt:['cn']}},                
-                {name:'type',index:'type', align:'center', width:30, searchoptions: {sopt:['cn']}},                
-                {name:'c.nama',index:'c.nama', align:'center', width:30, searchoptions: {sopt:['cn']}},                
-                {name:'Edit',index:'edit', align:'center', width:50, sortable: false, search: false},
-                {name:'Delete',index:'delete', align:'center', width:50, sortable: false, search: false},
+                {name:'kode',index:'kode', align:'center',width:50, searchoptions: {sopt:['cn']}},
+                {name:'a.nama',index:'a.nama', width:250, searchoptions: {sopt:['cn']}},            
+                {name:'size',index:'size', align:'center', width:50, searchoptions: {sopt:['cn']}},
+                {name:'type',index:'type', align:'center', width:50, searchoptions: {sopt:['cn']}},
+                {name:'c.nama',index:'c.nama', align:'center', width:50, searchoptions: {sopt:['cn']}},
+                {name:'Edit',index:'edit', align:'center', width:30, sortable: false, search: false},
+                {name:'Delete',index:'delete', align:'center', width:30, sortable: false, search: false},
             ],
             rowNum:20,
             rowList:[10,20,30],
@@ -271,12 +269,12 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BProducts, $group_acess);
 			subGrid : true,
             subGridUrl : '<?php echo BASE_URL.'pages/master_b2b/b2bproducts.php?action=json_sub'; ?>',
             subGridModel: [
-			            	{ 
-			            		name : ['No','Composition','Qty'], 
-			            		width : [40,300,100],
-			            		align : ['left','left','center'],
-			            	} 
-			            ],
+                { 
+                    name : ['No','Composition','Qty'], 
+                    width : [40,300,100],
+                    align : ['left','left','center'],
+                } 
+            ],
             ondblClickRow: function(rowid) {
                 alert(rowid);
             }
