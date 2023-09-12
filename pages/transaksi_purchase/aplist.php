@@ -39,10 +39,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
                   SELECT DISTINCT a.id_invoice FROM det_ap a
                   LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
               ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
-          ) AS X 
+          ) AS x 
           LEFT JOIN (
               SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
-          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          ) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
           LEFT JOIN (
               SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
           ) AS z ON x.supplier = z.nama_supplier
@@ -54,10 +54,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
                   SELECT DISTINCT a.id_invoice FROM det_ap a
                   LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
               ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
-          ) AS X 
+          ) AS x 
           LEFT JOIN (
               SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
-          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          ) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
           LEFT JOIN (
               SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
           ) AS z ON x.supplier = z.nama_supplier
@@ -70,10 +70,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
                   SELECT DISTINCT a.id_invoice FROM det_ap a
                   LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` <= '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
               ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
-          ) AS X 
+          ) AS x 
           LEFT JOIN (
               SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
-          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          ) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
           LEFT JOIN (
               SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
           ) AS z ON x.supplier = z.nama_supplier
@@ -85,10 +85,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
                   SELECT DISTINCT a.id_invoice FROM det_ap a
                   LEFT JOIN mst_ap b ON a.id_ap = b.id WHERE a.`tanggal_jatuh_tempo` > '".$tgl_jto."' AND posting = 1 GROUP BY a.id_ap
               ) AND a.supplier LIKE '%".$filter."%' AND a.deleted = 0 GROUP BY a.id_supplier
-          ) AS X 
+          ) AS x 
           LEFT JOIN (
               SELECT a.keterangan, SUM(a.total_kredit) AS total_payment FROM jurnal a WHERE a.status = 'AP' GROUP BY a.keterangan
-          ) AS Y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
+          ) AS y ON y.keterangan LIKE CONCAT('Pembayaran Hutang Dagang - ', x.supplier, '%') 
           LEFT JOIN (
               SELECT DISTINCT no_akun, nama_akun, nama_supplier FROM mst_ap
           ) AS z ON x.supplier = z.nama_supplier
