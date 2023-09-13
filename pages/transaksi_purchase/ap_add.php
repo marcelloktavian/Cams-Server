@@ -116,7 +116,7 @@
           element.remove(); hitungTotal();
         }
       }
-      baris1 = 0;
+      baris1 = 1;
       addNewRow1();
     });
 
@@ -301,7 +301,7 @@
     return(val.toLocaleString("id-ID", {style:"currency", currency:"IDR"}));
   }
 
-  var baris1 = 0;
+  var baris1 = 1;
   // add new row -----------------------------
   addNewRow1();
 
