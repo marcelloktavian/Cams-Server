@@ -67,10 +67,9 @@
         <td class="fonttext">Akun Kredit</td>
         <td><input type="text" class="inputForm" name="akun" id="akun" value="<?= $id_akun.':'.$nama_akun.' | '.$nomor_akun ?>" readonly/></td>
       </tr>
-      <tr height="1">
-        <td colspan="100%"><hr /></td>
-      </tr>
     </table>
+
+    <hr />
 
     <table width="100%" id="ap_detail">
       <thead>
