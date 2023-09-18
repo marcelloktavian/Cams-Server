@@ -210,8 +210,12 @@ $allow_delete = is_show_menu(DELETE_POLICY, DepositTransaction, $group_acess);
 				FROM jurnal ORDER BY id DESC LIMIT 1"));
 				$masterNo=$q['nomor'];
 
+				$ket = 'Penambahan';
+				if($_POST['type'] == 'Mengurang'){
+					$ket = 'Pengurangan';
+				}
 				// execute for master
-				$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',NOW(),'Penambahan Saldo Dropshipper - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW(),'DEPOSIT') ";
+				$sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo','".$_POST['tgl_trans']."','$ket Saldo Dropshipper - $namadropshipper - $idtrans','$total','$total','0','$id_user',NOW(),'DEPOSIT') ";
 				mysql_query($sql_master) or die (mysql_error());
 
 				//get master id terakhir

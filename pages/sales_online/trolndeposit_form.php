@@ -77,7 +77,7 @@
                 <textarea id="keterangan" name="keterangan"style="text-transform: uppercase"><?php echo isset($row['keterangan']) ? $row['keterangan'] : ''; ?></textarea>
             </div>
 
-			<label for="keterangan" class="ui-helper-reset label-control">Type</label>
+			<label for="type" class="ui-helper-reset label-control">Type</label>
             <div class="ui-corner-all form-control">
 				<select name='type' id='type' onchange="changetype()">
 					<option value="Menambah" selected>Menambah</option>
