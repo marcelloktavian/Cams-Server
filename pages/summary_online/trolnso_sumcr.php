@@ -183,8 +183,8 @@
                 $i+1,
                 $line['id_product'],
                 $line['namabrg'],
-                 number_format($line['harga_satuan'],0),
-                 number_format($line['discdp'],2),
+                //  number_format($line['harga_satuan'],0),
+                //  number_format($line['discdp'],2),
                  number_format($line['nett_price'],0),
                  number_format($line['jumlah_beli'],0),                
                  number_format($line['subtotal_nett'],0),                
@@ -335,10 +335,10 @@
             subGrid : true,
             subGridUrl : '<?php echo BASE_URL.'pages/summary_online/trolnso_sumcr.php?action=json_sub'; ?>',
             subGridModel: [
-			            	{ 
-			            		name : ['No','Code','Barang','Price List','Disc Dropship','Nett Price','Qty(pcs)','Subtotal Nett'], 
-			            		width : [40,40,300,50,50,50,50,50,50],
-			            		align : ['right','center','left','right','right','right','right','right','right'],
+							{ 
+			            		name : ['No','Code','Barang','Price (inc PPN)','Qty(pcs)','Subtotal'], 
+			            		width : [40,40,300,50,50,50],
+			            		align : ['right','center','left','right','right','right'],
 			            	} 
 			            ],
 						

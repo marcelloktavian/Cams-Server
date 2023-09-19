@@ -8,6 +8,9 @@
     flex-direction: row;
     justify-content: space-between;
   }
+  td > .harga{
+    width: 100% !important;
+  }
   .header{
     border-top: 2px solid black !important;
     border-bottom: 2px solid black !important;
@@ -112,11 +115,13 @@ $query = mysql_query($sql_aplist);
 <center>
 <table>
   <tr class="header">
-    <td width="5%">NO</th>
-    <td width="35%">SUPPLIER</th>
-    <td width="30%">BANK</th>
-    <td width="15%">REKENING</th>
-    <td width="20%">TOTAL SISA</th>
+    <td width="3%">NO</th>
+    <td width="30%">SUPPLIER</th>
+    <td width="25%">BANK</th>
+    <td width="12%">REKENING</th>
+    <td width="10%">TOTAL TRANSAKSI</th>
+    <td width="10%">TOTAL PEMBAYARAN</th>
+    <td width="10%">SISA PIUTANG</th>
   </tr>
 <?php
 
@@ -139,11 +144,13 @@ while($line = mysql_fetch_array($query)){
     $no_telp = (isset($line['y_telp']) && $line['y_telp'] != null ? $line['y_telp'] : $line['x_telp']);
     ?>
       <tr>
-        <td class="nomor" width="5%"><?= $i++ ?>.</td>
-        <td width="35%"><?= isset($line['x_supplier']) && $line['x_supplier'] != null ? $line['x_supplier'] : $line['y_supplier'] ?></td>
-        <td width="30%"><?= isset($line['x_bank']) && $line['x_bank'] != null ? $line['x_bank'] : $line['y_bank'] ?></td>
-        <td width="15%"><?= isset($line['x_rekening']) && $line['x_rekening'] != null ? $line['x_rekening'] : $line['y_rekening'] ?></td>
-        <td class="harga" width="20%"><div>Rp.</div><div><?= number_format($row_sisa) ?></div></td>
+        <td class="nomor" width="3%"><?= $i++ ?>.</td>
+        <td width="30%"><?= isset($line['x_supplier']) && $line['x_supplier'] != null ? $line['x_supplier'] : $line['y_supplier'] ?></td>
+        <td width="25%"><?= isset($line['x_bank']) && $line['x_bank'] != null ? $line['x_bank'] : $line['y_bank'] ?></td>
+        <td width="12%"><?= isset($line['x_rekening']) && $line['x_rekening'] != null ? $line['x_rekening'] : $line['y_rekening'] ?></td>
+        <td width="10%"><div class="harga"><div>Rp.</div><div><?= number_format($row_total) ?></div></div></td>
+        <td width="10%"><div class="harga"><div>Rp.</div><div><?= number_format($row_payment) ?></div></div></td>
+        <td width="10%"><div class="harga"><div>Rp.</div><div><?= number_format($row_sisa) ?></div></div></td>
       </tr>
     <?php
 
@@ -155,7 +162,7 @@ while($line = mysql_fetch_array($query)){
 }
 ?>
 <tr>
-    <td colspan="4">TOTAL SISA</th>
+    <td colspan="6" align="right">TOTAL SISA PIUTANG</th>
     <td class="harga header"><div>Rp.</div><div><?= number_format($total_remaining) ?></div></th>
 </tr>
 </table>

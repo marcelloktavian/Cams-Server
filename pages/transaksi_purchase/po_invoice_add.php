@@ -186,7 +186,7 @@
     var top     = (screen.height - height)/2;
     var params  = 'width='+width+', height='+height+',scrollbars=yes';
     params     += ', top='+top+', left='+left;
-    window.open('list_podetail.php?sup='+sup_q+'&curr='+idx,'',params);
+    window.open('list_podetail.php?sup='+sup_q+'&curr='+idx+'&baris='+baris1, '', params);
   }
 
   function intToIDR(val){

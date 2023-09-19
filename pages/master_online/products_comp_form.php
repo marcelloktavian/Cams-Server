@@ -100,7 +100,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
      <td colspan='4'></td>
      </tr>
      <tr>
-	    <td class='fonttext'>Price</td>
+	    <td class='fonttext'>Price (inc PPN)</td>
         <td>$harga
 		<td class='fonttext'>Category</td>
         <td>$kategori

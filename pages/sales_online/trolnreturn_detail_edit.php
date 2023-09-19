@@ -127,7 +127,7 @@ echo"<form id='form2' name='form2' action='' method='post'>
     <tr>
         <td align='center' width='15%' class='fonttext'>Code</td>
     	<td align='center' width='25%' class='fonttext'>Products</td>
-    	<td align='center' width='10%' class='fonttext'>NettPrice@</td>
+    	<td align='center' width='10%' class='fonttext'>Price@ (inc PPN)</td>
       	<td align='center' width='5%' class='fonttext'>Qty</td>
       	<td align='center' width='10%' class='fonttext'>Pinalty@</td>
       	<td align='center' width='5%' class='fonttext'>Return</td>

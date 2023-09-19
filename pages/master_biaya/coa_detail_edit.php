@@ -365,36 +365,6 @@ function hitungrow()
 function tutup(){
 window.close();
 }
-
-function cetak(){
-    var pesan           = '';
-    // var nama_input      = form2.nama.value;
-	// var id_kategori     = form2.id_kategori.value;
-    // //alert('temp='+temp_total+',totalfaktur='+totalfaktur+',Deposit='+simpan_deposit);
-    // if (nama_input == '') {
-    //         pesan = 'Nama Produk tidak boleh kosong\n';
-    //     }
-	// if (id_kategori == '') {
-    //         pesan = 'Category tidak boleh kosong\n';
-    //     }
-		
-    if (pesan != '') {
-        alert('Maaf, ada kesalahan pengisian Nota : \n'+pesan);
-        return false;
-	}	
-	else
-	{ 
-		var answer = confirm("Mau Simpan Chart Of Account???")
-		if (answer)
-		{	
-		hitungrow() ;
-		document.form2.action="coa_save.php?row="+baris1+"&id_trans=<?=$_GET['ids']?>";
-		document.form2.submit();
-		}
-		else
-		{}
-    }	
-}	
 	
 <?php 
 	$sql_detail="SELECT * FROM det_coa a WHERE a.id_parent ='".$_GET['ids']."' ORDER BY a.noakun ASC";
@@ -413,6 +383,70 @@ function cetak(){
 			$i++;
 		}
 		?>
+
+	baris1 = <?= $i ?>;
+	var barisAwal =  <?= $i ?>;
+
+	const nomorCOA = new Set();
+
+	function loadNomorCOA(idx, total){
+		try{
+			nomorCOA.add(document.getElementById('Nomor'+idx).value);
+			console.log('Masukin Nomor'+idx);
+		} catch (error){
+			console.log('Load No id found : '+'Nomor'+idx);
+		}
+		if(idx < total){
+			loadNomorCOA(idx+1, total);
+		}
+	}
+
+	function validasiNomorCOA(idx){
+		console.log('Nomor'+idx);
+		return nomorCOA.has(document.getElementById('Nomor'+idx).value);
+	};
+
+	function cetak(){
+    var pesan           = '';
+
+		nomorCOA.clear();
+
+		loadNomorCOA(0, barisAwal-1);
+		console.log(nomorCOA);
+
+		for(let i = barisAwal; i < baris1; i++){
+			try{
+				if(validasiNomorCOA(i)){
+					pesan = "Nomor COA sudah ada";
+				} else{
+					loadNomorCOA(i,i);
+				}
+			} catch{
+				console.log('Cetak No id found : '+'Nomor'+i);
+			}
+		}
+
+    if (pesan != '') {
+        alert('Maaf, ada kesalahan pengisian Nota : \n'+pesan);
+        return false;
+		}
+		else
+		{ 
+			var answer = confirm("Mau Simpan Chart Of Account???")
+			if (answer)
+			{	
+			hitungrow() ;
+			document.form2.action="coa_save.php?row="+baris1+"&id_trans=<?=$_GET['ids']?>";
+			document.form2.submit();
+			}
+			else
+			{}
+		}	
+	}	
+
+	$().ready(function() {
+		loadNomorCOA(0, barisAwal);
+	});
 
 </script>
 

@@ -122,7 +122,7 @@
             ?>
           </td>
           <td width="10%" class="fonttext">Qty Return</td>
-          <td width="15%" class="fonttext">Harga</td>
+          <td width="15%" class="fonttext">Harga(inc PPN)</td>
           <td width="15%" class="fonttext">Subtotal</td>
           <td width="5%" class="fonttext">Hapus</td>
         </tr>

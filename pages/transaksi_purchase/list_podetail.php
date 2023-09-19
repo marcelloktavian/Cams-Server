@@ -38,6 +38,9 @@ require_once "../../include/config.php";
 		body {
 			background-color:#E4B65E ;
 		} 
+    .loadedData{
+      display: none;
+    }
 	</style>
 </head>
 
@@ -57,6 +60,13 @@ require_once "../../include/config.php";
       $get_baris = 1;
     }
 
+    if(isset($_GET['baris'])){
+      $total_baris = $_GET['baris'];
+    }
+    else{
+      $total_baris = 0;
+    }
+
     if(isset($_GET['sup']) && isset($_GET['sup']) != null){
       $supplier_filter = $_GET['sup'];
     }
@@ -67,6 +77,29 @@ require_once "../../include/config.php";
     setcookie("tglstart", "", time() - 3600);
     setcookie("tglend", "", time() - 3600);
   ?>
+
+<script>
+    const loadedData = new Set();
+
+    function loadData(line, total){
+      console.log(line, total);
+      try {
+        const element = window.opener.document.getElementById('id' + line).value;
+        if (element) {
+          loadedData.add(element);
+        }
+      }catch (error) {
+        console.log(`Error occurred while trying to get element 'id${line}': ${error.message}`);
+      }
+
+      if(line < total){
+        loadData(line + 1, total);
+      }
+    }
+
+    let totalBaris = <?= $total_baris ?>;
+    loadData(0, totalBaris);
+  </script>
 
   <table width="100%">
     <tr>
@@ -120,7 +153,7 @@ require_once "../../include/config.php";
 
         while($det_po = mysql_fetch_array($get_detail_po)){
           ?>
-          <tr>
+          <tr class="checkList" name="baris<?= $baris ?>" id="<?= $det_po['id'] ?>">
             <td class="table-light"><input type="checkbox" id="chkid<?= $baris ?>" name="chkid<?= $baris ?>" size="5" onclick="simpan('<?= $baris ?>', '<?= $det_po['id'] ?>', '<?= $det_po['qty']-$det_po['qty_terbayar'] ?>', '<?= $det_po['subtotal']+($det_po['subtotal']*$det_po['persen_ppn']/100) ?>')"></td>
 
             <td class="table-light"><?= $det_po['id'] ;?><input type="hidden" name="id<?= $baris ?>" id="id<?= $baris ?>" value="<?= $det_po['id'] ?>" size="5" style="text-align:center; border: 0;" readonly/></td>
@@ -177,6 +210,15 @@ require_once "../../include/config.php";
 </body>
 
 <script>
+  const checkList = document.querySelectorAll('.checkList');
+
+  checkList.forEach((row)=>{
+    console.log(row.id);
+    if(loadedData.has(row.id)){
+      console.log(row.id);
+      row.classList.add('loadedData');
+    }
+  });
 
   var urutan        = [];
   var total         = 0;
@@ -197,7 +239,7 @@ require_once "../../include/config.php";
     if (window.confirm("Apakah anda yakin ?")){
       let n = <?= $get_baris ?>;
       for (var i = 0; i< <?= $baris ?>; i++){
-        if ($('input[type=checkbox][name=chkid'+i+']').is(':checked')){
+        if (($('input[type=checkbox][name=chkid'+i+']').is(':checked')) && (!$('tr[name=baris'+i+']').hasClass('loadedData'))){
           if(window.opener.document.getElementById('id'+(n)).value == ""){
             window.opener.document.getElementById('id'+(n)).value = $('#id'+i).val();
             window.opener.document.getElementById('persen_ppn'+(n)).value = $('#persen_po'+i).val();
@@ -239,7 +281,7 @@ require_once "../../include/config.php";
   }
 
   function simpan(no, id, qty, subtotal){
-    if ($('input[type=checkbox][name=chkid'+no+']').is(':checked')){
+    if (($('input[type=checkbox][name=chkid'+i+']').is(':checked')) && (!$('tr[name=baris'+i+']').hasClass('loadedData'))){
       total = parseFloat(total) + parseFloat(subtotal);
       total_qty = parseFloat(total_qty) + parseFloat(qty);
       urutan.push(id);
@@ -286,8 +328,10 @@ require_once "../../include/config.php";
 
         $("#list_detail_po tbody").each(function(){
           $(this).children('tr').each(function(){
-            total     = parseFloat(total)+parseFloat($(this).find('#subtotal_value').val());
-            total_qty = parseFloat(total_qty)+parseFloat($(this).find('#qty').val());
+            if (!$(this).hasClass('loadedData')) {
+              total     = parseFloat(total)+parseFloat($(this).find('#subtotal_value').val());
+              total_qty = parseFloat(total_qty)+parseFloat($(this).find('#qty').val());
+            }
           });
         });
       }
