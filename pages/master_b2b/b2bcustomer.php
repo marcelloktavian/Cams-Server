@@ -205,7 +205,7 @@ if ($allow_add) {
             subGridUrl : '<?php echo BASE_URL.'pages/master_b2b/b2bcustomer.php?action=json_sub'; ?>',
             subGridModel: [
 			            	{ 
-			            		name : ['No','ID','Product','Price','Disc','NettPrice'], 
+			            		name : ['No','ID','Product','Harga Pro Forma (inc PPN)','Disc','NettPrice'], 
 			            		width : [40,40,300,100,100,100],
 			            		align : ['right','right','left','right','right','right'],
 			            	} 
