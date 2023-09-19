@@ -174,7 +174,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, ArchiveOrder, $group_acess);
 		$id = $_GET['id'];
 		//$id = $line['id_trans'];
 		$where = "WHERE pd.id_trans = '".$id."' ";
-        $q = $db->query("SELECT pd.* FROM `olnsodetail` pd ".$where);
+        $q = $db->query("SELECT pd.*,d.disc as discdp,((pd.harga_satuan)*(1-d.disc)) as nett_price,(((pd.harga_satuan)*(1-d.disc))*(pd.jumlah_beli)) as subtotal_nett FROM `olnsodetail` pd inner join olnso p on pd.id_trans=p.id_trans left join mst_dropshipper d on p.id_dropshipper=d.id ".$where);
 		
 		$count = $q->rowCount();
 		
@@ -189,9 +189,9 @@ $allow_delete = is_show_menu(DELETE_POLICY, ArchiveOrder, $group_acess);
                 $line['id_product'],
                 $line['namabrg'],
                 $line['size'],
-                 number_format($line['harga_satuan'],0),
+                 number_format($line['nett_price'],0),
                  number_format($line['jumlah_beli'],0),                
-                 number_format($line['subtotal'],0),                
+                 number_format($line['subtotal_nett'],0),                
             );
             $i++;
         }
