@@ -124,7 +124,7 @@ else if(isset($_GET['action']) && strtolower($_GET['action']) == 'post'){
 
   $master_b2breturn = mysql_fetch_array(mysql_query("SELECT a.*, b.nama AS type_b2breturn, c.nama AS customer_b2breturn FROM b2breturn a LEFT JOIN mst_b2bcategory_sale b ON a.`id_kategori`=b.`id` LEFT JOIN mst_b2bcustomer c ON a.`b2bcust_id`=c.`id` WHERE a.`id`='".$_GET['id']."' LIMIT 1"));
 
-  $jurnal_master = $db->prepare("INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo',CURDATE(),'Retur B2B - ".$master_b2breturn['type_b2breturn']." - ".$master_b2breturn['customer_b2breturn']." - ".$master_b2breturn['b2breturn_num']."','".$master_b2breturn['total']."','".$master_b2breturn['total']."','0','$id_user',NOW(),'RETURB2B')");
+  $jurnal_master = $db->prepare("INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo','".$master_b2breturn['tgl_return']."','Retur B2B - ".$master_b2breturn['type_b2breturn']." - ".$master_b2breturn['customer_b2breturn']." - ".$master_b2breturn['b2breturn_num']."','".$master_b2breturn['total']."','".$master_b2breturn['total']."','0','$id_user',NOW(),'RETURB2B')");
 
   $jurnal_master->execute();
 
