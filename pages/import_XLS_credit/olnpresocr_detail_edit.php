@@ -810,8 +810,9 @@ function hitungpiutang()
 		if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-				var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
-				var qty      = document.getElementById("Qty"+i+"").value;
+				var harga = document.getElementById("Harga"+i+"").value;
+				var qty = document.getElementById("Qty"+i+"").value;
+				var subtotal = parseInt(harga) + Math.floor(harga * 0.11) * qty;
 			}
 			total+= parseInt(subtotal);
 			totalqty+= parseInt(qty);
@@ -904,11 +905,8 @@ function hitungtotal(){
 				var subtotal = 0;
 			}else{
 				var harga = document.getElementById("Harga"+i+"").value;
-				// console.log(harga);
-				var sub = parseInt(harga) + parseInt(1 * Math.ceil(harga * 0.11));
-				// alert(harga * disc_dropshipper);
 				var qty = document.getElementById("Qty"+i+"").value;
-				var subtotal = sub * qty;
+				var subtotal = parseInt(harga) + Math.floor(harga * 0.11) * qty;
 				totalhid += parseInt(qty)*parseInt(harga);
 			}
 			// console.log(sub);
