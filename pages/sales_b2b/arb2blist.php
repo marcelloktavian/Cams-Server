@@ -112,7 +112,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $q = mysql_fetch_array(mysql_query($sql_customer));
   $nama_customer = $q['nama'];
 
-  $sql_sub        = "SELECT *, date_format(tgl, '%d/%m/%Y') AS tgl_jurnal FROM jurnal WHERE keterangan LIKE CONCAT('%Pembayaran Piutang B2B % ','%".$nama_customer."%') AND status = 'B2B AR' AND deleted=0";
+  $sql_sub        = "SELECT *, date_format(tgl, '%d/%m/%Y') AS tgl_jurnal FROM jurnal WHERE (keterangan LIKE CONCAT('%Pembayaran Piutang B2B % ','%".$nama_customer."%') OR keterangan LIKE CONCAT('%Retur B2B - % ','%".$nama_customer."%')) AND status = 'B2B AR' AND deleted=0";
 
   $query          = $db->query($sql_sub);
   $count          = $query->rowCount();
