@@ -810,9 +810,8 @@ function hitungpiutang()
 		if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-				var harga = document.getElementById("Harga"+i+"").value;
-				var qty = document.getElementById("Qty"+i+"").value;
-				var subtotal = parseInt(harga) + Math.floor(harga * 0.11) * qty;
+				var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
+				var qty      = document.getElementById("Qty"+i+"").value;
 			}
 			total+= parseInt(subtotal);
 			totalqty+= parseInt(qty);
