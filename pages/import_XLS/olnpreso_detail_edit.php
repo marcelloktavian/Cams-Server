@@ -802,13 +802,8 @@ function validasipertama()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-				var harga = document.getElementById("Harga"+i+"").value;
+				var subtotal = parseInt((document.getElementById("SUBTOTAL"+i+"").value))+Math.floor((document.getElementById("SUBTOTAL"+i+"").value)*0.11);
 				var qty = document.getElementById("Qty"+i+"").value;
-				var subtotal = parseInt(harga) + Math.floor(harga * 0.11) * qty;
-				var saldo_deposit = parseInt(document.getElementById("saldo_deposit").value)
-				if(byr_deposit+tunai_murni+transfer_murni > subtotal){
-					subtotal = parseInt(harga) + Math.ceil(harga * 0.11) * qty;
-				}
 			}
 	    total+= parseInt(subtotal);
 	    totalqty+= parseInt(qty);
@@ -925,13 +920,8 @@ function hitungpiutang()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-				var harga = document.getElementById("Harga"+i+"").value;
-				var qty = document.getElementById("Qty"+i+"").value;
-				var subtotal = parseInt(harga) + Math.floor(harga * 0.11) * qty;
-				var saldo_deposit = parseInt(document.getElementById("saldo_deposit").value)
-				if(byr_deposit+tunai_murni+transfer_murni > subtotal){
-					subtotal = (parseInt(harga) + Math.ceil(harga * 0.11)) * qty;
-				}
+			var subtotal = (1.11*document.getElementById("SUBTOTAL"+i+"").value);
+			var qty = document.getElementById("Qty"+i+"").value;
 			}
 	        total+= parseInt(subtotal);
 	        totalqty+= parseInt(qty);
@@ -991,7 +981,7 @@ console.log(total);
 
 function hitungtotal(){
     
-	var total= parseInt(0);
+	var total=0;
 	var totalqty=0;
 	var sisa_tf=0;
 	var discfaktur=0;
@@ -1030,6 +1020,7 @@ function hitungtotal(){
 	{
 	var disc_dropshipper=parseFloat(document.getElementById("disc_dropshipper").value);
 	}
+	
 	if(document.getElementById("disc_faktur").value == "") {
           document.getElementById("disc_faktur").value = 0;
 	}
@@ -1043,16 +1034,12 @@ function hitungtotal(){
 	  if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 		var subtotal = 0;}
 		else{
-			var harga = document.getElementById("Harga"+i+"").value;
-			var qty = document.getElementById("Qty"+i+"").value;
-			var subtotal = (parseInt(harga) + Math.floor(harga * 0.11)) * qty;
-			var saldo_deposit = parseInt(document.getElementById("saldo_deposit").value)
-			if(<?= $grandtotal+$deposit ?> > subtotal){
-				subtotal = Math.ceil((parseInt(harga) + (harga * 0.11)) * qty);
-			}
+		var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
+		var qty = document.getElementById("Qty"+i+"").value;
 		}	
+	    //alert("subtotal ="+subtotal.toString())
 			
-		total+= parseInt(subtotal);
+		total+= parseInt(subtotal)+Math.floor(subtotal*0.11);
 		totalqty+= parseInt(qty);
 		total_blmdisc+= parseInt(subtotal);
 	 }
@@ -1069,8 +1056,8 @@ function hitungtotal(){
     document.getElementById("faktur").value = total;	
     
 	//totalfaktur ditambah dengan ongkir dikurangi disc_faktur
-	total=parseInt(total)+parseInt(ongkir) - parseInt(discfaktur_murni);
-    total_blmdisc=parseInt(total_blmdisc) + parseInt(ongkir) - parseInt(discfaktur_murni);
+	total=total+ongkir - discfaktur_murni;
+    total_blmdisc=total_blmdisc + ongkir - discfaktur_murni;
 
 	//sisa_tf merupakan sisa bila total > saldo depositnya shg defaultnya jadi ke tf	
 	sisa_tf=total-saldo_deposit;
