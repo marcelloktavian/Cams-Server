@@ -66,14 +66,14 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
     $responce['rows'][$i]['id']     = $line['id_b2bso'];
     $responce['rows'][$i]['cell']   = array(
-      $line['id_trans_so'],
+      $line['id_trans_do'],
       $line['no_faktur'],
       $line['tgl_trans'],
       $line['nama_customer'],
       $line['nama_salesman'],
-      number_format($line['totalqty']),
+      // number_format($line['totalqty']),
       number_format($line['totalkirim_do']-$line['total_qty']),
-      number_format($line['piutang_so']),
+      // number_format($line['piutang_so']),
       number_format($line['piutang_akhir']),
       number_format($line['piutang_terbayar']),
       number_format($line['piutang_sisa']),
@@ -152,7 +152,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_b2bpiutang_pembayaran').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nomor SO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY SO', 'Total QTY Akhir (-Retur)', 'Piutang SO', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
+      colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
       colModel      : [
         {name: 'id_trans_so', index: 'id_trans_so', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
         {name: 'no_faktur', index: 'no_faktur', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
