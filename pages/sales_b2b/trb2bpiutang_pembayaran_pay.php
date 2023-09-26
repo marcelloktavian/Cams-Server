@@ -31,7 +31,7 @@
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE a.totalqty=a.totalkirim_do-COALESCE(b.total_qty,0) AND no_faktur = '".$_GET['no_faktur']."'";
   $piutang = mysql_fetch_array(mysql_query($sql_text));
 
-  $sql_akun = "SELECT * FROM det_coa WHERE noakun = CONCAT('01.05.',LPAD('128',5,0))";
+  $sql_akun = "SELECT * FROM det_coa WHERE noakun = CONCAT('01.05.',LPAD('".$_GET['id_customer']."',5,0))";
   $akun_piutang = mysql_fetch_array(mysql_query($sql_akun));
 ?>
 	<form id='form2' name='form2' action='' method='post'>
