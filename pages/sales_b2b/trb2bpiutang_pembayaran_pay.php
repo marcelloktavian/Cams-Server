@@ -92,12 +92,12 @@
           <td>
             <input type="text" name="namaakun1" id="namaakun1" size="35" readonly="" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_piutang['nama'] ?>">
           </td>
-          <td>
-            <input type="text" name="debet1" id="debet1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_sisa'] ?>">
-            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $piutang['piutang_sisa'] ?>" />
+		  <td>
+            <input type="text" name="debet1" id="debet1" size="15" autocomplete="off" style="text-align: right; background-color: rgb(211, 211, 211);" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" readonly value="0">
           </td>
           <td>
-            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right; background-color: rgb(211, 211, 211);" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" readonly value="0">
+            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_sisa'] ?>">
+            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $piutang['piutang_sisa'] ?>" />
           </td>
           <td>
             <input type="text" name="keterangan1" id="keterangan1" size="30" style="background-color: rgb(211, 211, 211);" readonly value="Pembayaran Piutang B2B - <?= $_GET['nama_customer'] ?> - <?= $_GET['no_faktur'] ?>">
@@ -410,7 +410,7 @@
 			}
 		}
 
-    const inputPiutang = document.getElementById('debet1');
+    const inputPiutang = document.getElementById('kredit1');
     const maxPiutang = document.getElementById('max-piutang');
 
     inputPiutang.addEventListener('keyup',(event)=>{
