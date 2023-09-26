@@ -17,10 +17,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $customer = isset($_GET['customer'])?$_GET['customer']:'';
   $salesman = isset($_GET['salesman'])?$_GET['salesman']:'';
 
-  $where = " AND tgl_trans > '2023-01-01' ";
+  $where = " WHERE tgl_trans > STR_TO_DATE('01/01/2023','%d/%m/%Y') ";
 
   if($startdate != null && $startdate != ""){
-    $where .= " AND tgl_trans BETWEEN '$startdate' AND '$enddate' ";
+    $where .= " AND tgl_trans BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
   }
 
   if($customer != null && $customer != ""){
@@ -34,12 +34,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) > 0 ";
 
   $query = "SELECT *, piutang_do-COALESCE(total_return,0) AS piutang_akhir, piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) AS piutang_sisa FROM (
-    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, a.tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND a.deleted=0 GROUP BY no_faktur
+    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND a.deleted=0 GROUP BY no_faktur
   ) AS a LEFT JOIN (
     SELECT id_trans_do AS id_b2bdo, b2bdo_num, (qty31+qty32+qty33+qty34+qty35+qty36+qty37+qty38+qty39+qty40+qty41+qty42+qty43+qty44+qty45+qty46) AS total_qty ,SUM(subtotal) AS total_return FROM b2breturn_detail WHERE deleted=0 GROUP BY b2bdo_num
   ) AS b ON a.id_b2bdo=b.id_b2bdo LEFT JOIN (
     SELECT id AS id_jurnal, no_jurnal, tgl AS tgl_jurnal, keterangan AS keterangan_jurnal, SUM(total_debet) AS piutang_terbayar, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_jurnal FROM jurnal WHERE keterangan LIKE 'Pembayaran Piutang%' AND `status`='B2B PAY' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
-  ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE a.totalqty=a.totalkirim_do-COALESCE(b.total_qty,0) ".$where.$having;
+  ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) ".$where.$having;
 
   $q = $db->query($query);
   $count = $q->rowCount();
@@ -101,7 +101,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   <div class="ui-widget-content ui-conrer-bottom">
     <form id="filter_ap" method="" action="" class="ui-helper-clearfix">
-      <label for="" class="ui-helper-reset label-control">Tanggal B2B SO</label>
+      <label for="" class="ui-helper-reset label-control">Tanggal B2B DO</label>
       <div class="ui-corner-all form-control">
         <table>
           <tr>
@@ -124,22 +124,19 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
 <script>
   $('#startdate_b2bpiutang_pembayaran').datepicker({
-    dateFormat: "dd-mm-yy"
+    dateFormat: "dd/mm/yy"
   });
 
   $('#enddate_b2bpiutang_pembayaran').datepicker({
-    dateFormat: "dd-mm-yy"
+    dateFormat: "dd/mm/yy"
   });
 
-  $( "#startdate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
-	$( "#enddate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d-m-Y')?>' );
+  $( "#startdate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
+	$( "#enddate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
 
   function gridReloadB2BPemPit(){
-    let startdate   = ($("#startdate_b2bpiutang_pembayaran").val()).split("-");
-		let enddate     = ($("#enddate_b2bpiutang_pembayaran").val()).split("-");
-
-    startdate   = startdate[2]+"-"+startdate[1]+"-"+startdate[0];
-    enddate     = enddate[2]+"-"+enddate[1]+"-"+enddate[0];
+    let startdate   = ($("#startdate_b2bpiutang_pembayaran").val());
+		let enddate     = ($("#enddate_b2bpiutang_pembayaran").val());
 
 		let customer      = $("#customervalue_b2bpempit").val();
     let salesman      = $("#salesmanvalue_b2bpempit").val();
@@ -155,7 +152,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_b2bpiutang_pembayaran').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nomor SO','Nomor Faktur', 'Tanggal SO', 'Customer', 'Salesman', 'Total QTY SO', 'Total QTY Akhir (-Retur)', 'Piutang SO', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
+      colNames      : ['Nomor SO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY SO', 'Total QTY Akhir (-Retur)', 'Piutang SO', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
       colModel      : [
         {name: 'id_trans_so', index: 'id_trans_so', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
         {name: 'no_faktur', index: 'no_faktur', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},

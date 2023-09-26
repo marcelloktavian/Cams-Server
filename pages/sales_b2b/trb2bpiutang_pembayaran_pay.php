@@ -147,7 +147,7 @@
 	<script type="text/javascript">
 		//autocomplete pada grid
 		function get_products(a) {
-			$("#noakun" + a + "").autocomplete("COALov.php?", {
+			$("#noakun" + a + "").autocomplete("COALovB2B.php?", {
 				width: 178
 			});
 			//   console.log('here'+a)  ;
@@ -160,7 +160,7 @@
 				}
 				// console.log(id_pd);
 				$.ajax({
-					url: 'COALoVdet.php?id=' + id_pd,
+					url: 'COALoVdetB2B.php?id=' + id_pd,
 					dataType: 'json',
 					data: "nama=" + formatted,
 					success: function (data) {
