@@ -193,7 +193,7 @@ $year = $_GET['start'];
         no_akun_piutang, 
         nama_akun_piutang,
         keterangan_piutang,
-        REPLACE(SUBSTR(no_akun_piutang, 7),0, '') AS id_customer,
+        TRIM(LEADING '0' FROM SUBSTR(no_akun_piutang, 7)) AS id_customer,
         SUBSTR(nama_akun_piutang, 15) AS nama_customer, 
         COALESCE(total_piutang,0) AS total_piutang,
         COALESCE(total_pembayaran,0) AS total_pembayaran,
