@@ -252,6 +252,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 						<option value="B2B">B2B</option>
 						<option value="RETUR">RETUR OLN</option>
 						<option value="RETURB2B">RETUR B2B</option>
+						<option value="B2B PAY">B2B PAY</option>
 						<option value="AP">AP</option>
 						<option value="AR">AR OLN</option>
 						<option value="B2B AR">AR B2B</option>

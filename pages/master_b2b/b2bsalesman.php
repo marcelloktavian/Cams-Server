@@ -112,7 +112,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 $line['no_telp'],                
                 $line['disc'],                
                 $line['type'],                
-                $category,                
+                $category, 
+                ($line['komisi']=='Y')?'Ya':'Tidak',            
 				$edit,
 				$delete,
             );
@@ -158,8 +159,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 }
             }
 
-			$stmt = $db->prepare("UPDATE mst_b2bsalesman SET nama=?,alamat=?,no_telp=?,disc=?,type=?,category=?,user=?, lastmodified = NOW() WHERE id=?");
-			$stmt->execute(array($_POST['nama'],$_POST['alamat'],$_POST['no_telp'],$_POST['disc'],$_POST['tipe'], $category,$_SESSION['user']['username'], $_POST['id']));
+			$stmt = $db->prepare("UPDATE mst_b2bsalesman SET nama=?,alamat=?,no_telp=?,disc=?,type=?,category=?,komisi=?,user=?, lastmodified = NOW() WHERE id=?");
+			$stmt->execute(array($_POST['nama'],$_POST['alamat'],$_POST['no_telp'],$_POST['disc'],$_POST['tipe'], $category,$_POST['komisi'],$_SESSION['user']['username'], $_POST['id']));
 			
 			$affected_rows = $stmt->rowCount();
 			if($affected_rows > 0) {
@@ -184,8 +185,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 }
             }
 
-			$stmt = $db->prepare("INSERT INTO  mst_b2bsalesman(`nama`,`alamat`,`no_telp`,`disc`,`type`,`category`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?,NOW())");
-			if($stmt->execute(array($_POST['nama'],$_POST['alamat'], $_POST['no_telp'], $_POST['disc'], $_POST['tipe'],$category,$_SESSION['user']['username']))) {
+			$stmt = $db->prepare("INSERT INTO  mst_b2bsalesman(`nama`,`alamat`,`no_telp`,`disc`,`type`,`category`,`komisi`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?,NOW())");
+			if($stmt->execute(array($_POST['nama'],$_POST['alamat'], $_POST['no_telp'], $_POST['disc'], $_POST['tipe'],$category,$_POST['komisi'],$_SESSION['user']['username']))) {
 				$r['stat'] = 1;
 				$r['message'] = 'Success';
 			}
@@ -240,7 +241,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','Name','Address','Phone','Disc','Type','Category Sale','Edit','Delete'],
+            colNames:['ID','Name','Address','Phone','Disc','Type','Category Sale','Komisi','Edit','Delete'],
             colModel:[
                 {name:'id',index:'id', align:'right',width:30, searchoptions: {sopt:['cn']}},
                 {name:'nama',index:'nama', width:300, searchoptions: {sopt:['cn']}},                
@@ -249,6 +250,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 {name:'disc',index:'disc', align:'right', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'type',index:'type', align:'center', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'category',index:'category', align:'center', width:75, searchoptions: {sopt:['cn']}},                
+                {name:'komisi',index:'komisi', align:'center', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'Edit',index:'edit', align:'center', width:50, sortable: false, search: false},
                 {name:'Delete',index:'delete', align:'center', width:50, sortable: false, search: false},
             ],

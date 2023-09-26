@@ -40,9 +40,11 @@ for($i=1; $i<$row; $i++){
     $nomorAkun        = $_POST['nomorAkun'.$i];
     $namaAkun         = $_POST['namaAkun'.$i];
 
-    $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
+    if($qty > 0){
+      $sql_detail       = "INSERT INTO `det_invoice` (`id_po`,`id_detail`,`id_invoice`,`id_produk`,`nama_produk`,`qty`,`price`,`satuan`,`persen_ppn`,`subtotal`,`id_akun`,`nomor_akun`,`nama_akun`) VALUES ('$id_po','$id_detail','$id_invoice[0]','$id_produk','$nama_produk','$qty','$price','$satuan','$persen_ppn','$subtotal','$idAkun','$nomorAkun','$namaAkun')";
 
     $query            = mysql_query($sql_detail);
+    }
   }
 }
 

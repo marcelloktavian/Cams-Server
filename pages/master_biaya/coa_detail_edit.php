@@ -402,8 +402,19 @@ window.close();
 	}
 
 	function validasiNomorCOA(idx){
-		console.log('Nomor'+idx);
-		return nomorCOA.has(document.getElementById('Nomor'+idx).value);
+		if(((document.getElementById('Nomor'+idx).value).split(".")[2]) == '00000'){
+			return 'Nomor Detail COA tidak boleh 00000';
+		}
+
+		if(nomorCOA.has(document.getElementById('Nomor'+idx).value)){
+			return 'Nomor Detail COA '+(document.getElementById('Nomor'+idx).value)+' sudah ada';
+		}
+
+		if(document.getElementById('Nama'+idx).value == ''){
+			return 'Nama Detail COA '+(document.getElementById('Nomor'+idx).value)+' tidak boleh kosong';
+		}
+
+		return "";
 	};
 
 	function cetak(){
@@ -416,8 +427,8 @@ window.close();
 
 		for(let i = barisAwal; i < baris1; i++){
 			try{
-				if(validasiNomorCOA(i)){
-					pesan = "Nomor COA sudah ada";
+				if(validasiNomorCOA(i) != ""){
+					pesan = validasiNomorCOA(i);
 				} else{
 					loadNomorCOA(i,i);
 				}

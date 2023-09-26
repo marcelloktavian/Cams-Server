@@ -151,7 +151,7 @@ error_reporting(0);
       <th width="15%" class="style_title"><div align="center">Item</div></td>
       <th width="5%" class="style_title"><div align="center">UK</div></td>
       <th width="5%" class="style_title"><div align="center">Qty</div></td>
-      <th width="10%" class="style_title"><div align="center">Price</div></td>
+      <th width="10%" class="style_title"><div align="center">Price (inc PPN)</div></td>
  	  <th width="10%" class="style_title"><div align="center">Subtotal</div></td>
  	  <th width="5%" class="style_title"><div align="center">Disc</div></td>
  	  <th width="10%" class="style_title"><div align="center">Total</div></td>

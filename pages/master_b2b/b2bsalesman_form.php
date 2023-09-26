@@ -63,6 +63,14 @@
                 ?>
             </select>
             </div>
+
+            <label for="tipe" class="ui-helper-reset label-control">Komisi</label>
+            <div class="ui-corner-all form-control">
+            <select id="komisi" name="komisi" id="komisi">
+                <option value="Y" <?php if(isset($row['komisi'])){if($row['komisi']=='Y'){echo "selected";}}?>>Ya</option>
+                <option value="N" <?php if(isset($row['komisi'])){if($row['komisi']=='N'){echo "selected";}}?>>Tidak</option>
+            </select>
+            </div>
 			
         </form>
     </div>
