@@ -1,5 +1,5 @@
 <head>
-	<title>PEMBAYARAN PIUTANG B2B</title>
+	<title>PENGATURAN KOMISI B2B</title>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/styles.css" />
 	<link rel="stylesheet" type="text/css" href="../../assets/css/jquery.autocomplete.css" />
 	<script type="text/javascript" src="../../assets/js/jquery-1.4.js"></script>
@@ -31,14 +31,17 @@
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE no_faktur = '".$_GET['no_faktur']."'";
   $piutang = mysql_fetch_array(mysql_query($sql_text));
 
-  $sql_akun = "SELECT * FROM det_coa WHERE noakun = CONCAT('01.05.',LPAD('".$_GET['id_customer']."',5,0))";
-  $akun_piutang = mysql_fetch_array(mysql_query($sql_akun));
+  $sql_akun = "SELECT * FROM det_coa WHERE noakun = CONCAT('02.03.',LPAD('".$_GET['id_customer']."',5,0))";
+  $akun_salesman = mysql_fetch_array(mysql_query($sql_akun));
+
+	$sql_kompensasi = "SELECT * FROM det_coa WHERE id = '5374'";
+	$akun_kompensasi = mysql_fetch_array(mysql_query($sql_kompensasi));
 ?>
 	<form id='form2' name='form2' action='' method='post'>
 		<table width='100%'>
 			<tr>
 
-				<td class='fontjudul'>PEMBAYARAN PIUTANG B2B</td>
+				<td class='fontjudul'>PENGATURAN KOMISI SALES B2B</td>
 				<!-- subtotal -->
 				<td class='fontjudul'> TOTAL DEBET
 					<input type='text' class='' name='total_debet_m' id='total_debet_m' value='0'
@@ -62,12 +65,11 @@
 				<td class="fonttext">Tanggal</td>
 				<td><input type='date' class='inputform' name='tanggal' id='tanggal' value='' />
 				</td>
-			</tr>
-			<tr height='5'>
-				<td colspan='6'></td>
-			</tr>
-			<tr height='5'>
-				<td colspan='6'></td>
+				<td class="fonttext">Piutang DO</td>
+				<td><input type='text' class='inputform' name='' id='' value='<?= $piutang['piutang_do'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
+				<td class="fonttext">Piutang Akhir (-Retur)</td>
+				<td><input type='text' class='inputform' name='' id='' value='<?= $piutang['piutang_akhir'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
+				</tr>
 			</tr>
 		</table>
 		<hr>
@@ -85,25 +87,47 @@
 				</tr>
         <tr id="t11">
           <td>
-            <input type="hidden" name="idakun1" id="idakun1" size="15" align="left" readonly value="<?= $akun_piutang['id'] ?>">
+            <input type="hidden" name="idakun1" id="idakun1" size="15" align="left" readonly value="<?= $akun_salesman['id'] ?>">
             <input type="hidden" name="status1" id="status1" size="15" align="left" readonly value="Detail">
-            <input type="text" name="noakun1" id="noakun1" size="15" autocomplete="off" class="ac_input" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_piutang['noakun'] ?>">
+            <input type="text" name="noakun1" id="noakun1" size="15" autocomplete="off" class="ac_input" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_salesman['noakun'] ?>">
           </td>
           <td>
-            <input type="text" name="namaakun1" id="namaakun1" size="35" readonly="" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_piutang['nama'] ?>">
+            <input type="text" name="namaakun1" id="namaakun1" size="35" readonly="" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_salesman['nama'] ?>">
           </td>
-		  <td>
+					<td>
             <input type="text" name="debet1" id="debet1" size="15" autocomplete="off" style="text-align: right; background-color: rgb(211, 211, 211);" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" readonly value="0">
           </td>
           <td>
-            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_sisa'] ?>">
-            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $piutang['piutang_sisa'] ?>" />
+            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_do'] ?>">
+            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $piutang['piutang_do'] ?>" />
           </td>
           <td>
-            <input type="text" name="keterangan1" id="keterangan1" size="30" style="background-color: rgb(211, 211, 211);" readonly value="Pembayaran Piutang B2B - <?= $_GET['nama_customer'] ?> - <?= $_GET['no_faktur'] ?>">
+            <input type="text" name="keterangan1" id="keterangan1" size="30" style="background-color: rgb(211, 211, 211);" readonly value="Pengaturan Komisi Sales - <?= $piutang['nama_salesman'] ?> - <?= $_GET['no_faktur'] ?>">
           </td>
           <td>
-            
+					<!-- <input type="button" name="del11" id="del11" size="10" value="X" onclick="delRow1(1)" onkeydown="addNewRow1()"> -->
+          </td>
+        </tr>
+				<tr id="t12">
+          <td>
+            <input type="hidden" name="idakun2" id="idakun2" size="15" align="left" readonly value="<?= $akun_kompensasi['id'] ?>">
+            <input type="hidden" name="status2" id="status2" size="15" align="left" readonly value="Detail">
+            <input type="text" name="noakun2" id="noakun2" size="15" autocomplete="off" class="ac_input" value="<?= $akun_kompensasi['noakun'] ?>">
+          </td>
+          <td>
+            <input type="text" name="namaakun2" id="namaakun2" size="35" readonly="" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_kompensasi['nama'] ?>">
+          </td>
+					<td>
+            <input type="text" name="debet2" id="debet2" size="15" autocomplete="off" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_do'] ?>">
+          </td>
+          <td>
+            <input type="text" name="kredit2" id="kredit2" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="0">
+          </td>
+          <td>
+            <input type="text" name="keterangan2" id="keterangan2" size="30">
+          </td>
+          <td>
+						<input type="button" name="del12" id="del12" size="10" value="X" onclick="delRow1(2)" onkeydown="addNewRow1()">
           </td>
         </tr>
       </thead>
@@ -115,7 +139,7 @@
 					<td class="fonttext" style="width:20px;">
 						Keterangan
 					</td>
-					<td colspan="6" align="left"><textarea name="txtbrg" id="txtbrg" cols="100" rows="3" readonly style="background-color: rgb(211, 211, 211);">Pembayaran Piutang B2B - <?= $_GET['nama_customer'] ?> - <?= $_GET['no_faktur'] ?></textarea>
+					<td colspan="6" align="left"><textarea name="txtbrg" id="txtbrg" cols="100" rows="3" readonly style="background-color: rgb(211, 211, 211);">Pengaturan Komisi Sales - <?= $piutang['nama_salesman'] ?> - <?= $_GET['no_faktur'] ?></textarea>
 					</td>
 				</tr>
 			</tbody>
@@ -190,7 +214,7 @@
 			return true;
 		}
 
-		var baris1 = 2;
+		var baris1 = 3;
 		addNewRow1();
 		document.getElementById('tanggal').focus();
 
@@ -404,7 +428,7 @@
 				if (answer) {
 					hitungrow();
 					// hitung() ;
-					document.form2.action = "trb2bpiutang_pembayaran_save.php?action=add";
+					document.form2.action = "trb2bkomisi_save.php?action=add";
 					document.form2.submit();
 				} else {}
 			}
@@ -423,5 +447,6 @@
     });
 
     hitungtotal();
+		get_products(2);
 	</script>
 </body>

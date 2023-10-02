@@ -17,7 +17,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $customer = isset($_GET['customer'])?$_GET['customer']:'';
   $salesman = isset($_GET['salesman'])?$_GET['salesman']:'';
 
-  $where = " WHERE tgl_trans > STR_TO_DATE('30/09/2023','%d/%m/%Y') ";
+  $where = " WHERE tgl_trans > STR_TO_DATE('30/09/2023','%d/%m/%Y') AND id_jurnal_atur_komisi IS NULL ";
 
   if($startdate != null && $startdate != ""){
     $where .= " AND tgl_trans BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
@@ -31,7 +31,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $where .= " AND nama_salesman LIKE '%".$salesman."%' ";
   }
 
-  $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) > 0 ";
+  $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) = 0 ";
 
   $query = "SELECT *, piutang_do-COALESCE(total_return,0) AS piutang_akhir, piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) AS piutang_sisa FROM (
     SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND a.deleted=0 GROUP BY no_faktur
@@ -39,7 +39,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     SELECT a.id_trans_do AS id_b2bdo, a.b2bdo_num, (a.qty31+a.qty32+a.qty33+a.qty34+a.qty35+a.qty36+a.qty37+a.qty38+a.qty39+a.qty40+a.qty41+a.qty42+a.qty43+a.qty44+a.qty45+a.qty46) AS total_qty ,SUM(a.subtotal) AS total_return FROM b2breturn_detail a LEFT JOIN b2breturn b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0 AND b.post=1 GROUP BY a.b2bdo_num
   ) AS b ON a.id_b2bdo=b.id_b2bdo LEFT JOIN (
     SELECT id AS id_jurnal, no_jurnal, tgl AS tgl_jurnal, keterangan AS keterangan_jurnal, SUM(total_debet) AS piutang_terbayar, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_jurnal FROM jurnal WHERE keterangan LIKE 'Pembayaran Piutang%' AND `status`='B2B PAY' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
-  ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) ".$where.$having;
+  ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) LEFT JOIN (
+    SELECT id AS id_jurnal_atur_komisi, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_komisi FROM jurnal WHERE keterangan LIKE 'Pengaturan Komisi Sales%' AND `status`='B2B ATUR KOMISI' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
+  ) AS d ON a.no_faktur=TRIM(d.nomor_faktur_komisi) ".$where.$having;
 
   $q = $db->query($query);
   $count = $q->rowCount();
@@ -62,7 +64,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $post = $allow_post ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran_pay.php?no_faktur='.$line['no_faktur'].'&id_customer='.$line['id_customer'].'&nama_customer='.$line['nama_customer'].'\')">Pay</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Pay</a>';
+    $post = $allow_post ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2bkomisi_pay.php?no_faktur='.$line['no_faktur'].'&id_customer='.$line['id_customer'].'&nama_customer='.$line['nama_customer'].'\')">Atur Komisi</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Atur Komisi</a>';
 
     $responce['rows'][$i]['id']     = $line['id_b2bso'];
     $responce['rows'][$i]['cell']   = array(
@@ -105,52 +107,52 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       <div class="ui-corner-all form-control">
         <table>
           <tr>
-            <td><input type="text" class="required datepicker" id="startdate_b2bpiutang_pembayaran" name="startdate_b2bpiutang_pembayaran" readonly></td>
-            <td> s.d <input type="text" class="required datepicker" id="enddate_b2bpiutang_pembayaran" name="enddate_b2bpiutang_pembayaran" readonly></td>
-            <td> Filter <input type="text" id="customervalue_b2bpempit" name="customervalue_b2bpempit" />(Customer) <input type="text" id="salesmanvalue_b2bpempit" name="salesmanvalue_b2bpempit" />(Salesman)</td>
+            <td><input type="text" class="required datepicker" id="startdate_trb2bkomisi" name="startdate_trb2bkomisi" readonly></td>
+            <td> s.d <input type="text" class="required datepicker" id="enddate_trb2bkomisi" name="enddate_trb2bkomisi" readonly></td>
+            <td> Filter <input type="text" id="customervalue_trb2bkomisi" name="customervalue_trb2bkomisi" />(Customer) <input type="text" id="salesmanvalue_trb2bkomisi" name="salesmanvalue_trb2bkomisi" />(Salesman)</td>
           </tr>
         </table>
       </div>
       <label for="" class="ui-helper-reset label-control">&nbsp;</label>
       <div class="ui-corner-all form-control">
-        <button onclick="gridReloadB2BPemPit()" class="btn" type="button">Cari</button>
+        <button onclick="gridReloadtrb2bkomisi()" class="btn" type="button">Cari</button>
       </div>
     </form>
   </div>
 </div>
 
-<table id="table_b2bpiutang_pembayaran"></table>
-<div id="pager_table_b2bpiutang_pembayaran"></div>
+<table id="table_trb2bkomisi"></table>
+<div id="pager_table_trb2bkomisi"></div>
 
 <script>
-  $('#startdate_b2bpiutang_pembayaran').datepicker({
+  $('#startdate_trb2bkomisi').datepicker({
     dateFormat: "dd/mm/yy"
   });
 
-  $('#enddate_b2bpiutang_pembayaran').datepicker({
+  $('#enddate_trb2bkomisi').datepicker({
     dateFormat: "dd/mm/yy"
   });
 
-  $( "#startdate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
-	$( "#enddate_b2bpiutang_pembayaran" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
+  $( "#startdate_trb2bkomisi" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
+	$( "#enddate_trb2bkomisi" ).datepicker( 'setDate', '<?php echo date('d/m/Y')?>' );
 
-  function gridReloadB2BPemPit(){
-    let startdate   = ($("#startdate_b2bpiutang_pembayaran").val());
-		let enddate     = ($("#enddate_b2bpiutang_pembayaran").val());
+  function gridReloadtrb2bkomisi(){
+    let startdate   = ($("#startdate_trb2bkomisi").val());
+		let enddate     = ($("#enddate_trb2bkomisi").val());
 
-		let customer      = $("#customervalue_b2bpempit").val();
-    let salesman      = $("#salesmanvalue_b2bpempit").val();
+		let customer      = $("#customervalue_trb2bkomisi").val();
+    let salesman      = $("#salesmanvalue_trb2bkomisi").val();
 
-		let v_url       = '<?php echo BASE_URL?>pages/sales_b2b/trb2bpiutang_pembayaran.php?action=json&startdate='+startdate+'&enddate='+enddate+'&customer='+customer+'&salesman='+salesman;
-		jQuery("#table_b2bpiutang_pembayaran").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
+		let v_url       = '<?php echo BASE_URL?>pages/sales_b2b/trb2bkomisi.php?action=json&startdate='+startdate+'&enddate='+enddate+'&customer='+customer+'&salesman='+salesman;
+		jQuery("#table_trb2bkomisi").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
   }
 
   $(document).ready(()=>{
-    $('#customervalue_b2bpempit').autocomplete("<?= BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran_list.php?req=customer'?>", {width: 400});
-    $('#salesmanvalue_b2bpempit').autocomplete("<?= BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran_list.php?req=salesman'?>", {width: 400});
+    $('#customervalue_trb2bkomisi').autocomplete("<?= BASE_URL.'pages/sales_b2b/trb2bkomisi_list.php?req=customer'?>", {width: 400});
+    $('#salesmanvalue_trb2bkomisi').autocomplete("<?= BASE_URL.'pages/sales_b2b/trb2bkomisi_list.php?req=salesman'?>", {width: 400});
 
-    $('#table_b2bpiutang_pembayaran').jqGrid({
-      url           : '<?= BASE_URL.'pages/sales_b2b/trb2bpiutang_pembayaran.php?action=json'?>',
+    $('#table_trb2bkomisi').jqGrid({
+      url           : '<?= BASE_URL.'pages/sales_b2b/trb2bkomisi.php?action=json'?>',
       datatype      : 'json',
       colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
       colModel      : [
@@ -167,7 +169,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       ],
       rowNum        : 20,
       rowList       : [20, 1000],
-      pager         : '#pager_table_b2bpiutang_pembayaran',
+      pager         : '#pager_table_trb2bkomisi',
       sortname      : 'no_faktur',
       autowidth     : true,
       height        : '460',
@@ -179,6 +181,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         alert(rowid);
       },
     });
-    $('#table_b2bpiutang_pembayaran').jqGrid('navGrid', '#pager_table_b2bpiutang_pembayaran', {edit:false, add:false, del:false, search:false});
+    $('#table_trb2bkomisi').jqGrid('navGrid', '#pager_table_trb2bkomisi', {edit:false, add:false, del:false, search:false});
   });
 </script>

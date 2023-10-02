@@ -15,7 +15,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 
 		//searching _filter---------------------------------------------------------
        if ($_REQUEST["_search"] == "false") {
-       $where = "WHERE deleted=0 ";
+       $where = " b.deleted=0 ";
        } else {
        $operations = array(
         'eq' => "= '%s'",            // Equal
@@ -37,7 +37,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
     ); 
 	
       $value = $_REQUEST["searchString"];
-	  $where = sprintf(" where deleted=0 AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
+	  $where = sprintf(" AND b.deleted=0 AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 	
      }
 //--------------end of searching--------------------		
@@ -46,11 +46,11 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
 		if(isset($_GET['filter'])){
             $filter = $_GET['filter'];
             if($_GET['filter'] != null){
-			    $where .= " AND (noakun like '%$filter%' OR nama like '%$filter%') ";
+			    $where .= " AND ((a.noakun like '%$filter%' OR a.nama like '%$filter%') OR (b.noakun like '%$filter%' OR b.nama like '%$filter%')) ";
             }
 		}
 
-        $q = $db->query("SELECT * FROM `mst_coa` a ".$where);
+        $q = $db->query("SELECT b.* FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ");
 
 		$count = $q->rowCount();
         
@@ -59,7 +59,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
         $start = $limit*$page - $limit;
         if($start <0) $start = 0;
 
-        $q = $db->query("SELECT * FROM `mst_coa` a ".$where." ORDER BY `".$sidx."` ".$sord." LIMIT ".$start.", ".$limit);
+        $q = $db->query("SELECT b.* FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ORDER BY `".$sidx."` ".$sord." LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
         $statusToko = '';
