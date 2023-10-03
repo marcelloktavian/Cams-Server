@@ -198,7 +198,7 @@ font-family:Tahoma;
     // $grand_qty+=$rs2['totalqty'];
 	
   ?>
-    <tr>
+    <!-- <tr> -->
     <?
 		$sql_detail = "SELECT SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 3) as namabarang,
 		IFNULL(SUM(IF((det.size) = '31', det.jumlah_beli, 0)),0) AS s31,
@@ -242,7 +242,7 @@ font-family:Tahoma;
 		IFNULL(SUM(IF((det.size) = 'M', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'L', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'XL', det.jumlah_beli, 0)),0) +
-		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnsodetail det LEFT JOIN olnso m ON det.id_trans=m.id_trans WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 3)";
+		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnsodetail det LEFT JOIN olnso m ON det.id_trans=m.id_trans WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 3) HAVING subtotal > 0";
 
 		// var_dump($rs2['nama'].'<br><br>');
 
@@ -254,8 +254,8 @@ font-family:Tahoma;
 		{ 
 			if ($rs3['subtotal']>0) {
 				$nomer++;
-				echo"<td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
-				echo"<td class='style_detail'><div align='left'>".$rs2['namabarang']."</div></td>";
+				echo"<tr><td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
+				echo"<td class='style_detail'><div align='left'>".$rs3['namabarang']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s31']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s32']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s33']."</div></td>";
@@ -278,7 +278,7 @@ font-family:Tahoma;
 				echo"<td class='style_detail'><div align='center'>".$rs3['sXL']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['sXXL']."</div></td>";
 				echo"<td class='style_detail'><div align='right'>".$rs3['subtotal']."</div></td>";
-				echo"<td class='style_detail'><div align='center'>".number_format(($rs3['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td>";
+				echo"<td class='style_detail'><div align='center'>".number_format(($rs3['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td></tr>";
 
 				$grand_qty += $rs3['subtotal'];
 			}else{
@@ -323,7 +323,7 @@ font-family:Tahoma;
 		
 	
 	?>
-    </tr>  
+    <!-- </tr>   -->
 	<?		
   }
   ?>
