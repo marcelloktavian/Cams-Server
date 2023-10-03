@@ -66,9 +66,9 @@
 				<td><input type='date' class='inputform' name='tanggal' id='tanggal' value='' />
 				</td>
 				<td class="fonttext">Piutang DO</td>
-				<td><input type='text' class='inputform' name='' id='' value='<?= $piutang['piutang_do'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
+				<td><input type='text' class='inputform' name='total_piutang_do' id='total_piutang_do' value='<?= $piutang['piutang_do'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
 				<td class="fonttext">Piutang Akhir (-Retur)</td>
-				<td><input type='text' class='inputform' name='' id='' value='<?= $piutang['piutang_akhir'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
+				<td><input type='text' class='inputform' name='total_piutang_akhir' id='total_piutang_akhir' value='<?= $piutang['piutang_akhir'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
 				</tr>
 			</tr>
 		</table>
@@ -410,6 +410,7 @@
 			var tgltransaksi = document.getElementById("tanggal").value;
 			var totaldebet = document.getElementById("total_debet").value;
 			var totalkredit = document.getElementById("total_kredit").value;
+			var totalacuan = document.getElementById("total_piutang_do").value;
 
 			if (tgltransaksi == '') {
 				pesan = 'Tanggal Tidak Boleh Kosong';
@@ -417,6 +418,8 @@
 				pesan = 'Total Debet atau Total Kredit Harus Diisi';
 			} else if (totaldebet != totalkredit) {
 				pesan = 'Total Debet dan Total Kredit Tidak Sama';
+			} else if(totaldebet != totalacuan){
+				pesan = 'Total pembayaran harus sama dengan total piutang do';
 			}
 
 
