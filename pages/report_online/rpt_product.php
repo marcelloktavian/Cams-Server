@@ -248,7 +248,7 @@ font-family:Tahoma;
 
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
-		// var_dump($sql2);die;
+		var_dump($sql_detail);die;
 		$sqdet = mysql_query($sql_detail);
 		while($rs3=mysql_fetch_array($sqdet))
 		{ 
