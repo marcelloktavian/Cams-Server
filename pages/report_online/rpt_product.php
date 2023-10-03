@@ -200,7 +200,7 @@ font-family:Tahoma;
   ?>
     <!-- <tr> -->
     <?
-		$sql_detail = "SELECT SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 2) as namabarang,
+		$sql_detail = "SELECT SUBSTRING(TRIM(det.namabrg), 1, LENGTH(TRIM(det.namabrg)) - 2) as namabarang,
 		IFNULL(SUM(IF((det.size) = '31', det.jumlah_beli, 0)),0) AS s31,
 		IFNULL(SUM(IF((det.size) = '32', det.jumlah_beli, 0)),0) AS s32,
 		IFNULL(SUM(IF((det.size) = '33', det.jumlah_beli, 0)),0) AS s33,
@@ -242,7 +242,7 @@ font-family:Tahoma;
 		IFNULL(SUM(IF((det.size) = 'M', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'L', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'XL', det.jumlah_beli, 0)),0) +
-		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnsodetail det LEFT JOIN olnso m ON det.id_trans=m.id_trans WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 2) HAVING subtotal > 0";
+		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnsodetail det LEFT JOIN olnso m ON det.id_trans=m.id_trans WHERE ".$where_detail." GROUP BY SUBSTRING(TRIM(det.namabrg), 1, LENGTH(TRIM(det.namabrg)) - 2) HAVING subtotal > 0";
 
 		// var_dump($rs2['nama'].'<br><br>');
 
