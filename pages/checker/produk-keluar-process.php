@@ -52,7 +52,8 @@ ini_set('max_execution_time', 3000);
   $i = 1;
   
   foreach($data as $line){
-    $query = mysql_query("SELECT COALESCE(SUM('a.namabrg'),0) AS total_barang FROM olnsodetail a LEFT JOIN olnso b ON a.id_trans=b.id_trans WHERE a.namabrg = '".$line['nama']."' AND DATE(b.lastmodified) = '".$_POST['tanggalolnso']."' GROUP BY a.namabrg");
+    $query = mysql_query("SELECT COALESCE(SUM('a.namabrg'),0) AS total_barang FROM olnsodetail a LEFT JOIN olnso b ON a.id_trans=b.id_trans WHERE a.namabrg LIKE '".$line['nama']."%' AND DATE(b.lastmodified) = '".$_POST['tanggalolnso']."' GROUP BY a.namabrg");
+    var_dump("SELECT COALESCE(SUM('a.namabrg'),0) AS total_barang FROM olnsodetail a LEFT JOIN olnso b ON a.id_trans=b.id_trans WHERE a.namabrg = '".$line['nama']."' AND DATE(b.lastmodified) = '".$_POST['tanggalolnso']."' GROUP BY a.namabrg");
     $olnso = mysql_fetch_array($query);
     ?>
     <tr <?= ($line['total'] != $olnso['total_barang']) ? "style='background-color:lightred';" : "" ?>>
