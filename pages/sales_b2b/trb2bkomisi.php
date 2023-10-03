@@ -176,7 +176,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       viewrecords   : true,
       rownumbers    : true,
       sortorder     : 'desc',
-      caption       : "B2B Pembayaran Piutang",
+      caption       : "B2B Komisi Sales",
       ondblClickRow : function(rowid){
         alert(rowid);
       },
