@@ -188,12 +188,12 @@ font-family:Tahoma;
 
     // var_dump($sql);die;
     
-	$sq2 = mysql_query($sql);
-	$i=1;
-	$nomer=0;
-	$grand_qty=0;
-	while($rs2=mysql_fetch_array($sq2))
-	{ 	
+	// $sq2 = mysql_query($sql);
+	// $i=1;
+	// $nomer=0;
+	// $grand_qty=0;
+	// while($rs2=mysql_fetch_array($sq2))
+	// { 	
 		
     // $grand_qty+=$rs2['totalqty'];
 	
@@ -248,7 +248,7 @@ font-family:Tahoma;
 
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
-		var_dump($sql_detail);die;
+		// var_dump($sql_detail);die;
 		$sqdet = mysql_query($sql_detail);
 		while($rs3=mysql_fetch_array($sqdet))
 		{ 
@@ -325,7 +325,7 @@ font-family:Tahoma;
 	?>
     <!-- </tr>   -->
 	<?		
-  }
+//   }
   ?>
     <tr>
     <td class="style9" colspan="23"><div align="right">Total</div></td>
