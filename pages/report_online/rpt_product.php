@@ -91,7 +91,7 @@ font-family:Tahoma;
 	$where_title  ="";
 	$where_title  =" WHERE (m.state='1') AND (m.deleted=0) AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y')";
     $where_detail = "";
-	$where_detail =" AND (m.state='1') AND (m.deleted=0)";
+	$where_detail =" (m.state='1') AND (m.deleted=0)";
 	
 	// if($id_product != null) 
 	// {
@@ -188,19 +188,19 @@ font-family:Tahoma;
 
     // var_dump($sql);die;
     
-	$sq2 = mysql_query($sql);
-	$i=1;
-	$nomer=0;
-	$grand_qty=0;
-	while($rs2=mysql_fetch_array($sq2))
-	{ 	
+	// $sq2 = mysql_query($sql);
+	// $i=1;
+	// $nomer=0;
+	// $grand_qty=0;
+	// while($rs2=mysql_fetch_array($sq2))
+	// { 	
 		
     // $grand_qty+=$rs2['totalqty'];
 	
   ?>
-    <tr>
+    <!-- <tr> -->
     <?
-		$sql_detail = "SELECT 
+		$sql_detail = "SELECT SUBSTRING(TRIM(det.namabrg), 1, LENGTH(TRIM(det.namabrg)) - 2) as namabarang,
 		IFNULL(SUM(IF((det.size) = '31', det.jumlah_beli, 0)),0) AS s31,
 		IFNULL(SUM(IF((det.size) = '32', det.jumlah_beli, 0)),0) AS s32,
 		IFNULL(SUM(IF((det.size) = '33', det.jumlah_beli, 0)),0) AS s33,
@@ -242,20 +242,20 @@ font-family:Tahoma;
 		IFNULL(SUM(IF((det.size) = 'M', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'L', det.jumlah_beli, 0)),0) +
 		IFNULL(SUM(IF((det.size) = 'XL', det.jumlah_beli, 0)),0) +
-		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
+		IFNULL(SUM(IF((det.size) = 'XXL', det.jumlah_beli, 0)),0) ) AS subtotal FROM olnsodetail det LEFT JOIN olnso m ON det.id_trans=m.id_trans WHERE ".$where_detail." GROUP BY SUBSTRING(TRIM(det.namabrg), 1, LENGTH(TRIM(det.namabrg)) - 2) HAVING subtotal > 0";
 
 		// var_dump($rs2['nama'].'<br><br>');
 
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
-		// var_dump($sql2);die;
+		// var_dump($sql_detail);die;
 		$sqdet = mysql_query($sql_detail);
 		while($rs3=mysql_fetch_array($sqdet))
 		{ 
 			if ($rs3['subtotal']>0) {
 				$nomer++;
-				echo"<td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
-				echo"<td class='style_detail'><div align='left'>".$rs2['nama']."</div></td>";
+				echo"<tr><td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
+				echo"<td class='style_detail'><div align='left'>".$rs3['namabarang']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s31']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s32']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['s33']."</div></td>";
@@ -278,44 +278,44 @@ font-family:Tahoma;
 				echo"<td class='style_detail'><div align='center'>".$rs3['sXL']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".$rs3['sXXL']."</div></td>";
 				echo"<td class='style_detail'><div align='right'>".$rs3['subtotal']."</div></td>";
-				echo"<td class='style_detail'><div align='center'>".number_format(($rs3['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td>";
+				echo"<td class='style_detail'><div align='center'>".number_format(($rs3['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td></tr>";
 
 				$grand_qty += $rs3['subtotal'];
 			}else{
-				$sqdet2 = mysql_query($sql2);
-				while($rs4=mysql_fetch_array($sqdet2))
-				{ 
-					if ($rs4['subtotal']>0) {
-					$nomer++;
-					echo"<td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
-					echo"<td class='style_detail'><div align='left'>".$rs2['nama']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s31']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s32']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s33']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s34']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s35']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s36']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s37']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s38']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s39']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s40']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s41']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s42']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s43']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s44']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s45']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['s46']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['sS']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['sM']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['sL']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['sXL']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".$rs3['sXXL']."</div></td>";
-					echo"<td class='style_detail'><div align='right'>".$rs4['subtotal']."</div></td>";
-					echo"<td class='style_detail'><div align='center'>".number_format(($rs4['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td>";
+				// $sqdet2 = mysql_query($sql2);
+				// while($rs4=mysql_fetch_array($sqdet2))
+				// { 
+				// 	if ($rs4['subtotal']>0) {
+				// 	$nomer++;
+				// 	echo"<td class='style_detail_left'><div align='right'>".$nomer."</div></td>";
+				// 	echo"<td class='style_detail'><div align='left'>".$rs2['nama']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s31']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s32']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s33']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s34']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s35']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s36']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s37']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s38']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s39']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s40']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s41']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s42']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s43']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s44']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s45']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['s46']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['sS']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['sM']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['sL']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['sXL']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".$rs3['sXXL']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='right'>".$rs4['subtotal']."</div></td>";
+				// 	echo"<td class='style_detail'><div align='center'>".number_format(($rs4['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td>";
 
-					$grand_qty += $rs4['subtotal'];
-					}
-				}
+				// 	$grand_qty += $rs4['subtotal'];
+				// 	}
+				// }
 			}
 		
 		}
@@ -323,9 +323,9 @@ font-family:Tahoma;
 		
 	
 	?>
-    </tr>  
+    <!-- </tr>   -->
 	<?		
-  }
+//   }
   ?>
     <tr>
     <td class="style9" colspan="23"><div align="right">Total</div></td>
