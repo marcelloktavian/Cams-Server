@@ -17,7 +17,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $customer = isset($_GET['customer'])?$_GET['customer']:'';
   $salesman = isset($_GET['salesman'])?$_GET['salesman']:'';
 
-  $where = " WHERE tgl_trans > STR_TO_DATE('30/09/2023','%d/%m/%Y') AND id_jurnal_atur_komisi IS NULL ";
+  $where = " WHERE tgl_trans > STR_TO_DATE('30/09/2023','%d/%m/%Y') AND id_jurnal_atur_komisi IS NULL AND komisi ";
 
   if($startdate != null && $startdate != ""){
     $where .= " AND tgl_trans BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
@@ -31,7 +31,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $where .= " AND nama_salesman LIKE '%".$salesman."%' ";
   }
 
-  $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) = 0 ";
+  $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) = 0";
 
   $query = "SELECT *, piutang_do-COALESCE(total_return,0) AS piutang_akhir, piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) AS piutang_sisa FROM (
     SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND a.deleted=0 GROUP BY no_faktur
@@ -41,7 +41,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     SELECT id AS id_jurnal, no_jurnal, tgl AS tgl_jurnal, keterangan AS keterangan_jurnal, SUM(total_debet) AS piutang_terbayar, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_jurnal FROM jurnal WHERE keterangan LIKE 'Pembayaran Piutang%' AND `status`='B2B PAY' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) LEFT JOIN (
     SELECT id AS id_jurnal_atur_komisi, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_komisi FROM jurnal WHERE keterangan LIKE 'Pengaturan Komisi Sales%' AND `status`='B2B ATUR KOMISI' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
-  ) AS d ON a.no_faktur=TRIM(d.nomor_faktur_komisi) ".$where.$having;
+  ) AS d ON a.no_faktur=TRIM(d.nomor_faktur_komisi) LEFT JOIN (
+    SELECT c.no_faktur AS no_faktur_komisi, SUM(b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc)))-b.jumlah_kirim*a.harga AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 GROUP BY c.no_faktur
+  ) AS e ON a.no_faktur=e.no_faktur_komisi ".$where.$having;
 
   $q = $db->query($query);
   $count = $q->rowCount();
@@ -66,7 +68,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   foreach($data1 as $line){
     $post = $allow_post ? '<a onclick="javascript:window.open(\''.BASE_URL.'pages/sales_b2b/trb2bkomisi_pay.php?no_faktur='.$line['no_faktur'].'&id_customer='.$line['id_customer'].'&nama_customer='.$line['nama_customer'].'\')">Atur Komisi</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Atur Komisi</a>';
 
-    $responce['rows'][$i]['id']     = $line['id_b2bso'];
+    $responce['rows'][$i]['id']     = $line['no_faktur'];
     $responce['rows'][$i]['cell']   = array(
       $line['id_trans_do'],
       $line['no_faktur'],
@@ -78,7 +80,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       // number_format($line['piutang_so']),
       number_format($line['piutang_akhir']),
       number_format($line['piutang_terbayar']),
-      number_format($line['piutang_sisa']),
+      number_format($line['komisi']),
       $post
     );
     $i++;
@@ -89,7 +91,36 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   }
   echo json_encode($responce);
   exit;
-} 
+} elseif (isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
+  $no_faktur = $_GET['id'];
+
+  $sql_sub = "SELECT a.nama AS nama_barang, b.jumlah_kirim AS total_qty, b.harga_satuan AS harga_faktur, a.harga AS harga_resale, b.disc AS disc, b.jumlah_kirim*a.harga AS total_murni, (b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc))) AS total_resale, (b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc)))-b.jumlah_kirim*a.harga AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$no_faktur."'";
+
+  $q1 = $db->query($sql_sub);
+  $data1 = $q1->fetchAll(PDO::FETCH_ASSOC);
+
+  $i=0;
+  $responce = '';
+
+  foreach($data1 as $line){
+    $responce->rows[$i]['id']   = $line['komisi'];
+    $responce->rows[$i]['cell'] = array(
+      $i+1,
+      $line['nama_barang'],
+      $line['total_qty'],
+      number_format($line['disc'],2)."%",
+      number_format($line['harga_faktur'],0),
+      number_format($line['harga_resale'],0),
+      number_format($line['total_resale'],0),
+      number_format($line['total_murni'],0),
+      number_format($line['komisi'],0),
+    );
+    $i++;
+  }
+
+  echo json_encode($responce);
+  exit;
+}
 
 ?>
 
@@ -154,7 +185,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_trb2bkomisi').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2bkomisi.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Piutang Sisa', 'Pembayaran'],
+      colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Komisi', 'Pembayaran'],
       colModel      : [
         {name: 'id_trans_so', index: 'id_trans_so', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
         {name: 'no_faktur', index: 'no_faktur', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
@@ -180,6 +211,15 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       ondblClickRow : function(rowid){
         alert(rowid);
       },
+      subGrid : true,
+      subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2bkomisi.php?action=json_sub'; ?>',
+      subGridModel: [
+          { 
+            name : ['No','Nama Barang','Qty','Diskon','Harga Faktur','Harga Resale','Subtotal Faktur','Subtotal Resale', 'Komisi'], 
+            width : [40,200,50,50,50,50,50,50,50],
+          align : ['right','left','right','right','right','right','right','right','right'],
+         } 
+        ],
     });
     $('#table_trb2bkomisi').jqGrid('navGrid', '#pager_table_trb2bkomisi', {edit:false, add:false, del:false, search:false});
   });

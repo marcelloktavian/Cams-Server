@@ -31,6 +31,10 @@
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE no_faktur = '".$_GET['no_faktur']."'";
   $piutang = mysql_fetch_array(mysql_query($sql_text));
 
+	$sql_komisi = "SELECT SUM(b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc)))-b.jumlah_kirim*a.harga AS harga_dpp FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."' GROUP BY c.no_faktur";
+
+	$komisi_salesman = mysql_fetch_array(mysql_query($sql_komisi));
+
   $sql_akun = "SELECT * FROM det_coa WHERE noakun = CONCAT('02.03.',LPAD('".$_GET['id_customer']."',5,0))";
   $akun_salesman = mysql_fetch_array(mysql_query($sql_akun));
 
@@ -65,10 +69,8 @@
 				<td class="fonttext">Tanggal</td>
 				<td><input type='date' class='inputform' name='tanggal' id='tanggal' value='' />
 				</td>
-				<td class="fonttext">Piutang DO</td>
-				<td><input type='text' class='inputform' name='total_piutang_do' id='total_piutang_do' value='<?= $piutang['piutang_do'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
-				<td class="fonttext">Piutang Akhir (-Retur)</td>
-				<td><input type='text' class='inputform' name='total_piutang_akhir' id='total_piutang_akhir' value='<?= $piutang['piutang_akhir'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
+				<td class="fonttext">Komisi Faktur <?= $piutang['id_trans_do'] ?></td>
+				<td><input type='text' class='inputform' name='total_komisi' id='total_komisi' value='<?= $komisi_salesman['harga_dpp'] ?>' style="background-color: rgb(211, 211, 211);" readonly />
 				</tr>
 			</tr>
 		</table>
@@ -98,8 +100,8 @@
             <input type="text" name="debet1" id="debet1" size="15" autocomplete="off" style="text-align: right; background-color: rgb(211, 211, 211);" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" readonly value="0">
           </td>
           <td>
-            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_do'] ?>">
-            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $piutang['piutang_do'] ?>" />
+            <input type="text" name="kredit1" id="kredit1" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $komisi_salesman['harga_dpp'] ?>">
+            <input type='hidden' name="max-piutang" id="max-piutang" value="<?= $komisi_salesman['harga_dpp'] ?>" />
           </td>
           <td>
             <input type="text" name="keterangan1" id="keterangan1" size="30" style="background-color: rgb(211, 211, 211);" readonly value="Pengaturan Komisi Sales - <?= $piutang['nama_salesman'] ?> - <?= $_GET['no_faktur'] ?>">
@@ -118,7 +120,7 @@
             <input type="text" name="namaakun2" id="namaakun2" size="35" readonly="" style="background-color: rgb(211, 211, 211);" readonly value="<?= $akun_kompensasi['nama'] ?>">
           </td>
 					<td>
-            <input type="text" name="debet2" id="debet2" size="15" autocomplete="off" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="<?= $piutang['piutang_do'] ?>">
+            <input type="text" name="debet2" id="debet2" size="15" autocomplete="off" onchange="hitungjml(1)" style="text-align: right;" onkeypress="return isNumberKey(event)" value="<?= $komisi_salesman['harga_dpp'] ?>">
           </td>
           <td>
             <input type="text" name="kredit2" id="kredit2" size="15" autocomplete="off" style="text-align: right;" onchange="hitungjml(1)" onkeypress="return isNumberKey(event)" value="0">
@@ -410,7 +412,7 @@
 			var tgltransaksi = document.getElementById("tanggal").value;
 			var totaldebet = document.getElementById("total_debet").value;
 			var totalkredit = document.getElementById("total_kredit").value;
-			var totalacuan = document.getElementById("total_piutang_do").value;
+			var totalacuan = document.getElementById("total_komisi").value;
 
 			if (tgltransaksi == '') {
 				pesan = 'Tanggal Tidak Boleh Kosong';
@@ -418,8 +420,8 @@
 				pesan = 'Total Debet atau Total Kredit Harus Diisi';
 			} else if (totaldebet != totalkredit) {
 				pesan = 'Total Debet dan Total Kredit Tidak Sama';
-			} else if(totaldebet != totalacuan){
-				pesan = 'Total pembayaran harus sama dengan total piutang do';
+			} else if (parseFloat(totalacuan) != parseFloat(totaldebet)){
+				pesan = 'Total komisi tidak sama dengan komisi faktur';
 			}
 
 
