@@ -130,7 +130,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 	}
 	elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'process_pass') {
 		//cek apakah pass sama atau tidak
-		$stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13 OR user_id=10)");
+		$stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass']."') AND (user_id=17 OR user_id=3 OR user_id=13)");
 		$stmt->execute();
 		
 		$affected_rows = $stmt->rowCount();
