@@ -15,7 +15,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
 
 		//searching _filter---------------------------------------------------------
        if ($_REQUEST["_search"] == "false") {
-       $where = "WHERE deleted=0 ";
+       $where = "WHERE (a.deleted=0 OR a.deleted IS NULL) AND (b.keterangan LIKE '%Pengaturan Komisi Sales%' OR b.keterangan IS NULL) AND (b.deleted=0 OR b.deleted IS NULL) AND c.deleted=0 ";
        } else {
        $operations = array(
         'eq' => "= '%s'",            // Equal
@@ -36,13 +36,15 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
         'nn' => "is not null"        // Is not null
     ); 
 	
-      $value = $_REQUEST["searchString"];
-	  $where = sprintf(" where deleted=0 AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
+        $value = $_REQUEST["searchString"];
+        $where = sprintf(" WHERE (a.deleted=0 OR a.deleted IS NULL) AND (b.keterangan LIKE '%Pengaturan Komisi Sales%' OR b.keterangan IS NULL) AND (b.deleted=0 OR b.deleted IS NULL) AND c.deleted=0 AND %s ".$operations[$_REQUEST["searchOper"]], $_REQUEST["searchField"], $value);
 	
-     }
+    }
 //--------------end of searching--------------------		
      //   $where = "WHERE deleted=0 ";
-        $q = $db->query("SELECT * FROM `mst_b2bsalesman` a ".$where);
+        $group = " GROUP BY c.id ";
+
+        $q = $db->query("SELECT c.*, COALESCE(SUM(total_debet),0) AS total_komisi FROM mst_b2bsalesman c LEFT JOIN jurnal_detail b ON b.keterangan LIKE CONCAT('Pengaturan Komisi Sales - ',c.nama,'%') LEFT JOIN jurnal a ON a.id=b.id_parent ".$where.$group);
 		$count = $q->rowCount();
         
         $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
@@ -50,11 +52,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
         $start = $limit*$page - $limit;
         if($start <0) $start = 0;
 
-        $q = $db->query("SELECT a.*  
-							 FROM `mst_b2bsalesman` a
-							 ".$where."
-							 ORDER BY `".$sidx."` ".$sord."
-							 LIMIT ".$start.", ".$limit);
+        $q = $db->query("SELECT c.*, COALESCE(SUM(total_debet),0) AS total_komisi FROM mst_b2bsalesman c LEFT JOIN jurnal_detail b ON b.keterangan LIKE CONCAT('Pengaturan Komisi Sales - ',c.nama,'%') LEFT JOIN jurnal a ON a.id=b.id_parent ".$where.$group." ORDER BY `".$sidx."` ".$sord." LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
         $statusToko = '';
@@ -113,7 +111,8 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 $line['disc'],                
                 $line['type'],                
                 $category, 
-                ($line['komisi']=='Y')?'Ya':'Tidak',            
+                ($line['komisi']=='Y')?'Ya':'Tidak',         
+                ($line['komisi']=='Y')? $line['total_komisi'] : '-',
 				$edit,
 				$delete,
             );
@@ -241,16 +240,17 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','Name','Address','Phone','Disc','Type','Category Sale','Komisi','Edit','Delete'],
+            colNames:['ID','Name','Address','Phone','Disc','Type','Category Sale','Komisi','Saldo Komisi','Edit','Delete'],
             colModel:[
                 {name:'id',index:'id', align:'right',width:30, searchoptions: {sopt:['cn']}},
                 {name:'nama',index:'nama', width:300, searchoptions: {sopt:['cn']}},                
-                {name:'alamat',index:'alamat', width:170, searchoptions: {sopt:['cn']}},                
+                {name:'alamat',index:'alamat', width:150, searchoptions: {sopt:['cn']}},                
                 {name:'no_telp',index:'no_telp', align:'center', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'disc',index:'disc', align:'right', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'type',index:'type', align:'center', width:30, searchoptions: {sopt:['cn']}},                
-                {name:'category',index:'category', align:'center', width:75, searchoptions: {sopt:['cn']}},                
-                {name:'komisi',index:'komisi', align:'center', width:30, searchoptions: {sopt:['cn']}},                
+                {name:'category',index:'category', align:'center', width:75, searchoptions: {sopt:['cn']}},
+                {name:'komisi',index:'komisi', align:'center', width:30, searchoptions: {sopt:['cn']}},
+                {name:'saldo_komisi',index:'saldo_komisi', align:'right', width:50, searchoptions: {sopt:['cn']}},            
                 {name:'Edit',index:'edit', align:'center', width:50, sortable: false, search: false},
                 {name:'Delete',index:'delete', align:'center', width:50, sortable: false, search: false},
             ],
