@@ -50,7 +50,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
             }
 		}
 
-        $q = $db->query("SELECT DISTINCT b.* FROM det_coa a RIGHT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ");
+        $q = $db->query("SELECT b.* FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ");
 
 		$count = $q->rowCount();
         
@@ -59,7 +59,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, mst_COA, $group_acess);
         $start = $limit*$page - $limit;
         if($start <0) $start = 0;
 
-        $q = $db->query("SELECT DISTINCT b.* FROM det_coa a RIGHT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ORDER BY `".$sidx."` ".$sord." LIMIT ".$start.", ".$limit);
+        $q = $db->query("SELECT b.* FROM det_coa a LEFT JOIN mst_coa b ON b.id=a.id_parent WHERE ".$where." GROUP BY b.id ORDER BY `".$sidx."` ".$sord." LIMIT ".$start.", ".$limit);
 		$data1 = $q->fetchAll(PDO::FETCH_ASSOC);
 
         $statusToko = '';
