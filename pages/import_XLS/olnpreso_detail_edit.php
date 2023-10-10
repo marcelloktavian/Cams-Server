@@ -806,6 +806,7 @@ function validasipertama()
 				var qty = document.getElementById("Qty"+i+"").value;
 			}
 	    total+= parseInt(subtotal);
+
 	    totalqty+= parseInt(qty);
 			total_blmdisc+= parseInt(subtotal);
     
@@ -819,7 +820,6 @@ function validasipertama()
     
 	total_blmdisc=total_blmdisc+ongkir_murni;
 	sisa = (total)-(tunai_murni+transfer_murni+byr_deposit_murni);
-console.log(total);
 	sisa2 = (total)-(tunai_murni+transfer_murni);
 	// console.log('sisa '+sisa2);
 	// console.log(total);
@@ -838,6 +838,12 @@ console.log(total);
 	// document.getElementById("piutang").value = sisa3;
     // document.getElementById("byr_deposit").value = 0;
     // }
+	
+	if(total.toString().slice(-1)=='9'){
+		total = parseInt(total) + 1;
+	}else if(total.toString().slice(-1)=='1'){
+		total = parseInt(total) - 1;
+	}
 
 	//totalhidden dipake buat validasi saja
 	document.getElementById("totalhidden").value = total;
@@ -920,7 +926,7 @@ function hitungpiutang()
 			if(document.getElementById("SUBTOTAL"+i+"").value == "") {
 			var subtotal = 0;}
 			else{
-			var subtotal = (1.11*document.getElementById("SUBTOTAL"+i+"").value);
+			var subtotal = Math.round(1.11*document.getElementById("SUBTOTAL"+i+"").value);
 			var qty = document.getElementById("Qty"+i+"").value;
 			}
 	        total+= parseInt(subtotal);
@@ -1037,15 +1043,27 @@ function hitungtotal(){
 		var subtotal = document.getElementById("SUBTOTAL"+i+"").value;
 		var qty = document.getElementById("Qty"+i+"").value;
 		}	
-	    //alert("subtotal ="+subtotal.toString())
 			
 		total+= parseInt(subtotal)+Math.floor(subtotal*0.11);
+	    // alert("subtotal ="+(parseInt(subtotal)+Math.round(subtotal*0.11)).toString())
+
 		totalqty+= parseInt(qty);
 		total_blmdisc+= parseInt(subtotal);
 	 }
 		//else{}
 		//return false;
 	}
+
+	if(total.toString().slice(-1)=='9'){
+		total = parseInt(total) + 1;
+	}else if(total.toString().slice(-1)=='1'){
+		total = parseInt(total) - 1;
+	}
+	// else if(total.toString().slice(-2)=='98'){
+	// 	total = parseInt(total) + 2;
+	// }else if(total.toString().slice(-2)=='97'){
+	// 	total = parseInt(total) + 3;
+	// }
 	
     //alert("baris="+baris1.toString());
 	
