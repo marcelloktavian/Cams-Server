@@ -59,7 +59,6 @@ else{
 }
 
 
-
 // detail data processing -----------------
 if($id_supplier == 0){
   $id_supplier = "SELECT `id` FROM `mst_supplier` WHERE `vendor`='".$supplier."' AND `pic`='".$pic."' AND `ktp`='".$ktp."' LIMIT 1";
