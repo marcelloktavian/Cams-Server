@@ -1,7 +1,7 @@
 <?php
 error_reporting(0);
 require_once 'PHPExcel-1.8\Classes/PHPExcel.php';
-require_once '../include/koneksi.php';
+require_once '../../include/koneksi.php';
 
 $objPHPExcel = PHPExcel_IOFactory::load('DB B2B Kategori Produk.xlsx'); // Ganti dengan nama file Excel yang sesuai
 
