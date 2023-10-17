@@ -60,7 +60,7 @@
 
       <label for="nilai-pembelian-aset" class="ui-helper-reset label-control">Nilai Pembelian</label></label>
       <div class="ui-corner-all form-control">
-        <input class="required penyusutan-field-full" type="text" id="nilai-pembelian-aset" name="nilai-pembelian-aset" value="0" /> (DPP)
+        <input class="required penyusutan-field-full" type="text" id="nilai-pembelian-aset" name="nilai-pembelian-aset" /> (DPP)
       </div>
 
       <label for="ppn-pembelian-aset" class="ui-helper-reset label-control">PPN Pembelian</label></label>
@@ -69,7 +69,7 @@
           <option value='0' selected>Tidak</option>
           <option value='1'>Ya</option>
         </select>
-        <input class="penyusutan-field-3quarter penyusutan-disabled" type="text" id="nilai-ppn-aset" name="nilai-ppn-aset" value="0" readonly />
+        <input class="penyusutan-field-3quarter penyusutan-disabled" type="text" id="nilai-ppn-aset" name="nilai-ppn-aset" readonly />
       </div>
 
       <label for="keterangan-penyusutan" class="ui-helper-reset label-control">Keterangan</label>
@@ -81,6 +81,8 @@
       * Data tidak akan disimpan bila nilai pembelian nol.
       <br />
       * Diharapkan agar tidak menekan tombol save lebih dari satu kali.
+      <br />
+      * Diharapkan agar tidak mengubah nama akun aset dan akumulasi pada coa.
 
     </form>
   </div>
