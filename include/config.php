@@ -1838,6 +1838,16 @@
 	define("PRINT_POLICY", "PRINT;");
 	define("RETURN_POLICY", "RETURN;");
 	define("IMPORT_POLICY", "IMPORT;");
+
+	// DEFINE PPN -----
+	$queryGetPPN = "SELECT * FROM mst_taxes WHERE nama='PPN' AND deleted=0 ORDER BY id DESC LIMIT 1";
+
+	$getPPN = $db->query($queryGetPPN);
+	$datappn = $getPPN->fetchAll(PDO::FETCH_ASSOC);
+
+	$valuePPN = $datappn[0]['value'];
+	define('VALUE_PPN', $datappn[0]['value']);
+
 	function is_show_menu($policy, $menu_id, $group_access)
 	{
 		$show=false;

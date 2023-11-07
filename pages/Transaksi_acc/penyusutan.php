@@ -19,9 +19,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $where = " WHERE nama_aset_pemberhentian IS NULL AND tanggal_jurnal IS NOT NULL ";
 
-  if($startdate != null && $startdate != ""){
-    $where .= " AND tanggal_jurnal BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
-  }
+  // if($startdate != null && $startdate != ""){
+  //   $where .= " AND tanggal_jurnal BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+  // }
 
   if($aset != null && $aset != ""){
     $where .= " AND nama_aset LIKE '%".$aset."%' ";
@@ -169,7 +169,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $jurnalMasterPembelian = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalPembelian', '".$tanggalPembelian."', '".$keterangan."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '0', '".$id_user."', NOW(), 'PEMBELIAN ASET') ");
     $jurnalMasterPembelian->execute();
 
-    $jurnalMasterPembelianID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPembelian' LIMIT 1"));
+    $jurnalMasterPembelianID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPembelian' AND `keterangan`='".$keterangan."' AND user='".$id_user."' LIMIT 1"));
     $idparent=$jurnalMasterPembelianID['id'];
 
     $ambilAkunAset=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE nama = '".$akunAset['nama']." - ".$namaAset."'"));
@@ -250,7 +250,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $jurnalMasterPenyusutan = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalPenyusutan', '$lastDateOfMonth', 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan', '".$satuanPenyusutan."', '".$satuanPenyusutan."', '0', '".$id_user."', NOW(), 'PENYUSUTAN ASET') ");
       $jurnalMasterPenyusutan->execute();
 
-      $jurnalMasterPenyusutanID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPenyusutan' LIMIT 1"));
+      $jurnalMasterPenyusutanID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPenyusutan' AND keterangan = 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan' AND user = '".$id_user."' LIMIT 1"));
       $idparentPenyusutan=$jurnalMasterPenyusutanID['id'];
 
       $jurnalDetailPenyusutan = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunBebanPenyusutan','$noakunBebanPenyusutan','$namaakunBebanPenyusutan','Parent','".$satuanPenyusutan."','0','','0', '$id_user',NOW())");
@@ -302,7 +302,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $jurnalMasterAkumulasi = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalAkumulasi', '".$i."-12-31', 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."', '".$sumAkumulasiValue."', '".$sumAkumulasiValue."', '0', '".$id_user."', NOW(), 'AKUMULASI PENYUSUTAN') ");
       $jurnalMasterAkumulasi->execute();
 
-      $jurnalMasterAkumulasiID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalAkumulasi' LIMIT 1"));
+      $jurnalMasterAkumulasiID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalAkumulasi' AND keterangan = 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."' AND user = '".$id_user."' LIMIT 1"));
       $idparent=$jurnalMasterAkumulasiID['id'];
 
       $jurnalDetailPenyusutan = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','".$sumAkumulasiValue."','0','','0', '$id_user',NOW())");
@@ -365,14 +365,14 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $q = mysql_fetch_array($query);
   $nomorJurnalCancel=$q['nomor'];
 
-  $queryGetLast = mysql_query("SELECT *, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'ke', -1), 'dari', 1)),0) AS last_month, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'dari', -1), 'Bulan', 1)),0) AS total_month FROM jurnal WHERE keterangan LIKE '%".$namaAset."%' AND `status`='PENYUSUTAN ASET' ORDER BY tgl DESC LIMIT 1");
+  $queryGetLast = mysql_query("SELECT *, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'ke', -1), 'dari', 1)),0) AS last_month, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'dari', -1), 'Bulan', 1)),0) AS total_month FROM jurnal WHERE keterangan LIKE '%".$namaAset."%' AND MONTH(tgl)=MONTH(CURDATE()) AND `status`='PENYUSUTAN ASET' ORDER BY tgl DESC LIMIT 1");
 
   $lastPenyusutan = mysql_fetch_array($queryGetLast);
 
   $jurnalMasterCancel = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalCancel', '".$tanggalPemberhentian."', 'Likuidasi Aset - ".$namaAset." Penyusutan ".$lastPenyusutan['last_month']." dari ".$lastPenyusutan['total_month']."', '".$nilaiPemberhentian."', '".$nilaiPemberhentian."', '0', '".$id_user."', NOW(), 'LIKUIDITAS ASET') ");
   $jurnalMasterCancel->execute();
 
-  $jurnalMasterCancelID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalCancel' LIMIT 1"));
+  $jurnalMasterCancelID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalCancel' AND keterangan = 'Likuidasi Aset - ".$namaAset." Penyusutan ".$lastPenyusutan['last_month']." dari ".$lastPenyusutan['total_month']."' AND user = '".$id_user."' LIMIT 1"));
   $idparent=$jurnalMasterCancelID['id'];
 
   // PERSIAPAN DATA DETAIL
@@ -438,13 +438,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   <div class="ui-widget-content ui-conrer-bottom">
     <form id="filter_ap" method="" action="" class="ui-helper-clearfix">
-      <label for="" class="ui-helper-reset label-control">Tanggal Pembelian</label>
+      <label for="" class="ui-helper-reset label-control">Filter</label>
       <div class="ui-corner-all form-control">
         <table>
           <tr>
-            <td><input type="text" class="required datepicker" id="startdate_penyusutan" name="startdate_penyusutan" readonly></td>
-            <td> s.d <input type="text" class="required datepicker" id="enddate_penyusutan" name="enddate_penyusutan" readonly></td>
-            <td> Filter <input type="text" id="aset_penyusutan" name="aset_penyusutan" />(Nama Aset)</td>
+            <!-- <td><input type="text" class="required datepicker" id="startdate_penyusutan" name="startdate_penyusutan" readonly></td>
+            <td> s.d <input type="text" class="required datepicker" id="enddate_penyusutan" name="enddate_penyusutan" readonly></td> -->
+            <td><input type="text" id="aset_penyusutan" name="aset_penyusutan" />(Nama Aset)</td>
           </tr>
         </table>
       </div>

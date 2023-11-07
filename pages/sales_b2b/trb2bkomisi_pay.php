@@ -31,7 +31,7 @@
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE no_faktur = '".$_GET['no_faktur']."'";
   $piutang = mysql_fetch_array(mysql_query($sql_text));
 
-	$sql_komisi = "SELECT SUM((b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc/100)))-b.jumlah_kirim*a.harga) AS harga_dpp FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."' GROUP BY c.no_faktur";
+	$sql_komisi = "SELECT SUM(b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga)) AS harga_dpp FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."' GROUP BY c.no_faktur";
 
 	$komisi_salesman = mysql_fetch_array(mysql_query($sql_komisi));
 

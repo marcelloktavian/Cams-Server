@@ -42,7 +42,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) LEFT JOIN (
     SELECT id AS id_jurnal_atur_komisi, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_komisi FROM jurnal WHERE keterangan LIKE 'Pengaturan Komisi Sales%' AND `status`='B2B ATUR KOMISI' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
   ) AS d ON a.no_faktur=TRIM(d.nomor_faktur_komisi) LEFT JOIN (
-    SELECT c.no_faktur AS no_faktur_komisi, SUM((b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc/100)))-b.jumlah_kirim*a.harga) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 GROUP BY c.no_faktur
+    SELECT c.no_faktur AS no_faktur_komisi, SUM(b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga)) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 GROUP BY c.no_faktur
   ) AS e ON a.no_faktur=e.no_faktur_komisi ".$where.$having;
 
   $q = $db->query($query);
@@ -92,9 +92,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   echo json_encode($responce);
   exit;
 } elseif (isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
+
   $no_faktur = $_GET['id'];
 
-  $sql_sub = "SELECT a.nama AS nama_barang, b.jumlah_kirim AS total_qty, b.harga_satuan AS harga_faktur, a.harga AS harga_resale, b.disc AS disc, b.jumlah_kirim*a.harga AS total_murni, (b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc/100))) AS total_resale, (b.jumlah_kirim*(b.harga_satuan-(b.harga_satuan*disc/100)))-b.jumlah_kirim*a.harga AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$no_faktur."'";
+  $sql_sub = "SELECT a.nama AS nama_barang, b.jumlah_kirim AS total_qty, b.harga_satuan AS harga_faktur, a.harga AS harga_resale, b.disc AS disc, b.jumlah_kirim*a.harga AS total_murni, b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)) AS total_resale, b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$no_faktur."'";
 
   $q1 = $db->query($sql_sub);
   $data1 = $q1->fetchAll(PDO::FETCH_ASSOC);
@@ -214,12 +215,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       subGrid : true,
       subGridUrl : '<?php echo BASE_URL.'pages/sales_b2b/trb2bkomisi.php?action=json_sub'; ?>',
       subGridModel: [
-          { 
-            name : ['No','Nama Barang','Qty','Diskon','Harga Faktur','Harga Resale','Subtotal Faktur','Subtotal Resale', 'Komisi'], 
-            width : [40,200,50,50,50,50,50,50,50],
-          align : ['right','left','right','right','right','right','right','right','right'],
-         } 
-        ],
+        {
+          name : ['No','Nama Barang','Qty','Diskon','Harga Faktur','Harga Resale','Subtotal Faktur (- PPN)','Subtotal Resale', 'Komisi'], 
+          width : [40,200,50,50,50,50,100,100,100],
+        align : ['right','left','right','right','right','right','right','right','right'],
+        }
+      ],
     });
     $('#table_trb2bkomisi').jqGrid('navGrid', '#pager_table_trb2bkomisi', {edit:false, add:false, del:false, search:false});
   });
