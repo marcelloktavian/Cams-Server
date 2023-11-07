@@ -224,6 +224,10 @@ font-family:MS Reference Sans Serif;
     font-family: Arial;
     padding: 3px;
 }
+.one-row{
+    height: 28px;
+    max-height: 28px;
+}
 /*
 @page {
         size: A4;
@@ -266,11 +270,8 @@ error_reporting(0);
           <tr>  
             <td colspan="13" class="style9_title_no"><div align="left" style="margin-left: 120px;"><?=$rs['nofaktur'];?></div></td>
           <th colspan="4" class="style11btlr" ><div align="left" style="margin-left: 55px"><?= $rs['customer'];?></div><br>
-          <div align="left" style="margin-left: 55px"><?=$rs['alamat'];?> <?php if ($rs['kabupaten'] != '') {
+          <div align="left" class="one-row" style="margin-left: 55px"><?=$rs['alamat'];?> <?php if ($rs['kabupaten'] != '') {
             echo ",".$rs['kabupaten'];
-          }
-          if (strlen($rs['alamat'].', '.$rs['kabupaten'])<=42) {
-            echo "<br>&nbsp;";
           }
           ?></div>
         </th>
