@@ -42,7 +42,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) LEFT JOIN (
     SELECT id AS id_jurnal_atur_komisi, SUBSTRING_INDEX(keterangan, '-',-1) AS nomor_faktur_komisi FROM jurnal WHERE keterangan LIKE 'Pengaturan Komisi Sales%' AND `status`='B2B ATUR KOMISI' AND deleted=0 GROUP BY SUBSTRING_INDEX(keterangan, '-',-1)
   ) AS d ON a.no_faktur=TRIM(d.nomor_faktur_komisi) LEFT JOIN (
-    SELECT c.no_faktur AS no_faktur_komisi, SUM(b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga)) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 GROUP BY c.no_faktur
+    SELECT c.no_faktur AS no_faktur_komisi, SUM(ROUND(b.jumlah_kirim * (
+    (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) - a.harga
+  ), 0)) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 GROUP BY c.no_faktur
   ) AS e ON a.no_faktur=e.no_faktur_komisi ".$where.$having;
 
   $q = $db->query($query);
@@ -95,7 +97,20 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $no_faktur = $_GET['id'];
 
-  $sql_sub = "SELECT a.nama AS nama_barang, b.jumlah_kirim AS total_qty, b.harga_satuan AS harga_faktur, a.harga AS harga_resale, b.disc AS disc, b.jumlah_kirim*a.harga AS total_murni, b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)) AS total_resale, b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$no_faktur."'";
+  $sql_sub = "SELECT a.nama AS nama_barang,
+  b.jumlah_kirim AS total_qty,
+  b.harga_satuan AS harga_faktur,
+  a.harga AS harga_resale,
+  b.harga_satuan / 1.".VALUE_PPN." AS harga_pajak,
+  (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) AS harga_asli,
+  b.disc AS disc,
+  b.jumlah_kirim * a.harga AS total_murni,
+  b.jumlah_kirim * (
+   (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc)
+  ) AS total_resale,
+  b.jumlah_kirim * (
+    (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) - a.harga
+  ) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$no_faktur."'";
 
   $q1 = $db->query($sql_sub);
   $data1 = $q1->fetchAll(PDO::FETCH_ASSOC);
