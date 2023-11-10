@@ -34,7 +34,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $having = " HAVING piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) = 0";
 
   $query = "SELECT *, piutang_do-COALESCE(total_return,0) AS piutang_akhir, piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) AS piutang_sisa FROM (
-    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND d.deleted=0 AND d.komisi='Y' AND a.deleted=0 GROUP BY no_faktur
+    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND d.deleted=0 AND a.deleted=0 AND d.komisi = 'Y'   GROUP BY no_faktur
   ) AS a LEFT JOIN (
     SELECT a.id_trans_do AS id_b2bdo, a.b2bdo_num, (a.qty31+a.qty32+a.qty33+a.qty34+a.qty35+a.qty36+a.qty37+a.qty38+a.qty39+a.qty40+a.qty41+a.qty42+a.qty43+a.qty44+a.qty45+a.qty46) AS total_qty ,SUM(a.subtotal) AS total_return FROM b2breturn_detail a LEFT JOIN b2breturn b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0 AND b.post=1 GROUP BY a.b2bdo_num
   ) AS b ON a.id_b2bdo=b.id_b2bdo LEFT JOIN (
@@ -83,7 +83,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       number_format($line['piutang_akhir']),
       number_format($line['piutang_terbayar']),
       number_format($line['komisi']),
-      $post
+      $post,
+      '<a onclick="window_open(\''.BASE_URL.'pages/sales_b2b/trb2bkomisi_print.php?no_faktur='.$line['no_faktur'].'&id_trans='.$line['id_trans_do'].'&tgl='.$line['tgl_trans'].'&nama_cust='.$line['nama_customer'].'\')">Print</a>'
     );
     $i++;
   }
@@ -116,7 +117,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $data1 = $q1->fetchAll(PDO::FETCH_ASSOC);
 
   $i=0;
-  $responce = '';
+  $responce;
 
   foreach($data1 as $line){
     $responce->rows[$i]['id']   = $line['komisi'];
@@ -140,7 +141,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
 ?>
 
-<script tpye='text/javascript' src='assets/js/jquery.autocomplete.js'></script>
+<script type='text/javascript' src='assets/js/jquery.autocomplete.js'></script>
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.autocomplete.css" />
 
 <div class="ui-widget ui-form" style="margin-bottom:5px;">
@@ -201,7 +202,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_trb2bkomisi').jqGrid({
       url           : '<?= BASE_URL.'pages/sales_b2b/trb2bkomisi.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Komisi', 'Pembayaran'],
+      colNames      : ['Nomor DO','Nomor Faktur', 'Tanggal DO', 'Customer', 'Salesman', 'Total QTY Akhir (-Retur)', 'Piutang Akhir (-Retur)', 'Piutang Terbayar', 'Komisi', 'Pembayaran','Print'],
       colModel      : [
         {name: 'id_trans_so', index: 'id_trans_so', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
         {name: 'no_faktur', index: 'no_faktur', align: 'center', width: 40, searchoptions: {sopt: ['cn']}},
@@ -213,6 +214,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         {name: 'piutang_terbayar', index: 'piutang_terbayar', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'piutang_sisa', index: 'piutang_sisa', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'post', index: 'post', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
+        {name: 'print', index: 'print', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],
       rowNum        : 20,
       rowList       : [20, 1000],

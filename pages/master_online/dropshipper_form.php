@@ -54,6 +54,13 @@
                     <option value='I' <?php if(isset($row['type'])){if($row['type']=='I'){echo "selected";}} ?>>I</option>
                 </select>	
             </div>
+            <br>
+            <br>
+            
+            <div>
+                <p>Pastikan format nomor dimulai dengan 62</p>
+                <p>Pastikan nomor tidak ada spasi ataupun strip ( - )</p>
+            </div>
 <!--             
             <label for="noakun" class="ui-helper-reset label-control">No Akun</label>
             <div class="ui-corner-all form-control">

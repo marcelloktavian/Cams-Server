@@ -74,6 +74,7 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
         foreach($data1 as $line) {
         	// $allowEdit = array(1,2,3);
 			// $allowDelete = array(1,2,3);
+            $chat = '<a onclick="window_open(\'http://wa.me/'.$line['hp'].'\')" style="cursor: pointer;">Chat</a>';
 
             if ($statusToko == 'Tutup') {
                 $edit = '<a onclick="javascript:custom_alert(\'Maaf, Toko Sudah Tutup\')" href="javascript:;">Edit</a>';
@@ -102,8 +103,9 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
 				$line['oln_customer_id'],
 				$line['nama'],
                 $line['alamat'],                
-                $line['hp'],                
-                $line['disc'],                
+                $line['hp'],
+                $chat,
+                $line['disc'],        
                 $line['type'],                
 				$edit,
 				$delete,
@@ -169,17 +171,22 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
             $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND id<>? AND hp<>'0'");
             $query->execute(array($_POST['hp'],$_POST['id']));
             if ($query->rowCount() == 0) {
-                $stmt = $db->prepare("UPDATE mst_dropshipper SET nama=?,oln_customer_id=?,alamat=?,no_telp=?,hp=?,disc=?,type=?,user=?, lastmodified = NOW() WHERE id=?");
-                $stmt->execute(array($_POST['nama'],$_POST['oln_customer_id'],$_POST['alamat'],$telp,$_POST['hp'],$_POST['disc'],$_POST['tipe'], $_SESSION['user']['username'], $_POST['id']));
-                //var_dump($stmt);die;
-                $affected_rows = $stmt->rowCount();
-                if($affected_rows > 0) {
-                    $r['stat'] = 1;
-                    $r['message'] = 'Success';
-                }
-                else {
-                    $r['stat'] = 0;
-                    $r['message'] = 'Failed';
+                if (preg_match('/^62[0-9]+$/', $_POST['hp'])) {
+                    $stmt = $db->prepare("UPDATE mst_dropshipper SET nama=?,oln_customer_id=?,alamat=?,no_telp=?,hp=?,disc=?,type=?,user=?, lastmodified = NOW() WHERE id=?");
+                    $stmt->execute(array($_POST['nama'],$_POST['oln_customer_id'],$_POST['alamat'],$telp,$_POST['hp'],$_POST['disc'],$_POST['tipe'], $_SESSION['user']['username'], $_POST['id']));
+                    //var_dump($stmt);die;
+                    $affected_rows = $stmt->rowCount();
+                    if($affected_rows > 0) {
+                        $r['stat'] = 1;
+                        $r['message'] = 'Success';
+                    }
+                    else {
+                        $r['stat'] = 0;
+                        $r['message'] = 'Failed';
+                    }
+                }else {
+                    $r['stat']= 0;
+                    $r['message']='Format nomor salah';
                 }
             } else {
                 $r['stat'] = 0;
@@ -190,6 +197,7 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
             $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND hp<>'0'");
             $query->execute(array($_POST['hp']));
             if ($query->rowCount() == 0) {
+                if (preg_match('/^62[0-9]+$/', $_POST['hp'])) {
 			    $stmt = $db->prepare("INSERT INTO  mst_dropshipper(`nama`,`oln_customer_id`,`alamat`,`no_telp`,`hp`,`disc`,`type`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?,NOW())");
 			    if($stmt->execute(array($_POST['nama'],$_POST['oln_customer_id'],$_POST['alamat'], $telp, $_POST['hp'], $_POST['disc'], $_POST['tipe'],$_SESSION['user']['username']))) {
                     $id = $db->lastInsertId();
@@ -229,6 +237,10 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
 				    $r['stat'] = 0;
 				    $r['message'] = 'Failed';
 			    }
+            }else {
+                $r['stat']= 0;
+                $r['message']='Format nomor salah';
+            }
             } else {
                 $r['stat'] = 0;
                 $r['message'] = 'Phone Sudah Terdaftar';
@@ -245,10 +257,12 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
    onclick="window.open('pages/kirim/sodetail.php');">
    <button class="btn btn-success">Tambah</button></a>
 -->
+
+<button type="button" onclick="window.open('pages/master_online/dropshipper_xls.php')" class="btn">Excell</button>
 <?php
-	
-	// $allow = array(1,2,3);
-    
+
+
+
     $statusToko = '';
     $getStat = $db->prepare("SELECT * FROM tbl_status LIMIT 1");
     $getStat->execute();
@@ -266,11 +280,13 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
 	}}
 	
 ?>
+    
 </div>
 <table id="table_dropshipper"></table>
 <div id="pager_table_dropshipper"></div>
 
 <script type="text/javascript">
+
     $(document).ready(function(){
 
         $("#table_dropshipper").jqGrid({
@@ -282,12 +298,13 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
                 'summary_status': function() {return $('#sStatus').val(); },
             },*/
             datatype: "json",
-            colNames:['ID','Oln_id','Name','Address','Phone','Disc','Type','Edit','Delete','Apply Disc'],
+            colNames:['ID','Oln_id','Name','Address','Phone','Whatsapp','Disc','Type','Edit','Delete','Apply Disc'],
             colModel:[
                 {name:'id',index:'id', align:'right',width:30, searchoptions: {sopt:['cn']}},
                 {name:'oln_customer_id',index:'oln_customer_id', width:30, searchoptions: {sopt:['cn']}},                
                 {name:'nama',index:'nama', width:300, searchoptions: {sopt:['cn']}},                
                 {name:'alamat',index:'alamat', width:150, searchoptions: {sopt:['cn']}},                
+                {name:'hp',index:'hp', align:'center', width:100, searchoptions: {sopt:['cn']}},
                 {name:'hp',index:'hp', align:'center', width:100, searchoptions: {sopt:['cn']}},                
                 {name:'disc',index:'disc', align:'right', width:40, searchoptions: {sopt:['cn']}},                
                 {name:'type',index:'type', align:'center', width:40, searchoptions: {sopt:['cn']}},                
