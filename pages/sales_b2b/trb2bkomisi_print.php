@@ -2,23 +2,26 @@
 require_once '../../include/config.php';
 $q = $db->query(
     " SELECT a.nama AS nama_barang,
-    b.jumlah_kirim AS total_qty,
-    b.harga_satuan AS harga_faktur,
-    a.harga AS harga_resale,
-    b.harga_satuan / 1.".VALUE_PPN." AS harga_pajak,
-    (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) AS harga_asli,
-    b.disc AS disc,
-    b.jumlah_kirim * a.harga AS total_murni,
-    b.jumlah_kirim * (
-     (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc)
-    ) AS total_resale,
-    b.jumlah_kirim * (
-      (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) - a.harga
-    ) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."'"
+  b.jumlah_kirim AS total_qty,
+  b.harga_satuan AS harga_faktur,
+  a.harga AS harga_resale,
+  b.harga_satuan / 1.".VALUE_PPN." AS harga_pajak,
+  (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) AS harga_asli,
+  b.disc AS disc,
+  b.jumlah_kirim * a.harga AS total_murni,
+  b.jumlah_kirim * (
+   (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc)
+  ) AS total_resale,
+  b.jumlah_kirim * (
+    (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) - a.harga
+  ) AS komisi FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."'"
 );
 
 $data = $q->fetchAll(PDO::FETCH_ASSOC);
 $i = 0;
+$total_resale = 0;
+$total_harga = 0;
+$total_komisi = 0;
 
 ?>
 
@@ -171,18 +174,27 @@ $i = 0;
             <td class="style_detail"><div align="center"><?= number_format($d['total_murni'])?></div></td>
             <td class="style_detail"><div align="center"><?= number_format($d['komisi'])?></div></td>
         </tr>
-        <?php $i++; ?>
+        <?php 
+            $i++;
+            $total_resale += $d['total_resale'];
+            $total_harga += $d['harga_resale'];
+            $total_komisi += $d['komisi'];
+        ?>
     <?php endforeach; ?>
 
 
-    <!-- <tr>
-        <td colspan="3" class="style_title_left"><div align="right">Total:</div></td>
-        <td class="style_title"><div align="center"><?="0";?></div></td>
-        <td class="style_title"><div align="right"><?="0";?></div></td>
-        <td class="style_title"><div align="right"><?="0"?></div></td>
-        <td class="style_title"><div align="right"><?="0"?></div></td>
-        <td class="style_title"><div align="right"><?="0"?></div></td>
-    </tr> -->
+    <tr>
+        <td colspan="5" class="style_title_left"><div align="right">Total Faktur:</div></td>
+        <td class="style_title" colspan="3"><div align="center"><?=number_format($total_resale);?></div></td>
+    </tr>
+    <tr>
+        <td colspan="5" class="style_title_left"><div align="right">Total Resale:</div></td>
+        <td class="style_title" colspan="3"><div align="center"><?=number_format($total_harga);?></div></td>
+    </tr>
+    <tr>
+        <td colspan="5" class="style_title_left"><div align="right">Total Komisi:</div></td>
+        <td class="style_title" colspan="3"><div align="center"><?=number_format($total_komisi);?></div></td>
+    </tr>
     <!-- <tr>
         <td colspan="3" class="style_title_left"><div align="right">DPP:</div></td>
         <td class="style_title"><div align="center">&nbsp;</div></td>
