@@ -182,12 +182,38 @@ $allow_delete = is_show_menu(DELETE_POLICY, B2BSalesman, $group_acess);
                     }
                     
                 }
-            }
+            }            
 
-			$stmt = $db->prepare("INSERT INTO  mst_b2bsalesman(`nama`,`alamat`,`no_telp`,`disc`,`type`,`category`,`komisi`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?,NOW())");
+			$stmt = $db->prepare("INSERT INTO  mst_b2bsalesman(`nama`,`alamat`,`no_telp`,`disc`,`type`,`category`,`komisi`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?,?,NOW())");
 			if($stmt->execute(array($_POST['nama'],$_POST['alamat'], $_POST['no_telp'], $_POST['disc'], $_POST['tipe'],$category,$_POST['komisi'],$_SESSION['user']['username']))) {
-				$r['stat'] = 1;
-				$r['message'] = 'Success';
+                
+                $sales_id_row = $db->query("SELECT id from mst_b2bsalesman order by lastmodified desc limit 1")->fetchAll(PDO::FETCH_ASSOC);
+                $sales_id = $sales_id_row[0]['id'];
+
+                $last_coa = $db->query("SELECT mc.id as parent_id FROM `mst_coa` mc WHERE mc.noakun = '02.06.00000' LIMIT 1")->fetchAll(PDO::FETCH_ASSOC);
+
+                $last_num_coa = explode(".",'02.06.00000');
+
+                $num_part = sprintf("%05d", (int)$last_num_coa[2] + $sales_id);
+                
+                $last_num_coa[2] = $num_part;
+                
+                
+                $insert_coa = $db->prepare("INSERT INTO det_coa set id_parent = ?,noakun = ?,nama = ?,user=?,lastmodified = NOW()");
+                $r['sales_id'] = $sales_id_row[0]['id'];
+
+                if ($insert_coa->execute([
+                    $last_coa[0]['parent_id'],
+                    implode(".",$last_num_coa),
+                    "Saldo Komisi Salesman - ".$_POST['nama'],
+                    $_SESSION['user']['username']
+                ])) {
+                    $r['stat'] = 1;
+                    $r['message'] = 'Success';
+                }else {
+                    $r['stat'] = 0;
+                    $r['message'] = 'Failed';
+                }
 			}
 			else {
 				$r['stat'] = 0;
