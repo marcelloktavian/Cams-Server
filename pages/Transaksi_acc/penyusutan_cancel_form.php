@@ -53,7 +53,7 @@
         <input class="required penyusutan-field-full" type="date" id="tanggal-pemberhentian-aset" name="tanggal-pemberhentian-aset" />
       </div>
 
-      <label for="akun-pemberhentian-aset" class="ui-helper-reset label-control">Akun Pemberhentian</label></label>
+      <label for="akun-pemberhentian-aset" class="ui-helper-reset label-control">Akun Penjualan</label></label>
       <div class="ui-corner-all form-control">
         <input class="required penyusutan-field-full" type="text" id="akun-pemberhentian-aset" name="akun-pemberhentian-aset" /> (Debet)
       </div>
@@ -63,13 +63,7 @@
         <input class="penyusutan-field-full penyusutan-disabled" type="text" id="nilai-sisa-aset" name="nilai-sisa-aset" value="<?= floor($_GET['sisa']) ?>" readonly />
       </div>
 
-      <label for="nilai-pemberhentian-aset" class="ui-helper-reset label-control">Nilai Pemberhentian</label></label>
-      <div class="ui-corner-all form-control">
-        <input type="hidden" id="acuan-pemberhentian-aset" name="acuan-pemberhentian-aset" value="<?= floor($_GET['sisa']) ?>">
-        <input class="required penyusutan-field-full penyusutan-disabled" type="text" id="nilai-pemberhentian-aset" name="nilai-pemberhentian-aset" value="<?= floor($_GET['sisa']) ?>" readonly /> (Inc Tax)
-      </div>
-
-      <label for="ppn-pemberhentian-aset" class="ui-helper-reset label-control">PPN Pemberhentian</label></label>
+      <label for="ppn-pemberhentian-aset" class="ui-helper-reset label-control">PPN Penjualan</label></label>
       <div class="ui-corner-all form-control">
         <select  class="required penyusutan-select-field-half" id="ppn-pemberhentian-aset" name="ppn-pemberhentian-aset">
           <option value='0'>Tidak</option>
@@ -77,6 +71,12 @@
           <option value='2' selected>Otomatis 11%</option>
         </select>
         <input class="penyusutan-field-half penyusutan-disabled" type="text" id="nilai-ppn-pemberhentian" name="nilai-ppn-pemberhentian" readonly />
+      </div>
+
+      <label for="nilai-pemberhentian-aset" class="ui-helper-reset label-control">Total Penjualan</label></label>
+      <div class="ui-corner-all form-control">
+        <input type="hidden" id="acuan-pemberhentian-aset" name="acuan-pemberhentian-aset" value="<?= floor($_GET['sisa']) ?>">
+        <input class="required penyusutan-field-full penyusutan-disabled" type="text" id="nilai-pemberhentian-aset" name="nilai-pemberhentian-aset" value="<?= floor($_GET['sisa']) ?>" readonly /> (Inc Tax)
       </div>
 
       <br />

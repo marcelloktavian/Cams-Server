@@ -23,7 +23,7 @@
   include '../../include/koneksi.php';
 
   $sql_text = "SELECT *, piutang_do-COALESCE(total_return,0) AS piutang_akhir, piutang_do-COALESCE(total_return,0)-COALESCE(piutang_terbayar,0) AS piutang_sisa FROM (
-    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND a.deleted=0 GROUP BY no_faktur
+    SELECT a.id AS id_b2bso, b.id AS id_b2bdo, a.id_trans AS id_trans_so, b.id_trans AS id_trans_do, b.no_faktur, DATE(b.tgl_trans) as tgl_trans, a.id_customer, c.nama AS nama_customer, c.alamat AS alamat_customer, c.no_telp AS telp_customer, a.id_salesman, d.nama AS nama_salesman, d.alamat AS alamat_salesman, d.no_telp AS telp_salesman, a.piutang AS piutang_so, SUM(b.piutang) AS piutang_do, a.totalqty, a.totalkirim AS totalkirim_so, SUM(b.totalkirim) AS totalkirim_do FROM b2bso a LEFT JOIN b2bdo b ON a.id_trans=b.id_transb2bso LEFT JOIN mst_b2bcustomer c ON a.id_customer=c.id LEFT JOIN mst_b2bsalesman d ON a.id_salesman=d.id WHERE b.no_faktur IS NOT NULL AND b.deleted=0 AND d.deleted=0 AND a.deleted=0 AND d.komisi = 'Y'   GROUP BY no_faktur
   ) AS a LEFT JOIN (
     SELECT a.id_trans_do AS id_b2bdo, a.b2bdo_num, (a.qty31+a.qty32+a.qty33+a.qty34+a.qty35+a.qty36+a.qty37+a.qty38+a.qty39+a.qty40+a.qty41+a.qty42+a.qty43+a.qty44+a.qty45+a.qty46) AS total_qty ,SUM(a.subtotal) AS total_return FROM b2breturn_detail a LEFT JOIN b2breturn b ON a.id_parent=b.id WHERE a.deleted=0 AND b.deleted=0 AND b.post=1 GROUP BY a.b2bdo_num
   ) AS b ON a.id_b2bdo=b.id_b2bdo LEFT JOIN (
@@ -31,7 +31,9 @@
   ) AS c ON a.no_faktur=TRIM(c.nomor_faktur_jurnal) WHERE no_faktur = '".$_GET['no_faktur']."'";
   $piutang = mysql_fetch_array(mysql_query($sql_text));
 
-	$sql_komisi = "SELECT SUM(b.jumlah_kirim*(b.harga_satuan-b.harga_satuan*disc/100-(b.harga_satuan*".VALUE_PPN."/100)-a.harga)) AS harga_dpp FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."' GROUP BY c.no_faktur";
+	$sql_komisi = "SELECT SUM(ROUND(b.jumlah_kirim * (
+    (b.harga_satuan / 1.".VALUE_PPN.") * 0.01 * (100-disc) - a.harga
+  ), 0)) AS harga_dpp FROM mst_b2bproductsgrp a LEFT JOIN b2bdo_detail b ON a.id=b.id_product LEFT JOIN b2bdo c ON c.id_trans=b.id_trans WHERE a.deleted=0 AND c.deleted=0 AND c.`no_faktur`='".$_GET['no_faktur']."' GROUP BY c.no_faktur";
 
 	$komisi_salesman = mysql_fetch_array(mysql_query($sql_komisi));
 
