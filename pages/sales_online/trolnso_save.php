@@ -49,7 +49,7 @@ include("../../include/koneksi.php");
 	$rows=0;
 	//mengecek apakah kode_webnya kosong atau tidak
 	if(isset($_POST['ref_code']) and !empty($_POST['ref_code'])){
-		$sql_validasi="SELECT * FROM olnso WHERE (ref_kode IS NOT NULL OR ref_kode <> '0' OR ref_kode <> '' ) and ref_kode ='".$_POST['ref_code']."' AND deleted=0 ORDER BY id DESC";
+		$sql_validasi="SELECT * FROM olnso WHERE (ref_kode IS NOT NULL OR ref_kode <> '0' OR ref_kode <> '' ) and ref_kode ='".$_POST['ref_code']."' AND deleted=0 AND DATEDIFF(tgl_trans,CURRENT_DATE) > 6 ORDER BY id DESC";
 		//var_dump($sql_validasi);die;
 		$rows = mysql_num_rows($sql_validasi);
 		//var_dump($sql_validasi);	
