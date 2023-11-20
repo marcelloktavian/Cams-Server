@@ -30,6 +30,7 @@ include("../../include/koneksi.php");
 		$id_p 		= $_POST['IDP'.$i];
 		$size 	 = $_POST['Size'.$i];
 		$namabrg = $_POST['NamaBrg'.$i];
+		$namabrg = str_replace("'","\'",$namabrg);
 		$qty = 1;
 			//---akhir tarik parameter detail---
 			if($id_p==''){
@@ -64,6 +65,7 @@ include("../../include/koneksi.php");
 		//var_dump($namabrg.'-iduser='.$id_user);die;
 		$qty = 1;
 		$namabrg = $_POST['NamaBrg'.$i];
+		$namabrg = str_replace("'","\'",$namabrg);
 		//$Disc= str_replace(",","", $_POST['Disc'.$i]);
 			//echo "<script> alert('PROSES Penyimpanan delete= $delete,id_detail=$id_detail,id_comp=$id_comp,baris=$i');</script>";
 			

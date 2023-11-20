@@ -57,7 +57,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $delete = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa='.($line['total_aset']-$line['total_penyusutan']).'&aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:void(0);">Hapus Aset</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Hapus Aset</a>';
+    $delete = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa='.($line['total_aset']-$line['total_penyusutan']).'&aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:void(0);">Cancel</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Cancel</a>';
+
+    $hapus = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=passhapus&nama_aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:;">Hapus</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Hapus</a>';
 
     $responce['rows'][$i]['id']     = str_replace(' ','_',$line['nama_aset']);
     $responce['rows'][$i]['cell']   = array(
@@ -67,7 +69,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       number_format($line['total_aset']),
       number_format($line['total_penyusutan']),
       number_format($line['total_aset']-$line['total_penyusutan']),
-      $delete
+      $delete,
+      $hapus
     );
     $i++;
   }
@@ -422,8 +425,25 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   echo json_encode($r);
   exit();
 
-} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'hapus_aset') {
-  
+} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'passhapus') {
+  include 'penyusutan_passhapus.php';exit();
+	exit;
+} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'process_passhapus') {
+  //cek apakah pass sama atau tidak
+  $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_jm_edit']."') AND (user_id=3 OR user_id=13)");
+  $stmt->execute();
+
+  $affected_rows = $stmt->rowCount();
+  if ($affected_rows > 0) {
+    $r['stat'] = 1; $r['message'] = 'Success';
+    $stmt = $db->prepare("UPDATE `jurnal` SET `deleted`=1 WHERE keterangan LIKE '%".$_POST['nama_aset']."%'");
+    $stmt->execute();
+  }
+  else {
+    $r['stat'] = 0; $r['message'] = 'Failed';
+  }
+  echo json_encode($r);
+  exit;
 }
 
 ?>
@@ -492,7 +512,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_penyusutan').jqGrid({
       url           : '<?= BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Hapus'],
+      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Cancel', 'Hapus'],
       colModel      : [
         {name: 'nama_aset', index: 'nama_aset', align: 'left', width: 70, searchoptions: {sopt: ['cn']}},
         {name:'tanggal_pembelian_aset', index: 'tanggal_pembelian_aset', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
@@ -500,6 +520,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         {name: 'durasi_penyusutan', index: 'durasi_penyusutan', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'nilai_beli_aset', index: 'nilai_beli_aset', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'nilai_sisa_aset', index: 'nilai_sisa_aset', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
+        {name: 'cancel', index: 'cancel', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'hapus', index: 'hapus', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],
       rowNum        : 20,

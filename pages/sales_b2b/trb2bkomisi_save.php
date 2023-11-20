@@ -26,7 +26,6 @@
         $q = mysql_fetch_array($query);
             $masterNo=$q['nomor'];
 
-
         // execute for master
         $sql_master="INSERT INTO `jurnal`(`no_jurnal`,`tgl`,`keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`,`status`) VALUES ('$masterNo','$masterTanggal','$masterKeterangan','$masterTotalDebet','$masterTotalKredit','0','$id_user',NOW(),'B2B ATUR KOMISI') ";
         mysql_query($sql_master) or die (mysql_error());
