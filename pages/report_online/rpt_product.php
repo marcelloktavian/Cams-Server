@@ -164,7 +164,8 @@
       <th width="3%" class="style_title"><div align="center">XXL</div></td>
       <th width="3%" class="style_title"><div align="center">Totalqty</div></td>
       <th width="5%" class="style_title"><div align="center">%</div></td>
-      <th width="10%" class="style_title"><div align="center">DPP</div></td>
+      <th width="5%" class="style_title"><div align="center">DPP (unit)</div></td>
+      <th width="10%" class="style_title"><div align="center">DPP TOTAL (disc)</div></td>
       <th width="10%" class="style_title"><div align="center">PPN</div></td>
       
     </tr>
@@ -179,46 +180,46 @@
   ?>
     <!-- <tr> -->
     <?php
-		$sql_detail = "SELECT 
-		SUBSTRING(namabrg, 1, LENGTH(namabrg) - 2) AS namabarang,
-		SUM(CASE WHEN size = '31' THEN jumlah_beli ELSE 0 END) AS s31,
-		SUM(CASE WHEN size = '32' THEN jumlah_beli ELSE 0 END) AS s32,
-		SUM(CASE WHEN size = '33' THEN jumlah_beli ELSE 0 END) AS s33,
-		SUM(CASE WHEN size = '34' THEN jumlah_beli ELSE 0 END) AS s34,
-		SUM(CASE WHEN size = '35' THEN jumlah_beli ELSE 0 END) AS s35,
-		SUM(CASE WHEN size = '36' THEN jumlah_beli ELSE 0 END) AS s36,
-		SUM(CASE WHEN size = '37' THEN jumlah_beli ELSE 0 END) AS s37,
-		SUM(CASE WHEN size = '38' THEN jumlah_beli ELSE 0 END) AS s38,
-		SUM(CASE WHEN size = '39' THEN jumlah_beli ELSE 0 END) AS s39,
-		SUM(CASE WHEN size = '40' THEN jumlah_beli ELSE 0 END) AS s40,
-		SUM(CASE WHEN size = '41' THEN jumlah_beli ELSE 0 END) AS s41,
-		SUM(CASE WHEN size = '42' THEN jumlah_beli ELSE 0 END) AS s42,
-		SUM(CASE WHEN size = '43' THEN jumlah_beli ELSE 0 END) AS s43,
-		SUM(CASE WHEN size = '44' THEN jumlah_beli ELSE 0 END) AS s44,
-		SUM(CASE WHEN size = '45' THEN jumlah_beli ELSE 0 END) AS s45,
-		SUM(CASE WHEN size = '46' THEN jumlah_beli ELSE 0 END) AS s46,
-		SUM(CASE WHEN size = 'S' THEN jumlah_beli ELSE 0 END) AS sS,
-		SUM(CASE WHEN size = 'M' THEN jumlah_beli ELSE 0 END) AS sM,
-		SUM(CASE WHEN size = 'L' THEN jumlah_beli ELSE 0 END) AS sL,
-		SUM(CASE WHEN size = 'XL' THEN jumlah_beli ELSE 0 END) AS sXL,
-		SUM(CASE WHEN size = 'XXL' THEN jumlah_beli ELSE 0 END) AS sXXL,
-		SUM(jumlah_beli) AS subtotal,
-			SUM(
-			(harga_satuan * jumlah_beli) / (1 + (11/100))
-		) AS dpp,
-		SUM(
-			CASE 
-				WHEN DATE(lastmodified) < '2022-04-01' THEN 
-					((harga_satuan * jumlah_beli) / (1 + (11/100))) * 0.1
-				ELSE 
-					((harga_satuan * jumlah_beli) / (1 + (11/100))) * 0.11
-			END
-		) AS ppn
-	FROM 
-		olnsodetail det
-	LEFT JOIN 
-		olnso ON det.id_trans = olnso.id_trans
-	WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 2)";
+		$sql_detail = "SELECT
+				SUBSTRING( namabrg, 1, LENGTH( namabrg ) - 2 ) AS namabarang,
+				SUM( CASE WHEN size = '31' THEN jumlah_beli ELSE 0 END ) AS s31,
+				SUM( CASE WHEN size = '32' THEN jumlah_beli ELSE 0 END ) AS s32,
+				SUM( CASE WHEN size = '33' THEN jumlah_beli ELSE 0 END ) AS s33,
+				SUM( CASE WHEN size = '34' THEN jumlah_beli ELSE 0 END ) AS s34,
+				SUM( CASE WHEN size = '35' THEN jumlah_beli ELSE 0 END ) AS s35,
+				SUM( CASE WHEN size = '36' THEN jumlah_beli ELSE 0 END ) AS s36,
+				SUM( CASE WHEN size = '37' THEN jumlah_beli ELSE 0 END ) AS s37,
+				SUM( CASE WHEN size = '38' THEN jumlah_beli ELSE 0 END ) AS s38,
+				SUM( CASE WHEN size = '39' THEN jumlah_beli ELSE 0 END ) AS s39,
+				SUM( CASE WHEN size = '40' THEN jumlah_beli ELSE 0 END ) AS s40,
+				SUM( CASE WHEN size = '41' THEN jumlah_beli ELSE 0 END ) AS s41,
+				SUM( CASE WHEN size = '42' THEN jumlah_beli ELSE 0 END ) AS s42,
+				SUM( CASE WHEN size = '43' THEN jumlah_beli ELSE 0 END ) AS s43,
+				SUM( CASE WHEN size = '44' THEN jumlah_beli ELSE 0 END ) AS s44,
+				SUM( CASE WHEN size = '45' THEN jumlah_beli ELSE 0 END ) AS s45,
+				SUM( CASE WHEN size = '46' THEN jumlah_beli ELSE 0 END ) AS s46,
+				SUM( CASE WHEN size = 'S' THEN jumlah_beli ELSE 0 END ) AS sS,
+				SUM( CASE WHEN size = 'M' THEN jumlah_beli ELSE 0 END ) AS sM,
+				SUM( CASE WHEN size = 'L' THEN jumlah_beli ELSE 0 END ) AS sL,
+				SUM( CASE WHEN size = 'XL' THEN jumlah_beli ELSE 0 END ) AS sXL,
+				SUM( CASE WHEN size = 'XXL' THEN jumlah_beli ELSE 0 END ) AS sXXL,
+				SUM( jumlah_beli ) AS subtotal,
+				harga_satuan * ( 1-0.11 ) AS dpp,
+				SUM(
+				IF
+					(
+						olnso.discount = 0 
+						OR olnso.discount IS NULL,
+						(harga_satuan * jumlah_beli ),(harga_satuan * jumlah_beli ) * ( 1-olnso.discount )
+					)
+					) AS dpp_total_disc,
+						SUM(
+						harga_satuan * (0.11) * jumlah_beli
+						) AS ppn 
+						FROM
+							olnsodetail det
+							LEFT JOIN olnso ON det.id_trans = olnso.id_trans 
+						WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 2)";
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
 		$sqdet = mysql_query($sql_detail);
@@ -253,10 +254,11 @@
 				echo"<td class='style_detail'><div align='right'>".$rs3['subtotal']."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".number_format(($rs3['subtotal']/$rs_title['grandtotalqty'])*100,2)."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".number_format($rs3['dpp'])."</div></td>";
+				echo"<td class='style_detail'><div align='center'>".number_format($rs3['dpp_total_disc'])."</div></td>";
 				echo"<td class='style_detail'><div align='center'>".number_format($rs3['ppn'])."</div></td></tr>";
 
 				$grand_qty += $rs3['subtotal'];
-				$grand_dpp += $rs3['dpp'];
+				$grand_dpp += $rs3['dpp_total_disc'];
 				$grand_ppn += $rs3['ppn'];
 			}else{
 				// $sqdet2 = mysql_query($sql2);
@@ -296,9 +298,6 @@
 			}
 		
 		}
-		
-		
-	
 	?>
     <!-- </tr>   -->
 	<?php
