@@ -107,7 +107,7 @@
 	$rs_title = mysql_fetch_array($data_title); 
 	$grand_dpp = 0;
 	$grand_ppn = 0;
-	
+	$grand_qty = 0;
 ?>
 
 
@@ -199,7 +199,7 @@
 				SUM( CASE WHEN size = '45' THEN jumlah_beli ELSE 0 END ) AS s45,
 				SUM( CASE WHEN size = '46' THEN jumlah_beli ELSE 0 END ) AS s46,
 				SUM( CASE WHEN size = 'S' THEN jumlah_beli ELSE 0 END ) AS sS,
-				SUM( CASE WHEN size = 'M' THEN jumlah_beli ELSE 0 END ) AS sM,
+				SUM( CASE WHEN size = 'M' OR namabrg LIKE '%hi protect%' THEN jumlah_beli ELSE 0 END ) AS sM,
 				SUM( CASE WHEN size = 'L' THEN jumlah_beli ELSE 0 END ) AS sL,
 				SUM( CASE WHEN size = 'XL' THEN jumlah_beli ELSE 0 END ) AS sXL,
 				SUM( CASE WHEN size = 'XXL' THEN jumlah_beli ELSE 0 END ) AS sXXL,
@@ -223,6 +223,7 @@
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
 		$sqdet = mysql_query($sql_detail);
+
 
 		while($rs3=mysql_fetch_array($sqdet))
 		{ 
@@ -306,7 +307,7 @@
     <tr>
     	<td class="style9" colspan="23"><div align="right">Total</div></td>
 		<td class="style9" colspan="4"><div align="right">
-          <?= $rs_title['grandtotalqty'];?>
+          <?= $grand_qty?>
 		  &nbsp;pcs
     	</div>
 		</td>
