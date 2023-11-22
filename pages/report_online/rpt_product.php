@@ -182,7 +182,7 @@
     <?php
 		$sql_detail = "SELECT
 				TRIM(TRAILING SUBSTRING_INDEX(a.trim_namabarang,' ',-1) FROM a.trim_namabarang) as namabarang,
-				a.*,
+				a.*
 				FROM (
 				SELECT
 				TRIM( namabrg) AS trim_namabarang,
@@ -223,7 +223,7 @@
 						FROM
 							olnsodetail det
 							LEFT JOIN olnso ON det.id_trans = olnso.id_trans 
-						WHERE ".$where_detail." GROUP BY TRIM( namabrg ) AS namabarang ) a GROUP BY TRIM( TRAILING SUBSTRING_INDEX( a.trim_namabarang, ' ',- 1 ) FROM a.trim_namabarang)";
+						WHERE ".$where_detail." GROUP BY TRIM( namabrg ) ) a GROUP BY TRIM( TRAILING SUBSTRING_INDEX( a.trim_namabarang, ' ',- 1 ) FROM a.trim_namabarang)";
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
 		$sqdet = mysql_query($sql_detail);
