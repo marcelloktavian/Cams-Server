@@ -107,7 +107,7 @@
 	$rs_title = mysql_fetch_array($data_title); 
 	$grand_dpp = 0;
 	$grand_ppn = 0;
-	$grand_qty = 0;
+	
 ?>
 
 
@@ -181,7 +181,10 @@
     <!-- <tr> -->
     <?php
 		$sql_detail = "SELECT
-				SUBSTRING( namabrg, 1, LENGTH( namabrg ) - 2 ) AS namabarang,
+				TRIM(TRAILING SUBSTRING_INDEX(a.trim_namabarang,' ',-1) FROM a.trim_namabarang) as namabarang,
+				a.*,
+				FROM (
+				TRIM( namabrg) AS trim_namabarang,
 				SUM( CASE WHEN size = '31' THEN jumlah_beli ELSE 0 END ) AS s31,
 				SUM( CASE WHEN size = '32' THEN jumlah_beli ELSE 0 END ) AS s32,
 				SUM( CASE WHEN size = '33' THEN jumlah_beli ELSE 0 END ) AS s33,
@@ -198,7 +201,7 @@
 				SUM( CASE WHEN size = '44' THEN jumlah_beli ELSE 0 END ) AS s44,
 				SUM( CASE WHEN size = '45' THEN jumlah_beli ELSE 0 END ) AS s45,
 				SUM( CASE WHEN size = '46' THEN jumlah_beli ELSE 0 END ) AS s46,
-				SUM( CASE WHEN size = 'S' THEN jumlah_beli ELSE 0 END ) AS sS,
+				SUM( CASE WHEN size = 'S'  THEN jumlah_beli ELSE 0 END ) AS sS,
 				SUM( CASE WHEN size = 'M' OR namabrg LIKE '%hi protect%' THEN jumlah_beli ELSE 0 END ) AS sM,
 				SUM( CASE WHEN size = 'L' THEN jumlah_beli ELSE 0 END ) AS sL,
 				SUM( CASE WHEN size = 'XL' THEN jumlah_beli ELSE 0 END ) AS sXL,
@@ -219,11 +222,12 @@
 						FROM
 							olnsodetail det
 							LEFT JOIN olnso ON det.id_trans = olnso.id_trans 
-						WHERE ".$where_detail." GROUP BY SUBSTRING(det.namabrg, 1, LENGTH(det.namabrg) - 2)";
+						WHERE ".$where_detail." GROUP BY TRIM( namabrg) AS namabarang ) a GROUP BY TRIM(TRAILING SUBSTRING_INDEX(a.trim_namabarang,' ',-1) FROM a.trim_namabarang)";
 		$sql2= "SELECT IFNULL(SUM(IF((det.size) = '', det.jumlah_beli, 0)),0) as subtotal FROM olnso m LEFT JOIN olnsodetail det ON det.id_trans=m.id_trans WHERE det.namabrg LIKE '".addslashes($rs2['nama'])."%' ".$where_detail;
 
 		$sqdet = mysql_query($sql_detail);
 
+		// echo $sql_detail;
 
 		while($rs3=mysql_fetch_array($sqdet))
 		{ 
@@ -307,7 +311,7 @@
     <tr>
     	<td class="style9" colspan="23"><div align="right">Total</div></td>
 		<td class="style9" colspan="4"><div align="right">
-          <?= $grand_qty?>
+          <?= $rs_title['grandtotalqty'];?>
 		  &nbsp;pcs
     	</div>
 		</td>
