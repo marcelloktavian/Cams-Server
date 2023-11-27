@@ -1,0 +1,24 @@
+run server
+        1.install dependecy
+            npm install
+        2.jalankan server
+            pm2
+                npm run serve
+            manual(tanpa pm2)
+                npm start
+
+        3.start dev server 
+            npm run dev
+
+cron setting
+
+
+ # ┌────────────── second (optional) (0-59)
+ # │ ┌──────────── minute (0-59)
+ # │ │ ┌────────── hour (0-23)
+ # │ │ │ ┌──────── day of month (1-31)
+ # │ │ │ │ ┌────── month (1-12 (or names))
+ # │ │ │ │ │ ┌──── day of week ( 0-7 (or names, 0 or 7 are sunday) )
+ # │ │ │ │ │ │
+ # │ │ │ │ │ │
+ # * * * * * *
