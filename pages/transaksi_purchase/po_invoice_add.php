@@ -6,6 +6,7 @@
   tanggal{
     color: maroon; margin-left: 40px;
   }
+
 </style>
 
 <head>
@@ -20,7 +21,7 @@
 </head>
 
 <body>
-  <form id="invoice_add" name="invoice_add" action="" method="post">
+  <form id="invoice_add" name="invoice_add" action="" method="post" enctype="multipart/form-data" >
     <table width="100%">
       <tr>
         <td class="fontjudul">ADD PURCHASE INVOICE</td>
@@ -71,12 +72,23 @@
       </thead>
     </table>
 
-    <table>
+    <table> 
       <tr>
         <td colspan="100%" class="fonttext">Keterangan</td>
         <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" style="height: 80px; width: 640px;"></textarea></td>
       </tr>
-    </table>
+      <tr>
+        </table>
+        <table>
+          <td colspan="100%" class="fonttext">Attachment</td>
+            <td colspan="100%" style="display: flex; flex-direction: column-reverse; align-items: center;">
+              <input type="file" accept="image/png, image/jpg, image/jpeg, application/pdf" name="attachment" id="attach" style="display: none;"/>
+              <div id="display" style="padding: 10px 40px; background-color: white; margin-left: 20px; cursor: pointer;">
+                <p>Pilih File</p>
+              </div>
+            </td>
+          </tr>
+          </table>
   </form>
 
   <table>
@@ -95,7 +107,6 @@
 </body>
 
 <script>
-
   var sup_q   = "";
   $(document).ready(function(){
     $("#supplier").autocomplete("posupplier_list.php", {width: 400});
@@ -113,7 +124,34 @@
       baris1 = 1;
       addNewRow1();
     });
+
+    $("#attach").change(function() {
+    const file = this.files[0];
+    const size = ((file.size/1024)/1024).toFixed(4);
+      if (file && size <= 5) {
+        let reader = new FileReader();
+
+        reader.onload = function(event) {
+          if (file.type.startsWith("image/")) {
+            $('#display').html("<img src='" + event.target.result + "' alt='Preview'>");
+          } else {
+            $("#display").html("<p>File: " + file.name + "</p>");
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }else {
+        alert("Ukuran File terlalu besar")
+        $('#attach').val(null);
+      }
+    });
+
+    $("#display").click(function() {
+      $("#attach").click()
+    })
+
   });
+
 
   // general function ------------------------
 
@@ -202,6 +240,7 @@
     var tanggal_jatuh_tempo = $('#invoice_add').find('input[name="tanggal_jatuh_tempo"]').val();
     var catatan             = $('#invoice_add').find('input[name="catatan"]').val();
     var total_qty           = $('#total_qty_inv').val();
+    var file                = $("#attach").val()
 
     if(nomor_invoice == ''){
       pesan = 'Nomor Invoice tidak boleh kosong\n';
@@ -217,6 +256,10 @@
     }
     else if(parseInt(total_qty) < 1){
       pesan = 'Total tidak bisa nol\n';
+    } 
+    // ubah jika mau menambahkan validasi input file 
+    else if(file == ""){
+      pesan = "Harap Tambahkan File Bukti"
     }
 
     if(pesan != ''){

@@ -3,6 +3,7 @@ include "../../include/koneksi.php";
 
 // general variable -------------------------
 $row      = $_GET['row'];
+$target_dir = "asset/";
 
 // master data processing -------------------
 
@@ -10,12 +11,25 @@ $nomor_invoice        = $_POST['nomor_invoice'];
 $tanggal_invoice      = $_POST['tanggal_invoice'];
 $tanggal_jatuh_tempo  = $_POST['tanggal_jatuh_tempo'];
 $keterangan           = $_POST['keterangan'];
-$id_supplier             = explode(':', $_POST['supplier'])[0];
+$id_supplier          = explode(':', $_POST['supplier'])[0];
 $supplier             = explode(':', $_POST['supplier'])[1];
 $qty                  = $_POST['total_qty_inv'];
 $total                = $_POST['total_inv_value'];
 
-$sql_master           = "INSERT INTO `mst_invoice` (`nomor_invoice`,`tanggal_invoice`,`tanggal_jatuh_tempo`,`keterangan`,`id_supplier`,`supplier`,`qty`,`total`,`total_remaining`) VALUES ('$nomor_invoice','$tanggal_invoice','$tanggal_jatuh_tempo','$keterangan','$id_supplier','$supplier','$qty','$total',$total)";
+// get attachment directory
+if ($_FILES != null) {
+  $old_name = $_FILES['attachment']['name'];
+  $ext = pathinfo($old_name,PATHINFO_EXTENSION);
+  $new_name = 'att'.date("Ymdhis").'.'.$ext;
+  $target_file = $target_dir . $new_name;
+
+  $attach = $new_name;
+  move_uploaded_file($_FILES['attachment']['tmp_name'],$target_file);
+}else {
+  $attach = "";
+}
+
+$sql_master           = "INSERT INTO `mst_invoice` (`nomor_invoice`,`tanggal_invoice`,`tanggal_jatuh_tempo`,`keterangan`,`id_supplier`,`supplier`,`qty`,`total`,`total_remaining`,`attachment`) VALUES ('$nomor_invoice','$tanggal_invoice','$tanggal_jatuh_tempo','$keterangan','$id_supplier','$supplier','$qty','$total',$total,'$attach')";
 
 $query                = mysql_query($sql_master);
 

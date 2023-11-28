@@ -57,7 +57,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   $i = 0;
   foreach($data1 as $line){
-    $delete = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa='.($line['total_aset']-$line['total_penyusutan']).'&aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:void(0);">Cancel</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Cancel</a>';
+    $delete = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa='.($line['total_aset']-$line['total_penyusutan']).'&aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:void(0);">Likuidasi</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Likuidasi</a>';
 
     $hapus = $allow_delete ? '<a onclick="javascript:popup_form(\''.BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=passhapus&nama_aset='.$line['nama_aset'].'\',\'table_penyusutan\')" href="javascript:;">Hapus</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Hapus</a>';
 
@@ -97,12 +97,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   foreach($data1 as $line){
     $responce->rows[$i]['id']   = $line['no_jurnal'];
     $responce->rows[$i]['cell'] = array(
+      $i + 1,
       $line['no_jurnal'],
       $line['tgl'],
       $line['keterangan'],
       number_format($line['total_debet']),
     );
-    $i++;
   }
   if(!isset($responce)){
     $responce = [];
@@ -158,21 +158,11 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $insertAkunAkumulasi->execute();
 
     // 2. INSERT JURNAL PEMBELIAN
-    $nomorJurnalPembelian = '';
-    $query = mysql_query("SELECT DISTINCT CONCAT(CAST(no_jurnal AS UNSIGNED) + 1) AS nomor FROM jurnal WHERE tgl = '".$tanggalPembelian."' ORDER BY no_jurnal DESC LIMIT 1");
 
-    if(mysql_num_rows($query) > 0){
-    }else{
-      $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR('".$tanggalPembelian."'),3), IF(LENGTH(MONTH('".$tanggalPembelian."'))=1, CONCAT('0',MONTH('".$tanggalPembelian."')),MONTH('".$tanggalPembelian."')), IF(LENGTH(DAY('".$tanggalPembelian."'))=1, CONCAT('0',DAY('".$tanggalPembelian."')),DAY('".$tanggalPembelian."')), '00001') as nomor ");
-    }
-
-    $q = mysql_fetch_array($query);
-    $nomorJurnalPembelian=$q['nomor'];
-
-    $jurnalMasterPembelian = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalPembelian', '".$tanggalPembelian."', '".$keterangan."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '0', '".$id_user."', NOW(), 'PEMBELIAN ASET') ");
+    $jurnalMasterPembelian = $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('".$tanggalPembelian."', '".$keterangan."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '".((int)$nilaiPembelian+(int)$nilaiPPN)."', '0', '".$id_user."', NOW(), 'PEMBELIAN ASET') ");
     $jurnalMasterPembelian->execute();
 
-    $jurnalMasterPembelianID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPembelian' AND `keterangan`='".$keterangan."' AND user='".$id_user."' LIMIT 1"));
+    $jurnalMasterPembelianID=mysql_fetch_array(mysql_query("SELECT id FROM `cron_jurnal` WHERE `total_kredit`='".((int)$nilaiPembelian+(int)$nilaiPPN)."' AND `keterangan`='".$keterangan."' AND user='".$id_user."' LIMIT 1"));
     $idparent=$jurnalMasterPembelianID['id'];
 
     $ambilAkunAset=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE nama = '".$akunAset['nama']." - ".$namaAset."'"));
@@ -196,10 +186,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $namaakunPembelian   = $ambilAkunAkumulasi['nama'];
     }
 
-    $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakunPembelian','$noakunPembelian','$namaakunPembelian','Detail','0','".((int)$nilaiPembelian+(int)$nilaiPPN)."','','0', '$id_user',NOW())";
+    $sql_detail="INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakunPembelian','$noakunPembelian', '$namaakunPembelian','Detail','0','".((int)$nilaiPembelian+(int)$nilaiPPN)."','','0', '$id_user','PENDING',NOW())";
     mysql_query($sql_detail) or die (mysql_error());
 
-    $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Detail','".$nilaiPembelian."','0','','0', '$id_user',NOW())";
+    $sql_detail="INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Detail','".$nilaiPembelian."','0','','0', '$id_user','PENDING',NOW())";
     mysql_query($sql_detail) or die (mysql_error());
 
     if($nilaiPPN != '0' AND $nilaiPPN != ""){
@@ -208,7 +198,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $noakun=$ambilAkunAset['noakun'];
       $namaakun=$ambilAkunAset['nama'];
 
-      $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Parent','".$nilaiPPN."','0','','0', '$id_user',NOW())";
+      $sql_detail="INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Parent','".$nilaiPPN."','0','','0', '$id_user','PENDING',NOW())";
       mysql_query($sql_detail) or die (mysql_error());
     }
 
@@ -224,7 +214,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $akumulasiYear = date('Y', strtotime($tanggalPembelian));
 
     $nilaiTotal = ((int)$nilaiPembelian);
-    $satuanPenyusutan = (float) str_replace(',', '', number_format($nilaiPembelian / $durasiPenyusutan, 2));
+    $satuanPenyusutan = round((float) str_replace(',', '', number_format($nilaiPembelian / $durasiPenyusutan, 2)));
 
     $lastDateOfMonth = "";
 
@@ -239,24 +229,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
       // 3.5 INSERT JURNAL PENYUSUTAN
 
-      $nomorJurnalPenyusutan = '';
-      $queryNomorJurnalPenyusutan = mysql_query("SELECT DISTINCT CONCAT(CAST(no_jurnal AS UNSIGNED) + 1) AS nomor FROM jurnal WHERE tgl = '".$lastDateOfMonth."' ORDER BY no_jurnal DESC LIMIT 1");
-    
-      if(mysql_num_rows($queryNomorJurnalPenyusutan) == '1'){
-      }else{
-        $queryNomorJurnalPenyusutan = mysql_query("SELECT CONCAT(SUBSTR(YEAR('".$lastDateOfMonth."'),3), IF(LENGTH(MONTH('".$lastDateOfMonth."'))=1, CONCAT('0',MONTH('".$lastDateOfMonth."')),MONTH('".$lastDateOfMonth."')), IF(LENGTH(DAY('".$lastDateOfMonth."'))=1, CONCAT('0',DAY('".$lastDateOfMonth."')),DAY('".$lastDateOfMonth."')), '00001') as nomor ");
-      }
-    
-      $q = mysql_fetch_array($queryNomorJurnalPenyusutan);
-      $nomorJurnalPenyusutan=$q['nomor'];
-
-      $jurnalMasterPenyusutan = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalPenyusutan', '$lastDateOfMonth', 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan', '".$satuanPenyusutan."', '".$satuanPenyusutan."', '0', '".$id_user."', NOW(), 'PENYUSUTAN ASET') ");
+      $jurnalMasterPenyusutan = $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$lastDateOfMonth', 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan', '".$satuanPenyusutan."', '".$satuanPenyusutan."', '0', '".$id_user."', NOW(), 'PENYUSUTAN ASET') ");
       $jurnalMasterPenyusutan->execute();
 
-      $jurnalMasterPenyusutanID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalPenyusutan' AND keterangan = 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan' AND user = '".$id_user."' LIMIT 1"));
+      $jurnalMasterPenyusutanID=mysql_fetch_array(mysql_query("SELECT id FROM `cron_jurnal` WHERE `total_debet`='$satuanPenyusutan' AND keterangan = 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan' AND user = '".$id_user."' LIMIT 1"));
       $idparentPenyusutan=$jurnalMasterPenyusutanID['id'];
 
-      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunBebanPenyusutan','$noakunBebanPenyusutan','$namaakunBebanPenyusutan','Parent','".$satuanPenyusutan."','0','','0', '$id_user',NOW())");
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunBebanPenyusutan','$noakunBebanPenyusutan','$namaakunBebanPenyusutan','Parent','".$satuanPenyusutan."','0','','0', '$id_user','PENDING',NOW())");
       $jurnalDetailPenyusutan->execute();
 
       $ambilAkunAkumulasi=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE noakun=CONCAT('01.10.',LPAD('$akunAkumulasiNomor', 5 ,'0'))"));
@@ -264,7 +243,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $noakunAkumulasi=$ambilAkunAkumulasi['noakun'];
       $namaakunAkumulasi=$ambilAkunAkumulasi['nama'];
 
-      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','0','".$satuanPenyusutan."','','0', '$id_user',NOW())");
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','0','".$satuanPenyusutan."','','0', '$id_user','PENDING',NOW())");
       $jurnalDetailPenyusutan->execute();
 
       if ($startingMonth == 12) {
@@ -286,29 +265,19 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $loopingAkumulasi = $akumulasiYear+$durasiPenyusutan/12;
 
     for ($i = $akumulasiYear; $i <= $loopingAkumulasi; $i++) {
-      $nomorJurnalAkumulasi = '';
-      $query = mysql_query("SELECT DISTINCT CONCAT(CAST(no_jurnal AS UNSIGNED) + 1) AS nomor FROM jurnal WHERE tgl = '".$i."-12-31' ORDER BY no_jurnal DESC LIMIT 1");
 
-      if(mysql_num_rows($query) > 0){
-      }else{
-        $query = mysql_query("SELECT CONCAT(SUBSTR(YEAR('".$i."-12-31'),3), IF(LENGTH(MONTH('".$i."-12-31'))=1, CONCAT('0',MONTH('".$i."-12-31')),MONTH('".$i."-12-31')), IF(LENGTH(DAY('".$i."-12-31'))=1, CONCAT('0',DAY('".$i."-12-31')),DAY('".$i."-12-31')), '00001') as nomor ");
-      }
-
-      $q = mysql_fetch_array($query);
-      $nomorJurnalAkumulasi=$q['nomor'];
-
-      $getSumAkumulasi = mysql_query("SELECT SUM(total_debet) AS total_akumulasi FROM jurnal WHERE keterangan LIKE 'Penyusutan ".$namaAset." ke%' AND tgl BETWEEN '".$i."-01-01' AND '".$i."-12-31' AND deleted=0");
+      $getSumAkumulasi = mysql_query("SELECT SUM(total_debet) AS total_akumulasi FROM cron_jurnal WHERE keterangan LIKE 'Penyusutan ".$namaAset." ke%' AND tgl BETWEEN '".$i."-01-01' AND '".$i."-12-31' AND deleted=0");
 
       $sumAkumulasi = mysql_fetch_array($getSumAkumulasi);
       $sumAkumulasiValue=$sumAkumulasi['total_akumulasi'];
 
-      $jurnalMasterAkumulasi = $db->prepare("INSERT INTO `jurnal` (`no_jurnal`, `tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$nomorJurnalAkumulasi', '".$i."-12-31', 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."', '".$sumAkumulasiValue."', '".$sumAkumulasiValue."', '0', '".$id_user."', NOW(), 'AKUMULASI PENYUSUTAN') ");
+      $jurnalMasterAkumulasi = $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('".$i."-12-31', 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."', '".$sumAkumulasiValue."', '".$sumAkumulasiValue."', '0', '".$id_user."', NOW(), 'AKUMULASI PENYUSUTAN') ");
       $jurnalMasterAkumulasi->execute();
 
-      $jurnalMasterAkumulasiID=mysql_fetch_array(mysql_query("SELECT id FROM `jurnal` WHERE `no_jurnal`='$nomorJurnalAkumulasi' AND keterangan = 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."' AND user = '".$id_user."' LIMIT 1"));
+      $jurnalMasterAkumulasiID=mysql_fetch_array(mysql_query("SELECT id FROM `cron_jurnal` WHERE keterangan = 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."' AND user = '".$id_user."' LIMIT 1"));
       $idparent=$jurnalMasterAkumulasiID['id'];
 
-      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','".$sumAkumulasiValue."','0','','0', '$id_user',NOW())");
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','".$sumAkumulasiValue."','0','','0', '$id_user','PENDING',NOW())");
       $jurnalDetailPenyusutan->execute();
 
       $ambilAkunAset=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE nama = '".$akunAset['nama']." - ".$namaAset."'"));
@@ -316,13 +285,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $noakun=$ambilAkunAset['noakun'];
       $namaakun=$ambilAkunAset['nama'];
 
-      $sql_detail="INSERT INTO jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Detail','0','".$sumAkumulasiValue."','','0', '$id_user',NOW())";
+      $sql_detail="INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Detail','0','".$sumAkumulasiValue."','','0', '$id_user','PENDING',NOW())";
       mysql_query($sql_detail) or die (mysql_error());
     }
   }
 
 
-  $stmt = $db->prepare("SELECT * FROM jurnal WHERE id='".$idparent."'");
+  $stmt = $db->prepare("SELECT * FROM cron_jurnal WHERE id='".$idparent."'");
   $stmt->execute();
 
   $affected_rows = $stmt->rowCount();
@@ -368,7 +337,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $q = mysql_fetch_array($query);
   $nomorJurnalCancel=$q['nomor'];
 
-  $queryGetLast = mysql_query("SELECT *, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'ke', -1), 'dari', 1)),0) AS last_month, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'dari', -1), 'Bulan', 1)),0) AS total_month FROM jurnal WHERE keterangan LIKE '%".$namaAset."%' AND MONTH(tgl)=MONTH(CURDATE()) AND `status`='PENYUSUTAN ASET' ORDER BY tgl DESC LIMIT 1");
+  $queryGetLast = mysql_query("SELECT *, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'ke', -1), 'dari', 1)),0) AS last_month, COALESCE(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(keterangan, 'dari', -1), 'Bulan', 1)),0) AS total_month FROM jurnal WHERE keterangan LIKE '%".$namaAset."%' AND MONTH(tgl)=MONTH('".$tanggalPemberhentian."') AND `status`='PENYUSUTAN ASET' ORDER BY tgl DESC LIMIT 1");
 
   $lastPenyusutan = mysql_fetch_array($queryGetLast);
 
@@ -438,12 +407,182 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $r['stat'] = 1; $r['message'] = 'Success';
     $stmt = $db->prepare("UPDATE `jurnal` SET `deleted`=1 WHERE keterangan LIKE '%".$_POST['nama_aset']."%'");
     $stmt->execute();
+    $stmt = $db->prepare("DELETE FROM `det_coa` WHERE keterangan LIKE '%".$_POST['nama_aset']."%'");
+    $stmt->execute();
   }
   else {
     $r['stat'] = 0; $r['message'] = 'Failed';
   }
   echo json_encode($r);
   exit;
+} else if(isset($_GET['action']) && strtolower($_GET['action'] == 'tambah_penyusutan')) {
+
+  $uniqueAset = date('ymd', strtotime($_POST['tanggal-pembelian-aset'])).date('His');
+  $id_user = $_SESSION['user']['username'];
+  $nama_aset = '';
+
+  // check data apakah dari invoice atau manual
+  if (preg_match('/.+ - .+ : .+/', $_POST['nama-aset'])) {
+    $namaAset = explode(" - ",explode(" : ",$_POST['nama-aset'])[0])[1] . " / " .$uniqueAset;
+  } else {
+    $namaAset = $_POST['nama-aset'].' / '.$uniqueAset;
+  }
+
+  $tanggalPembelian = $_POST['tanggal-pembelian-aset'];
+  $durasiPenyusutan = $_POST['durasi-penyusutan'];
+  $nilaiPembelian = $_POST['nilai-pembelian-aset'];
+  $ppnPembelian = $_POST['ppn-pembelian-aset'];
+  $nilaiPPN = $_POST['nilai-ppn-aset'];
+  $keterangan = 'Pembelian Aset yang disusutkan '.$namaAset.' durasi penyusutan '.$durasiPenyusutan.' Bulan. Keterangan Manual :'.$_POST['keterangan-penyusutan'];
+
+  if ((int)$nilaiPembelian > 0) {
+    
+    // get nomor akun dan master data aset
+
+    $qAset = mysql_query(
+      "SELECT CONCAT(SUBSTRING(dc.noakun, 1, 6), LPAD(CAST(SUBSTRING_INDEX(dc.noakun, '.', -1) AS UNSIGNED) + 1, 5, '0')) AS dc_acc,
+      mc.id, 
+      mc.noakun, 
+      mc.nama
+      FROM det_coa dc
+      JOIN mst_coa mc ON dc.id_parent = mc.id
+      WHERE dc.noakun LIKE '01.02.%' ORDER BY dc.noakun DESC LIMIT 1"
+    ); 
+    $aset = mysql_fetch_array($qAset);
+    
+    // insert akun aset akumulasi
+      $namaakun = $aset['nama'].' - '.$namaAset;
+      $idakun = $aset['id'];
+      $akun = $aset['dc_acc'];
+      $user = $_SESSION['user']['username'];
+
+    $insertAkun = $db->prepare("INSERT INTO det_coa VALUES(NULL,?,?,?,?,NOW())");
+    $insertAkun->execute([$idakun,$akun,$namaakun,$user]);
+
+    $akumulasi = mysql_fetch_array(
+      mysql_query(
+        "SELECT CONCAT(SUBSTRING(dc.noakun,1,6),LPAD(CAST(SUBSTRING_INDEX(dc.noakun,'.',-1) as UNSIGNED) + 1,5,'0')) as dc_acc,mc.id, mc.noakun, mc.nama 
+            FROM det_coa dc 
+            JOIN mst_coa mc ON dc.id_parent = mc.id 
+          WHERE dc.noakun like '01.10.%' ORDER BY dc.noakun DESC LIMIT 1;"
+        )
+    );
+
+
+      $namaakun = $akumulasi['nama'].' - '.$namaAset;
+      $idakun = $akumulasi['id'];
+      $akunAkumulasiNomor = $akumulasi['dc_acc'];
+      $user = $_SESSION['user']['username'];
+
+    $insertAkunAkumulasi = $db->prepare("INSERT INTO det_coa VALUES(NULL, ?, ?, ?, ?, NOW())");
+    $insertAkunAkumulasi->execute([$idakun,$akunAkumulasiNomor,$namaakun,$user]);
+
+    // prepare data 
+
+    $ambilAkunBebanPenyusutan=mysql_fetch_array( mysql_query("SELECT * FROM mst_coa WHERE noakun='06.19.00000'"));
+    $idakunBebanPenyusutan=$ambilAkunBebanPenyusutan['id'];
+    $noakunBebanPenyusutan=$ambilAkunBebanPenyusutan['noakun'];
+    $namaakunBebanPenyusutan=$ambilAkunBebanPenyusutan['nama'];
+
+    $startingMonth = date('n', strtotime($tanggalPembelian));
+    $startingYear = date('Y', strtotime($tanggalPembelian));
+    $akumulasiYear = date('Y', strtotime($tanggalPembelian));
+
+    $nilaiTotal = ((int)$nilaiPembelian);
+    $satuanPenyusutan = round((float) str_replace(',', '', number_format($nilaiPembelian / $durasiPenyusutan, 2)));
+
+    $lastDateOfMonth = "";
+
+    // insert data penyusutan sebanyak n
+    for ($i = 0; $i < $durasiPenyusutan; $i++) {
+      $lastDateOfMonth = date('Y-m-t', strtotime($startingYear."-".$startingMonth."-01"));
+
+      if($i+1 == $durasiPenyusutan){
+        $satuanPenyusutan = $nilaiTotal;
+      } else {
+        $nilaiTotal -= $satuanPenyusutan ;
+      }
+
+      $jurnalMasterPenyusutan = $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('$lastDateOfMonth', 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan', '".$satuanPenyusutan."', '".$satuanPenyusutan."', '0', '".$id_user."', NOW(), 'PENYUSUTAN ASET') ");
+      $jurnalMasterPenyusutan->execute();
+
+      $jurnalMasterPenyusutanID=mysql_fetch_array(mysql_query("SELECT id FROM `cron_jurnal` WHERE keterangan = 'Penyusutan ".$namaAset." ke ".($i+1)." dari ".($durasiPenyusutan)." Bulan' AND user = '".$id_user."' LIMIT 1"));
+      $idparentPenyusutan=$jurnalMasterPenyusutanID['id'];
+
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunBebanPenyusutan','$noakunBebanPenyusutan','$namaakunBebanPenyusutan','Parent','".$satuanPenyusutan."','0','','0', '$id_user','PENDING',NOW())");
+      $jurnalDetailPenyusutan->execute();
+
+      $ambilAkunAkumulasi=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE noakun=CONCAT('01.10.',LPAD('$akunAkumulasiNomor', 5 ,'0'))"));
+      $idakunAkumulasi=$ambilAkunAkumulasi['id'];
+      $noakunAkumulasi=$ambilAkunAkumulasi['noakun'];
+      $namaakunAkumulasi=$ambilAkunAkumulasi['nama'];
+
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparentPenyusutan','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','0','".$satuanPenyusutan."','','0', '$id_user','PENDING',NOW())");
+      $jurnalDetailPenyusutan->execute();
+
+      if ($startingMonth == 12) {
+        $startingMonth = 1;
+        $startingYear ++;
+      } else {
+        $startingMonth++;
+      }
+    }
+
+    //  insert jurnal akumulasi tiap tahun
+
+    $ambilAkunAkumulasi=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE noakun='$akunAkumulasiNomor'"));
+      $idakunAkumulasi=$ambilAkunAkumulasi['id'];
+      $noakunAkumulasi=$ambilAkunAkumulasi['noakun'];
+      $namaakunAkumulasi=$ambilAkunAkumulasi['nama'];
+
+      $loopingAkumulasi = $akumulasiYear+$durasiPenyusutan/12;
+
+    for ($i = $akumulasiYear; $i <= $loopingAkumulasi; $i++) {
+      $getSumAkumulasi = mysql_query("SELECT SUM(total_debet) AS total_akumulasi FROM cron_jurnal WHERE keterangan LIKE 'Penyusutan ".$namaAset." ke%' AND tgl BETWEEN '".$i."-01-01' AND '".$i."-12-31' AND deleted=0");
+
+      $sumAkumulasi = mysql_fetch_array($getSumAkumulasi);
+      $sumAkumulasiValue=$sumAkumulasi['total_akumulasi'];
+
+      $jurnalMasterAkumulasi = $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('".$i."-12-31', 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."', '".$sumAkumulasiValue."', '".$sumAkumulasiValue."', '0', '".$id_user."', NOW(), 'AKUMULASI PENYUSUTAN') ");
+      $jurnalMasterAkumulasi->execute();
+
+      $jurnalMasterAkumulasiID=mysql_fetch_array(mysql_query("SELECT id FROM `cron_jurnal` WHERE keterangan = 'Akumulasi Penyusutan Aset ".$namaAset." Tahun ".$i."' AND user = '".$id_user."' LIMIT 1"));
+      $idparent=$jurnalMasterAkumulasiID['id'];
+
+      $jurnalDetailPenyusutan = $db->prepare("INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakunAkumulasi','$noakunAkumulasi','$namaakunAkumulasi','Detail','".$sumAkumulasiValue."','0','','0', '$id_user','PENDING',NOW())");
+      $jurnalDetailPenyusutan->execute();
+
+      $ambilAkunAset=mysql_fetch_array( mysql_query("SELECT * FROM det_coa WHERE nama = '".$aset['nama']." - ".$namaAset."'"));
+      $idakun=$ambilAkunAset['id'];
+      $noakun=$ambilAkunAset['noakun'];
+      $namaakun=$ambilAkunAset['nama'];
+
+      $sql_detail="INSERT INTO cron_jurnal_detail VALUES(NULL,'$idparent','$idakun','$noakun','$namaakun','Detail','0','".$sumAkumulasiValue."','','0', '$id_user','PENDING',NOW())";
+      mysql_query($sql_detail) or die (mysql_error());
+    }
+  }
+
+  if (preg_match('/.+ - .+ : .+/', $_POST['nama-aset'])) {
+    $invoiceId = explode(" - ",$_POST['nama-aset'])[0];
+    $updateInvoice = $db->prepare("UPDATE det_invoice SET data_qty = data_qty +1 WHERE id = ?");
+    $updateInvoice->execute([$invoiceId]);
+  }
+
+
+  $stmt = $db->prepare("SELECT * FROM cron_jurnal WHERE id='".$idparent."'");
+  $stmt->execute();
+
+  $affected_rows = $stmt->rowCount();
+  if($affected_rows > 0){
+    $r['stat'] = 1; $r['message'] = 'Aset berhasil ditambahkan';
+  } else if((int)$nilaiPembelian == 0){
+    $r['stat'] = 0; $r['message'] = 'Aset gagal ditambahkan, Nilai pembelian tidak boleh nol';
+  } else {
+    $r['stat'] = 0; $r['message'] = 'Aset gagal ditambahkan';
+  }
+
+  echo json_encode($r);
+  exit();
 }
 
 ?>
@@ -479,6 +618,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 <div class="btn_box">
   <?php
   if($allow_add){?>
+    <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL?>pages/Transaksi_acc/tambah_penyusutan.php', 'table_penyusutan')">Tambah Penyusutan</button>
     <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL?>pages/Transaksi_acc/penyusutan_form.php', 'table_penyusutan')">Tambah Aset</button>
   <?php } ?>
 </div>
@@ -512,7 +652,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_penyusutan').jqGrid({
       url           : '<?= BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Cancel', 'Hapus'],
+      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Likuidasi', 'Hapus'],
       colModel      : [
         {name: 'nama_aset', index: 'nama_aset', align: 'left', width: 70, searchoptions: {sopt: ['cn']}},
         {name:'tanggal_pembelian_aset', index: 'tanggal_pembelian_aset', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
@@ -532,7 +672,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       viewrecords   : true,
       rownumbers    : true,
       sortorder     : 'desc',
-      caption       : "Penyusutan Aset",
+      caption       : "Aktiva",
       ondblClickRow : function(rowid){
         alert(rowid);
       },
@@ -540,9 +680,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       subGridUrl    : '<?= BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=json_sub'?>',
       subGridModel  : [
         {
-          name  : ['Nomor Jurnal','Tanggal Penyusutan','Keterangan','Nilai Penyusutan'],
-          width : [80,80,300,100],
-          align : ['center','center','left','right'],
+          name  : ['No','Nomor Jurnal','Tanggal Penyusutan','Keterangan','Nilai Penyusutan'],
+          width : [30,80,80,300,100],
+          align : ['center','center','center','left','right'],
         }
       ],
     });

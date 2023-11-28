@@ -107,6 +107,13 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       $delete = '<a onclick="javascript:custom_alert(\'Not Allowed\')">Post</a>';
     }
 
+    
+    if ($line['attachment']) {
+      $attachment = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/transaksi_purchase/asset/'.$line['attachment'].'\')" href="javascript:void(0);" disabled>File</a>';
+    }else {
+      $attachment = '<a onclick="javascript:custom_alert(\'Attachment tidak ditemukan\')" href="javascript:void(0);" disabled>No File</a>';
+    }
+
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(
       $line['id'],
@@ -119,6 +126,7 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
       // number_format($line['total_payment']),
       // number_format($line['total_remaining']),
       $line['keterangan'],
+      $attachment,
       $postInvoice,
       $edit,
       $delete,
@@ -278,7 +286,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
     $('#table_invoice').jqGrid({
       url       : '<?= BASE_URL.'pages/transaksi_purchase/po_approval.php?action=json';?>',
       datatype  : 'json',
-      colNames  : ['ID','Nomor Invoice','Tgl Invoice','Tgl Jatuh Tempo','Supplier','Total Qty','Total Invoice','Keterangan','Post','Edit','Delete'],
+      colNames  : ['ID','Nomor Invoice','Tgl Invoice','Tgl Jatuh Tempo','Supplier','Total Qty','Total Invoice','Keterangan','Attachment','Post','Edit','Delete'],
       colModel  : [
         {name:'id', index: 'id', align: 'right', width:15, searchoptions: {sopt:['cn']}},
         {name:'nomor_invoice', index: 'nomor_invoice', align: 'left', width:40, searchoptions: {sopt:['cn']}},
@@ -290,6 +298,7 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
         // {name:'total_payment', index:'total_payment', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         // {name:'total_remaining', index:'total_remaining', align: 'right', width:40, searchoptions: {sopt: ['cn']}},
         {name:'keterangan', index:'keterangan', align: 'left', searchoptions: {sopt: ['cn']}},
+        {name: 'Attachment', index:'attachment', align:'center', width:30, sortable: false},
         {name: 'Post', index:'post', align:'center', width:30, sortable: false},
         {name: 'Edit', index:'edit', align:'center', width:30, sortable: false},
         {name: 'Print', index:'print', align:'center', width:30, sortable: false},
