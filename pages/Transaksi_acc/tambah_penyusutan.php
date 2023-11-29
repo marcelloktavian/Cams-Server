@@ -40,6 +40,8 @@
     Tambah Penyusutan
   </div>
 
+  
+
   <div class="ui-widget-content ui-corner-bottom">
     <form id="penyusutan_add_from" method="post" action="pages/Transaksi_acc/penyusutan.php?action=tambah_penyusutan" class="ui-helper-clear-fix">
 

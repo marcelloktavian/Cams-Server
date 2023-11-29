@@ -7,6 +7,8 @@ $group_acess    = unserialize(file_get_contents("../../GROUP_ACCESS_CACHE".$_SES
 $allow_add      = is_show_menu(ADD_POLICY, penyusutan, $group_acess);
 $allow_delete   = is_show_menu(DELETE_POLICY, penyusutan, $group_acess);
 
+
+
 if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $page = isset($_GET['page'])?$_GET['page']:1;
   $limit = isset($_GET['rows'])?$_GET['rows']:10;
@@ -29,7 +31,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 
   // TESTING
   $queryIndex = "SELECT *, COALESCE(total_aset-total_penyusutan,0) AS nilai_sisa_aset FROM (
-    SELECT a.tgl AS tanggal_jurnal, SUBSTRING_INDEX(SUBSTRING_INDEX(a.keterangan, ' disusutkan ', -1), ' durasi', 1) AS nama_aset, SUBSTRING_INDEX(SUBSTRING_INDEX(a.keterangan, ' penyusutan ', -1), ' Bulan', 1) AS durasi_penyusutan, b.nama_akun AS nama_akun_aset, b.debet AS total_aset FROM jurnal a LEFT JOIN jurnal_detail b ON a.`id`=b.`id_parent` WHERE a.`status`='PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted=0
+    SELECT a.tgl AS tanggal_jurnal, SUBSTRING_INDEX(SUBSTRING_INDEX(a.keterangan, ' disusutkan ', -1), ' durasi', 1) AS nama_aset, SUBSTRING_INDEX(SUBSTRING_INDEX(a.keterangan, ' penyusutan ', -1), ' Bulan', 1) AS durasi_penyusutan, b.nama_akun AS nama_akun_aset, b.debet AS total_aset FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id`=b.`id_parent` WHERE a.`status`='PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted=0
   ) AS a LEFT JOIN (
     SELECT SUBSTRING_INDEX( SUBSTRING_INDEX(a.keterangan, 'Penyusutan ', - 1), ' ke ', 1 ) AS nama_aset_penyusutan, b.nama_akun, SUM(b.kredit) AS total_penyusutan FROM jurnal a LEFT JOIN jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PENYUSUTAN ASET' AND b.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi - %' AND DATE(tgl) <= CURDATE() AND a.deleted = 0 GROUP BY nama_aset_penyusutan
   ) AS b ON a.nama_aset=b.nama_aset_penyusutan LEFT JOIN (
@@ -84,7 +86,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 } else if(isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub'){
   $aset     = str_replace('_',' ',$_GET['id']);
   
-  $sql_sub = "SELECT * FROM jurnal WHERE tgl <= CURDATE() AND keterangan LIKE '%".$aset."%' AND `status`='PENYUSUTAN ASET' AND deleted=0 ";
+  $sql_sub = "SELECT * FROM cron_jurnal WHERE tgl <= CURDATE() AND keterangan LIKE '%".$aset."%' AND `status`='PENYUSUTAN ASET' AND deleted=0 ";
 
   $query    = $db->query($sql_sub);
   $count    = $query->rowCount();
@@ -594,6 +596,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   <div class="ui-widget-header ui-corner-top padding5">
     Filter Data
   </div>
+
+  <?php
+    echo json_encode($_SESSION);
+  ?>
 
   <div class="ui-widget-content ui-conrer-bottom">
     <form id="filter_ap" method="" action="" class="ui-helper-clearfix">
