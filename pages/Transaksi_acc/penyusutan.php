@@ -597,10 +597,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     Filter Data
   </div>
 
-  <?php
-    echo json_encode($_SESSION);
-  ?>
-
   <div class="ui-widget-content ui-conrer-bottom">
     <form id="filter_ap" method="" action="" class="ui-helper-clearfix">
       <label for="" class="ui-helper-reset label-control">Filter</label>
