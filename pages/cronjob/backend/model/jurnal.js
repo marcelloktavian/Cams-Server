@@ -2,7 +2,7 @@ const {db1,db2} = require("../config/dbs")
 class Jurnal {
     async getData() {
         try {
-            const jurnal = await db1.query("SELECT ifnull(SUM(CASE WHEN c.cron_status = 'DONE' THEN 1 ELSE 0 END),0) AS done,ifnull(SUM(CASE WHEN c.cron_status = 'FAIL' THEN 1 ELSE 0 END),0) AS fail,ifnull(SUM(CASE WHEN c.cron_status = 'PENDING' THEN 1 ELSE 0 END),0) AS pending,ifnull(SUM(CASE WHEN c.deleted = 0 AND c.id IS NOT NULL THEN 1 ELSE 0 END),0) AS total_process,'jurnal' AS name FROM cron_jurnal c WHERE c.deleted = 0;")
+            const jurnal = await db1.query("SELECT ifnull(SUM(CASE WHEN c.cron_status = 'DONE' THEN 1 ELSE 0 END),0) AS done,ifnull(SUM(CASE WHEN c.cron_status = 'FAIL' THEN 1 ELSE 0 END),0) AS fail,ifnull(SUM(CASE WHEN c.cron_status = 'PENDING' THEN 1 ELSE 0 END),0) AS pending,ifnull(SUM(CASE WHEN c.deleted = 0 AND c.id IS NOT NULL THEN 1 ELSE 0 END),0) AS total_process,'penyusutan' AS name FROM cron_jurnal c WHERE c.deleted = 0;")
             return jurnal[0]
         } catch (error) {
             throw error
