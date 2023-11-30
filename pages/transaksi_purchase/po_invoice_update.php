@@ -3,6 +3,7 @@ include "../../include/koneksi.php";
 
 // general variable -------------------------
 $row      = $_GET['row'];
+$target_dir = "asset/";
 
 // master data processing -------------------
 
@@ -16,8 +17,26 @@ $id_supplier          = explode(':', $_POST['supplier'])[0];
 $supplier             = explode(':', $_POST['supplier'])[1];
 $qty                  = $_POST['total_qty_inv'];
 $total                = $_POST['total_inv_value'];
+$old_name             = $_POST['old_attach'];
 
-$sql_update           = "UPDATE `mst_invoice` SET `nomor_invoice`='$nomor_invoice',`tanggal_invoice`='$tanggal_invoice',`tanggal_jatuh_tempo`='$tanggal_jatuh_tempo',`keterangan`='$keterangan',`id_supplier`='$id_supplier',`supplier`='$supplier',`qty`='$qty',`total`='$total',`total_remaining`='$total' WHERE `id`=".$id_invoice."";
+if ($_FILES != null) {
+  $old_name = $_FILES['attachment']['name'];
+  $ext = pathinfo($old_name,PATHINFO_EXTENSION);
+  $new_name = 'att'.date("Ymdhis").'.'.$ext;
+  $target_file = $target_dir . $new_name;
+
+  $attach = $new_name;
+  move_uploaded_file($_FILES['attachment']['tmp_name'],$target_file);
+}else {
+  if ($old_name) {
+    $attach = $old_name;
+  }else {
+    $attach = "";
+  }
+}
+
+
+$sql_update           = "UPDATE `mst_invoice` SET `nomor_invoice`='$nomor_invoice',`tanggal_invoice`='$tanggal_invoice',`tanggal_jatuh_tempo`='$tanggal_jatuh_tempo',`keterangan`='$keterangan',`id_supplier`='$id_supplier',`supplier`='$supplier',`qty`='$qty',`total`='$total',`total_remaining`='$total',`attachment`='$attach' WHERE `id`=".$id_invoice."";
 
 $query                = mysql_query($sql_update);
 

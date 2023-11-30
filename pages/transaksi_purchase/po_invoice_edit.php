@@ -10,6 +10,7 @@
 
 <?php
   include "../../include/koneksi.php";
+  include "../../include/config.php";
 
   $sql_mst        = "SELECT * FROM `mst_invoice` WHERE `id`=".$_GET['id']." AND `deleted`=0";
   $sql            = mysql_query($sql_mst) or die (mysql_error());
@@ -25,7 +26,7 @@
 
     $total                = $result['total'];
     $total_payment        = $result['total_payment'];
-
+    $attach                = $result['attachment'];
 ?>
 
 <head>
@@ -40,7 +41,7 @@
 </head>
 
 <body>
-  <form id="invoice_edit" name="invoice_edit" action="" method="post">
+  <form id="invoice_edit" name="invoice_edit" action="" method="post" enctype="multipart/form-data">
     <table width="100%">
       <tr>
         <td class="fontjudul">EDIT PURCHASE INVOICE <span style="font-weight: bold;"><?= $nomor_invoice ;?></span></td>
@@ -97,6 +98,28 @@
         <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" style="height: 80px; width: 640px;" value="<?= $keterangan ?>"><?= $keterangan ?></textarea></td>
       </tr>
     </table>
+    <table style="margin-top: 20px;">
+      <td colspan="100%" class="fonttext">Attachment</td>
+        <td colspan="100%" style="display: flex; flex-direction: column-reverse; align-items: center;">
+          <input type="file" accept="image/png, image/jpg, image/jpeg, application/pdf" name="attachment" id="attach" style="display: none;"/>
+          <input type="hidden" name="old_attach" id="old_attach" value="<?= $attach ?>">
+          <div id="display" style="padding: 10px 40px; background-color: white; margin: 0px 20px; cursor: pointer;">            
+            <?php
+            if ($attach) {
+              if (explode(".",$attach)[1] != 'pdf') {
+                echo "<img src='".BASE_URL."pages/transaksi_purchase/asset/".$attach."' alt='Preview'>";
+              }else {
+                echo "<p>File: " .$attach. "</p>";
+              }
+            }else {
+              echo '<p>Tambah File</p>';
+            }
+            ?>
+          </div>
+        </td>
+        <td class="fonttext">Max 5mb</td>
+      </tr>
+    </table>
   </form>
 
   <table>
@@ -115,6 +138,35 @@
 </body>
 
 <script>
+
+  $(document).ready(function() {
+    
+    $("#attach").change(function() {
+    const file = this.files[0];
+    const size = ((file.size/1024)/1024).toFixed(4);
+      if (file && size <= 5) {
+        let reader = new FileReader();
+
+        reader.onload = function(event) {
+          if (file.type.startsWith("image/")) {
+            $('#display').html("<img src='" + event.target.result + "' alt='Preview'>");
+          } else {
+            $("#display").html("<p>File: " + file.name + "</p>");
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }else {
+        alert("Ukuran File terlalu besar")
+        $('#attach').val(null);
+      }
+    });
+
+    $("#display").click(function() {
+      $("#attach").click()
+    })
+  })
+
 
   // general function ------------------------
 
@@ -199,6 +251,9 @@
     var tanggal_invoice     = $('#invoice_edit').find('input[name="tanggal_invoice"]').val();
     var tanggal_jatuh_tempo = $('#invoice_edit').find('input[name="tanggal_jatuh_tempo"]').val();
     var total_qty           = $('#total_qty_inv').val();
+    var attachment          = $('#attach').val();
+    var old_attach          = $('#old_attach').val();
+
 
     if(nomor_invoice == ''){
       pesan = 'Nomor Invoice tidak boleh kosong\n';
@@ -214,7 +269,13 @@
     }
     else if(parseInt(total_qty) < 1){
       pesan = 'Total tidak bisa nol\n';
+    } 
+    else if(!attachment && !old_attach) {
+      pesan = 'Harap tambahkan file bukti';
+      console.log(attachment,old_attach);
     }
+    // else if((attachment == "" || attachment === 'undefined') && ( old_attach == null || old_attach == '')  ) {
+    // }
 
     if(pesan != ''){
       alert('Maaf, ada kesalahan pengisian Form : \n'+pesan);
