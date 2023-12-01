@@ -173,7 +173,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
           <tr>
             <td><input type="text" class="required datepicker" id="startdate_arb2b" name="startdate_arb2b" readonly></td>
             <td> s.d <input type="text" class="required datepicker" id="enddate_arb2b" name="enddate_arb2b" readonly></td>
-            <td> Filter <input type="text" id="filtervalue_b2bar" name="filtervalue_b2bar" />(Nomor Return B2B)</td>
+            <td> Filter <input type="text" id="filtervalue_b2bar" name="filtervalue_b2bar" />(Nomor Return B2B,Customer)</td>
           </tr>
         </table>
       </div>
