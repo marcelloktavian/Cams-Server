@@ -26,15 +26,12 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $where .= " AND tgl_ar BETWEEN '$startdate' AND '$enddate' ";
   }
 
-  if($filter != null && $filter != ""){
-    $where .= " AND tgl_ar LIKE '".$filter."' ";
-  }
-
+  
   $sql = "SELECT *, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar FROM b2bar mst ";
-
+  
   $q = $db->query($sql.$where);
   $count = $q->rowCount();
-
+  
   $count > 0 ? $total_pages = ceil($count/$limit) : $total_pages = 0;
 
   if ($page > $total_pages) $page=$total_pages;
@@ -45,6 +42,10 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   $responce['total'] = $total_pages;
   $responce['records'] = $count;
 
+  if($filter != null && $filter != ""){
+    $where .= " AND (ar_num LIKE '%".$filter."%' OR cust.nama LIKE '%".$filter."%') ";
+  }
+  
   $sql = "SELECT mst.*, date_format(tgl_ar, '%d-%m-%Y') AS tanggal_ar, cust.nama as customer FROM b2bar mst LEFT JOIN mst_b2bcustomer cust ON cust.id=mst.b2bcust_id ";
 
   $q = $db->query($sql.$where."
