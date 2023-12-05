@@ -78,17 +78,17 @@
         <td colspan="100%"><textarea type="text" class="inputForm" name="keterangan" id="keterangan" style="height: 80px; width: 640px;"></textarea></td>
       </tr>
       <tr>
-    </table>
-    <table>
-      <td colspan="100%" class="fonttext">Attachment</td>
-        <td colspan="100%" style="display: flex; flex-direction: column-reverse; align-items: center;">
-          <input type="file" accept="image/png, image/jpg, image/jpeg, application/pdf" name="attachment" id="attach" style="display: none;"/>
-          <div id="display" style="padding: 10px 40px; background-color: white; margin-left: 20px; cursor: pointer;">
-            <p>Pilih File</p>
-          </div>
-        </td>
-      </tr>
-    </table>
+        </table>
+        <table>
+          <td colspan="100%" class="fonttext">Attachment</td>
+            <td colspan="100%" style="display: flex; flex-direction: column-reverse; align-items: center;">
+              <input type="file" accept="image/png, image/jpg, image/jpeg, application/pdf" name="attachment" id="attach" style="display: none;"/>
+              <div id="display" style="padding: 10px 40px; background-color: white; margin-left: 20px; cursor: pointer;">
+                <p>Pilih File</p>
+              </div>
+            </td>
+          </tr>
+          </table>
   </form>
 
   <table>
@@ -133,7 +133,7 @@
 
         reader.onload = function(event) {
           if (file.type.startsWith("image/")) {
-            $('#display').html("<img src='" + event.target.result + "' alt='Preview'>");
+            $('#display').html("<img src='" + event.target.result + "' alt='Preview' style='width:500px'>");
           } else {
             $("#display").html("<p>File: " + file.name + "</p>");
           }

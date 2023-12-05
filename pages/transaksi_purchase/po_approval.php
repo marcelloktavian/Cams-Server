@@ -109,10 +109,14 @@ if(isset($_GET['action']) && strtolower($_GET['action'])=='json'){
 
     
     if ($line['attachment']) {
-      $attachment = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/transaksi_purchase/asset/'.$line['attachment'].'\')" href="javascript:void(0);" disabled>File</a>';
+      if (substr($line['attachment'],0,7) == "http://" ) {
+          $attachment = '<a onclick="javascript:window.open(\''.$line['attachment'].'\')" href="javascript:void(0);" disabled>File</a>';
+      }else {
+        $attachment = '<a onclick="javascript:window.open(\''.BASE_URL.'pages/transaksi_purchase/asset/'.$line['attachment'].'\')" href="javascript:void(0);" disabled>File</a>';
+      }
     }else {
       $attachment = '<a onclick="javascript:custom_alert(\'Attachment tidak ditemukan\')" href="javascript:void(0);" disabled>No File</a>';
-    } 
+    }
 
     $responce['rows'][$i]['id']     = $line['id'];
     $responce['rows'][$i]['cell']   = array(

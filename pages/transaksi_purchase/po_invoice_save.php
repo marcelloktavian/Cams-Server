@@ -1,5 +1,6 @@
 <?php
 include "../../include/koneksi.php";
+require_once '../../include/config.php';
 
 // general variable -------------------------
 $row      = $_GET['row'];
@@ -23,7 +24,7 @@ if ($_FILES != null) {
   $new_name = 'att'.date("Ymdhis").'.'.$ext;
   $target_file = $target_dir . $new_name;
 
-  $attach = $new_name;
+  $attach = BASE_URL . "pages/transaksi_purchase/asset/" . $new_name;
   move_uploaded_file($_FILES['attachment']['tmp_name'],$target_file);
 }else {
   $attach = "";

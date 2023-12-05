@@ -149,7 +149,7 @@
 
         reader.onload = function(event) {
           if (file.type.startsWith("image/")) {
-            $('#display').html("<img src='" + event.target.result + "' alt='Preview'>");
+            $('#display').html("<img src='" + event.target.result + "' alt='Preview' style='width:500px'>");
           } else {
             $("#display").html("<p>File: " + file.name + "</p>");
           }
