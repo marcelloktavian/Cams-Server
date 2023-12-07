@@ -92,6 +92,18 @@
         <textarea class="penyusutan-width" id="keterangan-penyusutan" name="keterangan-penyusutan"></textarea>
       </div>
 
+      <label class="ui-helper-reset label-control">Tipe Biaya</label>
+      <div class="ui-corner-all form-control">
+        <div>
+          <input type="radio" name="tipe-biaya" class="tipe-biaya" id="langsung" value="langsung" checked>
+          <label for="langsung">Langsung</label>
+        </div>
+        <div>
+          <input type="radio" name="tipe-biaya" class="tipe-biaya" id="tidak-langsung" value="tidak-langsung">
+          <label for="tidak-langsung">Tidak Langsung</label>
+        </div>
+      </div>
+
       <br />
       * Data tidak akan disimpan bila nilai pembelian nol.
       <br />
