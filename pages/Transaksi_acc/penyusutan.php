@@ -17,6 +17,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $startdate = isset($_GET['startdate'])?$_GET['startdate']:DATE('d/m/Y');
     $enddate = isset($_GET['enddate'])?$_GET['enddate']:DATE('d/m/Y');
     $aset = isset($_GET['aset'])?$_GET['aset']:'';
+    $tipe = isset($_GET['tipe'])?$_GET['tipe']:'';
   
     $where = " WHERE nama_aset_pemberhentian IS NULL ";
   
@@ -27,23 +28,23 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     if($aset != null && $aset != ""){
       $where .= " AND nama_aset LIKE '%".$aset."%' ";
     }
+
+    if (isset($_GET['tipe'])) {
+      if ($tipe != '') {
+        $where .= " AND acc = '$tipe' ";
+      }
+    }
   
-    $queryIndex = "SELECT *,COALESCE ( total_aset - total_penyusutan, 0 ) AS nilai_sisa_aset 
-    FROM
-      (SELECT a.tgl AS tanggal_jurnal,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' disusutkan ', - 1 ), ' durasi', 1 ) AS nama_aset,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' penyusutan ', - 1 ), ' Bulan', 1 ) AS durasi_penyusutan,b.nama_akun AS nama_akun_aset,b.debet AS total_aset FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted = 0 
-      ) AS a
-      LEFT JOIN (SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 ) AS nama_aset_penyusutan,b.nama_akun,SUM( b.kredit ) AS total_penyusutan FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PENYUSUTAN ASET' AND b.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi - %' AND DATE ( tgl ) <= CURDATE() AND a.deleted = 0 GROUP BY nama_aset_penyusutan 
-      ) AS b ON a.nama_aset = b.nama_aset_penyusutan
-      LEFT JOIN (
-      SELECT
-        SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' Aset - ', - 1 ), ' Penyusutan ', 1 ) AS nama_aset_pemberhentian 
-      FROM
-        jurnal a 
-      WHERE
-        a.`status` = 'LIKUIDITAS ASET' 
-        AND a.keterangan LIKE 'Likuidasi Aset - %' 
-        AND a.deleted = 0 
-      ) AS c ON TRIM( a.nama_aset )= TRIM( c.nama_aset_pemberhentian ) ";
+    $queryIndex = "SELECT *,IF(acc = '05.07.00000','Biaya Langsung','Biaya Tidak Langsung') as tipe,COALESCE ( total_aset - total_penyusutan, 0 ) AS nilai_sisa_aset FROM
+    (
+      SELECT a.tgl AS tanggal_jurnal,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' disusutkan ', - 1 ), ' durasi', 1 ) AS nama_aset,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' penyusutan ', - 1 ), ' Bulan', 1 ) AS durasi_penyusutan,b.nama_akun AS nama_akun_aset,b.debet AS total_aset FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted = 0 )
+    AS a LEFT JOIN (
+      SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 ) AS nama_aset_penyusutan,b.nama_akun,SUM( IF(b.nama_akun like 'Akumulasi Depresiasi & Amortisasi - %',b.kredit,0)) AS total_penyusutan ,IF(b.nama_akun not like 'Akumulasi Depresiasi & Amortisasi - %',b.no_akun,'') AS acc,SUM(IF( b.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi - %', 1, 0 )) as penyusutan_berjalan FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PENYUSUTAN ASET' AND DATE ( tgl ) <= CURDATE() AND a.deleted = 0 GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 )
+    ) AS b ON a.nama_aset = b.nama_aset_penyusutan
+    LEFT JOIN (
+       SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' Aset - ', - 1 ), ' Penyusutan ', 1 ) AS nama_aset_pemberhentian FROM jurnal a WHERE a.`status` = 'LIKUIDITAS ASET' AND a.keterangan LIKE 'Likuidasi Aset - %' AND a.deleted = 0 ) 
+    AS c ON TRIM( a.nama_aset )= TRIM( c.nama_aset_pemberhentian )";
+
 
     $q = $db->query($queryIndex.$where);
     $count = $q->rowCount();
@@ -77,6 +78,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         number_format($line['total_aset']),
         number_format($line['total_penyusutan']),
         number_format($line['total_aset']-$line['total_penyusutan']),
+        $line['tipe'],
+        $line['penyusutan_berjalan'],
         $delete,
         $hapus
       );
@@ -135,6 +138,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $ppnPembelian = $_POST['ppn-pembelian-aset'];
     $nilaiPPN = $_POST['nilai-ppn-aset'];
     $keterangan = 'Pembelian Aset yang disusutkan '.$namaAset.' durasi penyusutan '.$durasiPenyusutan.' Bulan. Keterangan Manual :'.$_POST['keterangan-penyusutan'];
+    $tipe = $_POST['tipe-biaya'];
   
     $idparent="";
   
@@ -215,8 +219,13 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       }
   
       // 3. INSERT JURNAL PENYUSUTAN SEBANYAK N BULAN
+
+      if ($tipe == "langsung") {
+        $ambilAkunBebanPenyusutan=mysql_fetch_array( mysql_query("SELECT * FROM mst_coa WHERE noakun='05.07.00000'"));
+      }else {
+        $ambilAkunBebanPenyusutan=mysql_fetch_array( mysql_query("SELECT * FROM mst_coa WHERE noakun='06.19.00000'"));
+      }
   
-      $ambilAkunBebanPenyusutan=mysql_fetch_array( mysql_query("SELECT * FROM mst_coa WHERE noakun='06.19.00000'"));
       $idakunBebanPenyusutan=$ambilAkunBebanPenyusutan['id'];
       $noakunBebanPenyusutan=$ambilAkunBebanPenyusutan['noakun'];
       $namaakunBebanPenyusutan=$ambilAkunBebanPenyusutan['nama'];
@@ -409,7 +418,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 } else if(isset($_GET['action']) && strtolower($_GET['action']) == 'passhapus') {
     include 'penyusutan_passhapus.php';exit();
       exit;
-} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'pr  ocess_passhapus') {
+} else if(isset($_GET['action']) && strtolower($_GET['action']) == 'process_passhapus') {
     //cek apakah pass sama atau tidak
     $stmt = $db->prepare("SELECT * FROM `user` WHERE deleted=0 AND `password`=MD5('".$_POST['pass_jm_edit']."') AND (user_id=3 OR user_id=13)");
     $stmt->execute();
@@ -599,7 +608,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     echo json_encode($r);
     exit();
 }
-  
 
 ?>
 
@@ -619,15 +627,15 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
           <tr>
             <td><input type="text" class="required datepicker" id="startdate_penyusutan" name="startdate_penyusutan" readonly></td>
             <td> s.d <input type="text" class="required datepicker" id="enddate_penyusutan" name="enddate_penyusutan" readonly></td>
-            <!-- <td> 
+            <td> 
                Tipe Biaya 
               <select name="tipe" id="tipe">
-                <option value="semua" selected>Semua</option>
-                <option value="langsung">Biaya Langsung</option>
-                <option value="tidak-langsung">Biaya Tidak Langsung</option>
+                <option value="" selected>Semua</option>
+                <option value="05.07.00000">Biaya Langsung</option>
+                <option value="06.19.00000">Biaya Tidak Langsung</option>
               </select>
               &nbsp; 
-            </td> -->
+            </td>
             <td><input type="text" id="aset_penyusutan" name="aset_penyusutan" />(Nama Aset)</td>
           </tr>
         </table>
@@ -641,6 +649,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 </div>
 
 <div class="btn_box">
+
+  <button class="btn btn-success" id="print" >Print</button>
   <?php
     if($allow_add) :
   ?>
@@ -668,8 +678,9 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     let startdate   = ($("#startdate_penyusutan").val());
 		let enddate     = ($("#enddate_penyusutan").val());
 		let aset        = $("#aset_penyusutan").val();
+    let tipe        = $("#tipe").val();
 
-    let v_url       = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan.php?action=json&startdate='+startdate+'&enddate='+enddate+'&aset='+aset;
+    let v_url       = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan.php?action=json&startdate='+startdate+'&enddate='+enddate+'&aset='+aset+'&tipe='+tipe;
 		jQuery("#table_penyusutan").setGridParam({url:v_url,page:1}).trigger("reloadGrid");
     }
 
@@ -677,7 +688,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $('#table_penyusutan').jqGrid({
       url           : '<?= BASE_URL.'pages/Transaksi_acc/penyusutan.php?action=json'?>',
       datatype      : 'json',
-      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Likuidasi', 'Hapus'],
+      colNames      : ['Nama Aset','Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Tipe Biaya','Total Penyusutan Saat ini','Likuidasi', 'Hapus'],
       colModel      : [
         {name: 'nama_aset', index: 'nama_aset', align: 'left', width: 70, searchoptions: {sopt: ['cn']}},
         {name:'tanggal_pembelian_aset', index: 'tanggal_pembelian_aset', align: 'center', width:30, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
@@ -685,6 +696,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
         {name: 'durasi_penyusutan', index: 'durasi_penyusutan', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'nilai_beli_aset', index: 'nilai_beli_aset', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'nilai_sisa_aset', index: 'nilai_sisa_aset', align: 'right', width: 40, searchoptions:{sopt: ['cn']}},
+        {name: 'tipe', index: '', align: 'center', width: 35, searchoptions:{sopt: ['cn']}},
+        {name: 'total_penyusutan_saat_ini', index: '', align: 'center', width: 35, searchoptions:{sopt: ['cn']}},
         {name: 'cancel', index: 'cancel', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
         {name: 'hapus', index: 'hapus', align: 'center', width: 20, searchoptions:{sopt: ['cn']}},
       ],
@@ -712,6 +725,16 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       ],
     });
     $('#table_penyusutan').jqGrid('navGrid', '#pager_table_penyusutan', {edit:false, add:false, del:false, search:false});
+
+    $("#print").click(() => {
+      let startdate   = ($("#startdate_penyusutan").val());
+      let enddate     = ($("#enddate_penyusutan").val());
+      let tipe        = $("#tipe").val();
+
+      let v_url       = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_print.php?startdate='+startdate+'&enddate='+enddate+'&tipe='+tipe;
+      window.open(v_url)
+    })
+
   });
 
 </script>
