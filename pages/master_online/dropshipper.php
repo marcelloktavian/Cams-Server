@@ -194,9 +194,9 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
             // }
 		}
 		else {
-            $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND hp<>'0'");
-            $query->execute(array($_POST['hp']));
-            if ($query->rowCount() == 0) {
+            // $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND hp<>'0'");
+            // $query->execute(array($_POST['hp']));
+            // if ($query->rowCount() == 0) {
                 if (preg_match('/^62[0-9]+$/', $_POST['hp'])) {
 			    $stmt = $db->prepare("INSERT INTO  mst_dropshipper(`nama`,`oln_customer_id`,`alamat`,`no_telp`,`hp`,`disc`,`type`,`user`,`lastmodified`) VALUES(?, ?, ?, ?, ?, ?, ?, ?,NOW())");
 			    if($stmt->execute(array($_POST['nama'],$_POST['oln_customer_id'],$_POST['alamat'], $telp, $_POST['hp'], $_POST['disc'], $_POST['tipe'],$_SESSION['user']['username']))) {
@@ -241,10 +241,10 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
                 $r['stat']= 0;
                 $r['message']='Format nomor salah';
             }
-            } else {
-                $r['stat'] = 0;
-                $r['message'] = 'Phone Sudah Terdaftar';
-            }
+            // } else {
+            //     $r['stat'] = 0;
+            //     $r['message'] = 'Phone Sudah Terdaftar';
+            // }
 		}
         }		
 		echo json_encode($r);
