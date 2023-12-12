@@ -168,9 +168,9 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
            $r['message'] = 'Phone Harus Diisi';
         } else {      
 		if(isset($_POST['id'])) {
-            $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND id<>? AND hp<>'0'");
-            $query->execute(array($_POST['hp'],$_POST['id']));
-            if ($query->rowCount() == 0) {
+            // $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND id<>? AND hp<>'0'");
+            // $query->execute(array($_POST['hp'],$_POST['id']));
+            // if ($query->rowCount() == 0) {
                 if (preg_match('/^62[0-9]+$/', $_POST['hp'])) {
                     $stmt = $db->prepare("UPDATE mst_dropshipper SET nama=?,oln_customer_id=?,alamat=?,no_telp=?,hp=?,disc=?,type=?,user=?, lastmodified = NOW() WHERE id=?");
                     $stmt->execute(array($_POST['nama'],$_POST['oln_customer_id'],$_POST['alamat'],$telp,$_POST['hp'],$_POST['disc'],$_POST['tipe'], $_SESSION['user']['username'], $_POST['id']));
@@ -188,10 +188,10 @@ $allow_post = is_show_menu(POST_POLICY, Dropshipper, $group_acess);
                     $r['stat']= 0;
                     $r['message']='Format nomor salah';
                 }
-            } else {
-                $r['stat'] = 0;
-                $r['message'] = 'Phone Sudah Terdaftar';
-            }
+            // } else {
+            //     $r['stat'] = 0;
+            //     $r['message'] = 'Phone Sudah Terdaftar';
+            // }
 		}
 		else {
             $query = $db->prepare("SELECT * FROM `mst_dropshipper` WHERE hp=? AND hp<>'0'");
