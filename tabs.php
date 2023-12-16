@@ -76,6 +76,18 @@
 <?php
   require "include/koneksi.php"; 
 
+  function generateNumbers($minimum, $maximum, $count) {
+    if ($count > ($maximum - $minimum + 1)) {
+        echo "Jumlah data yang diminta melebihi rentang yang tersedia.";
+        return null;
+    }
+
+    $generatedNumbers = range($minimum, $maximum);
+    shuffle($generatedNumbers);
+    $result = array_slice($generatedNumbers, 0, $count);
+    return $result;
+  }
+
   if(isset($_GET['month_filter'])){
     $month_filter = $_GET['month_filter'];
   }
@@ -103,33 +115,121 @@
   $sqlb2b_total = mysql_query($sqlb2b_query);
   $sqlolnso_total = mysql_query($sqlolnso_query);
 
-  $sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum_totalfaktur
-  FROM (
-      SELECT LAST_DAY('".$endDate."') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
+  $sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum_totalfaktur FROM (
+      SELECT LAST_DAY('$endDate') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
       FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
   ) a 
-  LEFT JOIN (SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '".$month_filter."' AND YEAR(tgl_trans) = '".$year_filter."' GROUP BY DAY(tgl_trans)) AS b
-  ON DAY(a.Date) = b.day
-  WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
+  LEFT JOIN (SELECT DAY(tgl_trans) AS `day`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND MONTH(tgl_trans) = '$month_filter' AND YEAR(tgl_trans) = '$year_filter' GROUP BY DAY(tgl_trans)) AS b
+    ON DAY(a.Date) = b.day WHERE a.Date BETWEEN '$startDate' AND LAST_DAY('$endDate') ORDER BY a.Date";
 
+  
   $sqlolnso_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalolnso,0) AS sum_totalolnso
   FROM (
       SELECT LAST_DAY('".$endDate."') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
       FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
-  ) a 
-  LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = '".$year_filter."' GROUP BY DAY(lastmodified)) AS b
-  ON DAY(a.Date) = b.day
-  WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
+      ) a 
+      LEFT JOIN (SELECT DAY(lastmodified) AS `day`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND MONTH(lastmodified) = '".$month_filter."' AND YEAR(lastmodified) = '".$year_filter."' GROUP BY DAY(lastmodified)) AS b
+      ON DAY(a.Date) = b.day
+      WHERE a.Date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."') ORDER BY a.Date";
+  
+  
+  $sqlolnsoreturn_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
+		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS b
+		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS c 
+  ) a LEFT JOIN (
+		SELECT SUM(o.total) as total,DAY(o.lastmodified) as day
+		FROM
+			olnsoreturn o 
+		WHERE
+			o.totalqty > 0 
+			AND o.deleted = 0 
+			AND o.state = '1'
+			AND MONTH(o.lastmodified) = $month_filter
+			AND YEAR(o.lastmodified) = $year_filter
+		GROUP BY DAY(o.lastmodified)
+		ORDER BY DAY(o.lastmodified) ) b ON DAY(a.date) = b.day WHERE a.DATE BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.DATE;";
 
+  $total_return_oln_month = "SELECT SUM(x.total) as total FROM ( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
+		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS b
+		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS c 
+  ) a LEFT JOIN ( 
+		SELECT SUM(o.total) as total,DAY(o.lastmodified) as day
+		FROM
+			olnsoreturn o 
+		WHERE
+			o.totalqty > 0 
+			AND o.deleted = 0 
+			AND o.state = '1'
+			AND MONTH(o.lastmodified) = $month_filter
+			AND YEAR(o.lastmodified) = $year_filter
+		GROUP BY DAY(o.lastmodified)
+		ORDER BY DAY(o.lastmodified) ) b ON DAY(a.date) = b.day WHERE a.DATE BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) 
+  ORDER BY a.DATE) x";
+
+  
+  $sqlreturnb2b_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+    ) AS a CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+		) AS b CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+		) AS  c 
+  ) a LEFT JOIN ( SELECT SUM(r.total) as total,DAY(r.tgl_return) as day FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0  AND MONTH ( r.tgl_return ) = $month_filter AND YEAR ( r.tgl_return ) = $year_filter GROUP BY DAY(r.tgl_return)
+    ) b ON DAY(a.date) = b.`day`
+  WHERE a.date BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.date";
+
+  $sqlreturnb2b_month_total = "SELECT SUM(x.total) as total FROM( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+    ) AS a CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+		) AS b CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+		) AS  c 
+  ) a LEFT JOIN ( SELECT SUM(r.total) as total,DAY(r.tgl_return) as day FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0  AND MONTH ( r.tgl_return ) = $month_filter AND YEAR ( r.tgl_return ) = $year_filter GROUP BY DAY(r.tgl_return)
+    ) b ON DAY(a.date) = b.`day`
+  WHERE a.date BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.date) x";
+
+
+
+  $sqlnetoln = "SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
+    SELECT MONTH(lastmodified) AS `month`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
+  ) a JOIN (
+    SELECT MONTH(lastmodified) as `month`,SUM(total) as total FROM olnsoreturn r WHERE deleted = 0 AND r.state = '1' AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
+  ) b ON a.month = b.month;";
+
+  $sqltotalnetoln = "SELECT SUM(x.netoln) as total_net_oln FROM( SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
+    SELECT MONTH(lastmodified) AS `month`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
+  ) a JOIN (
+    SELECT MONTH(lastmodified) as `month`,SUM(total) as total FROM olnsoreturn r WHERE deleted = 0 AND r.state = '1' AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
+  ) b ON a.month = b.month) x;";
+
+  $sqlnetb2b = "SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
+    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = 2023 GROUP BY MONTH(tgl_trans)
+  ) a LEFT JOIN (
+    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = 2023 GROUP BY MONTH(r.tgl_return)
+  ) b ON a.`month` = b.`month` ";
+
+  $sqltotalnetb2b = "SELECT SUM(x.netb2b) as total_net_b2b FROM ( SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
+    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = 2023 GROUP BY MONTH(tgl_trans)
+  ) a LEFT JOIN (
+    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = 2023 GROUP BY MONTH(r.tgl_return)
+  ) b ON a.`month` = b.`month` ) x";
+
+  
   $sqlb2b_total_month = mysql_query($sqlb2b_month);
   $sqlolnso_total_month = mysql_query($sqlolnso_month);
-
+  $sqlnetoln_total = mysql_query($sqlnetoln);
+  $sqlnetb2b_total = mysql_query($sqlnetb2b);
+  
   $sqlb2b_month = mysql_query($sqlb2b_month);
   $sqlolnso_month = mysql_query($sqlolnso_month);
+  $sqlolnsoreturn_month = mysql_query($sqlolnsoreturn_month);
+  $sqlolb2breturn_month = mysql_query($sqlreturnb2b_month);
+
+  $total_return_oln = mysql_fetch_array(mysql_query($total_return_oln_month))['total'];
+  $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['total'];
+  
+  $total_net_oln = mysql_fetch_array(mysql_query($sqltotalnetoln))['total_net_oln'];
+  $total_net_b2b = mysql_fetch_array(mysql_query($sqltotalnetb2b))['total_net_b2b'];
+
 
 ?>
 
@@ -202,6 +302,16 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card ">
+            <div class="card-body">
+              <p class="text-title">Penjualan Netto Tahun <?= $year_filter ?></p><hr>
+              <canvas id="penjualan-net" style="width:calc(100% - 40px);height:250px"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
       <?php } ?>
     </div>
   </div>
@@ -209,8 +319,9 @@
 
 <script>
 
-  const ctx = document.getElementById('penjualan-lower');
   const cty = document.getElementById('penjualan-upper');
+  const ctx = document.getElementById('penjualan-lower');
+  const ctn = document.getElementById('penjualan-net');
 
   <?php 
   $total_b2b = 0;
@@ -224,7 +335,7 @@
   while($row_olnso = mysql_fetch_array($sqlolnso_total)) {$total_olnso += $row_olnso['sum_totalolnso']; if(($i+1) == trim($month_filter)){$this_olnso = $row_olnso['sum_totalolnso'];} $i++;}
   ?>
 
-  const labels = ['Janurai', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November' ,'December'];
+  const labels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November' ,'December'];
   const data = {
     labels: labels,
     datasets: [
@@ -260,9 +371,13 @@
             const value = context.parsed.y;
             const formattedValue = new Intl.NumberFormat('en-US', {}).format(value);
             if (label.includes("OLN Sales")) {
-            return `OLN Sales : Rp ${formattedValue}`;
-            } else {
-              return `B2B Sales : Rp ${formattedValue}`;
+              return `OLN Sales : Rp ${formattedValue}`;
+            } else if(label.includes("B2B Sales")) {
+              return `B2B Sales : Rp ${formattedValue}`; 
+            } else if(label.includes("OLN Return")) {
+              return `OLN Return : Rp ${formattedValue}`;
+            } else if(label.includes("B2B Return")) {
+              return `B2B Return : Rp ${formattedValue}`;
             }
           },
         },
@@ -286,6 +401,8 @@
     echo date("d", $currentDate) . ",";
     $currentDate = strtotime("+1 day", $currentDate);
   }?>];
+
+  
   const data_month = {
     labels: labels_month,
     datasets: [
@@ -296,12 +413,33 @@
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgb(75, 192, 192)',
         tension: 0.1
-      },{
+      },
+      {
         label: 'OLN Sales : Rp <?= number_format($this_olnso,0) ?>',
         data: [<?php while($row_olnso = mysql_fetch_array($sqlolnso_month)) {?><?= $row_olnso['sum_totalolnso'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(192, 75, 75)',
         backgroundColor: 'rgb(192, 75, 75)',
+        tension: 0.1
+      },
+      {
+        label: 'OLN Return : Rp <?= number_format($total_return_oln,0) ?>',
+        data: [
+          <?php while($row_return_oln = mysql_fetch_array($sqlolnsoreturn_month)) {?><?= $row_return_oln['total'] ?>,<?php } ?>
+        ],
+        fill: false,
+        borderColor: 'rgb(75, 192, 75)',
+        backgroundColor: 'rgb(75, 192, 75)',
+        tension: 0.1
+      },
+      {
+        label: 'B2B Return : Rp <?= number_format($total_return_b2b,0) ?>',
+        data: [
+          <?php while($row_return_b2b = mysql_fetch_array($sqlolb2breturn_month)) {?><?= $row_return_b2b['total'] ?>,<?php } ?>
+        ],
+        fill: false,
+        borderColor: 'rgb(192, 192, 75)',
+        backgroundColor: 'rgb(192, 192, 75)',
         tension: 0.1
       }
     ]
@@ -313,13 +451,38 @@
     options: options
   });
 
+  const datanet = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'B2B Sales : Rp <?= number_format($total_net_b2b,0) ?>',
+        data: [<?php while($row_b2b_net = mysql_fetch_array($sqlnetb2b_total)) {?><?= $row_b2b_net['netb2b'] ?>,<?php } ?>],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      },{
+        label: 'OLN Sales : Rp <?= number_format($total_net_oln,0) ?>',
+        data: [<?php while($row_olnso_net = mysql_fetch_array($sqlnetoln_total)) {?><?= $row_olnso_net['netoln'] ?>,<?php } ?>],
+        fill: false,
+        borderColor: 'rgb(192, 75, 75)',
+        backgroundColor: 'rgb(192, 75, 75)',
+        tension: 0.1
+      }
+    ]
+  };
+  
+  new Chart(ctn, {
+    type: 'bar',
+    data: datanet,
+    options: options
+  });
+  
   function gridReloadTabs(){
     const month_filter = document.getElementById('month_filter').value;
     const year_filter = document.getElementById('year_filter').value;
-
     location.href = "<?php echo BASE_URL?>?month_filter="+month_filter+"&year_filter="+year_filter;
   }
-
   document.getElementById('month_filter').value = '<?= ltrim($month_filter,0) ?>';
   document.getElementById('year_filter').value = '<?= $year_filter ?>';
 </script>
