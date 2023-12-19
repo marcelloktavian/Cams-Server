@@ -5,7 +5,7 @@ $sup = $_GET['sup'];
 
 if (!$q) return;
 
-$sql_text = "SELECT a.*,date_format(a.tgl_quotation, '%d-%m-%Y') as tgl_quotation_formatted FROM `mst_produk` a WHERE a.`id_supplier`='".$sup."' AND a.`deleted`=0 AND `produk_jasa` LIKE '%$q%'";
+$sql_text = "SELECT a.*,date_format(a.tgl_quotation, '%d-%m-%Y') as tgl_quotation_formatted FROM `mst_produk` a WHERE a.`id_supplier`= $sup AND a.`deleted`=0 AND `produk_jasa` LIKE '%$q%' ORDER BY id DESC";
 $sql = mysql_query($sql_text);
 
 while($r = mysql_fetch_array($sql)){
