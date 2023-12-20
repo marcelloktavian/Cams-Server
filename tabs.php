@@ -76,18 +76,6 @@
 <?php
   require "include/koneksi.php"; 
 
-  function generateNumbers($minimum, $maximum, $count) {
-    if ($count > ($maximum - $minimum + 1)) {
-        echo "Jumlah data yang diminta melebihi rentang yang tersedia.";
-        return null;
-    }
-
-    $generatedNumbers = range($minimum, $maximum);
-    shuffle($generatedNumbers);
-    $result = array_slice($generatedNumbers, 0, $count);
-    return $result;
-  }
-
   if(isset($_GET['month_filter'])){
     $month_filter = $_GET['month_filter'];
   }
@@ -187,37 +175,31 @@
     ) b ON DAY(a.date) = b.`day`
   WHERE a.date BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.date) x";
 
-
-
-  $sqlnetoln = "SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
+  $sqlnet = "SELECT IFNULL(oln.`month`,b2b.`month`) as month,(oln.netoln + b2b.netb2b ) as net FROM (
+		SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
+    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = $year_filter GROUP BY MONTH(tgl_trans)
+  ) a LEFT JOIN (
+    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)
+  ) b ON a.`month` = b.`month`
+) b2b LEFT JOIN (
+	SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
     SELECT MONTH(lastmodified) AS `month`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
   ) a JOIN (
     SELECT MONTH(lastmodified) as `month`,SUM(total) as total FROM olnsoreturn r WHERE deleted = 0 AND r.state = '1' AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
-  ) b ON a.month = b.month;";
-
-  $sqltotalnetoln = "SELECT SUM(x.netoln) as total_net_oln FROM( SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
-    SELECT MONTH(lastmodified) AS `month`, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
-  ) a JOIN (
-    SELECT MONTH(lastmodified) as `month`,SUM(total) as total FROM olnsoreturn r WHERE deleted = 0 AND r.state = '1' AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
-  ) b ON a.month = b.month) x;";
-
-  $sqlnetb2b = "SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
-    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = 2023 GROUP BY MONTH(tgl_trans)
-  ) a LEFT JOIN (
-    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = 2023 GROUP BY MONTH(r.tgl_return)
-  ) b ON a.`month` = b.`month` ";
-
-  $sqltotalnetb2b = "SELECT SUM(x.netb2b) as total_net_b2b FROM ( SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
-    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = 2023 GROUP BY MONTH(tgl_trans)
-  ) a LEFT JOIN (
-    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = 2023 GROUP BY MONTH(r.tgl_return)
-  ) b ON a.`month` = b.`month` ) x";
+  ) b ON a.month = b.month
+) oln ON oln.`month` = b2b.`month`";
 
   
   $sqlb2b_total_month = mysql_query($sqlb2b_month);
   $sqlolnso_total_month = mysql_query($sqlolnso_month);
-  $sqlnetoln_total = mysql_query($sqlnetoln);
-  $sqlnetb2b_total = mysql_query($sqlnetb2b);
+  $net = mysql_query($sqlnet);
+
+  $datanet = [];
+  $total_net = 0;
+  while($dt = mysql_fetch_array($net)) {
+    $datanet[] = $dt['net'];
+    $total_net += (int)$dt['net'];
+  }
   
   $sqlb2b_month = mysql_query($sqlb2b_month);
   $sqlolnso_month = mysql_query($sqlolnso_month);
@@ -227,9 +209,7 @@
   $total_return_oln = mysql_fetch_array(mysql_query($total_return_oln_month))['total'];
   $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['total'];
   
-  $total_net_oln = mysql_fetch_array(mysql_query($sqltotalnetoln))['total_net_oln'];
-  $total_net_b2b = mysql_fetch_array(mysql_query($sqltotalnetb2b))['total_net_b2b'];
-
+  $totalnet = mysql_fetch_array(mysql_query($sqlnettotal))['total_net'];
 
 ?>
 
@@ -378,6 +358,8 @@
               return `OLN Return : Rp ${formattedValue}`;
             } else if(label.includes("B2B Return")) {
               return `B2B Return : Rp ${formattedValue}`;
+            } else if(label.includes("Rp.")) {
+              return `Rp. ${formattedValue}`
             }
           },
         },
@@ -451,22 +433,16 @@
     options: options
   });
 
+
   const datanet = {
     labels: labels,
     datasets: [
       {
-        label: 'B2B Sales : Rp <?= number_format($total_net_b2b,0) ?>',
-        data: [<?php while($row_b2b_net = mysql_fetch_array($sqlnetb2b_total)) {?><?= $row_b2b_net['netb2b'] ?>,<?php } ?>],
+        label: 'Rp. <?= number_format($total_net,0) ?>',
+        data: <?= json_encode($datanet) ?>,
         fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      },{
-        label: 'OLN Sales : Rp <?= number_format($total_net_oln,0) ?>',
-        data: [<?php while($row_olnso_net = mysql_fetch_array($sqlnetoln_total)) {?><?= $row_olnso_net['netoln'] ?>,<?php } ?>],
-        fill: false,
-        borderColor: 'rgb(192, 75, 75)',
-        backgroundColor: 'rgb(192, 75, 75)',
+        borderColor: 'rgb(214, 42, 19)',
+        backgroundColor: 'rgb(214, 42, 19)',
         tension: 0.1
       }
     ]
