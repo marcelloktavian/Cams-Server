@@ -97,8 +97,18 @@
 
   $sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = '".$year_filter."' GROUP BY MONTH(lastmodified)";
 
+  $sqlolnreturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month`";
+  $sqlolnreturntotal_query = "SELECT SUM(x.value) as total_oln FROM (SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month`) x";
+  
+  $sqlb2breturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month`";
+  $sqlb2breturntotal_query = "SELECT SUM(x.value) as total_b2b FROM ( SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` ) x";
+
   $sqlb2b = mysql_query($sqlb2b_query);
   $sqlolnso = mysql_query($sqlolnso_query);
+  $returnoln = mysql_query($sqlolnreturn_query);
+  $returnb2b = mysql_query($sqlb2breturn_query);
+  $returnolntotal = mysql_fetch_array(mysql_query($sqlolnreturntotal_query))['total_oln'];
+  $returnb2btotal = mysql_fetch_array(mysql_query($sqlb2breturntotal_query))['total_b2b'];
 
   $sqlb2b_total = mysql_query($sqlb2b_query);
   $sqlolnso_total = mysql_query($sqlolnso_query);
@@ -208,8 +218,6 @@
 
   $total_return_oln = mysql_fetch_array(mysql_query($total_return_oln_month))['total'];
   $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['total'];
-  
-  $totalnet = mysql_fetch_array(mysql_query($sqlnettotal))['total_net'];
 
 ?>
 
@@ -326,12 +334,29 @@
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgb(75, 192, 192)',
         tension: 0.1
-      },{
+      },
+      {
         label: 'OLN Sales : Rp <?= number_format($total_olnso,0) ?>',
         data: [<?php while($row_olnso = mysql_fetch_array($sqlolnso)) {?><?= $row_olnso['sum_totalolnso'] ?>,<?php } ?>],
         fill: false,
         borderColor: 'rgb(192, 75, 75)',
         backgroundColor: 'rgb(192, 75, 75)',
+        tension: 0.1
+      },
+      {
+        label: 'OLN Return : Rp <?= number_format($returnolntotal,0) ?>',
+        data: [<?php while($row_olnsoreturn = mysql_fetch_array($returnoln)) {?><?= $row_olnsoreturn['value'] ?>,<?php } ?>],
+        fill: false,
+        borderColor: 'rgb(75, 192, 75)',
+        backgroundColor: 'rgb(75, 192, 75)',
+        tension: 0.1
+      },
+      {
+        label: 'B2B Return : Rp <?= number_format($returnb2btotal,0) ?>',
+        data: [<?php while($row_b2breturn = mysql_fetch_array($returnb2b)) {?><?= $row_b2breturn['value'] ?>,<?php } ?>],
+        fill: false,
+        borderColor: 'rgb(192, 192, 75)',
+        backgroundColor: 'rgb(192, 192, 75)',
         tension: 0.1
       }
     ]
