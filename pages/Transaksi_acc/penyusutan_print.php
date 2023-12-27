@@ -103,13 +103,15 @@ $query = "SELECT x.nama_aset,x.tanggal_jurnal,
 		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
 		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),STR_TO_DATE('$tglstart','%d/%m/%Y')) as count,c.tipe
 		FROM
-		(SELECT cj.keterangan,cj.tgl,
+		(SELECT cj.keterangan,
+		STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
 		IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
 		IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
 		FROM
 		cron_jurnal cj
 		LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
-		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x WHERE  x.tanggal_jurnal <= STR_TO_DATE('$tglstart','%d/%m/%Y') ";
+		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x WHERE  x.tanggal_jurnal <= STR_TO_DATE('$tglstart','%d/%m/%Y') 
+		ORDER BY x.durasi_penyusutan,x.tanggal_jurnal";
 
 if ($tipe) {
 	$tipe = $tipe == '05.07.00000' ? 'Biaya Penyusutan Langsung' : 'Biaya Penyusutan Tidak Langsung';
