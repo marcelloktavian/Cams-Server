@@ -88,17 +88,32 @@ error_reporting(0);
 include("../../include/koneksi.php");
 include("../../include/config.php");
 $tglstart = $_GET['startdate'];
-$tglend = $_GET['enddate'];
 $tipe = $_GET['tipe'];
 
-$query = "SELECT *,IF(acc = '05.07.00000','Biaya Langsung','Biaya Tidak Langsung') as tipe,COALESCE ( total_aset - total_penyusutan, 0 ) AS nilai_sisa_aset 
-FROM ( SELECT a.tgl AS tanggal_jurnal,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' disusutkan ', - 1 ), ' durasi', 1 ) AS nama_aset,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' penyusutan ', - 1 ), ' Bulan', 1 ) AS durasi_penyusutan,b.nama_akun AS nama_akun_aset,b.debet AS total_aset FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted = 0 ) 
-AS a LEFT JOIN ( SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 ) AS nama_aset_penyusutan,b.nama_akun,SUM( IF(b.nama_akun like 'Akumulasi Depresiasi & Amortisasi - %',b.kredit,0)) AS total_penyusutan ,IF(b.nama_akun not like 'Akumulasi Depresiasi & Amortisasi - %',b.no_akun,'') AS acc,SUM(IF( b.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi - %', 1, 0 )) as penyusutan_berjalan FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PENYUSUTAN ASET' AND DATE ( tgl ) <= CURDATE() AND a.deleted = 0 GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 ) ) AS b ON a.nama_aset = b.nama_aset_penyusutan 
-LEFT JOIN ( SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' Aset - ', - 1 ), ' Penyusutan ', 1 ) AS nama_aset_pemberhentian FROM jurnal a WHERE a.`status` = 'LIKUIDITAS ASET' AND a.keterangan LIKE 'Likuidasi Aset - %' AND a.deleted = 0 ) AS c ON TRIM( a.nama_aset )= TRIM( c.nama_aset_pemberhentian ) ";
-$where = "WHERE nama_aset_pemberhentian IS NULL AND tanggal_jurnal BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y') ";
+$query = "SELECT x.nama_aset,x.tanggal_jurnal,
+		CONCAT(x.durasi_penyusutan,' Bulan') as durasi_penyusutan,
+		x.total_aset,
+		ROUND((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)) as total_penyusutan,
+		ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)))) as nilai_sisa_aset,
+		x.tipe,
+		IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count) as penyusutan_berjalan
+		FROM
+		(
+		SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
+		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
+		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),STR_TO_DATE('$tglstart','%d/%m/%Y')) as count,c.tipe
+		FROM
+		(SELECT cj.keterangan,cj.tgl,
+		IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
+		IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
+		FROM
+		cron_jurnal cj
+		LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
+		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x WHERE  x.tanggal_jurnal <= STR_TO_DATE('$tglstart','%d/%m/%Y') ";
 
 if ($tipe) {
-    $where .= "AND acc = '$tipe'";
+	$tipe = $tipe == '05.07.00000' ? 'Biaya Penyusutan Langsung' : 'Biaya Penyusutan Tidak Langsung';
+	$where .= " AND x.tipe like '%$tipe%' ";
 }
 
 ?>
@@ -120,7 +135,7 @@ if ($tipe) {
             </td>
           </tr>
           <tr>
-            <td width="100%" class="style_tgl" colspan="7"><div id='totalqty'>Dari: <?= $tglstart;?>&nbsp;-&nbsp;<?= $tglend ?>
+            <td width="100%" class="style_tgl" colspan="7"><div id='totalqty'>Dari: <?= $tglstart;?>
             </div></td>           
 		  </tr>          		  
 </table>

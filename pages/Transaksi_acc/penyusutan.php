@@ -15,35 +15,46 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $sord = isset($_GET['sord'])?$_GET['sord']:'DESC';
   
     $startdate = isset($_GET['startdate'])?$_GET['startdate']:DATE('d/m/Y');
-    $enddate = isset($_GET['enddate'])?$_GET['enddate']:DATE('d/m/Y');
     $aset = isset($_GET['aset'])?$_GET['aset']:'';
     $tipe = isset($_GET['tipe'])?$_GET['tipe']:'';
   
-    $where = " WHERE nama_aset_pemberhentian IS NULL ";
+    $where = " WHERE TRUE ";
   
     if($startdate != null && $startdate != ""){
-      $where .= " AND tanggal_jurnal BETWEEN STR_TO_DATE('$startdate','%d/%m/%Y') AND STR_TO_DATE('$enddate','%d/%m/%Y') ";
+      $where .= " AND x.tanggal_jurnal <= STR_TO_DATE('$startdate','%d/%m/%Y') ";
     }
   
     if($aset != null && $aset != ""){
-      $where .= " AND nama_aset LIKE '%".$aset."%' ";
+      $where .= "  AND x.nama_aset like '%$aset%' ";
     }
 
     if (isset($_GET['tipe'])) {
       if ($tipe != '') {
-        $where .= " AND acc = '$tipe' ";
+        $tipe = $tipe == '05.07.00000' ? 'Biaya Penyusutan Langsung' : 'Biaya Penyusutan Tidak Langsung';
+        $where .= " AND x.tipe like '%$tipe%' ";
       }
     }
   
-    $queryIndex = "SELECT *,IF(acc = '05.07.00000','Biaya Langsung','Biaya Tidak Langsung') as tipe,COALESCE ( total_aset - total_penyusutan, 0 ) AS nilai_sisa_aset FROM
-    (
-      SELECT a.tgl AS tanggal_jurnal,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' disusutkan ', - 1 ), ' durasi', 1 ) AS nama_aset,SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' penyusutan ', - 1 ), ' Bulan', 1 ) AS durasi_penyusutan,b.nama_akun AS nama_akun_aset,b.debet AS total_aset FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PEMBELIAN ASET' AND b.nama_akun LIKE 'Aset Tetap - %' AND a.deleted = 0 )
-    AS a LEFT JOIN (
-      SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 ) AS nama_aset_penyusutan,b.nama_akun,SUM( IF(b.nama_akun like 'Akumulasi Depresiasi & Amortisasi - %',b.kredit,0)) AS total_penyusutan ,IF(b.nama_akun not like 'Akumulasi Depresiasi & Amortisasi - %',b.no_akun,'') AS acc,SUM(IF( b.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi - %', 1, 0 )) as penyusutan_berjalan FROM cron_jurnal a LEFT JOIN cron_jurnal_detail b ON a.`id` = b.`id_parent` WHERE a.`status` = 'PENYUSUTAN ASET' AND DATE ( tgl ) <= CURDATE() AND a.deleted = 0 GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, 'Penyusutan ', - 1 ), ' ke ', 1 )
-    ) AS b ON a.nama_aset = b.nama_aset_penyusutan
-    LEFT JOIN (
-       SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( a.keterangan, ' Aset - ', - 1 ), ' Penyusutan ', 1 ) AS nama_aset_pemberhentian FROM jurnal a WHERE a.`status` = 'LIKUIDITAS ASET' AND a.keterangan LIKE 'Likuidasi Aset - %' AND a.deleted = 0 ) 
-    AS c ON TRIM( a.nama_aset )= TRIM( c.nama_aset_pemberhentian )";
+    $queryIndex = "SELECT x.nama_aset,x.tanggal_jurnal,
+      CONCAT(x.durasi_penyusutan,' Bulan') as durasi_penyusutan,
+      x.total_aset,
+      ROUND((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)) as total_penyusutan,
+      ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)))) as nilai_sisa_aset,
+      x.tipe,
+      IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count) as penyusutan_berjalan
+    FROM
+      (
+      SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
+      DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
+      SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),NOW()) as count,c.tipe
+      FROM
+      (SELECT cj.keterangan,cj.tgl,
+      IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
+      IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
+      FROM
+      cron_jurnal cj
+      LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
+    c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x ";
 
 
     $q = $db->query($queryIndex.$where);
@@ -74,7 +85,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       $responce['rows'][$i]['cell']   = array(
         $line['nama_aset'],
         $line['tanggal_jurnal'],
-        $line['durasi_penyusutan'].' Bulan',
+        $line['durasi_penyusutan'],
         number_format($line['total_aset']),
         number_format($line['total_penyusutan']),
         number_format($line['total_aset']-$line['total_penyusutan']),
@@ -141,7 +152,6 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     $tipe = $_POST['tipe-biaya'];
   
     $idparent="";
-  
     if((int)$nilaiPembelian > 0){
       // 1. BUAT AKUN ASET DAN AKUMULASI
   
@@ -625,8 +635,8 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       <div class="ui-corner-all form-control">
         <table>
           <tr>
-            <td><input type="text" class="required datepicker" id="startdate_penyusutan" name="startdate_penyusutan" readonly></td>
-            <td> s.d <input type="text" class="required datepicker" id="enddate_penyusutan" name="enddate_penyusutan" readonly></td>
+            <td><input type="text" class="required datepicker" id="startdate_penyusutan" name="startdate"></td>
+            <!-- <td> s.d <input type="text" class="required datepicker" id="enddate_penyusutan" name="enddate_penyusutan" readonly></td> -->
             <td> 
                Tipe Biaya 
               <select name="tipe" id="tipe">
@@ -651,6 +661,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
 <div class="btn_box">
 
   <button class="btn btn-success" id="print" >Print</button>
+  <!-- <button class="btn btn-success" id="excell" >Excell</button> -->
   <?php
     if($allow_add) :
   ?>
@@ -731,7 +742,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       let enddate     = ($("#enddate_penyusutan").val());
       let tipe        = $("#tipe").val();
 
-      let v_url       = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_print.php?startdate='+startdate+'&enddate='+enddate+'&tipe='+tipe;
+      let v_url       = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_print.php?startdate='+startdate+'&tipe='+tipe;
       window.open(v_url)
     })
 
