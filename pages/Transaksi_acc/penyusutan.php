@@ -46,7 +46,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
       (
       SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
       DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
-      SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),NOW()) as count,c.tipe
+      SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,CONCAT(DATE_FORMAT(DATE(c.tgl),'%Y-%m-'),'01'),NOW()) as count,c.tipe
       FROM
       (SELECT cj.keterangan,cj.tgl,
       IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,

@@ -101,7 +101,7 @@ $query = "SELECT x.nama_aset,x.tanggal_jurnal,
 		(
 		SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
 		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
-		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),STR_TO_DATE('$tglstart','%d/%m/%Y')) as count,c.tipe
+		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,CONCAT(DATE_FORMAT(DATE(c.tgl),'%Y-%m-'),'01'),STR_TO_DATE('$tglstart','%d/%m/%Y')) as count,c.tipe
 		FROM
 		(SELECT cj.keterangan,
 		STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
