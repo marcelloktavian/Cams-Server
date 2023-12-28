@@ -59,6 +59,7 @@
           <option value='48'>48</option>
           <option value='96'>96</option>
           <option value='240'>240</option>
+          <option value='1'>Tax Amnesti</option>
         </select> (Bulan)
       </div>
 
