@@ -50,7 +50,7 @@
 
       <label for="tanggal-pembelian-aset" class="ui-helper-reset label-control">Tanggal Pembelian</label>
       <div class="ui-corner-all form-control">
-        <input class="required penyusutan-field-full" type="date" id="tanggal-pembelian-aset" name="tanggal-pembelian-aset" />
+        <input class="required penyusutan-field-full" type="date" id="tanggal-pembelian-aset" name="tanggal-pembelian-aset" placeholder="dd-mm-yyyy" />
       </div>
 
       <label for="durasi-penyusutan" class="ui-helper-reset label-control">Durasi Penyusutan</label>
@@ -160,5 +160,8 @@
   });
   $(document).ready(function(){
     $('#akun-pembelian-aset').autocomplete("pages/Transaksi_acc/penyusutan_akun.php?req=pembelian", {width: 400});
+    $(".tipe-biaya").change(() => {
+      console.log($("input[name='tipe-biaya']:checked").val());
+    })
   });
 </script>

@@ -36,25 +36,27 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
     }
   
     $queryIndex = "SELECT x.nama_aset,x.tanggal_jurnal,
-      CONCAT(x.durasi_penyusutan,' Bulan') as durasi_penyusutan,
-      x.total_aset,
-      ROUND((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)) as total_penyusutan,
-      ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)))) as nilai_sisa_aset,
-      x.tipe,
-      IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count) as penyusutan_berjalan
-    FROM
-      (
-      SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
-      DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
-      SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,CONCAT(DATE_FORMAT(DATE(c.tgl),'%Y-%m-'),'01'),NOW()) as count,c.tipe
-      FROM
-      (SELECT cj.keterangan,cj.tgl,
-      IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
-      IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
-      FROM
-      cron_jurnal cj
-      LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
-    c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x ";
+		IF(x.durasi_penyusutan = 1,'Tidak Disusutkan',CONCAT(x.durasi_penyusutan,' Bulan'))  as durasi_penyusutan,
+		x.total_aset,
+		ROUND(
+		(x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)) as total_penyusutan,
+		ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,IF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)))) as nilai_sisa_aset,
+		x.tipe,
+		IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count) as penyusutan_berjalan
+		FROM
+		(
+		SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
+		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
+		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),STR_TO_DATE('31/12/2022','%d/%m/%Y')) + 1 as count,c.tipe
+		FROM
+		(SELECT cj.keterangan,
+		STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
+		IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
+		IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
+		FROM
+		cron_jurnal cj
+		LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
+		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x ";
 
 
     $q = $db->query($queryIndex.$where);
@@ -153,6 +155,7 @@ if(isset($_GET['action']) && strtolower($_GET['action']) == 'json'){
   
     $idparent="";
     if((int)$nilaiPembelian > 0){
+
       // 1. BUAT AKUN ASET DAN AKUMULASI
   
       $siapAkunAset = mysql_query("SELECT id, noakun, nama FROM mst_coa WHERE noakun = '01.02.00000' AND deleted=0");

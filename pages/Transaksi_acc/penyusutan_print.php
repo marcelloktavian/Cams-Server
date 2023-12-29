@@ -90,33 +90,39 @@ include("../../include/config.php");
 $tglstart = $_GET['startdate'];
 $tipe = $_GET['tipe'];
 
-$query = "SELECT x.nama_aset,x.tanggal_jurnal,
-		CONCAT(x.durasi_penyusutan,' Bulan') as durasi_penyusutan,
-		x.total_aset,
-		ROUND((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)) as total_penyusutan,
-		ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count)))) as nilai_sisa_aset,
-		x.tipe,
-		IF(x.count >= x.durasi_penyusutan,x.durasi_penyusutan,x.count) as penyusutan_berjalan
-		FROM
-		(
-		SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
-		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
-		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,CONCAT(DATE_FORMAT(DATE(c.tgl),'%Y-%m-'),'01'),STR_TO_DATE('$tglstart','%d/%m/%Y')) as count,c.tipe
-		FROM
-		(SELECT cj.keterangan,
-		STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
-		IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
-		IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
-		FROM
-		cron_jurnal cj
-		LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
-		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x WHERE  x.tanggal_jurnal <= STR_TO_DATE('$tglstart','%d/%m/%Y') 
-		ORDER BY x.durasi_penyusutan,x.tanggal_jurnal";
+$where = " x.tanggal_jurnal <= STR_TO_DATE('$tglstart','%d/%m/%Y') ";
 
 if ($tipe) {
 	$tipe = $tipe == '05.07.00000' ? 'Biaya Penyusutan Langsung' : 'Biaya Penyusutan Tidak Langsung';
 	$where .= " AND x.tipe like '%$tipe%' ";
 }
+
+
+$query = "SELECT x.nama_aset,x.tanggal_jurnal,
+	IF(x.durasi_penyusutan = 1,'Tidak Disusutkan',CONCAT(x.durasi_penyusutan,' Bulan'))  as durasi_penyusutan,
+	x.total_aset,
+	ROUND(
+	(x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)) as total_penyusutan,
+	ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,IF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)))) as nilai_sisa_aset,
+	x.tipe,
+	IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count) as penyusutan_berjalan
+	FROM
+	(
+	SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
+	DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
+	SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),STR_TO_DATE('$tglstart','%d/%m/%Y')) + 1 as count,c.tipe
+	FROM
+	(SELECT cj.keterangan,
+	STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
+	IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
+	IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
+	FROM
+	cron_jurnal cj
+	LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
+	c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x WHERE $where
+	ORDER BY x.durasi_penyusutan,x.tanggal_jurnal
+	";
+
 
 ?>
 
@@ -137,7 +143,7 @@ if ($tipe) {
             </td>
           </tr>
           <tr>
-            <td width="100%" class="style_tgl" colspan="7"><div id='totalqty'>Dari: <?= $tglstart;?>
+            <td width="100%" class="style_tgl" colspan="7"><div id='totalqty'>Sampai: <?= $tglstart;?>
             </div></td>           
 		  </tr>          		  
 </table>
@@ -156,7 +162,7 @@ if ($tipe) {
 
     <?php
 
-    $data = $db->query($query.$where)->fetchAll(PDO::FETCH_ASSOC);
+    $data = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
     $index = 1;
     $dpp = 0;
