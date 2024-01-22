@@ -186,7 +186,7 @@ FROM mst_b2bcustomer c LEFT JOIN (SELECT c.id,SUM(IF( c.id = b.id_customer, b.fa
 LEFT JOIN mst_b2bcustomer c ON b.id_customer = c.id
 WHERE b.deleted = 0 AND DATE ( b.tgl_trans ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY c.id ) d ON c.id = d.id LEFT JOIN (
 SELECT SUM( total ) AS total_retur,b2bcust_id AS id_dropshipper 
-FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE ( lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY b2bcust_id 
+FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE ( tgl_return ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY b2bcust_id 
 ) e ON c.id = e.id_dropshipper) net WHERE net.bruto > 0 or net.retur > 0 ";
 
 if ($type == 1) {
