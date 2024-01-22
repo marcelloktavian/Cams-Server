@@ -180,8 +180,8 @@ AND DATE ( r.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND S
 UNION 
 
 SELECT
-c.nama,IFNULL(d.bruto,0) as bruto,IFNULL(d.qty,0) as qty,IFNULL(d.`order`,0) as `order`,IFNULL( e.total_retur, 0 ) AS retur,IFNULL((d.bruto - IFNULL( e.total_retur, 0 )),0) AS netto,
-IFNULL(ROUND((d.bruto - IFNULL( e.total_retur, 0 )) / 1.11),0) as dpp,IFNULL(ROUND(((d.bruto - IFNULL( e.total_retur, 0 )) / 1.11) * 0.11),0) as ppn,'B2B' AS tipe 
+c.nama,IFNULL(d.bruto,0) as bruto,IFNULL(d.qty,0) as qty,IFNULL(d.`order`,0) as `order`,IFNULL( e.total_retur, 0 ) AS retur,		IFNULL(( IFNULL(d.bruto,0) - IFNULL( e.total_retur, 0 )), 0 ) AS netto,
+IFNULL( ROUND(( IFNULL(d.bruto,0) - IFNULL( e.total_retur, 0 )) / 1.11 ), 0 ) AS dpp,IFNULL( ROUND((( IFNULL(d.bruto,0) - IFNULL( e.total_retur, 0 )) / 1.11 ) * 0.11 ), 0 ) AS ppn,'B2B' AS tipe 
 FROM mst_b2bcustomer c LEFT JOIN (SELECT c.id,SUM(IF( c.id = b.id_customer, b.faktur, 0 )) AS bruto,SUM(IF( c.id = b.id_customer, b.totalkirim, 0 )) AS qty,COUNT( b.id ) AS `order` FROM b2bdo b
 LEFT JOIN mst_b2bcustomer c ON b.id_customer = c.id
 WHERE b.deleted = 0 AND DATE ( b.tgl_trans ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY c.id ) d ON c.id = d.id LEFT JOIN (
