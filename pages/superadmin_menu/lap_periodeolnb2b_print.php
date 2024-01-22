@@ -170,7 +170,8 @@ $type = $_GET['type'];
 
 $query = "SELECT net.* FROM (
 SELECT d.nama,IFNULL(o.faktur,0) as bruto,IFNULL(o.qty,0) as qty,IFNULL(o.`order`,0) as `order`,IFNULL(r.retur,0) as retur,
-IFNULL(o.faktur - IFNULL( r.retur, 0 ),0) AS netto,IFNULL(ROUND(( o.faktur - IFNULL( r.retur, 0 )) / 1.11 ),0) AS dpp,IFNULL(ROUND((( o.faktur - IFNULL( r.retur, 0 )) / 1.11 ) * 0.11 ),0) AS ppn,'OLN' AS tipe
+IFNULL(IFNULL(o.faktur,0) - IFNULL( r.retur, 0 ),0) AS netto,IFNULL(ROUND(( IFNULL(o.faktur,0) - IFNULL( r.retur, 0 )) / 1.11 ),0) AS dpp,IFNULL(ROUND((( IFNULL(o.faktur,0) - IFNULL( r.retur, 0 )) / 1.11 ) * 0.11 ),0) AS ppn,
+'OLN' AS tipe
 FROM mst_dropshipper d LEFT JOIN (
 SELECT SUM(o.faktur - IFNULL(o.discount_faktur,0)) AS faktur,SUM(o.totalqty) as qty, COUNT(o.id_trans) as `order`,o.id_dropshipper as id FROM olnso o WHERE o.deleted = 0
 AND o.state = '1' AND DATE ( o.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY o.id_dropshipper) o ON d.id = o.id LEFT JOIN (
