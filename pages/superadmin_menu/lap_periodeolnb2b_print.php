@@ -1,3 +1,4 @@
+<title>Laporan OLN + B2B</title>
 <script src="../../assets/js/jsbilangan.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../assets/js/jquery-1.4.js"></script>
 <style type="text/css">
@@ -168,32 +169,25 @@ $type = $_GET['type'];
 
 
 $query = "SELECT net.* FROM (
-	SELECT a.nama,a.bruto,a.qty,a.`order`,IFNULL(b.total_retur,0) as retur,(a.bruto - IFNULL(b.total_retur,0)) as netto,a.dpp,a.ppn,'OLN' as tipe
-FROM (
-	SELECT d.id,d.nama,SUM(IF(o.id_dropshipper = d.id,o.faktur,0)) as bruto,SUM(IF(o.id_dropshipper = d.id,o.totalqty,0)) as qty,COUNT(o.id_trans) as `order`,
-	SUM(IF(o.id_dropshipper = d.id,ROUND((o.faktur / 1.11 )),0)) as dpp,SUM(IF(o.id_dropshipper = d.id,ROUND((o.faktur / 1.11 ) * 0.11),0)) as ppn 
-	FROM olnso o JOIN mst_dropshipper d ON o.id_dropshipper = d.id
-	WHERE o.state = '1' AND o.deleted = 0 AND DATE(o.lastmodified) BETWEEN 
-	STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY d.id
-) a LEFT JOIN (
-	SELECT SUM( faktur ) AS total_retur,id_dropshipper FROM olnsoreturn 
-	WHERE deleted = 0 AND state = '1' AND DATE ( lastmodified ) BETWEEN 
-	STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY id_dropshipper 
-) b ON a.id = b.id_dropshipper
+SELECT d.nama,IFNULL(o.faktur,0) as bruto,IFNULL(o.qty,0) as qty,IFNULL(o.`order`,0) as `order`,IFNULL(r.retur,0) as retur,
+IFNULL(o.faktur - IFNULL( r.retur, 0 ),0) AS netto,IFNULL(ROUND(( o.faktur - IFNULL( r.retur, 0 )) / 1.11 ),0) AS dpp,IFNULL(ROUND((( o.faktur - IFNULL( r.retur, 0 )) / 1.11 ) * 0.11 ),0) AS ppn,'OLN' AS tipe
+FROM mst_dropshipper d LEFT JOIN (
+SELECT SUM(o.faktur - IFNULL(o.discount_faktur,0)) AS faktur,SUM(o.totalqty) as qty, COUNT(o.id_trans) as `order`,o.id_dropshipper as id FROM olnso o WHERE o.deleted = 0
+AND o.state = '1' AND DATE ( o.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY o.id_dropshipper) o ON d.id = o.id LEFT JOIN (
+SELECT SUM(IFNULL( r.faktur, 0 )) AS retur,r.id_dropshipper FROM olnsoreturn r WHERE r.deleted = 0 AND r.state = '1' 
+AND DATE ( r.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) AND ( r.totalqty <> 0 ) GROUP BY r.id_dropshipper ) r ON r.id_dropshipper = d.id
 
-UNION
+UNION 
 
-SELECT b.nama,b.bruto,b.qty,b.`order`,IFNULL(c.total_retur,0) as retur,(b.bruto - IFNULL(c.total_retur,0)) as netto,b.dpp,b.ppn,'B2B' as tipe
-FROM (
-	SELECT c.id,c.nama,SUM(IF(c.id = b.id_customer,b.faktur,0)) as bruto,SUM(IF(c.id = b.id_customer,b.totalkirim,0)) as qty,COUNT(b.id) as `order`,
-	SUM(IF(c.id = b.id_customer,ROUND( b.faktur / 1.11),0)) as dpp,SUM(IF(c.id = b.id_customer,ROUND( (b.faktur / 1.11) * 0.11 ),0)) as ppn
-	FROM b2bdo b LEFT JOIN mst_b2bcustomer c ON b.id_customer = c.id 
-	WHERE b.deleted = 0 AND DATE(b.tgl_trans) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY c.id
-) b LEFT JOIN (
-	SELECT SUM( total ) AS total_retur,b2bcust_id AS id_dropshipper 
-	FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE ( lastmodified ) BETWEEN 
-	STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY b2bcust_id ) c ON b.id = c.id_dropshipper 
-) net ";
+SELECT
+c.nama,IFNULL(d.bruto,0) as bruto,IFNULL(d.qty,0) as qty,IFNULL(d.`order`,0) as `order`,IFNULL( e.total_retur, 0 ) AS retur,IFNULL((d.bruto - IFNULL( e.total_retur, 0 )),0) AS netto,
+IFNULL(ROUND((d.bruto - IFNULL( e.total_retur, 0 )) / 1.11),0) as dpp,IFNULL(ROUND(((d.bruto - IFNULL( e.total_retur, 0 )) / 1.11) * 0.11),0) as ppn,'B2B' AS tipe 
+FROM mst_b2bcustomer c LEFT JOIN (SELECT c.id,SUM(IF( c.id = b.id_customer, b.faktur, 0 )) AS bruto,SUM(IF( c.id = b.id_customer, b.totalkirim, 0 )) AS qty,COUNT( b.id ) AS `order` FROM b2bdo b
+LEFT JOIN mst_b2bcustomer c ON b.id_customer = c.id
+WHERE b.deleted = 0 AND DATE ( b.tgl_trans ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY c.id ) d ON c.id = d.id LEFT JOIN (
+SELECT SUM( total ) AS total_retur,b2bcust_id AS id_dropshipper 
+FROM b2breturn WHERE deleted = 0 AND post = '1' AND DATE ( lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY b2bcust_id 
+) e ON c.id = e.id_dropshipper) net ";
 
 if ($type == 1) {
   $query .= "ORDER BY nama ASC";
@@ -310,26 +304,26 @@ foreach ($result as $value) {
           <?php foreach ($cat as $c) : ?>
             <tr>
               <td class="style_detail_left" style=""><?= $c['name'] ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['qty'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['order'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['bruto'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;color: red;"><?= number_format($c['retur'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['netto'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['dpp'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($c['ppn'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format(($c['netto'] / $total_netto) * 100, 2, ",", ".") . "%" ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['qty']) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['order']) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['bruto'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;color: red;"><?= number_format($c['retur'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['netto'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['dpp'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($c['ppn'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format(($c['netto'] / $total_netto) * 100, 2) . "%" ?></td>
             </tr>
           <?php endforeach; ?>
           <tr>
             <td width="10%" class="style_title_left" style="text-align: center; font-size: small; font-weight: 600;">Total</td>
-            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($qty, 2, ",", ".") ?></td>
-            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($order, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($bruto, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600; color: red;"><?= number_format($retur, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($netto, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($dpp, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($ppn, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($total_netto / $netto * 100, 2, ",", ".") . "%" ?></td>
+            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($qty) ?></td>
+            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($order) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($bruto, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600; color: red;"><?= number_format($retur, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($netto, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($dpp, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($ppn, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($total_netto / $netto * 100, 2) . "%" ?></td>
           </tr>
         </table>
 
@@ -354,27 +348,27 @@ foreach ($result as $value) {
             <tr>
               <td class="style_detail_left" style="text-align: center;"><?= $num ?></td>
               <td class="style_detail" style="text-align: left;"><?= $value['nama'] ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['qty'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['order'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['bruto'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;color: red;"><?= number_format($value['retur'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['netto'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['dpp'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= number_format($value['ppn'], 2, ",", ".") ?></td>
-              <td class="style_detail" style="text-align: right;"><?= str_replace(".", ",", (($value['netto'] / $total_netto) * 100)) . "%" ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['qty']) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['order']) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['bruto'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;color: red;"><?= number_format($value['retur'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['netto'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['dpp'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format($value['ppn'], 2) ?></td>
+              <td class="style_detail" style="text-align: right;"><?= number_format((($value['netto'] / $total_netto) * 100), 3) . "%" ?></td>
             </tr>
           <?php $num++;
           endforeach ?>
           <tr>
             <td width="20%" class="style_title_left" style="text-align: center; font-size: small; font-weight: 600;" colspan="2">Total</td>
-            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($qty, 2, ",", ".") ?></td>
-            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($order, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($bruto, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600; color: red;"><?= number_format($retur, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($netto, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($dpp, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($ppn, 2, ",", ".") ?></td>
-            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($total_netto / $netto * 100, 2, ",", ".") . "%" ?></td>
+            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($qty) ?></td>
+            <td width="5%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($order) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($bruto, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600; color: red;"><?= number_format($retur, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($netto, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($dpp, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($ppn, 2) ?></td>
+            <td width="10%" class="style_title" style="text-align: right; font-size: small; font-weight: 600;"><?= number_format($total_netto / $netto * 100, 2) . "%" ?></td>
           </tr>
         </table>
       </td>
