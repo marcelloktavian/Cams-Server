@@ -204,7 +204,7 @@ if ($_GET['id_trans'] == '') {
 		$id_detail = $_POST['Id' . $i];
 
 		$id_product = $_POST['IDP' . $i]; //
-		$namabrg = $_POST['NamaBrg' . $i];
+		$namabrg = str_replace("'", "''", $_POST['NamaBrg' . $i]);
 		$Qty = $_POST['SUBTOTALQTY' . $i];
 		$Pricelist = str_replace(",", "", $_POST['Pricelist' . $i]);
 		$Harga = str_replace(",", "", $_POST['Harga' . $i]);
