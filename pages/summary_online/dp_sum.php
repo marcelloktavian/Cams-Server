@@ -145,14 +145,14 @@ $ongkir = 0;
                 <tr>
                     <td><?= $no ?></td>
                     <td class="data"><?= $d['dropshipper'] ?></td>
-                    <td class="<?= $d['order_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cash']) ?></td>
                     <td class="<?= $d['qty_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cash']) ?></td>
+                    <td class="<?= $d['order_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cash']) ?></td>
                     <td class="<?= $d['f_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cash']) ?></td>
-                    <td class="<?= $d['order_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cr']) ?></td>
                     <td class="<?= $d['qty_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cr']) ?></td>
+                    <td class="<?= $d['order_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cr']) ?></td>
                     <td class="<?= $d['f_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cr']) ?></td>
-                    <td class="<?= $d['order_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_all']) ?></td>
                     <td class="<?= $d['qty_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_all']) ?></td>
+                    <td class="<?= $d['order_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_all']) ?></td>
                     <td class="<?= $d['f_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_all']) ?></td>
                     <td class="<?= $d['dpp_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['dpp_all']) ?></td>
                     <td class="<?= $d['ppn_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ppn_all']) ?></td>
