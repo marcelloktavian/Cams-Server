@@ -123,7 +123,7 @@ $ongkir = 0;
                 <th rowspan="2">Nama Customer</th>
                 <th colspan="3">Penjualan Cash</th>
                 <th colspan="3">Penjualan Credit</th>
-                <th colspan="5">Penjualan OLN + Credit</th>
+                <th colspan="5">Penjualan Keseluruhan</th>
                 <th rowspan="2">Ongkos Kirim</th>
             </tr>
             <tr>
@@ -174,14 +174,14 @@ $ongkir = 0;
             endforeach; ?>
             <tr class="bold">
                 <td colspan="2">Total</td>
-                <td><?= number_format($order_cash) ?></td>
                 <td><?= number_format($qty_cash) ?></td>
+                <td><?= number_format($order_cash) ?></td>
                 <td><?= number_format($f_cash) ?></td>
-                <td><?= number_format($order_cr) ?></td>
                 <td><?= number_format($qty_cr) ?></td>
+                <td><?= number_format($order_cr) ?></td>
                 <td><?= number_format($f_cr) ?></td>
-                <td><?= number_format($order_all) ?></td>
                 <td><?= number_format($qty_all) ?></td>
+                <td><?= number_format($order_all) ?></td>
                 <td><?= number_format($f_all) ?></td>
                 <td><?= number_format($dpp_all) ?></td>
                 <td><?= number_format($ppn_all) ?></td>
