@@ -130,14 +130,6 @@
         size: A4;
         margin: 15px;
     }
-
-    .red {
-        color: red;
-    }
-
-    .bold {
-        font-weight: bold;
-    }
 </style>
 <?php
 // error_reporting(0);
@@ -188,7 +180,7 @@ $rs_title = mysql_fetch_array($data_title);
                     <tr>
                         <td width="100%" class="style9b" colspan="7">Dari:
                             <?php echo "" . $tglstart; ?>
-                            &nbsp;-&nbsp;<?php echo "" . $tglend; ?> </td>
+                            &nbsp;-&nbsp;<?php echo "" . $tglend; ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jumlah Order:&nbsp;<?php echo "" . $rs_title['jumlah_order']; ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nomor_awal:&nbsp;<?php echo "" . $rs_title['first_order']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nomor_akhir:&nbsp;<?php echo "" . $rs_title['last_order']; ?></td>
                     </tr>
 
                 </table>
@@ -208,12 +200,6 @@ $rs_title = mysql_fetch_array($data_title);
             <th width="25%" class="style_title">
                 <div align="center">Customer</div>
                 </td>
-            <th width="10%" class="style_title">
-                <div align="center">No Faktur</div>
-                </td>
-            <th width="8%" class="style_title">
-                <div align="center">Tgl Kirim Faktur</div>
-                </td>
             <th width="15%" class="style_title">
                 <div align="center">Item</div>
                 </td>
@@ -223,11 +209,11 @@ $rs_title = mysql_fetch_array($data_title);
             <th width="5%" class="style_title">
                 <div align="center">Qty</div>
                 </td>
-            <th width="8%" class="style_title">
-                <div align="center">Nilai Perunit</div>
+            <th width="10%" class="style_title">
+                <div align="center">Price</div>
                 </td>
-            <th width="12%" class="style_title red">
-                <div align="center">Retur Bruto</div>
+            <th width="10%" class="style_title">
+                <div align="center">Subtotal</div>
                 </td>
         </tr>
         <?php
@@ -240,7 +226,7 @@ $rs_title = mysql_fetch_array($data_title);
         } else {
             $where .= " AND DATE(p.tgl_return) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y') AND STR_TO_DATE('$tglend','%d/%m/%Y')";
         }
-        $query_detail = "SELECT p.*,dt.*,c.nama as customer,k.nama as kategori,DATE_FORMAT(p.tgl_return,'%d/%m/%Y') as tglreturn,DATE_FORMAT(`do`.tgl_trans,'%d/%m/%Y') as tgl_post  FROM `b2breturn` p Left Join `mst_b2bcustomer` c on (c.id=p.b2bcust_id) Left Join `mst_b2bcategory_sale` k on (p.id_kategori=k.id) left join b2breturn_detail dt ON dt.id_parent=p.id LEFT JOIN b2bdo `do` ON dt.b2bdo_num = `do`.id_trans " . $where;
+        $query_detail = "SELECT p.*,dt.*,c.nama as customer,k.nama as kategori,DATE_FORMAT(p.tgl_return,'%d/%m/%Y') as tglreturn FROM `b2breturn` p Left Join `mst_b2bcustomer` c on (c.id=p.b2bcust_id) Left Join `mst_b2bcategory_sale` k on (p.id_kategori=k.id) left join b2breturn_detail dt ON dt.id_parent=p.id " . $where;
         $data_detail = mysql_query($query_detail);
 
         $i = 0;
@@ -401,13 +387,11 @@ $rs_title = mysql_fetch_array($data_title);
 
             echo "<tr><td class='style_detail_left'><div align='center'>" . $line['b2breturn_num'] . "</br>(" . $line['tglreturn'] . ")</div></td>";
             echo "<td class='style_detail'><div align='center'>" . $line['customer'] . "</div></td>";
-            echo "<td class='style_detail'><div align='center'>" . $line['b2bdo_num'] . "</div></td>";
-            echo "<td class='style_detail'><div align='center'>" . $line['tgl_post'] . "</div></td>";
             echo "<td class='style_detail'><div align='center'>" . $line['namabrg'] . "</div></td>";
             echo "<td class='style_detail'><div align='center'>" . $sizenew . "</div></td>";
             echo "<td class='style_detail'><div align='right'>" . number_format($totalqty) . "</div></td>";
             echo "<td class='style_detail'><div align='right'>" . number_format($line['harga_satuan']) . "</div></td>";
-            echo "<td class='style_detail red'><div align='right'>" . number_format($line['subtotal']) . "</div></td>";
+            echo "<td class='style_detail'><div align='right'>" . number_format($line['subtotal']) . "</div></td>";
             $barangnya = $line['id_product'];
             $grand_qty += $totalqty;
             $grand_total += $line['subtotal'];
@@ -416,13 +400,13 @@ $rs_title = mysql_fetch_array($data_title);
 
         ?>
         <tr>
-            <td colspan="6" class="style_title_left bold">
+            <td colspan="4" class="style_title_left">
                 <div align="right">Total:</div>
             </td>
-            <td class="style_title bold">
+            <td class="style_title">
                 <div align="right"><?= $grand_qty; ?></div>
             </td>
-            <td colspan="2" class="style_title red bold">
+            <td colspan="2" class="style_title">
                 <div align="right"><?= number_format($grand_total); ?></div>
             </td>
         </tr>
