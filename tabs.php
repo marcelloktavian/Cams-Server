@@ -103,14 +103,14 @@ if (isset($_GET['year_filter'])) {
 $startDate = date("Y-m-01", strtotime($year_filter . "-" . $month_filter . "-01"));
 $endDate = date("Y-m-t", strtotime($year_filter . "-" . $month_filter . "-31"));
 
-$sqlb2b_query = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = '" . $year_filter . "' GROUP BY MONTH(tgl_trans)";
+$sqlb2b_query = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = $year_filter GROUP BY MONTH(tgl_trans)";
 
-$sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = '" . $year_filter . "' GROUP BY MONTH(lastmodified)";
+$sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)";
 
-$sqlolnreturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month`";
+$sqlolnreturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month` order by a.num";
 $sqlolnreturntotal_query = "SELECT SUM(x.value) as total_oln FROM (SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month`) x";
 
-$sqlb2breturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month`";
+$sqlb2breturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` order by a.num";
 $sqlb2breturntotal_query = "SELECT SUM(x.value) as total_b2b FROM ( SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` ) x";
 
 $sqlb2b = mysql_query($sqlb2b_query);
@@ -195,31 +195,14 @@ $sqlreturnb2b_month_total = "SELECT SUM(x.total) as total FROM( SELECT DAY(a.dat
     ) b ON DAY(a.date) = b.`day`
   WHERE a.date BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.date) x";
 
-$sqlnet = "SELECT IFNULL(oln.`month`,b2b.`month`) as month,(oln.netoln + b2b.netb2b ) as net FROM (
-		SELECT a.`month`,IFNULL((a.sum_totalfaktur - IFNULL(b.total_r_b2b,0)),0	) as netb2b FROM (
-    SELECT MONTH(tgl_trans) AS `month`, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = $year_filter GROUP BY MONTH(tgl_trans)
-  ) a LEFT JOIN (
-    SELECT MONTH(r.tgl_return) as `month`, SUM(r.total) as total_r_b2b FROM b2breturn r WHERE r.deleted = 0 AND r.post = 1 AND YEAR(r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)
-  ) b ON a.`month` = b.`month`
-) b2b LEFT JOIN (
-	SELECT a.`month`,(a.sum_totalolnso - b.total) as netoln FROM (
-    SELECT MONTH(lastmodified) AS `month`, SUM(faktur) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
-  ) a JOIN (
-    SELECT MONTH(lastmodified) as `month`,SUM(total) as total FROM olnsoreturn r WHERE deleted = 0 AND r.state = '1' AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)
-  ) b ON a.month = b.month
-) oln ON oln.`month` = b2b.`month`";
 
 
 $sqlb2b_total_month = mysql_query($sqlb2b_month);
 $sqlolnso_total_month = mysql_query($sqlolnso_month);
-$net = mysql_query($sqlnet);
 
-$datanet = [];
 $total_net = 0;
-while ($dt = mysql_fetch_array($net)) {
-  $datanet[] = $dt['net'];
-  $total_net += (int)$dt['net'];
-}
+
+
 
 $sqlb2b_month = mysql_query($sqlb2b_month);
 $sqlolnso_month = mysql_query($sqlolnso_month);
@@ -325,6 +308,13 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
   const ctx = document.getElementById('penjualan-lower');
   const ctn = document.getElementById('penjualan-net');
 
+  let datab2b = [<?php while ($row_b2b = mysql_fetch_array($sqlb2b)) { ?><?= $row_b2b['sum_totalfaktur'] ?>, <?php } ?>];
+  let dataoln = [<?php while ($row_olnso = mysql_fetch_array($sqlolnso)) { ?><?= $row_olnso['sum_totalolnso'] ?>, <?php } ?>];
+  let dataolnrtn = [<?php while ($row_olnsoreturn = mysql_fetch_array($returnoln)) { ?><?= $row_olnsoreturn['value'] ?>, <?php } ?>];
+  let datab2brtn = [<?php while ($row_b2breturn = mysql_fetch_array($returnb2b)) { ?><?= $row_b2breturn['value'] ?>, <?php } ?>];
+  let total_net = 0;
+  let data_net = []
+
   <?php
   $total_b2b = 0;
   $this_b2b = 0;
@@ -349,12 +339,14 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
   }
   ?>
 
+
+
   const labels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'December'];
   const data = {
     labels: labels,
     datasets: [{
         label: 'B2B Sales : Rp <?= number_format($total_b2b, 0) ?>',
-        data: [<?php while ($row_b2b = mysql_fetch_array($sqlb2b)) { ?><?= $row_b2b['sum_totalfaktur'] ?>, <?php } ?>],
+        data: datab2b,
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgb(75, 192, 192)',
@@ -362,7 +354,7 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
       },
       {
         label: 'OLN Sales : Rp <?= number_format($total_olnso, 0) ?>',
-        data: [<?php while ($row_olnso = mysql_fetch_array($sqlolnso)) { ?><?= $row_olnso['sum_totalolnso'] ?>, <?php } ?>],
+        data: dataoln,
         fill: false,
         borderColor: 'rgb(192, 75, 75)',
         backgroundColor: 'rgb(192, 75, 75)',
@@ -370,7 +362,7 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
       },
       {
         label: 'OLN Return : Rp <?= number_format($returnolntotal, 0) ?>',
-        data: [<?php while ($row_olnsoreturn = mysql_fetch_array($returnoln)) { ?><?= $row_olnsoreturn['value'] ?>, <?php } ?>],
+        data: dataolnrtn,
         fill: false,
         borderColor: 'rgb(75, 192, 75)',
         backgroundColor: 'rgb(75, 192, 75)',
@@ -378,7 +370,7 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
       },
       {
         label: 'B2B Return : Rp <?= number_format($returnb2btotal, 0) ?>',
-        data: [<?php while ($row_b2breturn = mysql_fetch_array($returnb2b)) { ?><?= $row_b2breturn['value'] ?>, <?php } ?>],
+        data: datab2brtn,
         fill: false,
         borderColor: 'rgb(192, 192, 75)',
         backgroundColor: 'rgb(192, 192, 75)',
@@ -483,11 +475,20 @@ $total_return_b2b = mysql_fetch_array(mysql_query($sqlreturnb2b_month_total))['t
   });
 
 
+  for (let i = 0; i < datab2b.length; i++) {
+    const element = (datab2b[i] + dataoln[i] - datab2brtn[i] - dataolnrtn[i]);
+
+    total_net += element
+    data_net.push(element)
+  }
+
+  total_net = new Intl.NumberFormat('en-US', {}).format(total_net)
+
   const datanet = {
     labels: labels,
     datasets: [{
-      label: 'Rp. <?= number_format($total_net, 0) ?>',
-      data: <?= json_encode($datanet) ?>,
+      label: 'Rp. ' + total_net,
+      data: data_net,
       fill: false,
       borderColor: 'rgb(214, 42, 19)',
       backgroundColor: 'rgb(214, 42, 19)',
