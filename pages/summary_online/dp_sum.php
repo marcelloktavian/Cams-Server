@@ -7,23 +7,25 @@ $tglend = $_GET['end'];
 $type = $_GET['type'];
 
 $query = "SELECT
-d.nama AS dropshipper,
-	COUNT(IF(m.piutang = 0,m.id_trans,NULL)) as order_cash,
-	SUM(IF(m.piutang = 0,m.totalqty,0)) as qty_cash,
-	SUM(IF(m.piutang = 0,m.faktur,0)) as f_cash,
-	COUNT(IF(m.piutang > 0,m.id_trans,NULL)) as order_cr,
-	SUM(IF(m.piutang > 0,m.totalqty,0)) as qty_cr,
-	SUM(IF(m.piutang > 0,m.faktur,0)) as f_cr,
-	COUNT(m.id_trans) as order_all,
-	SUM(m.totalqty) as qty_all,
-	SUM(m.faktur) as f_all,
-	ROUND(SUM(m.faktur) / 1.11) AS dpp_all,
-	ROUND((SUM(m.faktur) / 1.11) * 0.11) as ppn_all,
-	SUM(exp_fee) as ongkir
-FROM olnso m LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id 
-WHERE m.deleted = 0 AND m.state = '1' AND DATE( m.lastmodified ) 
-BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) 
-GROUP BY m.id_dropshipper ORDER BY d.nama ASC";
+            d.nama AS dropshipper,
+            COUNT(IF(m.piutang = 0, m.id_trans, NULL)) AS order_cash,
+            SUM(IF(m.piutang = 0, m.totalqty, 0)) AS qty_cash,
+            SUM(IF(m.piutang = 0, m.faktur - IFNULL(m.discount_faktur, 0), 0)) AS f_cash,
+            COUNT(IF(m.piutang > 0, m.id_trans, NULL)) AS order_cr,
+            SUM(IF(m.piutang > 0, m.totalqty, 0)) AS qty_cr,
+            SUM(IF(m.piutang > 0, m.faktur - IFNULL(m.discount_faktur, 0), 0)) AS f_cr,
+            COUNT(m.id_trans) AS order_all,
+            SUM(m.totalqty) AS qty_all,
+            SUM(m.faktur - IFNULL(m.discount_faktur, 0)) AS f_all,
+            ROUND(SUM(m.faktur - IFNULL(m.discount_faktur, 0)) / 1.11) AS dpp_all,
+            ROUND((SUM(m.faktur - IFNULL(m.discount_faktur, 0)) / 1.11) * 0.11) AS ppn_all,
+            SUM(exp_fee) AS ongkir
+        FROM olnso m LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id WHERE m.deleted = 0 
+        AND m.state = '1' AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') 
+        GROUP BY m.id_dropshipper ";
+
+$type == 1 ? $query .= ' ORDER BY d.nama ASC;' : $query .= ' ORDER BY SUM (m.totalqty) DESC';
+
 $data = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
 $no = 1;
