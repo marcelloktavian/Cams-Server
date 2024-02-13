@@ -24,7 +24,7 @@ $query = "SELECT
         AND m.state = '1' AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') 
         GROUP BY m.id_dropshipper ";
 
-$type == 1 ? $query .= ' ORDER BY d.nama ASC;' : $query .= ' ORDER BY SUM (m.totalqty) DESC';
+$type == 1 ? $query .= ' ORDER BY d.nama ASC;' : $query .= ' ORDER BY SUM(m.totalqty) DESC';
 
 $data = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
