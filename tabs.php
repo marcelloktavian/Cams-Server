@@ -88,6 +88,11 @@
 <?php
 require "include/koneksi.php";
 
+$queryGetPPN = "SELECT * FROM mst_taxes WHERE nama='PPN' AND deleted=0 ORDER BY id DESC LIMIT 1";
+
+$getPPN = $db->query($queryGetPPN);
+$ppn = $getPPN->fetchAll(PDO::FETCH_ASSOC)[0]['value'] / 100;
+
 if (isset($_GET['month_filter'])) {
   $month_filter = $_GET['month_filter'];
 } else {
@@ -103,14 +108,14 @@ if (isset($_GET['year_filter'])) {
 $startDate = date("Y-m-01", strtotime($year_filter . "-" . $month_filter . "-01"));
 $endDate = date("Y-m-t", strtotime($year_filter . "-" . $month_filter . "-31"));
 
-$sqlb2b_query = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = $year_filter GROUP BY MONTH(tgl_trans)";
+$sqlb2b_query = "SELECT MONTH(tgl_trans) AS MONTH, SUM(totalfaktur) / (1 + $ppn) AS sum_totalfaktur FROM b2bdo WHERE deleted = 0 AND YEAR(tgl_trans) = $year_filter GROUP BY MONTH(tgl_trans)";
 
-$sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, SUM(total)-SUM(exp_fee) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)";
+$sqlolnso_query = "SELECT MONTH(lastmodified) AS MONTH, (SUM(total)-SUM(exp_fee)) / (1 + $ppn) AS sum_totalolnso FROM olnso WHERE deleted = 0 AND YEAR(lastmodified) = $year_filter GROUP BY MONTH(lastmodified)";
 
-$sqlolnreturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month` order by a.num";
+$sqlolnreturn_query = "SELECT IFNULL(b.total / (1 + $ppn),0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month` order by a.num";
 $sqlolnreturntotal_query = "SELECT SUM(x.value) as total_oln FROM (SELECT IFNULL(b.total,0) as `value`,a.num FROM (SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) a LEFT JOIN (SELECT SUM( o.total ) AS total,MONTH(o.lastmodified) as `month` FROM olnsoreturn o WHERE o.totalqty > 0 AND o.deleted = 0 AND o.state = '1' AND YEAR ( o.lastmodified ) = $year_filter GROUP BY MONTH(o.lastmodified)) b ON a.num = b.`month`) x";
 
-$sqlb2breturn_query = "SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` order by a.num";
+$sqlb2breturn_query = "SELECT IFNULL(b.total / (1 + $ppn),0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` order by a.num";
 $sqlb2breturntotal_query = "SELECT SUM(x.value) as total_b2b FROM ( SELECT IFNULL(b.total,0) as `value`,a.num FROM ( SELECT 1 as num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 ) a LEFT JOIN (SELECT SUM( r.total ) AS total, MONTH(r.tgl_return) as `month` FROM b2breturn r WHERE r.post = '1' AND r.deleted = 0 AND YEAR ( r.tgl_return ) = $year_filter GROUP BY MONTH(r.tgl_return)) b ON a.num = b.`month` ) x";
 
 $sqlb2b = mysql_query($sqlb2b_query);
@@ -123,7 +128,7 @@ $returnb2btotal = mysql_fetch_array(mysql_query($sqlb2breturntotal_query))['tota
 $sqlb2b_total = mysql_query($sqlb2b_query);
 $sqlolnso_total = mysql_query($sqlolnso_query);
 
-$sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum_totalfaktur FROM (
+$sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur / (1  + $ppn),0) AS sum_totalfaktur FROM (
       SELECT LAST_DAY('$endDate') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
       FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
       CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
@@ -133,7 +138,7 @@ $sqlb2b_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalfaktur,0) AS sum
     ON DAY(a.Date) = b.day WHERE a.Date BETWEEN '$startDate' AND LAST_DAY('$endDate') ORDER BY a.Date";
 
 
-$sqlolnso_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalolnso,0) AS sum_totalolnso
+$sqlolnso_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalolnso / (1 + $ppn),0) AS sum_totalolnso
   FROM (
       SELECT LAST_DAY('" . $endDate . "') - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS DATE
       FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
@@ -145,7 +150,7 @@ $sqlolnso_month = "SELECT DAY(a.Date) AS `day`, IFNULL(b.sum_totalolnso,0) AS su
       WHERE a.Date BETWEEN '" . $startDate . "' AND LAST_DAY('" . $endDate . "') ORDER BY a.Date";
 
 
-$sqlolnsoreturn_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
+$sqlolnsoreturn_month = "SELECT DAY(a.date) as day,IFNULL(b.total / (1 + $ppn),0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
 		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS b
 		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS c 
   ) a LEFT JOIN (
@@ -161,7 +166,7 @@ $sqlolnsoreturn_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FR
 		GROUP BY DAY(o.lastmodified)
 		ORDER BY DAY(o.lastmodified) ) b ON DAY(a.date) = b.day WHERE a.DATE BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.DATE;";
 
-$total_return_oln_month = "SELECT SUM(x.total) as total FROM ( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
+$total_return_oln_month = "SELECT IFNULL(SUM(x.total / (1 + $ppn)),0 ) as total FROM ( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM (SELECT LAST_DAY( '$endDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS a
 		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS b
 		CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS c 
   ) a LEFT JOIN ( 
@@ -179,7 +184,7 @@ $total_return_oln_month = "SELECT SUM(x.total) as total FROM ( SELECT DAY(a.date
   ORDER BY a.DATE) x";
 
 
-$sqlreturnb2b_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+$sqlreturnb2b_month = "SELECT DAY(a.date) as day,IFNULL(b.total / (1 + $ppn),0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
     ) AS a CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
 		) AS b CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
 		) AS  c 
@@ -187,7 +192,7 @@ $sqlreturnb2b_month = "SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM
     ) b ON DAY(a.date) = b.`day`
   WHERE a.date BETWEEN '$startDate' AND LAST_DAY( '$endDate' ) ORDER BY a.date";
 
-$sqlreturnb2b_month_total = "SELECT SUM(x.total) as total FROM( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
+$sqlreturnb2b_month_total = "SELECT SUM(x.total) / (1 + $ppn) as total FROM( SELECT DAY(a.date) as day,IFNULL(b.total,0) as total FROM ( SELECT LAST_DAY( '$startDate' ) - INTERVAL (a.a + ( 10 * b.a ) + ( 100 * c.a )) DAY AS `date` FROM ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
     ) AS a CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
 		) AS b CROSS JOIN ( SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 
 		) AS  c 
