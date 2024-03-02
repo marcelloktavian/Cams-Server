@@ -11,14 +11,17 @@ $allow_delete   = is_show_menu(DELETE_POLICY, penyusutan, $group_acess);
 if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   $page = isset($_GET['page']) ? $_GET['page'] : 1;
   $limit = isset($_GET['rows']) ? $_GET['rows'] : 10;
-  $sidx = isset($_GET['sidx']) ? $_GET['sidx'] : 'nilai_sisa_aset';
-  $sord = isset($_GET['sord']) ? $_GET['sord'] : 'DESC';
+  $sidx = isset($_GET['sidx']) ? $_GET['sidx'] : 'is_add';
+  $sord = isset($_GET['sord']) ? $_GET['sord'] : 'ASC';
 
   $startdate = isset($_GET['startdate']) ? $_GET['startdate'] : DATE('d/m/Y');
   $aset = isset($_GET['aset']) ? $_GET['aset'] : '';
   $tipe = isset($_GET['tipe']) ? $_GET['tipe'] : '';
+  $status = isset($_GET['status']) ? $_GET['status'] : '';
 
   $where = " WHERE TRUE ";
+
+  $whereStatus = "";
 
   if ($startdate != null && $startdate != "") {
     $where .= " AND x.tanggal_jurnal <= STR_TO_DATE('$startdate','%d/%m/%Y') ";
@@ -35,31 +38,40 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
     }
   }
 
-  $queryIndex = "SELECT x.nama_aset,x.tanggal_jurnal,
-		IF(x.durasi_penyusutan = 1,'Tidak Disusutkan',CONCAT(x.durasi_penyusutan,' Bulan'))  as durasi_penyusutan,
-		x.total_aset,
-		ROUND(
-		(x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)) as total_penyusutan,
-		ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,IF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)))) as nilai_sisa_aset,
-		x.tipe,
-		IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count) as penyusutan_berjalan
-		FROM
-		(
-		SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
-		DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
-		SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),LAST_DAY(NOW())) + 1 as count,c.tipe
-		FROM
-		(SELECT cj.keterangan,
-		STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
-		IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
-		IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
-		FROM
-		cron_jurnal cj
-		LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
-		c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) ) x ";
+  if (isset($_GET['status'])) {
+    if ($status != '') {
+      $whereStatus .= " WHERE y.is_add = $status ";
+    }
+  }
+
+  $queryIndex = "SELECT * FROM (
+    SELECT 0 as id,x.nama_aset,x.tanggal_jurnal,
+      IF(x.durasi_penyusutan = 1,'Tidak Disusutkan',CONCAT(x.durasi_penyusutan,' Bulan'))  as durasi_penyusutan,
+      x.total_aset,
+      ROUND((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)) as total_penyusutan,
+      ROUND((x.total_aset - ((x.total_aset / x.durasi_penyusutan) * IF(x.count >= x.durasi_penyusutan,IF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count)))) as nilai_sisa_aset,
+      x.tipe,
+      IF(x.count >= x.durasi_penyusutan,iF(x.durasi_penyusutan = 1,0,x.durasi_penyusutan),x.count) as penyusutan_berjalan,
+      1 AS is_add
+      FROM
+      (SELECT SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 ) AS nama_aset,
+        DATE ( c.tgl ) AS tanggal_jurnal,CAST(SUBSTRING_INDEX(SUBSTRING_INDEX( c.keterangan, 'dari',- 1 ),'Bulan',1) as UNSIGNED) as durasi_penyusutan,
+        SUM( c.kredit ) AS total_aset,TIMESTAMPDIFF(MONTH,DATE(c.tgl),NOW()) + 1 as count,c.tipe
+        FROM
+        (SELECT cj.keterangan,
+        STR_TO_DATE(SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(cj.keterangan,'/ ',-1),' ke',1),1,6),'%y%m%d') as tgl,
+        IF( cd.nama_akun LIKE 'Akumulasi Depresiasi & Amortisasi %', cd.kredit, 0 ) AS kredit,
+        IF(cd.no_akun = '06.19.00000','Biaya Penyusutan Tidak Langsung',IF( cd.no_akun = '05.07.00000', 'Biaya Penyusutan Langsung', '' )) AS tipe 
+        FROM
+        cron_jurnal cj
+        LEFT JOIN cron_jurnal_detail cd ON cj.id = cd.id_parent WHERE cj.keterangan LIKE 'Penyusutan %' AND cj.deleted = 0 AND cd.deleted = 0 ) 
+        c GROUP BY SUBSTRING_INDEX( SUBSTRING_INDEX( c.keterangan, 'Penyusutan',- 1 ), 'ke', 1 )) x $where
+      UNION ALL
+      SELECT p.id,p.nama as nama_aset,p.tgl_pembelian as tanggal_jurnal,CONCAT(p.durasi,' Bulan') as durasi_penyusutan,p.dpp as total_aset,0 as total_penyusutan,0 as nilai_sisa_aset, '' as tipe, 0 as penyusutan_berjalan,p.is_add FROM penyusutan p WHERE p.hide = 0 AND p.deleted = 0 AND p.is_add = 0
+  ) y ";
 
 
-  $q = $db->query($queryIndex . $where);
+  $q = $db->query($queryIndex . $whereStatus);
   $count = $q->rowCount();
 
   $count > 0 ? $total_pages = ceil($count / $limit) : $total_pages = 0;
@@ -72,7 +84,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   $responce['records'] = $count;
 
   $q = $db->query(
-    $queryIndex . $where . "
+    $queryIndex . $whereStatus . "
       ORDER BY `" . $sidx . "` " . $sord . "
       LIMIT " . $start . ", " . $limit
   );
@@ -81,9 +93,34 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 
   $i = 0;
   foreach ($data1 as $line) {
-    $delete = $allow_delete ? '<a onclick="javascript:popup_form(\'' . BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa=' . ($line['total_aset'] - $line['total_penyusutan']) . '&aset=' . $line['nama_aset'] . '\',\'table_penyusutan\')" href="javascript:void(0);">Likuidasi</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Likuidasi</a>';
+    $delete;
+    $hapus;
+    $susutkan;
 
-    $hapus = $allow_delete ? '<a onclick="javascript:popup_form(\'' . BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=passhapus&nama_aset=' . $line['nama_aset'] . '\',\'table_penyusutan\')" href="javascript:;">Hapus</a>' : '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Hapus</a>';
+    if ($allow_add) {
+      if ($line['is_add'] == 0) {
+        $susutkan = '<a onclick="javascript:link_ajax(\'' . BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=add_aktiva&id=' . $line['id'] . '\')" href="javascript:void(0);">Susutkan</a>';
+      } else {
+        $susutkan = '<a onclick="javascript:custom_alert(\'Aset Sudah Disusutkan\')" href="javascript:void(0);">Susutkan</a>';
+      }
+    } else {
+      $susutkan = '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Susutkan</a>';
+    }
+
+
+    if ($line['is_add'] == 0) {
+      $delete = '<a onclick="javascript:custom_alert(\'Aset Belum disusutkan!\')" href="javascript:void(0);">Likuidasi</a>';
+      $hapus = '<a onclick="javascript:custom_alert(\'Aset Belum disusutkan\')" href="javascript:void(0);">Hapus</a>';
+    } else {
+      if ($allow_delete) {
+        $delete = '<a onclick="javascript:popup_form(\'' . BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=cancel_aset&sisa=' . ($line['total_aset'] - $line['total_penyusutan']) . '&aset=' . $line['nama_aset'] . '\',\'table_penyusutan\')" href="javascript:void(0);">Likuidasi</a>';
+        $hapus = '<a onclick="javascript:popup_form(\'' . BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=passhapus&nama_aset=' . $line['nama_aset'] . '\',\'table_penyusutan\')" href="javascript:;">Hapus</a>';
+      } else {
+        $delete = '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Likuidasi</a>';
+        $hapus = '<a onclick="javascript:custom_alert(\'Anda tidak memiliki akses\')" href="javascript:void(0);">Hapus</a>';
+      }
+    }
+
     $responce['rows'][$i]['id']     = str_replace(' ', '_', $line['nama_aset']);
     $responce['rows'][$i]['cell']   = array(
       $line['nama_aset'],
@@ -94,8 +131,10 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
       number_format($line['total_aset'] - $line['total_penyusutan']),
       $line['tipe'],
       $line['penyusutan_berjalan'],
+      $susutkan,
       $delete,
-      $hapus
+      $hapus,
+      $line['is_add']
     );
     $i++;
   }
@@ -108,7 +147,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 } else if (isset($_GET['action']) && strtolower($_GET['action']) == 'json_sub') {
   $aset     = str_replace('_', ' ', $_GET['id']);
 
-  $sql_sub = "SELECT COALESCE(j.no_jurnal, '') AS no_jurnal,c.tgl,c.keterangan,c.total_debet FROM cron_jurnal c LEFT JOIN jurnal j ON c.keterangan = j.keterangan WHERE c.tgl <= CURDATE() AND c.keterangan LIKE '%" . $aset . "%' AND c.`status`='PENYUSUTAN ASET' AND c.deleted=0";
+  $sql_sub = "SELECT COALESCE(j.no_jurnal, '') AS no_jurnal,c.tgl,c.keterangan,c.total_debet FROM cron_jurnal c LEFT JOIN jurnal j ON c.keterangan = j.keterangan WHERE MONTH(c.tgl) <= MONTH(CURDATE()) AND YEAR(c.tgl) <=  YEAR(CURDATE()) AND c.keterangan LIKE '%" . $aset . "%' AND c.`status`='PENYUSUTAN ASET' AND c.deleted=0";
 
   $query    = $db->query($sql_sub);
   $count    = $query->rowCount();
@@ -627,6 +666,148 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 
   echo json_encode($r);
   exit();
+} else if (isset($_GET['action']) && strtolower($_GET['action'] == "add_aktiva")) {
+  // get data
+  $data = $db->query("SELECT * FROM penyusutan p WHERE p.id = $_GET[id]")->fetchAll(PDO::FETCH_ASSOC)[0];
+  $akunDebit = $db->query("SELECT * FROM det_coa WHERE id = $data[id_akun]")->fetchAll(PDO::FETCH_ASSOC)[0];
+
+  $uniqueAset = date('ymd', strtotime($data['tgl_pembelian'])) . date('His');
+  $id_user = $_SESSION['user']['username'];
+
+  $namaAset = $data['nama'] . ' / ' . $uniqueAset;
+  $durasiPenyusutan = $data['durasi'];
+
+  $nilaiPembelian = $data['dpp'];
+  $keterangan = 'Pembelian Aset yang disusutkan ' . $namaAset . ' durasi penyusutan ' . $durasiPenyusutan . ' Bulan.';
+  $tipe = $data['tipe'];
+
+
+  // Get data coa aset
+  $get_acc_aset = $db->query("SELECT CONCAT(SUBSTRING(dc.noakun, 1, 6), LPAD(CAST(SUBSTRING_INDEX(dc.noakun, '.', -1) AS UNSIGNED) + 1, 5, '0')) AS dc_acc,mc.id, mc.noakun, mc.nama FROM det_coa dc JOIN mst_coa mc ON dc.id_parent = mc.id WHERE dc.noakun LIKE '01.02.%' ORDER BY dc.noakun DESC LIMIT 1")
+    ->fetchAll(PDO::FETCH_ASSOC)[0];
+
+  // insert coa aset
+  $db->prepare("INSERT INTO det_coa VALUES (NULL,?,?,?,?,NOW())")
+    ->execute([$get_acc_aset['id'], $get_acc_aset['dc_acc'], $get_acc_aset['nama'] . ' - ' . $namaAset, $id_user]);
+
+
+  // get data coa akumulasi
+  $get_acc_acm = $db->query("SELECT CONCAT(SUBSTRING(dc.noakun,1,6),LPAD(CAST(SUBSTRING_INDEX(dc.noakun,'.',-1) as UNSIGNED) + 1,5,'0')) as dc_acc,mc.id, mc.noakun, mc.nama FROM det_coa dc JOIN mst_coa mc ON dc.id_parent = mc.id WHERE dc.noakun like '01.10.%' ORDER BY dc.noakun DESC LIMIT 1;")
+    ->fetchAll(PDO::FETCH_ASSOC)[0];
+
+  // insert coa akumulasi
+  $db->prepare("INSERT INTO det_coa VALUES (NULL,?,?,?,?,NOW())")
+    ->execute([$get_acc_acm['id'], $get_acc_acm['dc_acc'], $get_acc_acm['nama'] . ' - ' . $namaAset, $id_user]);
+
+  // akun beban penyusutan
+  $ambilAkunBebanPenyusutan;
+  if ($tipe == "langsung") {
+    $ambilAkunBebanPenyusutan = $db->query("SELECT * FROM mst_coa WHERE noakun='05.07.00000'")->fetchAll(PDO::FETCH_ASSOC)[0];
+  } else {
+    $ambilAkunBebanPenyusutan = $db->query("SELECT * FROM mst_coa WHERE noakun='06.19.00000'")->fetchAll(PDO::FETCH_ASSOC)[0];
+  }
+
+  $get_akun_aset = $db->query("SELECT * FROM det_coa WHERE noakun = '$get_acc_aset[dc_acc]'")->fetchAll(PDO::FETCH_ASSOC)[0];
+
+  // insert jurnal -> purchase
+
+  $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES (?,?,?,?,0,?,NOW(),'PEMBELIAN ASET')")
+    ->execute([
+      $data['tgl_pembelian'], "Transisi Pembelian $namaAset", $nilaiPembelian, $nilaiPembelian, $id_user
+    ]);
+
+
+  // get data id jurnal
+  $transisi_id = $db->query("SELECT id FROM cron_jurnal ORDER BY lastmodified DESC LIMIT 1")->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
+
+  // insert detail_jurnal
+  $db->prepare("INSERT INTO `cron_jurnal_detail` (`id`, `id_parent`, `id_akun`, `no_akun`, `nama_akun`, `status`, `debet`, `kredit`, `keterangan`, `deleted`, `user`, `cron_status`, `lastmodified`) 
+                                  VALUES (null, $transisi_id, $get_akun_aset[id], '$get_akun_aset[noakun]', '$get_akun_aset[nama]', 'Detail', $nilaiPembelian, 0, '', 0, '$id_user', 'PENDING', NOW()),
+                                  (null, $transisi_id, $data[akun_cr], '$data[nomor_akun]', '$data[nama_akun]', 'Detail', 0, $nilaiPembelian, '', 0, '$id_user', 'PENDING', NOW());")->execute();
+
+
+  // siap data sebelum insert penyusutan sebanyak n bulan
+  $startingMonth = date('n', strtotime($data['tgl_pembelian']));
+  $startingYear = date('Y', strtotime($data['tgl_pembelian']));
+  $akumulasiYear = date('Y', strtotime($data['tgl_pembelian']));
+
+  $nilaiTotal = ((int)$nilaiPembelian);
+  $satuanPenyusutan = round((float) str_replace(',', '', number_format($nilaiPembelian / $durasiPenyusutan, 2)));
+
+  $get_akumulasi = $db->query("SELECT * FROM det_coa WHERE noakun='$get_acc_acm[dc_acc]'")->fetchAll(PDO::FETCH_ASSOC)[0];
+
+  for ($i = 0; $i < $data['durasi']; $i++) {
+    $lastDateOfMonth = date('Y-m-t', strtotime($startingYear . "-" . $startingMonth . "-01"));
+
+    if ($i + 1 == $durasiPenyusutan) {
+      $satuanPenyusutan = $nilaiTotal;
+    } else {
+      $nilaiTotal -= $satuanPenyusutan;
+    }
+
+    // insert master jurnal penyusutan
+    $db->prepare(
+      "INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) 
+      VALUES ('$lastDateOfMonth', 'Penyusutan " . $namaAset . " ke " . ($i + 1) . " dari " . ($durasiPenyusutan) . " Bulan', '" . $satuanPenyusutan . "', '" . $satuanPenyusutan . "', '0', '" . $id_user . "', NOW(), 'PENYUSUTAN ASET') "
+    )->execute();
+
+    // get id master
+    $id_master = $db->query("SELECT id FROM `cron_jurnal` WHERE `total_debet`='$satuanPenyusutan' AND keterangan = 'Penyusutan " . $namaAset . " ke " . ($i + 1) . " dari " . ($durasiPenyusutan) . " Bulan' AND user = '" . $id_user . "' LIMIT 1")->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
+
+    // insert penyusutan ke akun beban -> Detail Parent
+    $db->prepare("INSERT INTO cron_jurnal_detail 
+    VALUES (NULL,'$id_master','$ambilAkunBebanPenyusutan[id]','$ambilAkunBebanPenyusutan[noakun]','$ambilAkunBebanPenyusutan[nama]','Parent','" . $satuanPenyusutan . "','0','','0', '$id_user','PENDING',NOW()),
+           (NULL,'$id_master','$get_akumulasi[id]','$get_akumulasi[noakun]','$get_akumulasi[nama]','Detail','0','" . $satuanPenyusutan . "','','0', '$id_user','PENDING',NOW());")->execute();
+
+    // $db->prepare("INSERT INTO cron_jurnal_detail VALUES")->execute();
+
+    if ($startingMonth == 12) {
+      $startingMonth = 1;
+      $startingYear++;
+    } else {
+      $startingMonth++;
+    }
+  }
+
+  // Insert Jurnal Akumulasi
+
+  $loop_akumulasi = $akumulasiYear + $durasiPenyusutan / 12;
+
+  for ($j = $akumulasiYear; $j <= $loop_akumulasi; $j++) {
+    // get jumlah akumulasi
+    $get_sum_akumulasi_tahunan = $db->query("SELECT SUM(total_debet) AS total_akumulasi FROM cron_jurnal WHERE keterangan LIKE 'Penyusutan " . $namaAset . " ke%' AND tgl BETWEEN '" . $j . "-01-01' AND '" . $j . "-12-31' AND deleted=0")->fetchAll(PDO::FETCH_ASSOC)[0];
+
+    // insert ke master
+    $db->prepare("INSERT INTO `cron_jurnal` (`tgl`, `keterangan`, `total_debet`, `total_kredit`, `deleted`, `user`, `lastmodified`, `status`) VALUES ('" . $j . "-12-31', 'Akumulasi Penyusutan Aset " . $namaAset . " Tahun " . $j . "', '" . $get_sum_akumulasi_tahunan['total_akumulasi'] . "', '" .
+      $get_sum_akumulasi_tahunan['total_akumulasi'] . "', '0', '" . $id_user . "', NOW(), 'AKUMULASI PENYUSUTAN') ")->execute();
+
+    // get data parent
+    $id_parent = $db->query("SELECT id FROM `cron_jurnal` WHERE keterangan = 'Akumulasi Penyusutan Aset " . $namaAset . " Tahun " . $j . "' AND user = '" . $id_user . "' LIMIT 1")->fetchAll(PDO::FETCH_ASSOC)[0]['id'];
+
+
+    // insert detail akumulasi
+    $db->prepare("INSERT INTO cron_jurnal_detail VALUES (NULL,'$id_parent','$get_akumulasi[id]','$get_akumulasi[noakun]','$get_akumulasi[nama]','Detail','" . $get_sum_akumulasi_tahunan['total_akumulasi'] . "','0','','0', '$id_user','PENDING',NOW()),
+                                                        (NULL,'$id_parent','$get_akun_aset[id]','$get_akun_aset[noakun]','$get_akun_aset[nama]','Detail','0','" . $get_sum_akumulasi_tahunan['total_akumulasi']  . "','','0', '$id_user','PENDING',NOW())
+    ")->execute();
+
+    // $db->prepare("INSERT INTO cron_jurnal_detail VALUES ")->execute();
+  }
+
+  $confirm = $db->prepare("UPDATE penyusutan SET is_add =1 WHERE id = $_GET[id]");
+  $confirm->execute();
+
+  if ($confirm->rowCount() > 0) {
+    $r['stat'] = 1;
+    $r['message'] = 'Aset berhasil ditambahkan';
+  } else {
+    $r['stat'] = 0;
+    $r['message'] = 'Aset gagal ditambahkan';
+  }
+
+
+
+  echo json_encode($r);
+  exit;
 }
 
 ?>
@@ -656,6 +837,15 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
               </select>
               &nbsp;
             </td>
+            <td>
+              Status
+              <select name="status" id="status">
+                <option value="">Semua</option>
+                <option value="0" selected>Belum Disusutkan</option>
+                <option value="1">Sudah Disusutkan</option>
+              </select>
+              &nbsp;
+            </td>
             <td><input type="text" id="aset_penyusutan" name="aset_penyusutan" />(Nama Aset)</td>
           </tr>
         </table>
@@ -676,6 +866,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   if ($allow_add) :
   ?>
     <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_form.php', 'table_penyusutan')">Tambah Aset</button>
+    <!-- <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL ?>pages/Transaksi_acc/tambah_penyusutan.php', 'table_penyusutan')">Tambah Penyusutan</button> -->
   <?php endif; ?>
 </div>
 
@@ -700,8 +891,9 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
     let enddate = ($("#enddate_penyusutan").val());
     let aset = $("#aset_penyusutan").val();
     let tipe = $("#tipe").val();
+    let status = $("#status").val();
 
-    let v_url = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan.php?action=json&startdate=' + startdate + '&enddate=' + enddate + '&aset=' + aset + '&tipe=' + tipe;
+    let v_url = '<?= BASE_URL ?>pages/Transaksi_acc/penyusutan.php?action=json&startdate=' + startdate + '&enddate=' + enddate + '&aset=' + aset + '&tipe=' + tipe + '&status=' + status;
     jQuery("#table_penyusutan").setGridParam({
       url: v_url,
       page: 1
@@ -710,9 +902,9 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 
   $(document).ready(() => {
     $('#table_penyusutan').jqGrid({
-      url: '<?= BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=json' ?>',
+      url: '<?= BASE_URL . 'pages/Transaksi_acc/penyusutan.php?action=json&status=0' ?>',
       datatype: 'json',
-      colNames: ['Nama Aset', 'Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Tipe Biaya', 'Total Penyusutan Saat ini', 'Likuidasi', 'Hapus'],
+      colNames: ['Nama Aset', 'Tanggal Pembelian', 'Durasi Penyusutan', 'Nilai Beli DPP', 'Total Penyusutan', 'Nilai Sisa Aset', 'Tipe Biaya', 'Total Penyusutan Saat ini', 'Susutkan', 'Likuidasi', 'Hapus', 'state'],
       colModel: [{
           name: 'nama_aset',
           index: 'nama_aset',
@@ -795,6 +987,15 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
           }
         },
         {
+          name: 'is_add',
+          index: 'is_add',
+          align: 'center',
+          width: 35,
+          searchoptions: {
+            sopt: ['cn']
+          }
+        },
+        {
           name: 'cancel',
           index: 'cancel',
           align: 'center',
@@ -812,9 +1013,22 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
             sopt: ['cn']
           }
         },
+        {
+          name: 'State',
+          index: 'state',
+          hidden: true
+        },
       ],
       rowNum: 20,
       rowList: [20, 1000],
+      rowattr: function(rowData) {
+        if (rowData.State == "0") {
+          console.log(rowData.State);
+          return {
+            "style": "color:blue;"
+          };
+        }
+      },
       pager: '#pager_table_penyusutan',
       sortname: 'nilai_sisa_aset',
       autowidth: true,
