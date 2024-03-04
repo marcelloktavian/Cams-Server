@@ -1,240 +1,215 @@
-<script src="../../assets/js/jsbilangan.js" type="text/javascript"></script>
-<script type="text/javascript" src="../../assets/js/jquery-1.4.js"></script>
-<style type="text/css">
-	.style9 {
-	font-size: 9pt; 
-	font-family:Tahoma;
-	}
-	.style9b {color: #000000;
-		font-size: 9pt;
-		font-weight: bold;
-		font-family: Tahoma;
-	}.style99 {font-size: 13pt; font-family:Tahoma}
-	.style10 {font-size: 10pt; font-family:Tahoma; text-align:right}
-	.style19 {font-size: 10pt; font-weight: bold; font-family:Tahoma; font-style:italic}
-	.style11 {
-		color: #000000;
-		font-size: 8pt;
-		font-weight: normal;
-		font-family: MS Reference Sans Serif;
-		
-	}
-	.style20b {font-size: 8pt;font-weight: bold; font-family:Tahoma}
-	.style20 {font-size: 8pt; font-family:Tahoma}
-	.style16 {font-size: 9pt; font-family:Tahoma}
-	.style21 {color: #000000;
-		font-size: 10pt;
-		font-weight: bold;
-		font-family: Tahoma;
-	}
-	.style18 {color: #000000;
-		font-size: 9pt;
-		font-weight: normal;
-		font-family: Tahoma;
-	}
-	.style_footer {color: #000000;
-		font-size: 11pt;	
-		font-family: Tahoma;
-		border-top: 1px solid black;
-		border-bottom: 1px solid black;
-		border-right: 1px solid black;
-		border-left: 1px solid black;
-		
-	}
-	.style19b {	color: #000000;
-		font-size: 11pt;
-		font-weight: bold;
-		font-family: Tahoma;
-	}
-	.style_title {	color: #000000;
-		font-size: 11pt;	
-		font-family: Tahoma;
-		border-top: 1px solid black;
-		border-bottom: 1px solid black;
-		border-right: 1px solid black;
-		
-		
-		padding: 3px;
-	}
-	.style_title_left {	color: #000000;
-		font-size: 11pt;	
-		font-family: Tahoma;
-		border-top: 1px solid black;
-		border-bottom: 1px solid black;
-		border-right: 1px solid black;
-		border-left: 1px solid black;
-		
-		padding: 3px;
-	}
-	.style_detail {	color: #000000;
-		font-size: 9pt;	
-		font-family: Tahoma;
-		border-bottom: 1px dashed black;
-		border-right: 1px solid black;
-		padding: 3px;
-	}
-	.style_detail_left {	color: #000000;
-		font-size: 9pt;	
-		font-family: Tahoma;
-		border-bottom: 1px dashed black;
-		border-left: 1px solid black;
-		border-right: 1px solid black;
-		padding: 3px;
-	}
-	@page {
-			size: A4;
-			margin: 15px;
-		}
-</style>
 <?php
 error_reporting(0);
-	include("../../include/koneksi.php");
-	$tglstart=$_GET['start'];
-    $tglend=$_GET['end'];
-	$type=$_GET['type'];
+include("../../include/koneksi.php");
+include("../../include/config.php");
+$tglstart = $_GET['start'];
+$tglend = $_GET['end'];
+$type = $_GET['type'];
+
+$query = "SELECT
+            d.nama AS dropshipper,
+            COUNT(IF(m.piutang = 0, m.id_trans, NULL)) AS order_cash,
+            SUM(IF(m.piutang = 0, m.totalqty, 0)) AS qty_cash,
+            SUM(IF(m.piutang = 0, m.faktur - IFNULL(m.discount_faktur, 0), 0)) AS f_cash,
+            COUNT(IF(m.piutang > 0, m.id_trans, NULL)) AS order_cr,
+            SUM(IF(m.piutang > 0, m.totalqty, 0)) AS qty_cr,
+            SUM(IF(m.piutang > 0, m.faktur - IFNULL(m.discount_faktur, 0), 0)) AS f_cr,
+            COUNT(m.id_trans) AS order_all,
+            SUM(m.totalqty) AS qty_all,
+            SUM(m.faktur - IFNULL(m.discount_faktur, 0)) AS f_all,
+            ROUND(SUM(m.faktur - IFNULL(m.discount_faktur, 0)) / 1.11) AS dpp_all,
+            ROUND((SUM(m.faktur - IFNULL(m.discount_faktur, 0)) / 1.11) * 0.11) AS ppn_all,
+            SUM(exp_fee) AS ongkir
+        FROM olnso m LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id WHERE m.deleted = 0 
+        AND m.state = '1' AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') 
+        GROUP BY m.id_dropshipper ";
+
+$type == 1 ? $query .= ' ORDER BY d.nama ASC;' : $query .= ' ORDER BY SUM(m.totalqty) DESC';
+
+$data = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+
+$no = 1;
+
+$order_cash = 0;
+$qty_cash = 0;
+$f_cash = 0;
+$order_cr = 0;
+$qty_cr = 0;
+$f_cr = 0;
+$order_all = 0;
+$qty_all = 0;
+$f_all = 0;
+$dpp_all = 0;
+$ppn_all = 0;
+$ongkir = 0;
+
 ?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLN LAPORAN PENJUALAN CASH + CREDIT</title>
+    <script src="../../assets/js/jsbilangan.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../assets/js/jquery-1.4.js"></script>
+    <style type="text/css">
+        .title {
+            font-size: large;
+            font-weight: bold;
+        }
+
+        .title_dir {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        @page {
+            size: A4;
+            margin: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .data {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+
+        }
+
+        tbody {
+            font-size: 14px;
+        }
+
+        .zero {
+            color: #e0e0e0;
+        }
+
+        .bold {
+            font-weight: bold;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title_dir">
+        <span class="title">
+            OLN LAPORAN PENJUALAN CASH + CREDIT
+        </span>
+        <span id="timestamp"><?php date_default_timezone_set('Asia/Jakarta');
+                                echo $timestamp = date('d/m/Y H:i:s'); ?>
+        </span>
+    </div>
+    <div style="margin-bottom: 20px;">
+        <span><?php echo "" . $tglstart; ?>&nbsp;-&nbsp;<?php echo "" . $tglend; ?></span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">NO</th>
+                <th rowspan="2">Nama Customer</th>
+                <th colspan="3">Penjualan Cash</th>
+                <th colspan="3">Penjualan Credit</th>
+                <th colspan="5">Penjualan Keseluruhan</th>
+                <th rowspan="2">Ongkos Kirim</th>
+            </tr>
+            <tr>
+                <th>Total QTY</th>
+                <th>Total Order</th>
+                <th>Penjualan Bruto</th>
+                <th>Total QTY</th>
+                <th>Total Order</th>
+                <th>Penjualan Bruto</th>
+                <th>Total QTY</th>
+                <th>Total Order</th>
+                <th>Penjualan Bruto</th>
+                <th>DPP</th>
+                <th>PPN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($data as $d) : ?>
+                <tr>
+                    <td><?= $no ?></td>
+                    <td class="data"><?= $d['dropshipper'] ?></td>
+                    <td class="<?= $d['qty_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cash']) ?></td>
+                    <td class="<?= $d['order_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cash']) ?></td>
+                    <td class="<?= $d['f_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cash']) ?></td>
+                    <td class="<?= $d['qty_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cr']) ?></td>
+                    <td class="<?= $d['order_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cr']) ?></td>
+                    <td class="<?= $d['f_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cr']) ?></td>
+                    <td class="<?= $d['qty_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_all']) ?></td>
+                    <td class="<?= $d['order_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_all']) ?></td>
+                    <td class="<?= $d['f_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_all']) ?></td>
+                    <td class="<?= $d['dpp_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['dpp_all']) ?></td>
+                    <td class="<?= $d['ppn_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ppn_all']) ?></td>
+                    <td class="<?= $d['ongkir'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ongkir']) ?></td>
+                </tr>
+            <?php $no++;
+                $order_cash += $d['order_cash'];
+                $qty_cash += $d['qty_cash'];
+                $f_cash += $d['f_cash'];
+                $order_cr += $d['order_cr'];
+                $qty_cr += $d['qty_cr'];
+                $f_cr += $d['f_cr'];
+                $order_all += $d['order_all'];
+                $qty_all += $d['qty_all'];
+                $f_all += $d['f_all'];
+                $dpp_all += $d['dpp_all'];
+                $ppn_all += $d['ppn_all'];
+                $ongkir += $d['ongkir'];
+            endforeach; ?>
+            <tr class="bold">
+                <td colspan="2">Total</td>
+                <td><?= number_format($qty_cash) ?></td>
+                <td><?= number_format($order_cash) ?></td>
+                <td><?= number_format($f_cash) ?></td>
+                <td><?= number_format($qty_cr) ?></td>
+                <td><?= number_format($order_cr) ?></td>
+                <td><?= number_format($f_cr) ?></td>
+                <td><?= number_format($qty_all) ?></td>
+                <td><?= number_format($order_all) ?></td>
+                <td><?= number_format($f_all) ?></td>
+                <td><?= number_format($dpp_all) ?></td>
+                <td><?= number_format($ppn_all) ?></td>
+                <td><?= number_format($ongkir) ?></td>
+            </tr>
+        </tbody>
+    </table>
 
 
-<form id="form2" name="form2" action="" method="post"  onSubmit="return validasi(this)">
-  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-    <tr>
-      <td height="123" valign="top"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-          
-          <tr>
-            <td width="100%" class="style99" colspan="7"><strong>
-			Dropshipper Sales Statistics REPORT </strong></td>
-			<td style="text-align:right">
-                <div id="timestamp">
-                <?php
-                    date_default_timezone_set('Asia/Jakarta');
-                    echo $timestamp = date('d/m/Y H:i:s');
-                ?>
-                </div>  
-                
-            </td>
-            
-          </tr>
-          <tr>
-            <td width="100%" class="style9b" colspan="7">Dari:
-            <?php echo"".$tglstart;?>
-            &nbsp;-&nbsp;<?php echo"".$tglend;?></td>           
-		  </tr>
-          		  
-  </table>  
-    
-    
-  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-  
-        <tr>
-            <td colspan="8" class="style9"><hr /></td>
-          </tr>
-      <tr>
-      <th width="3%" class="style_title_left"><div align="center">No</div></td>
-      <th width="25%" class="style_title"><div align="center">Dropshipper</div></td>
-      <th width="10%" class="style_title"><div align="center">TotalQty</div></td>
-      <th width="5%" class="style_title"><div align="center">Jumlah Order</div></td>
-      <th width="15%" class="style_title"><div align="right">Total Faktur</div></td>
-      <th width="15%" class="style_title"><div align="right">Total Ongkir</div></td>
- 	  <th width="15%" class="style_title"><div align="right">Total Disc Faktur</div></td>
- 	  <th width="15%" class="style_title"><div align="right">Faktur+Ongkir-Disc</div></td>
-      
-    </tr>
-    <?php
-		
-	$where = " WHERE m.deleted=0 and m.state='1' ";
-	$where .= " AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart','%d/%m/%Y')  AND STR_TO_DATE('$tglend','%d/%m/%Y')";
-	if($type == 1){
-		$sql_detail = "SELECT d.nama AS dropshipper,COUNT(m.id_trans) AS jum_order,SUM(m.`totalqty`) AS totalqty,SUM(m.tunai) AS tunai ,SUM(m.transfer) AS transfer,SUM(m.deposit) AS deposit,SUM(m.faktur) AS faktur,SUM(m.total) AS total,SUM(m.piutang) AS piutang,SUM(m.simpan_deposit) as simpan_deposit,SUM(m.exp_fee) as ongkir,SUM(m.discount_faktur) as discount_faktur,SUM(m.total) - SUM(m.exp_fee) as net FROM olnso m
-	LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id".$where." 
-	GROUP BY m.id_dropshipper
-	ORDER BY d.nama ASC";
-	}else{
-		$sql_detail = "SELECT d.nama AS dropshipper,COUNT(m.id_trans) AS jum_order,SUM(m.`totalqty`) AS totalqty,SUM(m.tunai) AS tunai ,SUM(m.transfer) AS transfer,SUM(m.deposit) AS deposit,SUM(m.faktur) AS faktur,SUM(m.total) AS total,SUM(m.piutang) AS piutang,SUM(m.simpan_deposit) as simpan_deposit,SUM(m.exp_fee) as ongkir,SUM(m.discount_faktur) as discount_faktur,SUM(m.total) - SUM(m.exp_fee) as net FROM olnso m
-	LEFT JOIN mst_dropshipper d ON m.id_dropshipper = d.id".$where." 
-	GROUP BY m.id_dropshipper
-	ORDER BY SUM(m.`totalqty`) DESC";
-	}
-	
-	$sq2 = mysql_query($sql_detail);
-	$nomer=0;
-	$grand_qty=0;
-	$grand_faktur=0;
-	$grand_order=0;
-	$grand_ongkir=0;
-	$grand_total=0;
-	$grand_disc = 0;
-	$biaya=0;
-	$nett_faktur = 0;
-	while($rs2=mysql_fetch_array($sq2))
-	{ 
-	  $nomer++;
-  	?>
-			<tr>
-			<td class="style_detail_left"><div align="left"><?=$nomer;?>
-			</div></td>
-			<td class="style_detail"><div align="left"><?=$rs2['dropshipper'];?>
-			</div></td>
-			<td class="style_detail"><div align="center"><?=number_format($rs2['totalqty']);?></div></td>
-			<td class="style_detail"><div align="center"><?=number_format($rs2['jum_order']);?></div></td>
-			<td class="style_detail"><div align="right"><?=number_format($rs2['faktur']);?></div></td>
-			<td class="style_detail"><div align="right"><?=number_format($rs2['ongkir']);?></div></td>
-			<td class="style_detail"><div align="right"><?=number_format($rs2['discount_faktur']);?></div></td>
-			<td class="style_detail"><div align="right"><?=number_format($rs2['total']);?>
-			</div></td>
-			</tr>  
-	<?php
-		$grand_qty+=$rs2['totalqty'];
-		$grand_faktur+=$rs2['faktur'];
-		$grand_order+=$rs2['jum_order'];
-		$grand_ongkir+=$rs2['ongkir'];
-		$grand_disc+=$rs2['discount_faktur'];
-		$grand_total+=$rs2['total'];
-		$nett_faktur+=$rs2['net'];	
-	}
-	$dpp=($nett_faktur/1.11);
-	?>
-       <tr>
-       	<td class="style_footer"></td>
-            <td class="style_footer"><div align="right">GrandTotal :</div></td>
-            <td class="style_footer"><div align="center"><?=number_format($grand_qty);?></div></td>
-            <td class="style_footer"><div align="center"><?=number_format($grand_order);?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_faktur);?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_ongkir);?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_disc);?></div></td>
-            <td class="style_footer"><div align="right"><?=number_format($grand_total);?></div></td>
-       </tr>
-	   <tr>
-            <td class="style_footer" colspan="7"><div align="right">Nett Faktur(Faktur-Disc) :</div></td>
-            <td class="style_footer"><div align="right"><?=number_format($nett_faktur);?></div></td>
-       </tr>
-	   <tr>
-            <td class="style_footer" colspan="7"><div align="right">DPP:</div></td>
-            <td class="style_footer"><div align="right"><?=number_format($dpp);?></div></td>
-       </tr>
-	   <tr>
-            <td class="style_footer" colspan="7"><div align="right">PPN:</div></td>
-            <td class="style_footer"><div align="right"><?=number_format($dpp*0.11);?></div></td>
-       </tr>
-  </table>
-  <div align="center"></div>
-</form>
 
-<script language="javascript">
-			$(document).ready(function() {
-    	setInterval(timestamp, 1000);
-});
+    <script language="javascript">
+        $(document).ready(function() {
+            setInterval(timestamp, 1000);
+        });
 
-function timestamp() {
-    $.ajax({
-        url: '../timestamp.php',
-        success: function(data) {
-            $('#timestamp').html(data);
-        },
-    });
-}
+        function timestamp() {
+            $.ajax({
+                url: '../timestamp.php',
+                success: function(data) {
+                    $('#timestamp').html(data);
+                },
+            });
+        }
 
-window.print();
-</script>
-  <div align="center"><span class="style20">
-   
-  </span> </div>
+        window.print();
+    </script>
+</body>
+
+</html>

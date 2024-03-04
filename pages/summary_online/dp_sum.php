@@ -24,7 +24,8 @@ $query = "SELECT
         AND m.state = '1' AND DATE(m.lastmodified) BETWEEN STR_TO_DATE('$tglstart', '%d/%m/%Y') AND STR_TO_DATE('$tglend', '%d/%m/%Y') 
         GROUP BY m.id_dropshipper ";
 
-$type == 1 ? $query .= ' ORDER BY d.nama ASC;' : $query .= ' ORDER BY SUM(m.totalqty) DESC';
+$type == 1 ? $query .= ' ORDER BY d.nama ASC' : $query .= ' ORDER BY SUM(m.totalqty) DESC';
+
 
 $data = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
@@ -102,6 +103,19 @@ $ongkir = 0;
             font-weight: bold;
             font-size: large;
         }
+
+        .separator {
+            border-right: 3px solid black;
+        }
+
+        .top {
+            border-top: 2px solid black;
+        }
+
+        .dashed {
+            border-bottom: 1px dashed black;
+            border-top: 0px;
+        }
     </style>
 </head>
 
@@ -122,43 +136,43 @@ $ongkir = 0;
         <thead>
             <tr>
                 <th rowspan="2">NO</th>
-                <th rowspan="2">Nama Customer</th>
-                <th colspan="3">Penjualan Cash</th>
-                <th colspan="3">Penjualan Credit</th>
-                <th colspan="5">Penjualan Keseluruhan</th>
+                <th rowspan="2" class="separator">Nama Customer</th>
+                <th colspan="3" class="separator">Penjualan Cash</th>
+                <th colspan="3" class="separator">Penjualan Credit</th>
+                <th colspan="5" class="separator">Penjualan OLN + Credit</th>
                 <th rowspan="2">Ongkos Kirim</th>
             </tr>
             <tr>
                 <th>Total QTY</th>
                 <th>Total Order</th>
-                <th>Penjualan Bruto</th>
+                <th class="separator">Penjualan Bruto</th>
                 <th>Total QTY</th>
                 <th>Total Order</th>
-                <th>Penjualan Bruto</th>
+                <th class="separator">Penjualan Bruto</th>
                 <th>Total QTY</th>
                 <th>Total Order</th>
                 <th>Penjualan Bruto</th>
                 <th>DPP</th>
-                <th>PPN</th>
+                <th class="separator">PPN</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($data as $d) : ?>
                 <tr>
-                    <td><?= $no ?></td>
-                    <td class="data"><?= $d['dropshipper'] ?></td>
-                    <td class="<?= $d['qty_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cash']) ?></td>
-                    <td class="<?= $d['order_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cash']) ?></td>
-                    <td class="<?= $d['f_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cash']) ?></td>
-                    <td class="<?= $d['qty_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cr']) ?></td>
-                    <td class="<?= $d['order_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cr']) ?></td>
-                    <td class="<?= $d['f_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_cr']) ?></td>
-                    <td class="<?= $d['qty_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_all']) ?></td>
-                    <td class="<?= $d['order_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_all']) ?></td>
-                    <td class="<?= $d['f_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_all']) ?></td>
-                    <td class="<?= $d['dpp_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['dpp_all']) ?></td>
-                    <td class="<?= $d['ppn_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ppn_all']) ?></td>
-                    <td class="<?= $d['ongkir'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ongkir']) ?></td>
+                    <td class="dashed"><?= $no ?></td>
+                    <td class="dashed data separator"><?= $d['dropshipper'] ?></td>
+                    <td class="dashed <?= $d['order_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cash']) ?></td>
+                    <td class="dashed <?= $d['qty_cash'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cash']) ?></td>
+                    <td class="dashed <?= $d['f_cash'] == 0 ? 'zero separator'  : 'separator' ?>"><?= number_format($d['f_cash']) ?></td>
+                    <td class="dashed <?= $d['order_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_cr']) ?></td>
+                    <td class="dashed <?= $d['qty_cr'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_cr']) ?></td>
+                    <td class="dashed <?= $d['f_cr'] == 0 ? 'zero separator'  : 'separator' ?>"><?= number_format($d['f_cr']) ?></td>
+                    <td class="dashed <?= $d['order_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['order_all']) ?></td>
+                    <td class="dashed <?= $d['qty_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['qty_all']) ?></td>
+                    <td class="dashed <?= $d['f_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['f_all']) ?></td>
+                    <td class="dashed <?= $d['dpp_all'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['dpp_all']) ?></td>
+                    <td class="dashed <?= $d['ppn_all'] == 0 ? 'zero separator'  : 'separator' ?>"><?= number_format($d['ppn_all']) ?></td>
+                    <td class="dashed <?= $d['ongkir'] == 0 ? 'zero'  : '' ?>"><?= number_format($d['ongkir']) ?></td>
                 </tr>
             <?php $no++;
                 $order_cash += $d['order_cash'];
@@ -174,19 +188,19 @@ $ongkir = 0;
                 $ppn_all += $d['ppn_all'];
                 $ongkir += $d['ongkir'];
             endforeach; ?>
-            <tr class="bold">
-                <td colspan="2">Total</td>
-                <td><?= number_format($qty_cash) ?></td>
+            <tr class="bold top">
+                <td colspan="2" class="separator">Total</td>
                 <td><?= number_format($order_cash) ?></td>
-                <td><?= number_format($f_cash) ?></td>
-                <td><?= number_format($qty_cr) ?></td>
+                <td><?= number_format($qty_cash) ?></td>
+                <td class="separator"><?= number_format($f_cash) ?></td>
                 <td><?= number_format($order_cr) ?></td>
-                <td><?= number_format($f_cr) ?></td>
-                <td><?= number_format($qty_all) ?></td>
+                <td><?= number_format($qty_cr) ?></td>
+                <td class="separator"><?= number_format($f_cr) ?></td>
                 <td><?= number_format($order_all) ?></td>
+                <td><?= number_format($qty_all) ?></td>
                 <td><?= number_format($f_all) ?></td>
                 <td><?= number_format($dpp_all) ?></td>
-                <td><?= number_format($ppn_all) ?></td>
+                <td class="separator"><?= number_format($ppn_all) ?></td>
                 <td><?= number_format($ongkir) ?></td>
             </tr>
         </tbody>
