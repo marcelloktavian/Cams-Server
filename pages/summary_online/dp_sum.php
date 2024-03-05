@@ -139,18 +139,18 @@ $ongkir = 0;
                 <th rowspan="2" class="separator">Nama Customer</th>
                 <th colspan="3" class="separator">Penjualan Cash</th>
                 <th colspan="3" class="separator">Penjualan Credit</th>
-                <th colspan="5" class="separator">Penjualan OLN + Credit</th>
+                <th colspan="5" class="separator">Penjualan Keseluruhan</th>
                 <th rowspan="2">Ongkos Kirim</th>
             </tr>
             <tr>
-                <th>Total QTY</th>
                 <th>Total Order</th>
+                <th>Total QTY</th>
                 <th class="separator">Penjualan Bruto</th>
-                <th>Total QTY</th>
                 <th>Total Order</th>
+                <th>Total QTY</th>
                 <th class="separator">Penjualan Bruto</th>
-                <th>Total QTY</th>
                 <th>Total Order</th>
+                <th>Total QTY</th>
                 <th>Penjualan Bruto</th>
                 <th>DPP</th>
                 <th class="separator">PPN</th>
