@@ -235,7 +235,7 @@ foreach ($data as $x) {
 			<tr>
 				<td colspan="18" class="right">Total</td>
 				<td><?= $grand_qty ?></td>
-				<td colspan="18">PCS</td>
+				<td colspan="1">PCS</td>
 			</tr>
 		</tbody>
 	</table>
