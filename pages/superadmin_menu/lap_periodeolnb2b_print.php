@@ -175,7 +175,7 @@ IFNULL(IFNULL(o.faktur,0) - IFNULL( r.retur, 0 ),0) AS netto,IFNULL(ROUND(( IFNU
 FROM mst_dropshipper d LEFT JOIN (
 SELECT SUM(o.faktur - IFNULL(o.discount_faktur,0)) AS faktur,SUM(o.totalqty) as qty, COUNT(o.id_trans) as `order`,o.id_dropshipper as id FROM olnso o WHERE o.deleted = 0
 AND o.state = '1' AND DATE ( o.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) GROUP BY o.id_dropshipper) o ON d.id = o.id LEFT JOIN (
-SELECT SUM(IFNULL( r.faktur, 0 )) AS retur,r.id_dropshipper FROM olnsoreturn r WHERE r.deleted = 0 AND r.state = '1' 
+SELECT SUM(IFNULL( r.total, 0 )) AS retur,r.id_dropshipper FROM olnsoreturn r WHERE r.deleted = 0 AND r.state = '1' 
 AND DATE ( r.lastmodified ) BETWEEN STR_TO_DATE( '$tglstart', '%d/%m/%Y' ) AND STR_TO_DATE( '$tglend', '%d/%m/%Y' ) AND ( r.totalqty <> 0 ) GROUP BY r.id_dropshipper ) r ON r.id_dropshipper = d.id
 
 UNION 
