@@ -865,7 +865,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   <?php
   if ($allow_add) :
   ?>
-    <!-- <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_form.php', 'table_penyusutan')">Tambah Aset</button> -->
+    <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL ?>pages/Transaksi_acc/penyusutan_form.php', 'table_penyusutan')">Tambah Aset</button>
     <!-- <button class="btn btn-success" onclick="javascript:popup_form('<?= BASE_URL ?>pages/Transaksi_acc/tambah_penyusutan.php', 'table_penyusutan')">Tambah Penyusutan</button> -->
   <?php endif; ?>
 </div>
