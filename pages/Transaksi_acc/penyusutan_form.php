@@ -1,36 +1,36 @@
 <style>
-  .penyusutan-field-full{
+  .penyusutan-field-full {
     height: 15px;
     width: 200px;
   }
 
-  .penyusutan-select-field-full{
+  .penyusutan-select-field-full {
     width: 212px;
   }
 
-  .penyusutan-select-field-quarter{
+  .penyusutan-select-field-quarter {
     width: 62px;
   }
 
-  .penyusutan-field-3quarter{
+  .penyusutan-field-3quarter {
     height: 15px;
     width: 135px;
   }
 
-  .penyusutan-field-half{
+  .penyusutan-field-half {
     height: 15px;
     width: 96px;
   }
 
-  .penyusutan-width{
+  .penyusutan-width {
     width: 200px;
   }
 
-  .penyusutan-select-field-half{
+  .penyusutan-select-field-half {
     width: 97px;
   }
 
-  .penyusutan-disabled{
+  .penyusutan-disabled {
     background-color: #b6b4ac;
   }
 </style>
@@ -55,7 +55,7 @@
 
       <label for="durasi-penyusutan" class="ui-helper-reset label-control">Durasi Penyusutan</label>
       <div class="ui-corner-all form-control">
-        <select  class="required penyusutan-select-field-full" id="durasi-penyusutan" name="durasi-penyusutan">
+        <select class="required penyusutan-select-field-full" id="durasi-penyusutan" name="durasi-penyusutan">
           <option value='48'>48</option>
           <option value='96'>96</option>
           <option value='240'>240</option>
@@ -75,7 +75,7 @@
 
       <label for="ppn-pembelian-aset" class="ui-helper-reset label-control">PPN Pembelian</label></label>
       <div class="ui-corner-all form-control">
-        <select  class="required penyusutan-select-field-half" id="ppn-pembelian-aset" name="ppn-pembelian-aset">
+        <select class="required penyusutan-select-field-half" id="ppn-pembelian-aset" name="ppn-pembelian-aset">
           <option value='0'>Tidak</option>
           <option value='1'>Manual</option>
           <option value='2' selected>Otomatis 11%</option>
@@ -123,45 +123,44 @@
   const nilaiAset = document.getElementById('nilai-pembelian-aset');
   const totalNilai = document.getElementById('total-pembelian');
 
-  ppnStatus.addEventListener('change',()=>{
-    if(ppnStatus.value == "1"){
+  ppnStatus.addEventListener('change', () => {
+    if (ppnStatus.value == "1") {
       ppnValue.classList.remove('penyusutan-disabled');
-      ppnValue.readOnly=false;
-      totalNilai.value=parseInt(nilaiAset.value)+parseInt(ppnValue.value);
-    } else if(ppnStatus.value == "0"){
+      ppnValue.readOnly = false;
+      totalNilai.value = parseInt(nilaiAset.value) + parseInt(ppnValue.value);
+    } else if (ppnStatus.value == "0") {
       ppnValue.classList.add('penyusutan-disabled');
-      ppnValue.readOnly=true;
-      ppnValue.value=0;
-      totalNilai.value=parseInt(nilaiAset.value);
-    } else if(ppnStatus.value == "2"){
+      ppnValue.readOnly = true;
+      ppnValue.value = 0;
+      totalNilai.value = parseInt(nilaiAset.value);
+    } else if (ppnStatus.value == "2") {
       ppnValue.classList.add('penyusutan-disabled');
-      ppnValue.readOnly=true;
-      ppnValue.value=Math.floor(nilaiAset.value*0.11);
-      totalNilai.value=parseInt(nilaiAset.value)+parseInt(ppnValue.value);
+      ppnValue.readOnly = true;
+      ppnValue.value = Math.floor(nilaiAset.value * 0.11);
+      totalNilai.value = parseInt(nilaiAset.value) + parseInt(ppnValue.value);
     }
   });
 
-  nilaiAset.addEventListener('keydown', ()=>{
-    if(ppnStatus.value == "1"){
+  nilaiAset.addEventListener('keydown', () => {
+    if (ppnStatus.value == "1") {
       ppnValue.classList.remove('penyusutan-disabled');
-      ppnValue.readOnly=false;
-      totalNilai.value=parseInt(nilaiAset.value)+parseInt(ppnValue.value);
-    } else if(ppnStatus.value == "0"){
+      ppnValue.readOnly = false;
+      totalNilai.value = parseInt(nilaiAset.value) + parseInt(ppnValue.value);
+    } else if (ppnStatus.value == "0") {
       ppnValue.classList.add('penyusutan-disabled');
-      ppnValue.readOnly=true;
-      ppnValue.value=0;
-      totalNilai.value=parseInt(nilaiAset.value);
-    } else if(ppnStatus.value == "2"){
+      ppnValue.readOnly = true;
+      ppnValue.value = 0;
+      totalNilai.value = parseInt(nilaiAset.value);
+    } else if (ppnStatus.value == "2") {
       ppnValue.classList.add('penyusutan-disabled');
-      ppnValue.readOnly=true;
-      ppnValue.value=Math.floor(nilaiAset.value*0.11);
-      totalNilai.value=parseInt(nilaiAset.value)+parseInt(ppnValue.value);
+      ppnValue.readOnly = true;
+      ppnValue.value = Math.floor(nilaiAset.value * 0.11);
+      totalNilai.value = parseInt(nilaiAset.value) + parseInt(ppnValue.value);
     }
   });
-  $(document).ready(function(){
-    $('#akun-pembelian-aset').autocomplete("pages/Transaksi_acc/penyusutan_akun.php?req=pembelian", {width: 400});
-    $(".tipe-biaya").change(() => {
-      console.log($("input[name='tipe-biaya']:checked").val());
-    })
+  $(document).ready(function() {
+    $('#akun-pembelian-aset').autocomplete("pages/Transaksi_acc/penyusutan_akun.php?req=pembelian", {
+      width: 400
+    });
   });
 </script>
