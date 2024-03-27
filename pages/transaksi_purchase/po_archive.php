@@ -451,8 +451,8 @@ elseif(isset($_GET['action']) && strtolower($_GET['action']) == 'delete'){
       colModel      : [
         {name: 'id', index: 'id', align: 'right', width: 15, searchoptions: {sopt: ['cn']}},
         {name: 'nomor_ap', index: 'nomor_ap', align: 'left', width: 40, searchoptions:{sopt: ['cn']}},
-        {name:'tanggal_ap', index: 'tanggal_ap', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
-        {name: 'supplier', index: 'supplier', align: 'left', width: 80, searchoptions:{sopt: ['cn']}},
+        {name: 'ap_date', index: 'ap_date', align: 'center', width:40, formatter:"date", formatoptions:{srcformat:"Y-m-d", newformat:"d/m/Y"}, searchoptions: {sopt:['cn']}},
+        {name: 'nama_supplier', index: 'nama_supplier', align: 'left', width: 80, searchoptions:{sopt: ['cn']}},
         {name: 'nomor_akun', index: 'nomor_akun', align: 'center', width: 40, searchoptions:{sopt: ['cn']}},
         {name: 'nama_akun', index: 'nama_akun', align: 'left', width: 80, searchoptions:{sopt: ['cn']}},
         {name: 'total_qty', index: 'total_qty', align: 'center', width: 25, searchoptions:{sopt: ['cn']}},
