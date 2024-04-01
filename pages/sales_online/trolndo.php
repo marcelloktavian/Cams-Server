@@ -215,29 +215,29 @@ $allow_delete = is_show_menu(DELETE_POLICY, OnlineDelivery, $group_acess);
 			$stmt = $db->prepare("delete from olnso_id WHERE id_trans=?");
 			$stmt->execute(array($_POST['id']));
 
-			$stmt = $db->prepare("UPDATE jurnal SET deleted=1, user=?, lastmodified=NOW() WHERE keterangan like '%".$_POST['id']."%';");
-			$stmt->execute(array($id_user));
+			// $stmt = $db->prepare("UPDATE jurnal SET deleted=1, user=?, lastmodified=NOW() WHERE keterangan like '%".$_POST['id']."%';");
+			// $stmt->execute(array($id_user));
 
-			$stmt = $db->prepare("UPDATE jurnal_detail SET deleted=1, user=?, lastmodified=NOW() WHERE id_parent=(select id from jurnal where keterangan like '%".$_POST['id']."%');");
-			$stmt->execute(array($id_user));
+			// $stmt = $db->prepare("UPDATE jurnal_detail SET deleted=1, user=?, lastmodified=NOW() WHERE id_parent=(select id from jurnal where keterangan like '%".$_POST['id']."%');");
+			// $stmt->execute(array($id_user));
 
 			// no jurnal
-			// $masterNo = '';
-			// $q = mysql_fetch_array( mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor
-			// FROM jurnal ORDER BY id DESC LIMIT 1"));
-			// $masterNo=$q['nomor'];
+			$masterNo = '';
+			$q = mysql_fetch_array( mysql_query("SELECT CONCAT(SUBSTR(YEAR(NOW()),3), IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())), IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), IF(SUBSTR(no_jurnal, 1,2) <> SUBSTR(YEAR(NOW()),3) OR SUBSTR(no_jurnal, 3,2) <> IF(LENGTH(MONTH(NOW()))=1, CONCAT('0',MONTH(NOW())),MONTH(NOW())) OR SUBSTR(no_jurnal, 5,2) <> IF(LENGTH(DAY(NOW()))=1, CONCAT('0',DAY(NOW())),DAY(NOW())), '00001', IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=1, CONCAT('0000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=2, CONCAT('000',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=3, CONCAT('00',((SUBSTR(no_jurnal, 7,5))+1)), IF(LENGTH(((SUBSTR(no_jurnal, 7,5))+1))=4, CONCAT('0',((SUBSTR(no_jurnal, 7,5))+1)),((SUBSTR(no_jurnal, 7,5))+1) ) ) )))) AS nomor
+			FROM jurnal ORDER BY id DESC LIMIT 1"));
+			$masterNo=$q['nomor'];
 
-			// // insert jurnal
-			// $stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
-			// $stmt->execute();
+			// insert jurnal
+			$stmt = $db->prepare("INSERT INTO jurnal (SELECT NULL,'$masterNo',NOW(),REPLACE(keterangan,'Penjualan','CANCELLED'),total_debet,total_kredit,0,'$id_user',NOW(),'OLN','0' FROM jurnal WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
+			$stmt->execute();
 
-			// //get master id terakhir
-			// $q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
-			// $idparent=$q['id'];
+			//get master id terakhir
+			$q = mysql_fetch_array( mysql_query('select id FROM jurnal order by id DESC LIMIT 1'));
+			$idparent=$q['id'];
 
-			// // insert jurnal detail
-			// $stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,jurnal_detail.`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
-			// $stmt->execute();
+			// insert jurnal detail
+			$stmt = $db->prepare("INSERT INTO jurnal_detail (SELECT '','$idparent',id_akun,no_akun,nama_akun,jurnal_detail.`status`,kredit,debet,'',0,'$id_user',NOW() FROM jurnal_detail LEFT JOIN jurnal ON jurnal.id=jurnal_detail.id_parent WHERE jurnal.keterangan LIKE '%".$_POST['id']."%') ");
+			$stmt->execute();
 
 			// update trolnso agar state jadi nol dan dikembalikan ke sales_order dan stkirim jadi 0 lagi
 			$stmt = $db->prepare("update olnso set state='0',stkirim=0 WHERE id_trans=?");
