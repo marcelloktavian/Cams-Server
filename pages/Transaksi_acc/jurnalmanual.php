@@ -193,7 +193,7 @@ $allow_delete = is_show_menu(DELETE_POLICY, BiayaOperasional, $group_acess);
 		error_reporting(0);
 		$id = $_GET["id"];
 		$where = " AND id_parent = '".$id."' AND deleted=0";
-        $q = $db->query("(SELECT * FROM jurnal_detail WHERE debet>0 ".$where.") UNION ALL (SELECT * FROM jurnal_detail WHERE kredit>0 ".$where.")");
+        $q = $db->query("SELECT DISTINCT * FROM ( (SELECT * FROM jurnal_detail WHERE debet>0 ".$where.") UNION ALL (SELECT * FROM jurnal_detail WHERE kredit>0 ".$where.") )");
 		
 		$count = $q->rowCount();
 		
