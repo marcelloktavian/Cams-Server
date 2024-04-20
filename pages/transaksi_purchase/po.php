@@ -23,7 +23,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
 
   // << searching _filter ------------------------------
   if (isset($_GET['filter']) && $_GET['filter'] != '') {
-    $filter_value = " AND (`dokumen` LIKE '%" . $_GET['filter'] . "%' OR `nama_supplier` LIKE '%" . $_GET['filter'] . "%' OR `nama_pemohon` LIKE '%" . $_GET['filter'] . "%') ";
+    $filter_value = " AND (`dokumen` LIKE '%" . $_GET['filter'] . "%' OR `nama_supplier` LIKE '%" . $_GET['filter'] . "%' OR `nama_pemohon` LIKE '%" . $_GET['filter'] . "%'  OR d.nama_produk LIKE '%" . $_GET['filter'] . "%' ) ";
   } else {
     $filter_value = '';
   }
@@ -39,7 +39,8 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
   }
   // -------------------- end of searching _filter >>
 
-  $sql_po = "SELECT  a.*, date_format(a.tgl_po,'%d-%m-%y') as tgl_po_formatted, date_format(a.eta_pengiriman,'%d-%m-%y') as eta_pengiriman_formatted FROM `mst_po` a ";
+  $sql_po = "SELECT  a.*, date_format(a.tgl_po,'%d-%m-%y') as tgl_po_formatted, date_format(a.eta_pengiriman,'%d-%m-%y') as eta_pengiriman_formatted FROM `mst_po` a left join det_po d on a.id = d.id_po  ";
+  $where .= " GROUP BY a.id ";
   $q = $db->query($sql_po . $where);
 
   $count = $q->rowCount();
@@ -271,7 +272,7 @@ if (isset($_GET['action']) && strtolower($_GET['action']) == 'json') {
           <tr>
             <td><input type="text" class="required datepicker" id="startdate_po" name="startdate_po" placeholder="Start Date" readonly></td>
             <td> s.d <input type="text" class="required datepicker" id="enddate_po" name="enddate_po" placeholder="End Date" readonly></td>
-            <td> Filter <input type="text" id="filtervalue_po" name="filtervalue_po">(No Dokumen, Pemohon, Supplier)</td>
+            <td> Filter <input type="text" id="filtervalue_po" name="filtervalue_po">(No Dokumen, Pemohon, Supplier, Produk/Jasa)</td>
           </tr>
         </table>
       </div>
